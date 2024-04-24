@@ -6,3 +6,6 @@ export const store = configureStore({
     LoadingSlice: LoadingSlice
   }
 })
+
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch
