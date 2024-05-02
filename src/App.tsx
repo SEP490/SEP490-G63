@@ -2,7 +2,6 @@ import { BrowserRouter, Route } from 'react-router-dom'
 import { routers } from './common/const/router.ts'
 import { RouteType } from './common/const/type.ts'
 import { Provider } from 'react-redux'
-import { ConfigProvider } from 'antd'
 import { store } from './redux/Store.tsx'
 import AuthProvider from './provider/authProvider.tsx'
 import Routes from './routers/index.tsx'
@@ -20,13 +19,11 @@ const antdThemeConfig = {
 function App() {
   return (
     <Provider store={store}>
-      <ConfigProvider theme={antdThemeConfig}>
-        <AuthProvider>
-          <GetTokenV2ContextProvider>
-            <Routes />
-          </GetTokenV2ContextProvider>
-        </AuthProvider>
-      </ConfigProvider>
+      <AuthProvider>
+        <GetTokenV2ContextProvider>
+          <Routes />
+        </GetTokenV2ContextProvider>
+      </AuthProvider>
     </Provider>
   )
 }
