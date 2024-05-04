@@ -1,7 +1,7 @@
-import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { useAuth } from '../provider/authProvider'
 import { ProtectedRoute } from './ProtectedRouter.tsx'
-import { useSelector } from 'react-redux'
+
 import Error from '~/components/shared/Error/Error.tsx'
 import AdminLayout from '~/layout/AdminLayout/index.tsx'
 import NavBar from '~/layout/AdminLayout/NavBar/index.tsx'
@@ -9,10 +9,8 @@ import Login from '~/components/Login.tsx'
 import Logout from '~/components/Logout.tsx'
 
 const Routes = () => {
-  const { isLoading } = useSelector((a: any) => a.LoadingSlice)
-
   const { token } = useAuth()
-  let routes
+  let routes: Array<any>
   //   const routesForAdmin = [
   //     {
   //       path: '/',
@@ -145,7 +143,7 @@ const Routes = () => {
 
     {
       path: '/login',
-      element: <Login />
+      element: <NavBar />
     },
     //   {
     //     path: 'loginforexpert',

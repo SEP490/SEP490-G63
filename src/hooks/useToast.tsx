@@ -2,8 +2,8 @@ import { Zoom, toast } from 'react-toastify'
 
 const useToast = () => {
   type Notification = {
-    message: String
-    type: String
+    message: string
+    type: string
   }
   const successNotification = (props: Notification) => {
     toast.success(props?.message, {
