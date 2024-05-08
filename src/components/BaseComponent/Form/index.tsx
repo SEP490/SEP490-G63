@@ -1,6 +1,6 @@
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { REGEX_EMAIL, REGEX_PASSWORD } from '~/common/const/regexForm'
-
+import './index.css'
 type FromType = {
   email: string
   password: string
@@ -47,8 +47,12 @@ const Form = () => {
         />
         {errors.password && <div className='text-red-500'>{errors.password.message}</div>}
       </div>
-      <div className='w-[50%] mx-5 my-5'>
-        <input type='checkbox' />
+      <div className='w-[50%] mx-5 my-5 '>
+        <div className='checkbox flex items-center'>
+          <input name='checkbox' type='checkbox' />
+          <span className='checkmark'></span>
+          <div>Make this my default address</div>
+        </div>
       </div>
       <div className='w-full'>
         <button

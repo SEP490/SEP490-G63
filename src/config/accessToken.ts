@@ -1,9 +1,13 @@
+import Cookies from 'js-cookie'
 export const getAccessToken = () => {
-  return localStorage.getItem('token')
+  return Cookies.get('token')
 }
 export const setAccessToken = (token: string) => {
-  localStorage.setItem('token', token)
+  Cookies.set('token', token)
 }
 export const removeAccessToken = () => {
-  localStorage.removeItem('token')
+  Cookies.remove('token')
+}
+export const hasAccessToken = () => {
+  return !!Cookies.get('token')
 }

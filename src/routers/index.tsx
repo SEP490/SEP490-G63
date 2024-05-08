@@ -7,6 +7,7 @@ import AdminLayout from '~/layout/AdminLayout/index.tsx'
 import NavBar from '~/layout/AdminLayout/NavBar/index.tsx'
 import Login from '~/components/Login.tsx'
 import Logout from '~/components/Logout.tsx'
+import Example from '~/pages/Example.tsx'
 
 const Routes = () => {
   const { token } = useAuth()
@@ -169,7 +170,10 @@ const Routes = () => {
       path: '/logout',
       element: <Logout />
     },
-
+    {
+      path: '/example',
+      element: <Example />
+    },
     {
       path: '*',
       element: <Error />
