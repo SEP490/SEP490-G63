@@ -1,16 +1,17 @@
-import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { useAuth } from '../provider/authProvider'
 import { ProtectedRoute } from './ProtectedRouter.tsx'
-import { Spin } from 'antd'
-import { useSelector } from 'react-redux'
+
 import Error from '~/components/shared/Error/Error.tsx'
-import NavBar from '~/components/Navbar/index.tsx'
+import AdminLayout from '~/layout/AdminLayout/index.tsx'
+import NavBar from '~/layout/AdminLayout/NavBar/index.tsx'
+import Login from '~/components/Login.tsx'
+import Logout from '~/components/Logout.tsx'
+import Example from '~/pages/Example.tsx'
 
 const Routes = () => {
-  const { isLoading } = useSelector((a: any) => a.LoadingSlice)
-
   const { token } = useAuth()
-  let routes
+  let routes: Array<any>
   //   const routesForAdmin = [
   //     {
   //       path: '/',
@@ -119,6 +120,14 @@ const Routes = () => {
       element: <ProtectedRoute />, // Wrap the component in ProtectedRoute
       children: [
         {
+          path: '/admin',
+          element: (
+            <AdminLayout>
+              <NavBar />
+            </AdminLayout>
+          )
+        },
+        {
           path: '*',
           element: <Error />
         }
@@ -132,14 +141,11 @@ const Routes = () => {
     //   path: '/',
     //   element: <Navigate to='/' />
     // },
+
     {
-      path: '/',
+      path: '/login',
       element: <NavBar />
     },
-    //   {
-    //     path: 'login',
-    //     element: <Login />
-    //   },
     //   {
     //     path: 'loginforexpert',
     //     element: <LoginForExpert />
@@ -160,10 +166,14 @@ const Routes = () => {
     //     path: 'set-password/:token',
     //     element: <ConfirmEmailPassword />
     //   },
-    //   {
-    //     path: 'logout',
-    //     element: <Logout />
-    //   },
+    {
+      path: '/logout',
+      element: <Logout />
+    },
+    {
+      path: '/example',
+      element: <Example />
+    },
     {
       path: '*',
       element: <Error />
@@ -178,9 +188,9 @@ const Routes = () => {
   const router = createBrowserRouter([...routes])
   // Provide the router configuration using RouterProvider
   return (
-    <Spin spinning={isLoading} size='large' style={{ maxHeight: '100%', zIndex: 1001 }}>
-      <RouterProvider router={router} />
-    </Spin>
+    // <Spin spinning={isLoading} size='large' style={{ maxHeight: '100%', zIndex: 1001 }}>
+    <RouterProvider router={router} />
+    // </Spin>
   )
 }
 

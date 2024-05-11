@@ -6,18 +6,22 @@ import { setStatusLoading } from '../redux/LoadingSlice'
 export const GetTokenV2Context = createContext<any>(undefined)
 
 export const GetTokenV2ContextProvider = (props: any) => {
-  const [contextHolder, openNotification] = useToast({ duration: 8 })
+  const { successNotification, errorNotification } = useToast()
   const dispatch = useDispatch()
 
   function handleSuccessToast(message: string, callback: any, res: any) {
     dispatch(setStatusLoading(false))
-    message && openNotification('success', 'Thông báo', message)
+    message && successNotification({ type: 'success', message: message })
     callback && callback(res)
   }
-
+  // function handleWarningToast(message: string, callback: any, res: any) {
+  //   dispatch(setStatusLoading(false))
+  //   message && warningNotification({ type: 'warning', message: message })
+  //   callback && callback(res)
+  // }
   function handleErrorToast(message: string, callback: any) {
     dispatch(setStatusLoading(false))
-    openNotification('error', 'Thông báo', message)
+    errorNotification({ type: 'error', message: message })
     callback && callback()
   }
 
@@ -162,6 +166,8 @@ export const GetTokenV2ContextProvider = (props: any) => {
         return res
       })
       .catch((error: any) => {
+        console.log(error)
+
         // Handle error here
       })
   }
@@ -176,7 +182,6 @@ export const GetTokenV2ContextProvider = (props: any) => {
         getTokenDownloadFile
       }}
     >
-      {contextHolder}
       {props.children}
     </GetTokenV2Context.Provider>
   )
