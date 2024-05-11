@@ -28,20 +28,22 @@ axiosInstance.interceptors.response.use(
     return response
   },
   (error) => {
-    switch (error?.response?.status) {
-      case UNAUTHORIZED:
-        removeAccessToken()
-        window.location.href = '/login'
-        break
+    console.log(error)
 
-      case NOT_FOUND:
-        window.location.href = '/not-found'
-        break
+    // switch (error?.response?.status) {
+    //   case UNAUTHORIZED:
+    //     removeAccessToken()
+    //     window.location.href = '/login'
+    //     break
 
-      case FORBIDDEN:
-        window.location.href = '/maintained'
-        break
-    }
+    //   case NOT_FOUND:
+    //     window.location.href = '/not-found'
+    //     break
+
+    //   case FORBIDDEN:
+    //     window.location.href = '/maintained'
+    //     break
+    // }
 
     return Promise.reject(error)
   }

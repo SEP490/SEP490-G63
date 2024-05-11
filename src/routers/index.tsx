@@ -1,4 +1,4 @@
-import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { useAuth } from '../provider/authProvider'
 import { ProtectedRoute } from './ProtectedRouter.tsx'
 
@@ -144,7 +144,7 @@ const Routes = () => {
 
     {
       path: '/login',
-      element: <NavBar />
+      element: <Login />
     },
     //   {
     //     path: 'loginforexpert',

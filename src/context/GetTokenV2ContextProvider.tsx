@@ -11,7 +11,7 @@ export const GetTokenV2ContextProvider = (props: any) => {
 
   function handleSuccessToast(message: string, callback: any, res: any) {
     dispatch(setStatusLoading(false))
-    message && successNotification({ type: 'success', message: message })
+    message && successNotification(message)
     callback && callback(res)
   }
   // function handleWarningToast(message: string, callback: any, res: any) {
@@ -21,7 +21,7 @@ export const GetTokenV2ContextProvider = (props: any) => {
   // }
   function handleErrorToast(message: string, callback: any) {
     dispatch(setStatusLoading(false))
-    errorNotification({ type: 'error', message: message })
+    errorNotification(message)
     callback && callback()
   }
 
