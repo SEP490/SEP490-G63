@@ -7,14 +7,13 @@ import Form from './components/BaseComponent/Form/index.tsx'
 
 function App() {
   return (
-    <Form></Form>
-    // <Provider store={store}>
-    //   <AuthProvider>
-    //     <GetTokenV2ContextProvider>
-    //       <Routes />
-    //     </GetTokenV2ContextProvider>
-    //   </AuthProvider>
-    // </Provider>
+    <Provider store={store}>
+      <AuthProvider>
+        <GetTokenV2ContextProvider>
+          <Routes />
+        </GetTokenV2ContextProvider>
+      </AuthProvider>
+    </Provider>
   )
 }
 
