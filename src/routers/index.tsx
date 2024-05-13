@@ -1,4 +1,4 @@
-import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { useAuth } from '../provider/authProvider'
 import { ProtectedRoute } from './ProtectedRouter.tsx'
 
@@ -8,6 +8,7 @@ import NavBar from '~/layout/AdminLayout/NavBar/index.tsx'
 import Login from '~/components/Login.tsx'
 import Logout from '~/components/Logout.tsx'
 import Example from '~/pages/Example.tsx'
+import Employee from '~/pages/Admin/Employee/Employee.tsx'
 import Home from '../pages/landing_page/Home.tsx'
 import Layout from '~/pages/landing_page/Layout.tsx'
 import About from '~/pages/landing_page/About.tsx'
@@ -17,118 +18,33 @@ import BlogsComp from '~/components/landing_page/Blogs/BlogsComp.tsx'
 const Routes = () => {
   const { token } = useAuth()
   let routes: Array<any>
-  //   const routesForAdmin = [
-  //     {
-  //       path: '/',
-  //       element: <ProtectedRoute />, // Wrap the component in ProtectedRoute
-  //       children: [
-  //         {
-  //           path: '/',
-  //           element: <Navigate to='/account' />
-  //         },
-  //         {
-  //           path: 'account',
-  //           element: <Account />
-  //         },
-  //         {
-  //           path: 'profile',
-  //           element: <UserProfile />
-  //         },
-  //         {
-  //           path: 'logout',
-  //           element: <Logout />
-  //         },
-  //         {
-  //           path: '*',
-  //           element: <ErrorPage />
-  //         }
-  //       ]
-  //     }
-  //   ]
-  //   const routesForUser = [
-  //     {
-  //       path: '/',
-  //       element: <ProtectedRoute />, // Wrap the component in ProtectedRoute
-  //       children: [
-  //         {
-  //           path: '/',
-  //           element: <Navigate to='/home' />
-  //         },
-  //         {
-  //           path: 'home',
-  //           element: <HomePage />
-  //         },
-  //         {
-  //           path: 'preferjob',
-  //           element: <PreferJob />
-  //         },
-  //         {
-  //           path: 'applyjob',
-  //           element: <ApplyJob />
-  //         },
-  //         {
-  //           path: 'profile',
-  //           element: <UserProfile />
-  //         },
-  //         {
-  //           path: 'calendar',
-  //           element: <ScheduleCalendar />
-  //         },
-  //         {
-  //           path: 'cv',
-  //           element: <CV />
-  //         },
-  //         {
-  //           path: 'jobpostingdetail/:ID',
-  //           element: <JobPostingDetail />
-  //         },
-  //         {
-  //           path: 'listgeneraltest',
-  //           element: <ListExamForCandidate />
-  //         },
-  //         {
-  //           path: 'exam',
-  //           element: <ExamPage />
-  //         },
-  //         {
-  //           path: 'speexam',
-  //           element: <SpeExamPage />
-  //         },
 
-  //         {
-  //           path: 'detailCv',
-  //           element: <DetailsFillingPage />
-  //         },
-  //         {
-  //           path: 'logout',
-  //           element: <Logout />
-  //         },
-  //         {
-  //           path: 'submit-success',
-  //           element: <SubmitSpeExam />
-  //         },
-  //         {
-  //           path: '*',
-  //           element: <ErrorPage />
-  //         },
-  //         {
-  //           path: 'noti',
-  //           element: <ContentNoti />
-  //         }
-  //       ]
-  //     }
-  //   ]
-  // Define routes accessible only to authenticated users
   const routesForAuthenticatedOnly = [
     {
       path: '/',
       element: <ProtectedRoute />, // Wrap the component in ProtectedRoute
       children: [
         {
-          path: '/admin',
+          path: '/',
           element: (
             <AdminLayout>
               <NavBar />
+            </AdminLayout>
+          )
+        },
+        {
+          path: '/employee',
+          element: (
+            <AdminLayout>
+              <Employee />
+            </AdminLayout>
+          )
+        },
+        {
+          path: '/logout',
+          element: (
+            <AdminLayout>
+              <Logout />
             </AdminLayout>
           )
         },
@@ -146,34 +62,9 @@ const Routes = () => {
     //   path: '/',
     //   element: <Navigate to='/' />
     // },
-
     {
       path: '/login',
-      element: <NavBar />
-    },
-    //   {
-    //     path: 'loginforexpert',
-    //     element: <LoginForExpert />
-    //   },
-    //   {
-    //     path: 'forgotPass',
-    //     element: <ForgotPass />
-    //   },
-    //   {
-    //     path: 'jobpostingdetailguest/:ID',
-    //     element: <JobPostingDetailGuest />
-    //   },
-    //   {
-    //     path: 'verification-success/:token',
-    //     element: <ConfirmEmail />
-    //   },
-    //   {
-    //     path: 'set-password/:token',
-    //     element: <ConfirmEmailPassword />
-    //   },
-    {
-      path: '/logout',
-      element: <Logout />
+      element: <Login />
     },
     {
       path: '/example',

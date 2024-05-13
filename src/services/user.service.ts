@@ -1,7 +1,11 @@
 import axiosInstant from '../config/axiosConfig.ts'
-export const SignIn = async (email: string, password: string) => {
+interface LoginData {
+  email: string
+  password: string
+}
+export const login = async ({ email, password }: LoginData) => {
   try {
-    const response = await axiosInstant.post('user/signin', { email, password })
+    const response = await axiosInstant.post('public/auth/login', { email, password })
     return response.data
   } catch (error) {
     console.log(error)

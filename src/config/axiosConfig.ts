@@ -37,10 +37,6 @@ axiosInstance.interceptors.response.use(
       case NOT_FOUND:
         window.location.href = '/not-found'
         break
-
-      case FORBIDDEN:
-        window.location.href = '/maintained'
-        break
     }
 
     return Promise.reject(error)
