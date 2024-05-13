@@ -1,15 +1,17 @@
 import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { useAuth } from '../provider/authProvider'
 import { ProtectedRoute } from './ProtectedRouter.tsx'
-
+import { lazy, Suspense } from 'react'
 import Error from '~/components/shared/Error/Error.tsx'
 import AdminLayout from '~/layout/AdminLayout/index.tsx'
 import NavBar from '~/layout/AdminLayout/NavBar/index.tsx'
-import Login from '~/components/Login.tsx'
-import Logout from '~/components/Logout.tsx'
-import Example from '~/pages/Example.tsx'
-import Employee from '~/pages/Admin/Employee/Employee.tsx'
+import Loading from '~/components/shared/Loading/Loading.tsx'
 
+const Login = lazy(() => import('~/components/Login.tsx'))
+const Logout = lazy(() => import('~/components/Logout.tsx'))
+const Example = lazy(() => import('~/pages/Example.tsx'))
+const Employee = lazy(() => import('~/pages/Admin/Employee.tsx'))
+const Register = lazy(() => import('~/components/Register.tsx'))
 const Routes = () => {
   const { token } = useAuth()
   let routes: Array<any>
@@ -22,25 +24,31 @@ const Routes = () => {
         {
           path: '/',
           element: (
-            <AdminLayout>
-              <NavBar />
-            </AdminLayout>
+            <Suspense fallback={<Loading />}>
+              <AdminLayout>
+                <NavBar />
+              </AdminLayout>
+            </Suspense>
           )
         },
         {
           path: '/employee',
           element: (
-            <AdminLayout>
-              <Employee />
-            </AdminLayout>
+            <Suspense fallback={<Loading />}>
+              <AdminLayout>
+                <Employee />
+              </AdminLayout>
+            </Suspense>
           )
         },
         {
           path: '/logout',
           element: (
-            <AdminLayout>
-              <Logout />
-            </AdminLayout>
+            <Suspense fallback={<Loading />}>
+              <AdminLayout>
+                <Logout />
+              </AdminLayout>
+            </Suspense>
           )
         },
         {
@@ -53,17 +61,33 @@ const Routes = () => {
 
   // Define routes accessible only to non-authenticated users
   const routesForNotAuthenticatedOnly = [
-    // {
-    //   path: '/',
-    //   element: <Navigate to='/' />
-    // },
+    {
+      path: '/',
+      element: <Loading />
+    },
+    {
+      path: '/register',
+      element: (
+        <Suspense fallback={<Loading />}>
+          <Register />
+        </Suspense>
+      )
+    },
     {
       path: '/login',
-      element: <Login />
+      element: (
+        <Suspense fallback={<Loading />}>
+          <Login />
+        </Suspense>
+      )
     },
     {
       path: '/example',
-      element: <Example />
+      element: (
+        <Suspense fallback={<Loading />}>
+          <Example />
+        </Suspense>
+      )
     },
     {
       path: '*',
