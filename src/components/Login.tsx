@@ -5,11 +5,15 @@ import { login } from '~/services/user.service'
 import { getAccessToken, setAccessToken } from '~/config/accessToken'
 import useToast from '~/hooks/useToast'
 import logo from '../assets/svg/Tdocman.svg'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '~/provider/authProvider'
 type FromType = {
   email: string
   password: string
 }
 const Login = () => {
+  const navigate = useNavigate()
+  const { setToken } = useAuth()
   const {
     register,
     handleSubmit,
@@ -21,9 +25,10 @@ const Login = () => {
     try {
       const response = await login(data)
       if (response) {
-        setAccessToken(response?.access_token)
-        successNotification('Login OK nhé')
-      }
+        setToken(response?.access_token)
+        successNotification('Đăng nhập thành công nhé')
+        navigate('/')
+      } else errorNotification('Đăng nhập không thành công nhé')
     } catch (error) {
       console.log(error)
     }
@@ -57,7 +62,7 @@ const Login = () => {
               }
             })}
           />
-          <div className={`text-red-500 absolute ${errors.email ? 'visible' : 'invisible'}`}>
+          <div className={`text-red-500 absolute text-[12px]  ${errors.email ? 'visible' : 'invisible'}`}>
             {errors.email?.message}
           </div>
         </div>
@@ -73,11 +78,11 @@ const Login = () => {
               required: 'This field cannot be left blank'
             })}
           />
-          <div className={`text-red-500 absolute ${errors.password ? 'visible' : 'invisible'}`}>
+          <div className={`text-red-500 absolute text-[12px] ${errors.password ? 'visible' : 'invisible'}`}>
             {errors.password?.message}
           </div>
         </div>
-        <div className='w-full'>
+        <div className='w-full my-5'>
           <div className='cursor-pointer text-blue-600 text-[14px]'>Forgot password?</div>
         </div>
         <button
@@ -89,7 +94,9 @@ const Login = () => {
         </button>
         <div>
           Don't have a company yet?
-          <span className='cursor-pointer text-blue-600 '> Register now</span>
+          <span className='cursor-pointer text-blue-600 ' onClick={() => navigate('/register')}>
+            Register now
+          </span>
         </div>
       </form>
     </div>
