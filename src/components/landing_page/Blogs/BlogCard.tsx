@@ -24,7 +24,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ image, date, title, description, au
         }}
         state={{ image, date, title, description, author }}
       >
-        <div className="p-4 shadow-lg transition-all duration-500 hover:shadow-xl dark:bg-slate-950 dark:text-white bg-yellow-800">
+        <div className="p-4 shadow-lg transition-all duration-500 hover:shadow-xl dark:bg-slate-950 dark:text-white">
           <div className="overflow-hidden">
             <img
               src={image}
