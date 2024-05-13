@@ -8,6 +8,11 @@ import NavBar from '~/layout/AdminLayout/NavBar/index.tsx'
 import Login from '~/components/Login.tsx'
 import Logout from '~/components/Logout.tsx'
 import Example from '~/pages/Example.tsx'
+import Home from '../pages/landing_page/Home.tsx'
+import Layout from '~/pages/landing_page/Layout.tsx'
+import About from '~/pages/landing_page/About.tsx'
+import Blogs from '~/pages/landing_page/Blogs.tsx'
+import BlogsComp from '~/components/landing_page/Blogs/BlogsComp.tsx'
 
 const Routes = () => {
   const { token } = useAuth()
@@ -173,6 +178,28 @@ const Routes = () => {
     {
       path: '/example',
       element: <Example />
+    },
+    {
+      path: '/landing',
+      element: <Home />,
+      // children: [
+      //   {
+      //     path: '/',
+      //     element: <Home />
+      //   },
+      //   {
+      //     path: '/about',
+      //     element: <About />
+      //   }
+      // ]
+    },
+    {
+      path: '/blogs',
+      element: <Blogs />
+    },
+    {
+      path: '/about',
+      element: <About />
     },
     {
       path: '*',
