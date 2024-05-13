@@ -1,4 +1,4 @@
-export const BASE_URL = 'http://localhost:8080/api/v1/'
+export const BASE_URL = 'http://localhost:8080/'
 
 export const INTERNAL_SERVER_ERROR = 500
 export const NOT_FOUND = 404

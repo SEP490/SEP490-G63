@@ -1,23 +1,17 @@
-// import axios from 'axios'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-// import PropTypes from 'prop-types'
-// import { Button, Space, notification } from 'antd'
-// import { Server } from '../dataConfig'
-// import * as signalR from '@microsoft/signalr'
-// import { RecruitLogo } from '../components/Icons'
+import { getAccessToken, removeAccessToken, setAccessToken } from '~/config/accessToken'
 type MyContextValue = {
-  token: string
+  token: string | undefined
+  setToken: (token: string) => void | undefined
+  removeToken: () => void | undefined
 }
 interface Props {
   children: React.ReactNode
 }
-const AuthContext = createContext<MyContextValue>({ token: '' })
+const AuthContext = createContext<MyContextValue>({ token: '', setToken: () => {}, removeToken: () => {} })
 
 const AuthProvider: React.FC<Props> = ({ children }) => {
-  const [token, setToken_] = useState<any>(localStorage.getItem('token'))
-  const [accountId, setAccountID] = useState<any>(localStorage.getItem('accountId'))
-  const [userName, setUsername] = useState<any>(localStorage.getItem('userName'))
-  const [roleId, setRoleId] = useState<any>(localStorage.getItem('roleId'))
+  const [token, setToken_] = useState<string | undefined>(getAccessToken())
   // const [isExpert, setIsExpert] = useState(localStorage.getItem('isExpert'))
   // const [connection, setConnection] = useState(null)
   // const [api, contextHolder] = notification.useNotification()
@@ -97,31 +91,16 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
   //   })
   // }
 
-  const setToken = (newToken: string, newAccountID: string, newUsername: string, newRoleId: string) => {
-    if (newToken !== null && newToken !== 'null') {
-      // Giá trị newToken hợp lệ (không phải là null hoặc "null")
-      setToken_(newToken)
-      setAccountID(newAccountID)
-      setUsername(newUsername)
-      setRoleId(newRoleId)
-      localStorage.setItem('token', newToken)
-      localStorage.setItem('accountId', newAccountID)
-      localStorage.setItem('userName', newUsername)
-      localStorage.setItem('roleId', newRoleId)
-    } else {
-      localStorage.removeItem('token')
-      localStorage.removeItem('accountId')
-      localStorage.removeItem('userName')
-      localStorage.removeItem('roleId')
-      localStorage.removeItem('isExpert')
-      setToken_(null)
-      setAccountID(null)
-      setUsername(null)
-      setRoleId(null)
-    }
+  const setToken = (newToken: string) => {
+    setToken_(newToken)
+    setAccessToken(newToken)
+  }
+  const removeToken = () => {
+    setToken_(undefined)
+    removeAccessToken()
   }
 
-  const contextValue = useMemo(() => ({ token, accountId, userName, roleId }), [token, accountId])
+  const contextValue = useMemo(() => ({ token, setToken, removeToken }), [token])
 
   return (
     <>

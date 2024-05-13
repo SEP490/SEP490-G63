@@ -1,12 +1,8 @@
 import { Zoom, toast } from 'react-toastify'
 
 const useToast = () => {
-  type Notification = {
-    message: string
-    type: string
-  }
-  const successNotification = (props: Notification) => {
-    toast.success(props?.message, {
+  const successNotification = (message: string) => {
+    toast.success(message, {
       position: 'top-right',
       autoClose: 3000,
       hideProgressBar: false,
@@ -18,8 +14,8 @@ const useToast = () => {
       transition: Zoom
     })
   }
-  const warningNotification = (props: Notification) => {
-    toast.warning(props?.message, {
+  const warningNotification = (message: string) => {
+    toast.warning(message, {
       position: 'top-right',
       autoClose: 3000,
       hideProgressBar: false,
@@ -31,8 +27,8 @@ const useToast = () => {
       transition: Zoom
     })
   }
-  const errorNotification = (props: Notification) => {
-    toast.error(props?.message, {
+  const errorNotification = (message: string) => {
+    toast.error(message, {
       position: 'top-right',
       autoClose: 3000,
       hideProgressBar: false,
