@@ -1,21 +1,17 @@
-// import axios from 'axios'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { getAccessToken, removeAccessToken, setAccessToken } from '~/config/accessToken'
-// import PropTypes from 'prop-types'
-// import { Button, Space, notification } from 'antd'
-// import { Server } from '../dataConfig'
-// import * as signalR from '@microsoft/signalr'
-// import { RecruitLogo } from '../components/Icons'
 type MyContextValue = {
-  token: string
+  token: string | undefined
+  setToken: (token: string) => void | undefined
+  removeToken: () => void | undefined
 }
 interface Props {
   children: React.ReactNode
 }
-const AuthContext = createContext<MyContextValue>({ token: '' })
+const AuthContext = createContext<MyContextValue>({ token: '', setToken: () => {}, removeToken: () => {} })
 
 const AuthProvider: React.FC<Props> = ({ children }) => {
-  const [token, setToken_] = useState<any>(getAccessToken())
+  const [token, setToken_] = useState<string | undefined>(getAccessToken())
   // const [isExpert, setIsExpert] = useState(localStorage.getItem('isExpert'))
   // const [connection, setConnection] = useState(null)
   // const [api, contextHolder] = notification.useNotification()
@@ -96,17 +92,15 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
   // }
 
   const setToken = (newToken: string) => {
-    if (newToken !== null && newToken !== 'null') {
-      // Giá trị newToken hợp lệ (không phải là null hoặc "null")
-      setToken_(newToken)
-      setAccessToken(newToken)
-    } else {
-      removeAccessToken()
-      setToken_(null)
-    }
+    setToken_(newToken)
+    setAccessToken(newToken)
+  }
+  const removeToken = () => {
+    setToken_(undefined)
+    removeAccessToken()
   }
 
-  const contextValue = useMemo(() => ({ token }), [token])
+  const contextValue = useMemo(() => ({ token, setToken, removeToken }), [token])
 
   return (
     <>
