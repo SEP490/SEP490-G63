@@ -1,5 +1,5 @@
 import React from "react";
-import FooterLogo from "../../assets/logo.png";
+import FooterLogo from "~/assets/logo.png";
 import {
   FaFacebook,
   FaInstagram,
@@ -7,7 +7,7 @@ import {
   FaLocationArrow,
   FaMobileAlt,
 } from "react-icons/fa";
-import NatureVid from "../../assets/video/footer.mp4";
+import NatureVid from "~/assets/video/footer.mp4";
 import { Link } from "react-router-dom";
 
 const FooterLinks = [
@@ -56,11 +56,11 @@ const Footer = () => {
               <br />
               <div className="flex items-center gap-3 ">
                 <FaLocationArrow />
-                <p>Noida, Uttar Pradesh</p>
+                <p>Ha Noi, Viet Nam</p>
               </div>
               <div className="flex items-center gap-3 mt-3">
                 <FaMobileAlt />
-                <p>+91 123456789</p>
+                <p>+11021997</p>
               </div>
               {/* social handles */}
               <div>
@@ -142,7 +142,7 @@ const Footer = () => {
           </div>
           <div>
             <div className="text-center py-5 border-t-2 border-gray-300/50 bg-primary text-white">
-              @copyright 2024 All rights reserved || Made with ❤️ by Dilshad
+              @copyright 2024 All rights reserved || Made with ❤️ by Tudeptrai
             </div>
           </div>
         </div>

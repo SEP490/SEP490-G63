@@ -10,6 +10,8 @@ import BannerImg from "~/assets/cover-women.jpg";
 import Banner2 from "~/assets/travel-cover2.jpg";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import Navbar from "../../components/landing_page/Navbar/Navbar";
+import Footer from "../../components/landing_page/Footer/Footer";
 
 const Home = () => {
   React.useEffect(() => {
@@ -24,6 +26,7 @@ const Home = () => {
   
   return (
     <>
+    <Navbar />
       <div>
         <div className="h-[700px] relative">
           <video
@@ -43,6 +46,7 @@ const Home = () => {
         <BannerPic img={Banner2} />
         {/* <Testimonial /> */}
       </div>
+      <Footer />
     </>
   );
 };
