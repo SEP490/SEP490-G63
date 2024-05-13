@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { BASE_URL, FORBIDDEN, NOT_FOUND, UNAUTHORIZED } from '~/common/const'
+import { BASE_URL, BASE_ADMIN_URL, FORBIDDEN, NOT_FOUND, UNAUTHORIZED } from '~/common/const'
 import { getAccessToken, removeAccessToken } from './accessToken'
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
@@ -8,7 +8,13 @@ const axiosInstance = axios.create({
     'Content-Type': 'application/json'
   }
 })
-
+export const adminInstance = axios.create({
+  baseURL: BASE_ADMIN_URL,
+  timeout: 5000,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
 axiosInstance.interceptors.request.use(
   (config) => {
     const accessToken = getAccessToken()
