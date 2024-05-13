@@ -1,7 +1,11 @@
+import React from "react";
 import BlogCard from "./BlogCard";
 import Img1 from "~/assets/places/tajmahal.jpg";
 import Img2 from "~/assets/places/water.jpg";
 import Img3 from "~/assets/places/boat.jpg";
+
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const BlogsData = [
   {
@@ -34,6 +38,15 @@ const BlogsData = [
 ];
 
 const BlogsComp = () => {
+  React.useEffect(() => {
+    AOS.init({
+      offset: 100,
+      duration: 900,
+      easing: "ease-in-sine",
+      delay: 100,
+    });
+    AOS.refresh();
+  }, []);
   return (
     <>
       <div className="dark:bg-gray-900 dark:text-white py-10 bg-red-800">

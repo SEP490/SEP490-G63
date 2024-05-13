@@ -1,5 +1,7 @@
 import React from "react";
 import Slider from "react-slick";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const testimonialData = [
   {
@@ -61,6 +63,15 @@ const Testimonial = () => {
       },
     ],
   };
+  React.useEffect(() => {
+    AOS.init({
+      offset: 100,
+      duration: 900,
+      easing: "ease-in-sine",
+      delay: 100,
+    });
+    AOS.refresh();
+  }, []);
   return (
     <>
       <div data-aos="fade-up" data-aos-duration="300" className="py-10">

@@ -3,7 +3,7 @@ import Hero from "~/components/landing_page/Hero/Hero";
 import NatureVid from "~/assets/video/main.mp4";
 import BlogsComp from "~/components/landing_page/Blogs/BlogsComp";
 import Places from "~/components/landing_page/Places/Places";
-import Testimonial from "~/components/landing_page/Testimonial/Testimonial";
+// import Testimonial from "~/components/landing_page/Testimonial/Testimonial";
 import Banner from "~/components/landing_page/Banner/Banner";
 import BannerPic from "~/components/landing_page/BannerPic/BannerPic";
 import BannerImg from "~/assets/cover-women.jpg";
