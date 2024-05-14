@@ -33,18 +33,18 @@ const PlaceCard: React.FC<PlaceCardProps> = ({
 
         <div className="space-y-2 p-3">
           <h1 className="line-clamp-1 font-bold text-xl">{title}</h1>
-          <div className="flex items-center gap-2 opacity-70">
+          {/* <div className="flex items-center gap-2 opacity-70">
             <IoLocationSharp />
             <span>{location}</span>
-          </div>
-          <p className="line-clamp-2">{description}</p>
+          </div> */}
+          <p className="line-clamp-6">{description}</p>
           <div className="flex items-center justify-between border-t-2 py-3 !mt-3">
             <div className="opacity-70">
-              <p>{type}</p>
+              {/* <p>{type}</p> */}
             </div>
-            <div>
+            {/* <div>
               <p className="text-2xl font-bold">${price}</p>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

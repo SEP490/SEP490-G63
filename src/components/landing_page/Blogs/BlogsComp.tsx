@@ -1,8 +1,8 @@
 import React from "react";
 import BlogCard from "./BlogCard";
-import Img1 from "~/assets/places/tajmahal.jpg";
-import Img2 from "~/assets/places/water.jpg";
-import Img3 from "~/assets/places/boat.jpg";
+import Img1 from "~/assets/places/i.jpg";
+import Img2 from "~/assets/places/k.jpg";
+import Img3 from "~/assets/places/l.jpg";
 
 import AOS from "aos";
 import "aos/dist/aos.css";

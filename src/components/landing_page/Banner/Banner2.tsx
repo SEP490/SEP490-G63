@@ -1,10 +1,10 @@
 import React from "react";
-import TravelImg from "~/assets/places/n.jpg";
+import TravelImg from "~/assets/places/u.jpg";
 import { MdFlight, MdOutlineLocalHotel } from "react-icons/md";
 import { IoIosWifi } from "react-icons/io";
 import { IoFastFoodSharp } from "react-icons/io5";
 
-const Banner = () => {
+const Banner2 = () => {
   return (
     <>
       <div className="min-h-[550px] bg-gray-100">
@@ -67,4 +67,4 @@ const Banner = () => {
   );
 };
 
-export default Banner;
+export default Banner2;

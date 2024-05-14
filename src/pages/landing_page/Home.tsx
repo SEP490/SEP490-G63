@@ -5,13 +5,16 @@ import BlogsComp from "~/components/landing_page/Blogs/BlogsComp";
 import Places from "~/components/landing_page/Places/Places";
 // import Testimonial from "~/components/landing_page/Testimonial/Testimonial";
 import Banner from "~/components/landing_page/Banner/Banner";
-import BannerPic from "~/components/landing_page/BannerPic/BannerPic";
+import Contact from "~/components/landing_page/BannerPic/BannerPic";
 import BannerImg from "~/assets/cover-women.jpg";
-import Banner2 from "~/assets/travel-cover2.jpg";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import Navbar from "../../components/landing_page/Navbar/Navbar";
 import Footer from "../../components/landing_page/Footer/Footer";
+import Services from "./Services";
+import ServicesBoxx from "./ServiceBoxx";
+import Banner1 from "~/components/landing_page/Banner/Banner1";
+import Banner2 from "~/components/landing_page/Banner/Banner2";
 
 const Home = () => {
   React.useEffect(() => {
@@ -40,10 +43,13 @@ const Home = () => {
           <Hero />
         </div>
         <Places />
-        <BannerPic img={BannerImg} />
+        <Services />
+        <Contact />
         <BlogsComp />
         <Banner />
-        <BannerPic img={Banner2} />
+        <Banner1 />
+        <Banner2 />
+        <ServicesBoxx />
         {/* <Testimonial /> */}
       </div>
       <Footer />
