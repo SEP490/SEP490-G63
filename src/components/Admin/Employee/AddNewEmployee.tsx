@@ -94,8 +94,8 @@ const AddNewEmployee = () => {
         </label>
         <div className='flex flex-wrap justify-between'>
           {permissions?.map((e) => (
-            <div className='flex w-[100%] md:w-[48%] gap-4 ' key={e.id}>
-              <input type='checkbox' />
+            <div className='flex w-[100%] md:w-[48%] gap-4 items-center' key={e.id}>
+              <input type='checkbox' className='rounded-sm' />
               <label>{e.title}</label>
             </div>
           ))}
