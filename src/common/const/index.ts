@@ -1,5 +1,6 @@
 export const BASE_URL = 'http://localhost:8080/'
 export const BASE_ADMIN_URL = 'http://localhost:8080/'
+export const BASE_PROVINCE_URL = 'https://vapi.vnappmob.com'
 export const INTERNAL_SERVER_ERROR = 500
 export const NOT_FOUND = 404
 export const UNAUTHORIZED = 401
