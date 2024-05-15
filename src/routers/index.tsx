@@ -6,6 +6,11 @@ import Error from '~/components/shared/Error/Error.tsx'
 import AdminLayout from '~/layout/AdminLayout/index.tsx'
 import NavBar from '~/layout/AdminLayout/NavBar/index.tsx'
 import Loading from '~/components/shared/Loading/Loading.tsx'
+import Home from '../pages/landing_page/Home.tsx'
+import Layout from '~/pages/landing_page/Layout.tsx'
+import About from '~/pages/landing_page/About.tsx'
+import Blogs from '~/pages/landing_page/Blogs.tsx'
+import BlogsComp from '~/components/landing_page/Blogs/BlogsComp.tsx'
 
 const Login = lazy(() => import('~/components/Login.tsx'))
 const Logout = lazy(() => import('~/components/Logout.tsx'))
@@ -88,6 +93,28 @@ const Routes = () => {
           <Example />
         </Suspense>
       )
+    },
+    {
+      path: '/landing',
+      element: <Home />,
+      // children: [
+      //   {
+      //     path: '/',
+      //     element: <Home />
+      //   },
+      //   {
+      //     path: '/about',
+      //     element: <About />
+      //   }
+      // ]
+    },
+    {
+      path: '/blogs',
+      element: <Blogs />
+    },
+    {
+      path: '/about',
+      element: <About />
     },
     {
       path: '*',
