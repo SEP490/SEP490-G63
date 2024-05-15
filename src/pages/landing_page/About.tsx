@@ -1,4 +1,3 @@
-import React from 'react'
 import BlogsComp from '~/components/landing_page/Blogs/BlogsComp'
 import Location from '~/components/landing_page/Location/Location'
 
