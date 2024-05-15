@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '~/provider/authProvider'
+import NavBar from './NavBar'
 
 function AdminLayout({ children }: any) {
   const location = useLocation()
@@ -7,7 +8,12 @@ function AdminLayout({ children }: any) {
   if (!token) {
     return <Navigate to='/404notfound' state={{ from: location }} replace></Navigate>
   }
-  return children
+  return (
+    <div className='h-[100vh] overflow-hidden'>
+      <NavBar />
+      {children}
+    </div>
+  )
 }
 
 export default AdminLayout
