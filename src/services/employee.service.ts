@@ -1,7 +1,12 @@
 import axiosInstant, { adminInstance } from '../config/axiosConfig.ts'
-interface LoginData {
+interface EmployeeData {
+  name: string
   email: string
   password: string
+  phone: string
+  position: string
+  department: string
+  permissions: string[]
 }
 interface RegisterData {
   company: string
@@ -10,9 +15,11 @@ interface RegisterData {
   email: string
   phone: string
 }
-export const login = async ({ email, password }: LoginData) => {
+export const createEmployee = async (data: EmployeeData) => {
   try {
-    const response = await axiosInstant.post('public/auth/login', { email, password })
+    console.log({ ...data, role: 'USER' })
+    const response = await axiosInstant.post('public/auth/register-for-user', { ...data, role: 'USER' })
+
     return response.data
   } catch (error) {
     console.log(error)

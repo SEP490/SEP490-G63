@@ -4,11 +4,17 @@ import { Bars3Icon, UserIcon, ChevronDownIcon } from '@heroicons/react/24/outlin
 import avatar from '../../../assets/images/avatar.jpg'
 import useViewport from '~/hooks/useViewport'
 import { Menu, Transition } from '@headlessui/react'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '~/provider/authProvider'
+import useToast from '~/hooks/useToast'
 const NavBar = () => {
   const [openNav, setOpenNav] = useState(false)
   const [openProfile, setOpenProfile] = useState(false)
   const { width } = useViewport()
   const isMobile = width <= 1024
+  const navigate = useNavigate()
+  const { removeToken } = useAuth()
+  const { successNotification } = useToast()
   return (
     <div className='relative'>
       <div
@@ -45,6 +51,11 @@ const NavBar = () => {
         <button
           className={`hover:bg-green-500 hover:text-white text-gray-900
            group flex w-full items-center  px-2 py-2 text-sm `}
+          onClick={() => {
+            removeToken()
+            successNotification('Logout success')
+            navigate('/login')
+          }}
         >
           Logout
         </button>
@@ -120,6 +131,11 @@ const NavBar = () => {
                         className={`${
                           active ? 'bg-blue-500 text-white' : 'text-gray-900'
                         } group flex w-full items-center rounded-md px-2 py-2 text-sm `}
+                        onClick={() => {
+                          removeToken()
+                          successNotification('Logout success')
+                          navigate('/login')
+                        }}
                       >
                         Logout
                       </button>
