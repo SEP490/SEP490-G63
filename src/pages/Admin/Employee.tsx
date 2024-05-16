@@ -1,15 +1,29 @@
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import AddNewEmployee from '~/components/Admin/Employee/AddNewEmployee'
 import { PlusIcon } from '@heroicons/react/24/outline'
 import ViewEmployee from '~/components/Admin/Employee/ViewEmployee'
 import permissionsList from '~/common/const/permissions'
+import { getListEmployee } from '~/services/employee.service'
 interface CheckBoxValue {
   [value: string]: boolean
+}
+interface DataEmployee {
+  name?: string
+  email?: string
+  password?: string
+  phone?: string
+  position?: string
+  status?: string
+  identificationNumber?: string
+  department?: string
 }
 const Employee = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [viewDetail, setViewDetail] = useState(false)
+  const [page, setPage] = useState(0)
+  const [size, setSize] = useState(10)
+  const [data, setData] = useState<DataEmployee[]>([])
   const [permissions, setPermissions] = useState(
     permissionsList.reduce((acc: CheckBoxValue, permission) => {
       acc[permission.value] = false
@@ -33,6 +47,17 @@ const Employee = () => {
   function openModal() {
     setIsOpen(true)
   }
+  useEffect(() => {
+    const fetchAPI = async () => {
+      const data = await getListEmployee({ size: size, page: page })
+      if (data) {
+        setData(data.content)
+      }
+    }
+    fetchAPI()
+  }, [])
+  console.log(data)
+
   return (
     <div className='bg-[#e8eaed] h-full'>
       <div className='flex flex-wrap py-4'>
@@ -74,7 +99,7 @@ const Employee = () => {
             </div>
           </div>
         </div>
-        <div className=' w-full px-5  md:w-[80%]'>
+        <div className=' w-full px-5  md:w-[80%] h-[100vh]'>
           <div className='flex gap-3 justify-between w-full'>
             <div className='relative w-[50%]'>
               <div className='absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none'>
@@ -108,61 +133,51 @@ const Employee = () => {
               <PlusIcon className='h-5 w-5' /> Add Employee
             </button>
           </div>
-          <div className=' overflow-x-auto shadow-md sm:rounded-lg my-3'>
-            <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 overflow-auto '>
-              <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
+          <div className=' overflow-x-auto shadow-md sm:rounded-lg my-3  h-[75vh]'>
+            <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
+              <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
                 <tr>
-                  <th scope='col' className='px-6 py-3'>
-                    Employee Name
-                  </th>
-                  <th scope='col' className='px-6 py-3'>
-                    Email
-                  </th>
+                  <th className='px-6 py-3'>Employee Name</th>
+                  <th className='px-6 py-3'>Email</th>
                   <th scope='col' className='px-6 py-3'>
                     Phone
                   </th>
-                  <th scope='col' className='px-6 py-3'>
-                    Department
-                  </th>
+                  <th className='px-6 py-3'>Department</th>
                   <th scope='col' className='px-6 py-3'>
                     Position
                   </th>
-                  <th scope='col' className='px-6 py-3'>
-                    Address
-                  </th>
-
-                  <th scope='col' className='px-6 py-3'>
-                    Action
-                  </th>
+                  <th className='px-6 py-3'>Address</th>
+                  <th className='px-6 py-3'>Action</th>
                 </tr>
               </thead>
-              <tbody className='w-full'>
-                <tr className=' w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'>
-                  <th
-                    scope='row'
-                    className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white hover:underline cursor-pointer'
-                    onClick={() => setViewDetail(true)}
-                  >
-                    Nguyễn Hữu Thắng
-                  </th>
-                  <td className='px-6 py-4'>thangnhhe161517@fpt.edu.vn</td>
-                  <td className='px-6 py-4'>0854898556</td>
-                  <td className='px-6 py-4'>IT</td>
-                  <td className='px-6 py-4'>Dev</td>
-                  <td className='px-6 py-4'>Thon 3,Thach Hoa,Thach That,Ha Noi</td>
+              <tbody className='w-full '>
+                {data?.map((d: DataEmployee) => (
+                  <tr className=' w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'>
+                    <th
+                      scope='row'
+                      className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white hover:underline cursor-pointer'
+                      onClick={() => setViewDetail(true)}
+                    >
+                      {d.name}
+                    </th>
+                    <td className='px-6 py-4'>{d.email}</td>
+                    <td className='px-6 py-4'>{d.phone}</td>
+                    <td className='px-6 py-4'>{d.department}</td>
+                    <td className='px-6 py-4'>{d.position}</td>
+                    <td className='px-6 py-4'>Address</td>
 
-                  <td className='px-6 py-4 text-right'>
-                    <a href='#' className='font-medium text-blue-600 dark:text-blue-500 hover:underline'>
-                      Edit
-                    </a>
-                  </td>
-                </tr>
+                    <td className='px-6 py-4 text-right'>
+                      <a href='#' className='font-medium text-blue-600 dark:text-blue-500 hover:underline'>
+                        Edit
+                      </a>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
         </div>
       </div>
-
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as='div' className='relative z-10 w-[90vw]' onClose={closeModal}>
           <Transition.Child
@@ -192,7 +207,7 @@ const Employee = () => {
                   <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
                     Add New Employee
                   </Dialog.Title>
-                  <AddNewEmployee />
+                  <AddNewEmployee closeModal={closeModal} />
                 </Dialog.Panel>
               </Transition.Child>
             </div>
