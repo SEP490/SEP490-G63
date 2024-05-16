@@ -6,4 +6,4 @@ const NoPage = () => {
   // https://royeraadames.medium.com/open-react-router-link-at-top-of-page-c8e48a72da99
 };
 
-export default NoPage
+export default NoPage;
