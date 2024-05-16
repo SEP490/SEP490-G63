@@ -8,8 +8,8 @@ const Hero = () => {
       <div className="h-full flex items-center p-4 bg-primary/10">
         <div className="container grid grid-cols-1 gap-4">
           <div className="text-white">
-            <p data-aos="fade-up" className="text-3xl font-mono border-2 border-teal-500 inline-block rounded p-2">
-            TDocuman
+            <p data-aos="fade-up" className="text-5xl font-mono border-4 border-teal-500 inline-block rounded p-2">
+            TDocman
             </p>
             <p
               data-aos="fade-up"

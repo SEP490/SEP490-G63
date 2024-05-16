@@ -31,7 +31,7 @@ const Routes = () => {
           element: (
             <Suspense fallback={<Loading />}>
               <AdminLayout>
-                <NavBar />
+                <Employee />
               </AdminLayout>
             </Suspense>
           )
@@ -96,7 +96,7 @@ const Routes = () => {
     },
     {
       path: '/landing',
-      element: <Home />,
+      element: <Home />
       // children: [
       //   {
       //     path: '/',
