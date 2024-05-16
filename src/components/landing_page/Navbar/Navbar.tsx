@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Logo from '~/assets/svg/Tdocman.svg'
-import { NavLink, Link } from 'react-router-dom'
+import { NavLink, Link, Navigate, useNavigate } from 'react-router-dom'
 import { FaCaretDown } from 'react-icons/fa'
 import ResponsiveMenu from './ResponsiveMenu'
 import { HiMenuAlt3, HiMenuAlt1 } from 'react-icons/hi'
@@ -41,7 +41,7 @@ const DropdownLinks = [
 
 const Navbar = () => {
   const [showMenu, setShowMenu] = useState(false)
-
+  const navigate = useNavigate()
   const toggleMenu = () => {
     setShowMenu(!showMenu)
   }
@@ -101,9 +101,18 @@ const Navbar = () => {
             </div>
             <div className='flex items-center gap-4'>
               <button
+                className='bg-gradient-to-r from-red-500 to-red-500 hover:bg-bg-gradient-to-r hover:from-red hover:bg-red-500 transition-all duration-600 text-white px-3 py-1 rounded-full'
+                onClick={() => {
+                  navigate('/login')
+                }}
+              >
+                Sign In
+              </button>
+              <button
                 className='bg-gradient-to-r from-cyan-500 to-teal-500 hover:bg-bg-gradient-to-r hover:from-secondary hover:bg-primary transition-all duration-600 text-white px-3 py-1 rounded-full'
                 onClick={() => {
                   // handleOrderPopup();
+                  navigate('/register')
                 }}
               >
                 Try for free
