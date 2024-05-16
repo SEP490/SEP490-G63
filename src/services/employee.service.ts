@@ -15,10 +15,28 @@ interface RegisterData {
   email: string
   phone: string
 }
+interface QueryDataGet {
+  name?: string
+  email?: string
+  password?: string
+  phone?: string
+  position?: string
+  department?: string
+  permissions?: string[]
+  page?: number
+  size?: number
+}
 export const createEmployee = async (data: EmployeeData) => {
   try {
-    console.log({ ...data, role: 'USER' })
     const response = await axiosInstant.post('public/auth/register-for-user', { ...data, role: 'USER' })
+    return response.data
+  } catch (error) {
+    console.log(error)
+  }
+}
+export const getListEmployee = async ({ size, page }: QueryDataGet) => {
+  try {
+    const response = await axiosInstant.get(`user/search?page=${page}&size=${size}`)
 
     return response.data
   } catch (error) {

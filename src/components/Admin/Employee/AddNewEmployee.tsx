@@ -2,6 +2,7 @@ import { ChangeEventHandler, EventHandler, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import permissionsList from '~/common/const/permissions'
 import { REGEX_EMAIL } from '~/common/const/regexForm'
+import useToast from '~/hooks/useToast'
 import { createEmployee } from '~/services/employee.service'
 type FromType = {
   name: string
@@ -14,12 +15,16 @@ type FromType = {
 interface CheckBoxValue {
   [value: string]: boolean
 }
-const AddNewEmployee = () => {
+interface IProp {
+  closeModal: () => void
+}
+const AddNewEmployee = ({ closeModal }: IProp) => {
   const {
     register,
     handleSubmit,
     formState: { errors }
   } = useForm<FromType>()
+  const { successNotification } = useToast()
   const [permissions, setPermissions] = useState(
     permissionsList.reduce((acc: CheckBoxValue, permission) => {
       acc[permission.value] = false
@@ -40,7 +45,10 @@ const AddNewEmployee = () => {
     try {
       const response = await createEmployee({ ...data, permissions: getCheckedPermissions() })
 
-      console.log(response)
+      if (response) {
+        successNotification('OK')
+        closeModal()
+      }
     } catch (error) {
       console.log(error)
     }

@@ -6,7 +6,6 @@ import Error from '~/components/shared/Error/Error.tsx'
 import AdminLayout from '~/layout/AdminLayout/index.tsx'
 import NavBar from '~/layout/AdminLayout/NavBar/index.tsx'
 import Loading from '~/components/shared/Loading/Loading.tsx'
-import Home from '../pages/landing_page/Home.tsx'
 import Layout from '~/pages/landing_page/Layout.tsx'
 import About from '~/pages/landing_page/About.tsx'
 import Blogs from '~/pages/landing_page/Blogs.tsx'
@@ -17,6 +16,7 @@ const Logout = lazy(() => import('~/components/Logout.tsx'))
 const Example = lazy(() => import('~/pages/Example.tsx'))
 const Employee = lazy(() => import('~/pages/Admin/Employee.tsx'))
 const Register = lazy(() => import('~/components/Register.tsx'))
+const Home = lazy(() => import('~/pages/landing_page/Home.tsx'))
 const Routes = () => {
   const { token } = useAuth()
   let routes: Array<any>
@@ -68,7 +68,11 @@ const Routes = () => {
   const routesForNotAuthenticatedOnly = [
     {
       path: '/',
-      element: <Loading />
+      element: (
+        <Suspense fallback={<Loading />}>
+          <Home />
+        </Suspense>
+      )
     },
     {
       path: '/register',
