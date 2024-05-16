@@ -1,74 +1,85 @@
-import React from "react";
-import Img1 from "~/assets/places/i.jpg";
-import Img2 from "~/assets/places/k.jpg";
-import Img3 from "~/assets/places/l.jpg";
-import { FaStar } from "react-icons/fa";
+import React from 'react'
+import Img1 from '~/assets/places/i.jpg'
+import Img2 from '~/assets/places/k.jpg'
+import Img3 from '~/assets/places/l.jpg'
+import { FaStar } from 'react-icons/fa'
 
 const ServicesData = [
   {
     id: 1,
     img: Img1,
-    title: "His Life",
-    description:
-      "☑️lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ",
+    title: 'Variety of contracts',
+    description: 'lorem ipsum dolor sit amet, consectetur adipiscing elit.'
   },
   {
     id: 2,
     img: Img2,
-    title: "Who's there",
-    description:
-      "☑️lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    title: 'Affordable price',
+    description: 'lorem ipsum dolor sit amet, consectetur adipiscing.'
   },
   {
     id: 3,
     img: Img3,
-    title: "Lost Boy",
-    description:
-      "☑️lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-  },
-];
+    title: 'Easy and reliable',
+    description: 'lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+  }
+]
 
-const Services = ({  }) => {
+const Services = () => {
   return (
     <>
-      <span id="services"></span>
-      <div className="py-10">
-        <div className="container">
-          <div className="text-center mb-20 max-w-[600px] mx-auto">
-            
-            <h1 className="text-3xl font-bold">Comprehensive business solution</h1>
-            <p className="text-xs text-gray-400">
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-              Perspiciatis delectus architecto error nesciunt,
+      <span id='services'></span>
+      <div className='py-10'>
+        <div className='container'>
+          <div className='text-center mb-20 max-w-[600px] mx-auto'>
+            <h1 className='text-3xl font-bold'>Comprehensive business solution</h1>
+            <p className='text-xs text-gray-400'>
+              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Perspiciatis delectus architecto error nesciunt,
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-20 md:gap-5 place-items-center">
+          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-20 md:gap-5 place-items-center'>
             {ServicesData.map((service) => (
               <div
-                data-aos="zoom-in"
-                className="rounded-2xl bg-white dark:bg-gray-800 hover:bg-primary dark:hover:bg-primary hover:text-white relative shadow-xl duration-high group max-w-[300px]"
+                data-aos='zoom-in'
+                className='rounded-2xl bg-white dark:bg-gray-800 hover:bg-primary dark:hover:bg-primary hover:text-white relative shadow-xl duration-high group max-w-[500px]'
               >
-                <div className="h-[160px]">
+                <div className='h-[160px]'>
                   <img
                     src={service.img}
-                    alt=""
-                    className="max-w-[100px] block mx-auto transform -translate-y-14
-                  group-hover:scale-105  duration-300 shadow-md"
+                    alt=''
+                    className='max-w-[100px] block mx-auto transform -translate-y-14
+                  group-hover:scale-105  duration-300 shadow-md'
                   />
                 </div>
-                <div className="p-4 text-center">
-                  <div className="w-full flex items-center justify-center gap-1">
-                    <FaStar className="text-yellow-500" />
-                    <FaStar className="text-yellow-500" />
-                    <FaStar className="text-yellow-500" />
-                    <FaStar className="text-yellow-500" />
+                <div className='p-4 text-center'>
+                  <div className='w-full flex items-center justify-center gap-1 flex-wrap'>
+                    <FaStar className='text-yellow-500' />
+                    <FaStar className='text-yellow-500' />
+                    <FaStar className='text-yellow-500' />
+                    <FaStar className='text-yellow-500' />
                   </div>
-                  <h1 className="text-xl font-bold">{service.title}</h1>
-                  <p className="text-gray-500 group-hover:text-white duration-high text-sm line-clamp-6">
-                    {service.description}
-                  </p>
+                  <h1 className='text-xl font-bold'>{service.title}</h1>
+                  <div className='flex'>
+                    <span>☑️</span>
+                    <span className='text-gray-500 group-hover:text-white duration-high text-sm line-clamp-6 text-start ml-1'>
+                      {service.description}
+                    </span>
+                  </div>
+                  <div className='flex'>
+                    <span>☑️</span>
+                    <span className='text-gray-500 group-hover:text-white duration-high text-sm line-clamp-6 text-start ml-1'>
+                      {service.description}
+                    </span>
+                  </div>
+                  <div className='flex'>
+                    <span>☑️</span>
+                    <span className='text-gray-500 group-hover:text-white duration-high text-sm line-clamp-6 text-start ml-1'>
+                      {service.description}
+                    </span>
+                  </div>s
+
                   <button
-                    className="bg-primary hover:scale-105 duration-300 text-white py-1 px-4 rounded-full mt-4 group-hover:bg-white group-hover:text-primary"
+                    className='bg-primary hover:scale-105 duration-300 text-white py-1 px-4 rounded-full mt-4 group-hover:bg-white group-hover:text-primary'
                     // onClick={handleOrderPopup}
                   >
                     Find out more
@@ -80,7 +91,7 @@ const Services = ({  }) => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Services;
+export default Services

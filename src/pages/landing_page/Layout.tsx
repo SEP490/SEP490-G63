@@ -5,11 +5,7 @@ import Footer from "~/layout/UserLayout/Footer";
 // import OrderPopup from "../components/OrderPopup/OrderPopup";
 
 const Layout = () => {
-  const [orderPopup, setOrderPopup] = React.useState(false);
 
-  const handleOrderPopup = () => {
-    setOrderPopup(!orderPopup);
-  };
   return (
     <>
       <Navbar />
