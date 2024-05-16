@@ -3,10 +3,29 @@ import { Fragment, useState } from 'react'
 import AddNewEmployee from '~/components/Admin/Employee/AddNewEmployee'
 import { PlusIcon } from '@heroicons/react/24/outline'
 import ViewEmployee from '~/components/Admin/Employee/ViewEmployee'
+import permissionsList from '~/common/const/permissions'
+interface CheckBoxValue {
+  [value: string]: boolean
+}
 const Employee = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [viewDetail, setViewDetail] = useState(false)
-
+  const [permissions, setPermissions] = useState(
+    permissionsList.reduce((acc: CheckBoxValue, permission) => {
+      acc[permission.value] = false
+      return acc
+    }, {})
+  )
+  const handleCheckboxChange = (event: any) => {
+    const { name, checked } = event.target
+    setPermissions((prevPermissions) => ({
+      ...prevPermissions,
+      [name]: checked
+    }))
+  }
+  const getCheckedPermissions = () => {
+    return Object.keys(permissions).filter((permission) => permissions[permission])
+  }
   function closeModal() {
     setIsOpen(false)
   }
@@ -20,9 +39,38 @@ const Employee = () => {
         <div className='font-bold hidden md:flex md:w-[20%] px-3 md:flex-col items-center '>
           <p className='font-bold text-[28px]'>Employee</p>
           <div className='overflow-x-auto shadow-md sm:rounded-md my-3 w-full'>
-            <div className='bg-white pl-4'>
-              <p>Permissions</p>
-              <div className='font-normal'>select permission</div>
+            <div className='bg-white px-4 '>
+              <div className='flex justify-between'>
+                <p>Permissions list</p>
+                <p
+                  className={`font-normal   ${getCheckedPermissions().length == 0 ? 'hover:cursor-default text-gray-500' : 'text-blue-600 hover:cursor-pointer hover:underline'} `}
+                  onClick={() =>
+                    setPermissions(
+                      permissionsList.reduce((acc: CheckBoxValue, permission) => {
+                        acc[permission.value] = false
+                        return acc
+                      }, {})
+                    )
+                  }
+                >
+                  Clear
+                </p>
+              </div>
+
+              <div className='font-normal py-2'>
+                {permissionsList?.map((e) => (
+                  <div className='flex w-[100%]  gap-4 items-center' key={e.id}>
+                    <input
+                      type='checkbox'
+                      name={e.value}
+                      className='rounded-sm'
+                      checked={permissions[e.value]}
+                      onChange={handleCheckboxChange}
+                    />
+                    <label>{e.title}</label>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
