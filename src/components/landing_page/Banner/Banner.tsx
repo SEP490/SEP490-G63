@@ -22,11 +22,14 @@ const Banner = () => {
               {/* text content section */}
               <div className='flex flex-col justify-center gap-6 sm:pt-0 lg:px-16'>
                 <h1 data-aos='fade-up' className='text-3xl sm:text-4xl font-bold'>
-                  Explore all corners of The world with us
+                  Effective online contract management solution
                 </h1>
                 <p data-aos='fade-up' className='text-sm text-gray-500 tracking-wide leading-8'>
-                  Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eaque reiciendis inventore iste ratione ex
-                  alias quis magni at optio ratione ex alias quis magni at optio
+                  Managing contracts online involves using digital tools and platforms to create, store, track, and
+                  execute agreements. This process enhances efficiency by providing real-time access, facilitating
+                  collaboration, and automating workflow processes. Online contract management ensures better
+                  compliance, reduces the risk of errors, and streamlines approvals, making it an essential practice for
+                  modern businesses.
                   <br />
                 </p>
                 <div data-aos='zoom-in' className='grid grid-cols-2 gap-6'>

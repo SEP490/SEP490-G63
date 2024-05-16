@@ -1,5 +1,6 @@
-import BlogsComp from '~/components/landing_page/Blogs/BlogsComp'
+// import BlogsComp from '~/components/landing_page/Blogs/BlogsComp'
 import Location from '~/components/landing_page/Location/Location'
+import Places from '~/components/landing_page/Places/Places'
 
 const About = () => {
   return (
@@ -25,7 +26,7 @@ const About = () => {
         </div>
       </div>
       <Location />
-      <BlogsComp />
+      <Places />
     </>
   )
 }

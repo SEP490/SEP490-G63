@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import Logo from '~/assets/logo.png'
+import Logo from '~/assets/svg/Tdocman.svg'
 import { NavLink, Link } from 'react-router-dom'
 import { FaCaretDown } from 'react-icons/fa'
 import ResponsiveMenu from './ResponsiveMenu'
@@ -75,9 +75,7 @@ const Navbar = () => {
             <div className='flex items-center gap-4'>
               <button
                 className='bg-gradient-to-r from-cyan-500 to-teal-500 hover:bg-bg-gradient-to-r hover:from-secondary hover:bg-primary transition-all duration-600 text-white px-3 py-1 rounded-full'
-                onClick={() => {
-                  // handleOrderPopup();
-                }}
+                onClick={() => {}}
               >
                 Try for free
               </button>

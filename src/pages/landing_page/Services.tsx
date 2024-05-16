@@ -8,23 +8,20 @@ const ServicesData = [
   {
     id: 1,
     img: Img1,
-    title: 'His Life',
-    description:
-      '☑️lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '
+    title: 'Variety of contracts',
+    description: 'lorem ipsum dolor sit amet, consectetur adipiscing elit.'
   },
   {
     id: 2,
     img: Img2,
-    title: "Who's there",
-    description:
-      '☑️lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+    title: 'Affordable price',
+    description: 'lorem ipsum dolor sit amet, consectetur adipiscing.'
   },
   {
     id: 3,
     img: Img3,
-    title: 'Lost Boy',
-    description:
-      '☑️lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+    title: 'Easy and reliable',
+    description: 'lorem ipsum dolor sit amet, consectetur adipiscing elit.'
   }
 ]
 
@@ -44,7 +41,7 @@ const Services = () => {
             {ServicesData.map((service) => (
               <div
                 data-aos='zoom-in'
-                className='rounded-2xl bg-white dark:bg-gray-800 hover:bg-primary dark:hover:bg-primary hover:text-white relative shadow-xl duration-high group max-w-[300px]'
+                className='rounded-2xl bg-white dark:bg-gray-800 hover:bg-primary dark:hover:bg-primary hover:text-white relative shadow-xl duration-high group max-w-[500px]'
               >
                 <div className='h-[160px]'>
                   <img
@@ -55,16 +52,32 @@ const Services = () => {
                   />
                 </div>
                 <div className='p-4 text-center'>
-                  <div className='w-full flex items-center justify-center gap-1'>
+                  <div className='w-full flex items-center justify-center gap-1 flex-wrap'>
                     <FaStar className='text-yellow-500' />
                     <FaStar className='text-yellow-500' />
                     <FaStar className='text-yellow-500' />
                     <FaStar className='text-yellow-500' />
                   </div>
                   <h1 className='text-xl font-bold'>{service.title}</h1>
-                  <p className='text-gray-500 group-hover:text-white duration-high text-sm line-clamp-6'>
-                    {service.description}
-                  </p>
+                  <div className='flex'>
+                    <span>☑️</span>
+                    <span className='text-gray-500 group-hover:text-white duration-high text-sm line-clamp-6 text-start ml-1'>
+                      {service.description}
+                    </span>
+                  </div>
+                  <div className='flex'>
+                    <span>☑️</span>
+                    <span className='text-gray-500 group-hover:text-white duration-high text-sm line-clamp-6 text-start ml-1'>
+                      {service.description}
+                    </span>
+                  </div>
+                  <div className='flex'>
+                    <span>☑️</span>
+                    <span className='text-gray-500 group-hover:text-white duration-high text-sm line-clamp-6 text-start ml-1'>
+                      {service.description}
+                    </span>
+                  </div>s
+
                   <button
                     className='bg-primary hover:scale-105 duration-300 text-white py-1 px-4 rounded-full mt-4 group-hover:bg-white group-hover:text-primary'
                     // onClick={handleOrderPopup}
