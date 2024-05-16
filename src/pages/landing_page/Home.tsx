@@ -1,6 +1,7 @@
 import React from 'react'
 import Hero from '~/components/landing_page/Hero/Hero'
-import NatureVid from '~/assets/video/a.mp4'
+// import NatureVid from '~/assets/video/a.mp4'
+import Welcome from '~/assets/places/Kinh-doanh-la-gi-cho-vi-du.jpg'
 import Places from '~/components/landing_page/Places/Places'
 // import Testimonial from "~/components/landing_page/Testimonial/Testimonial";
 import Banner from '~/components/landing_page/Banner/Banner'
@@ -30,9 +31,11 @@ const Home = () => {
       <Navbar />
       <div>
         <div className='h-[700px] relative'>
-          <video autoPlay loop muted className='absolute right-0 top-0 h-[700px] w-full object-cover z-[-1]'>
+          {/* <video autoPlay loop muted className='absolute right-0 top-0 h-[700px] w-full object-cover z-[-1]'>
             <source src={NatureVid} type='video/mp4' />
-          </video>
+          </video> */}
+          <img src={Welcome} className='absolute right-0 top-0 h-[700px] w-full object-cover z-[-1]'></img>
+
           <Hero />
         </div>
         <Places />
