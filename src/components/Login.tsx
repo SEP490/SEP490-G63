@@ -26,9 +26,9 @@ const Login = () => {
       const response = await login(data)
       if (response) {
         setToken(response?.access_token)
-        successNotification('Đăng nhập thành công nhé')
+        successNotification('Login successful')
         navigate('/')
-      } else errorNotification('Đăng nhập không thành công nhé')
+      } else errorNotification('Login unsuccessful')
     } catch (error) {
       console.log(error)
     }

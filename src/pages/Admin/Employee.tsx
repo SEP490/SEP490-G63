@@ -9,6 +9,7 @@ interface CheckBoxValue {
   [value: string]: boolean
 }
 interface DataEmployee {
+  id?: string
   name?: string
   email?: string
   password?: string
@@ -17,12 +18,14 @@ interface DataEmployee {
   status?: string
   identificationNumber?: string
   department?: string
+  permission?: string
+  address?: string
 }
 const Employee = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [viewDetail, setViewDetail] = useState(false)
   const [page, setPage] = useState(0)
-  const [size, setSize] = useState(10)
+  const [size, setSize] = useState(5)
   const [data, setData] = useState<DataEmployee[]>([])
   const [permissions, setPermissions] = useState(
     permissionsList.reduce((acc: CheckBoxValue, permission) => {
@@ -55,7 +58,7 @@ const Employee = () => {
       }
     }
     fetchAPI()
-  }, [])
+  }, [page, size])
   console.log(data)
 
   return (
@@ -133,40 +136,43 @@ const Employee = () => {
               <PlusIcon className='h-5 w-5' /> Add Employee
             </button>
           </div>
-          <div className=' overflow-x-auto shadow-md sm:rounded-lg my-3  h-[75vh]'>
+          <div className=' overflow-x-auto shadow-md sm:rounded-lg my-3  max-h-[75vh]'>
             <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
               <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
                 <tr>
-                  <th className='px-6 py-3'>Employee Name</th>
-                  <th className='px-6 py-3'>Email</th>
-                  <th scope='col' className='px-6 py-3'>
+                  <th className='px-3 py-3'>Employee Name</th>
+                  <th className='px-3 py-3'>Email</th>
+                  <th scope='col' className='px-3 py-3'>
                     Phone
                   </th>
-                  <th className='px-6 py-3'>Department</th>
+                  <th className='px-3 py-3'>Department</th>
                   <th scope='col' className='px-6 py-3'>
                     Position
                   </th>
-                  <th className='px-6 py-3'>Address</th>
-                  <th className='px-6 py-3'>Action</th>
+                  <th className='px-3 py-3'>Address</th>
+                  <th className='px-3 py-3'></th>
                 </tr>
               </thead>
               <tbody className='w-full '>
                 {data?.map((d: DataEmployee) => (
-                  <tr className=' w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'>
+                  <tr
+                    key={d.id}
+                    className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
+                  >
                     <th
                       scope='row'
-                      className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white hover:underline cursor-pointer'
+                      className='px-3 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white hover:underline cursor-pointer hover:text-blue-500'
                       onClick={() => setViewDetail(true)}
                     >
                       {d.name}
                     </th>
-                    <td className='px-6 py-4'>{d.email}</td>
-                    <td className='px-6 py-4'>{d.phone}</td>
-                    <td className='px-6 py-4'>{d.department}</td>
-                    <td className='px-6 py-4'>{d.position}</td>
-                    <td className='px-6 py-4'>Address</td>
+                    <td className='px-3 py-4'>{d.email}</td>
+                    <td className='px-3 py-4'>{d.phone}</td>
+                    <td className='px-3 py-4'>{d.department}</td>
+                    <td className='px-3 py-4'>{d.position}</td>
+                    <td className='px-3 py-4'>{d.address}</td>
 
-                    <td className='px-6 py-4 text-right'>
+                    <td className='px-3 py-4 text-right'>
                       <a href='#' className='font-medium text-blue-600 dark:text-blue-500 hover:underline'>
                         Edit
                       </a>
@@ -243,7 +249,11 @@ const Employee = () => {
                   <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
                     Employee Detail
                   </Dialog.Title>
-                  <ViewEmployee />
+                  <ViewEmployee
+                    closeModal={() => {
+                      setViewDetail(false)
+                    }}
+                  />
                 </Dialog.Panel>
               </Transition.Child>
             </div>

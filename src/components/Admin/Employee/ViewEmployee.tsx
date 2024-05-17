@@ -1,6 +1,9 @@
+import { ChangeEventHandler, EventHandler, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import permissions from '~/common/const/permissions'
+import permissionsList from '~/common/const/permissions'
 import { REGEX_EMAIL } from '~/common/const/regexForm'
+import useToast from '~/hooks/useToast'
+import { createEmployee } from '~/services/employee.service'
 type FromType = {
   name: string
   department: string
@@ -8,16 +11,51 @@ type FromType = {
   phone: string
   email: string
   password: string
+  address: string
+  identificationNumber: string
 }
-const ViewEmployee = () => {
+interface CheckBoxValue {
+  [value: string]: boolean
+}
+interface IProp {
+  closeModal: () => void
+}
+const ViewEmployee = ({ closeModal }: IProp) => {
   const {
     register,
     handleSubmit,
+
     formState: { errors }
   } = useForm<FromType>()
-  const onSubmit: SubmitHandler<FromType> = (data) => {
-    console.log(data)
+  const { successNotification } = useToast()
+  const [permissions, setPermissions] = useState(
+    permissionsList.reduce((acc: CheckBoxValue, permission) => {
+      acc[permission.value] = false
+      return acc
+    }, {})
+  )
+  const handleCheckboxChange = (event: any) => {
+    const { name, checked } = event.target
+    setPermissions((prevPermissions) => ({
+      ...prevPermissions,
+      [name]: checked
+    }))
   }
+  const getCheckedPermissions = () => {
+    return Object.keys(permissions).filter((permission) => permissions[permission])
+  }
+  const onSubmit: SubmitHandler<FromType> = async (data) => {
+    try {
+      const response = await createEmployee({ ...data, permissions: getCheckedPermissions() })
+
+      if (response) {
+        successNotification('OK')
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -36,21 +74,6 @@ const ViewEmployee = () => {
         />
         <div className={`text-red-500 absolute text-[12px] ${errors.name ? 'visible' : 'invisible'}`}>
           {errors.name?.message}
-        </div>
-      </div>
-      <div className='w-[100%] md:w-[48%] mt-5 relative'>
-        <label className='font-bold '>
-          Department<sup className='text-red-500'>*</sup>
-        </label>
-        <input
-          className={`${errors.department ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-          placeholder='Enter your department'
-          {...register('department', {
-            required: 'This field cannot be left blank'
-          })}
-        />
-        <div className={`text-red-500 absolute text-[12px] ${errors.department ? 'visible' : 'invisible'}`}>
-          {errors.department?.message}
         </div>
       </div>
       <div className='w-[100%] md:w-[48%] mt-5 relative'>
@@ -74,6 +97,52 @@ const ViewEmployee = () => {
       </div>
       <div className='w-[100%] md:w-[48%] mt-5 relative'>
         <label className='font-bold '>
+          Department<sup className='text-red-500'>*</sup>
+        </label>
+        <input
+          className={`${errors.department ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+          placeholder='Enter your department'
+          {...register('department', {
+            required: 'This field cannot be left blank'
+          })}
+        />
+        <div className={`text-red-500 absolute text-[12px] ${errors.department ? 'visible' : 'invisible'}`}>
+          {errors.department?.message}
+        </div>
+      </div>
+      <div className='w-[100%] md:w-[48%] mt-5 relative'>
+        <label className='font-bold '>
+          Position<sup className='text-red-500'>*</sup>
+        </label>
+        <input
+          className={`${errors.position ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+          placeholder='Enter your position'
+          {...register('position', {
+            required: 'This field cannot be left blank'
+          })}
+        />
+        <div className={`text-red-500 absolute text-[12px] ${errors.position ? 'visible' : 'invisible'}`}>
+          {errors.position?.message}
+        </div>
+      </div>
+      <div className='w-[100%] md:w-[48%] mt-5 relative'>
+        <label className='font-bold '>
+          Address<sup className='text-red-500'>*</sup>
+        </label>
+        <input
+          className={`${errors.address ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+          type='text'
+          placeholder='Enter your address'
+          {...register('address', {
+            required: 'This field cannot be left blank'
+          })}
+        />
+        <div className={`text-red-500 absolute text-[12px] ${errors.address ? 'visible' : 'invisible'}`}>
+          {errors.address?.message}
+        </div>
+      </div>
+      <div className='w-[100%] md:w-[48%] mt-5 relative'>
+        <label className='font-bold '>
           Password<sup className='text-red-500'>*</sup>
         </label>
         <input
@@ -93,9 +162,15 @@ const ViewEmployee = () => {
           Permissions<sup className='text-red-500'>*</sup>
         </label>
         <div className='flex flex-wrap justify-between'>
-          {permissions?.map((e) => (
+          {permissionsList?.map((e) => (
             <div className='flex w-[100%] md:w-[48%] gap-4 items-center' key={e.id}>
-              <input type='checkbox' className='rounded-sm' />
+              <input
+                type='checkbox'
+                name={e.value}
+                className='rounded-sm'
+                checked={permissions[e.value]}
+                onChange={handleCheckboxChange}
+              />
               <label>{e.title}</label>
             </div>
           ))}
