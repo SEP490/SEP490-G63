@@ -8,7 +8,7 @@ import { getListEmployee } from '~/services/employee.service'
 interface CheckBoxValue {
   [value: string]: boolean
 }
-interface DataEmployee {
+export interface DataEmployee {
   id?: string
   name?: string
   email?: string
@@ -27,6 +27,7 @@ const Employee = () => {
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(5)
   const [data, setData] = useState<DataEmployee[]>([])
+  const [selectedUser, setSelectedUser] = useState<DataEmployee>()
   const [permissions, setPermissions] = useState(
     permissionsList.reduce((acc: CheckBoxValue, permission) => {
       acc[permission.value] = false
@@ -162,7 +163,10 @@ const Employee = () => {
                     <th
                       scope='row'
                       className='px-3 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white hover:underline cursor-pointer hover:text-blue-500'
-                      onClick={() => setViewDetail(true)}
+                      onClick={() => {
+                        setViewDetail(true)
+                        setSelectedUser(d)
+                      }}
                     >
                       {d.name}
                     </th>
@@ -250,6 +254,7 @@ const Employee = () => {
                     Employee Detail
                   </Dialog.Title>
                   <ViewEmployee
+                    data={selectedUser}
                     closeModal={() => {
                       setViewDetail(false)
                     }}

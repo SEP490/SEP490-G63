@@ -3,6 +3,7 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import permissionsList from '~/common/const/permissions'
 import { REGEX_EMAIL } from '~/common/const/regexForm'
 import useToast from '~/hooks/useToast'
+import { DataEmployee } from '~/pages/Admin/Employee'
 import { createEmployee } from '~/services/employee.service'
 type FromType = {
   name: string
@@ -18,15 +19,16 @@ interface CheckBoxValue {
   [value: string]: boolean
 }
 interface IProp {
+  data: DataEmployee | undefined
   closeModal: () => void
 }
-const ViewEmployee = ({ closeModal }: IProp) => {
+const ViewEmployee = ({ data, closeModal }: IProp) => {
   const {
     register,
     handleSubmit,
 
     formState: { errors }
-  } = useForm<FromType>()
+  } = useForm<FromType>({ defaultValues: data })
   const { successNotification } = useToast()
   const [permissions, setPermissions] = useState(
     permissionsList.reduce((acc: CheckBoxValue, permission) => {

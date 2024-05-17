@@ -13,7 +13,7 @@ type FromType = {
 }
 const Login = () => {
   const navigate = useNavigate()
-  const { setToken } = useAuth()
+  const { setToken, setRole } = useAuth()
   const {
     register,
     handleSubmit,
@@ -26,6 +26,7 @@ const Login = () => {
       const response = await login(data)
       if (response) {
         setToken(response?.access_token)
+        setRole(response.user.role)
         successNotification('Login successful')
         navigate('/')
       } else errorNotification('Login unsuccessful')
