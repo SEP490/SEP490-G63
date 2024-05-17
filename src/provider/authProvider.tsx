@@ -1,17 +1,28 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { GUESS } from '~/common/const/role'
 import { getAccessToken, removeAccessToken, setAccessToken } from '~/config/accessToken'
+import { getRoleW, removeRoleW, setRoleW } from '~/config/role'
 type MyContextValue = {
   token: string | undefined
+  role: string | undefined
   setToken: (token: string) => void | undefined
+  setRole: (token: string) => void | undefined
   removeToken: () => void | undefined
 }
 interface Props {
   children: React.ReactNode
 }
-const AuthContext = createContext<MyContextValue>({ token: '', setToken: () => {}, removeToken: () => {} })
+const AuthContext = createContext<MyContextValue>({
+  token: '',
+  role: '',
+  setToken: () => {},
+  setRole: () => {},
+  removeToken: () => {}
+})
 
 const AuthProvider: React.FC<Props> = ({ children }) => {
   const [token, setToken_] = useState<string | undefined>(getAccessToken())
+  const [role, setRole_] = useState<string | undefined>(getRoleW())
   // const [isExpert, setIsExpert] = useState(localStorage.getItem('isExpert'))
   // const [connection, setConnection] = useState(null)
   // const [api, contextHolder] = notification.useNotification()
@@ -98,9 +109,14 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
   const removeToken = () => {
     setToken_(undefined)
     removeAccessToken()
+    removeRoleW()
+  }
+  const setRole = (role: string) => {
+    setRole_(role)
+    setRoleW(role)
   }
 
-  const contextValue = useMemo(() => ({ token, setToken, removeToken }), [token])
+  const contextValue = useMemo(() => ({ token, role, setToken, setRole, removeToken }), [token, role])
 
   return (
     <>

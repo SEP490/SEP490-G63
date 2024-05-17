@@ -28,7 +28,7 @@ interface QueryDataGet {
 }
 export const createEmployee = async (data: EmployeeData) => {
   try {
-    const response = await axiosInstant.post('public/auth/register-for-user', { ...data, role: 'USER' })
+    const response = await axiosInstant.post('user/register-for-user', { ...data, role: 'USER' })
     return response.data
   } catch (error) {
     console.log(error)
