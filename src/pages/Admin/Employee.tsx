@@ -59,9 +59,7 @@ const Employee = () => {
       }
     }
     fetchAPI()
-  }, [page, size])
-  console.log(data)
-
+  }, [page, size, isOpen])
   return (
     <div className='bg-[#e8eaed] h-full'>
       <div className='flex flex-wrap py-4'>
