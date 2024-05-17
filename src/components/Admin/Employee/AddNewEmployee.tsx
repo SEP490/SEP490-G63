@@ -44,7 +44,6 @@ const AddNewEmployee = ({ closeModal }: IProp) => {
   const onSubmit: SubmitHandler<FromType> = async (data) => {
     try {
       const response = await createEmployee({ ...data, permissions: getCheckedPermissions() })
-
       if (response) {
         successNotification('OK')
         closeModal()
