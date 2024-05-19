@@ -26,7 +26,6 @@ const ViewEmployee = ({ data, closeModal }: IProp) => {
   const {
     register,
     handleSubmit,
-
     formState: { errors }
   } = useForm<FromType>({ defaultValues: data })
   const { successNotification } = useToast()
@@ -57,6 +56,7 @@ const ViewEmployee = ({ data, closeModal }: IProp) => {
       console.log(error)
     }
   }
+  console.log([...JSON.parse(data?.permissions ? data?.permissions : '')])
 
   return (
     <form
@@ -69,7 +69,7 @@ const ViewEmployee = ({ data, closeModal }: IProp) => {
         </label>
         <input
           className={`${errors.name ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-          placeholder='Enter your name'
+          disabled
           {...register('name', {
             required: 'This field cannot be left blank'
           })}
@@ -84,7 +84,8 @@ const ViewEmployee = ({ data, closeModal }: IProp) => {
         </label>
         <input
           className={`${errors.email ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-          placeholder='Enter your email'
+          defaultValue=''
+          disabled
           {...register('email', {
             required: 'This field cannot be left blank',
             pattern: {
@@ -103,7 +104,8 @@ const ViewEmployee = ({ data, closeModal }: IProp) => {
         </label>
         <input
           className={`${errors.department ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-          placeholder='Enter your department'
+          defaultValue=''
+          disabled
           {...register('department', {
             required: 'This field cannot be left blank'
           })}
@@ -118,7 +120,8 @@ const ViewEmployee = ({ data, closeModal }: IProp) => {
         </label>
         <input
           className={`${errors.position ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-          placeholder='Enter your position'
+          defaultValue=''
+          disabled
           {...register('position', {
             required: 'This field cannot be left blank'
           })}
@@ -134,7 +137,8 @@ const ViewEmployee = ({ data, closeModal }: IProp) => {
         <input
           className={`${errors.address ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
           type='text'
-          placeholder='Enter your address'
+          value=''
+          disabled
           {...register('address', {
             required: 'This field cannot be left blank'
           })}
@@ -150,7 +154,7 @@ const ViewEmployee = ({ data, closeModal }: IProp) => {
         <input
           className={`${errors.password ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
           type='password'
-          placeholder='Enter your password'
+          disabled
           {...register('password', {
             required: 'This field cannot be left blank'
           })}
@@ -178,7 +182,7 @@ const ViewEmployee = ({ data, closeModal }: IProp) => {
           ))}
         </div>
       </div>
-      <div className='w-full flex justify-end'>
+      {/* <div className='w-full flex justify-end'>
         <button
           type='submit'
           className='middle my-3 none center mr-4 rounded-lg bg-[#0070f4] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
@@ -190,10 +194,11 @@ const ViewEmployee = ({ data, closeModal }: IProp) => {
           type='button'
           className='middle my-3 none center mr-4 rounded-lg bg-[#49484d] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#49484d]  focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
           data-ripple-light='true'
+          onClick={closeModal}
         >
           Cancel
         </button>
-      </div>
+      </div> */}
     </form>
   )
 }
