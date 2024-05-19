@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react'
 import logo from '../../../assets/svg/Tdocman.svg'
 import { Bars3Icon, UserIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
-import avatar from '../../../assets/images/avatar.jpg'
+import avatar from '../../../assets/images/avatar1.png'
 import useViewport from '~/hooks/useViewport'
 import { Menu, Transition } from '@headlessui/react'
 import { useNavigate } from 'react-router-dom'
@@ -117,11 +117,12 @@ const NavBar = () => {
                   <Menu.Item>
                     {({ active }) => (
                       <button
+                        onClick={() => navigate('/profile')}
                         className={`${
                           active ? 'bg-blue-500 text-white' : 'text-gray-900'
                         } group flex w-full items-center rounded-md px-2 py-2 text-sm `}
                       >
-                        Account
+                        Tài khoản
                       </button>
                     )}
                   </Menu.Item>
@@ -137,7 +138,7 @@ const NavBar = () => {
                           navigate('/login')
                         }}
                       >
-                        Logout
+                        Đăng xuất
                       </button>
                     )}
                   </Menu.Item>

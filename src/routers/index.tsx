@@ -11,7 +11,6 @@ import About from '~/pages/landing_page/About.tsx'
 import Blogs from '~/pages/landing_page/Blogs.tsx'
 import BlogsComp from '~/components/landing_page/Blogs/BlogsComp.tsx'
 import { ADMIN, USER } from '~/common/const/role.ts'
-
 const Login = lazy(() => import('~/components/Login.tsx'))
 const Logout = lazy(() => import('~/components/Logout.tsx'))
 const Example = lazy(() => import('~/pages/Example.tsx'))
@@ -19,6 +18,7 @@ const Employee = lazy(() => import('~/pages/Admin/Employee.tsx'))
 const Register = lazy(() => import('~/components/Register.tsx'))
 const Home = lazy(() => import('~/pages/landing_page/Home.tsx'))
 const HomeUser = lazy(() => import('~/pages/User/HomeUser.tsx'))
+const Profile = lazy(() => import('~/pages/Profile.tsx'))
 const Routes = () => {
   const { token, role } = useAuth()
   let routes: Array<any>
@@ -34,6 +34,16 @@ const Routes = () => {
             <Suspense fallback={<Loading />}>
               <AdminLayout>
                 <Employee />
+              </AdminLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/profile',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <AdminLayout>
+                <Profile />
               </AdminLayout>
             </Suspense>
           )

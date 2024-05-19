@@ -60,7 +60,7 @@ const AddNewEmployee = ({ closeModal }: IProp) => {
     >
       <div className='w-[100%] md:w-[48%] mt-5 relative'>
         <label className='font-bold '>
-          Name<sup className='text-red-500'>*</sup>
+          Tên<sup className='text-red-500'>*</sup>
         </label>
         <input
           className={`${errors.name ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
@@ -75,7 +75,7 @@ const AddNewEmployee = ({ closeModal }: IProp) => {
       </div>
       <div className='w-[100%] md:w-[48%] mt-5 relative'>
         <label className='font-bold '>
-          Department<sup className='text-red-500'>*</sup>
+          Phòng ban<sup className='text-red-500'>*</sup>
         </label>
         <input
           className={`${errors.department ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
@@ -90,7 +90,7 @@ const AddNewEmployee = ({ closeModal }: IProp) => {
       </div>
       <div className='w-[100%] md:w-[48%] mt-5 relative'>
         <label className='font-bold '>
-          Position<sup className='text-red-500'>*</sup>
+          Vị trí<sup className='text-red-500'>*</sup>
         </label>
         <input
           className={`${errors.position ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
@@ -124,7 +124,7 @@ const AddNewEmployee = ({ closeModal }: IProp) => {
       </div>
       <div className='w-[100%] md:w-[48%] mt-5 relative'>
         <label className='font-bold '>
-          Password<sup className='text-red-500'>*</sup>
+          Mật khẩu<sup className='text-red-500'>*</sup>
         </label>
         <input
           className={`${errors.password ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
@@ -140,7 +140,7 @@ const AddNewEmployee = ({ closeModal }: IProp) => {
       </div>
       <div className='w-[100%] mt-5 relative'>
         <label className='font-bold '>
-          Permissions<sup className='text-red-500'>*</sup>
+          Quyền<sup className='text-red-500'>*</sup>
         </label>
         <div className='flex flex-wrap justify-between'>
           {permissionsList?.map((e) => (
@@ -163,14 +163,14 @@ const AddNewEmployee = ({ closeModal }: IProp) => {
           className='middle my-3 none center mr-4 rounded-lg bg-[#0070f4] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
           data-ripple-light='true'
         >
-          Add
+          Thêm
         </button>
         <button
           type='button'
           className='middle my-3 none center mr-4 rounded-lg bg-[#49484d] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#49484d]  focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
           data-ripple-light='true'
         >
-          Cancel
+          Hủy
         </button>
       </div>
     </form>

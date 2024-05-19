@@ -18,7 +18,7 @@ export interface DataEmployee {
   status?: string
   identificationNumber?: string
   department?: string
-  permission?: string
+  permissions?: string
   address?: string
 }
 const Employee = () => {
@@ -63,7 +63,7 @@ const Employee = () => {
   return (
     <div className='bg-[#e8eaed] h-full'>
       <div className='flex flex-wrap py-4'>
-        <div className='font-bold hidden md:flex md:w-[20%] px-3 md:flex-col items-center '>
+        {/* <div className='font-bold hidden md:flex md:w-[20%] px-3 md:flex-col items-center '>
           <p className='font-bold text-[28px]'>Employee</p>
           <div className='overflow-x-auto shadow-md sm:rounded-md my-3 w-full'>
             <div className='bg-white px-4 '>
@@ -100,8 +100,8 @@ const Employee = () => {
               </div>
             </div>
           </div>
-        </div>
-        <div className=' w-full px-5  md:w-[80%] h-[100vh]'>
+        </div> */}
+        <div className=' w-full px-5   h-[100vh]'>
           <div className='flex gap-3 justify-between w-full'>
             <div className='relative w-[50%]'>
               <div className='absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none'>
@@ -176,7 +176,7 @@ const Employee = () => {
 
                     <td className='px-3 py-4 text-right'>
                       <a href='#' className='font-medium text-blue-600 dark:text-blue-500 hover:underline'>
-                        Edit
+                        Sửa
                       </a>
                     </td>
                   </tr>
@@ -213,7 +213,7 @@ const Employee = () => {
               >
                 <Dialog.Panel className='w-[100vw] md:w-[60vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
                   <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
-                    Add New Employee
+                    Thêm mới nhân viên
                   </Dialog.Title>
                   <AddNewEmployee closeModal={closeModal} />
                 </Dialog.Panel>
@@ -249,7 +249,7 @@ const Employee = () => {
               >
                 <Dialog.Panel className='w-[100vw] md:w-[60vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
                   <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
-                    Employee Detail
+                    Thông tin chi tiết
                   </Dialog.Title>
                   <ViewEmployee
                     data={selectedUser}
