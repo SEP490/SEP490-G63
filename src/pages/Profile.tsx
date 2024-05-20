@@ -4,6 +4,7 @@ import { dataUser } from '~/common/dataConfig'
 import avatar from '../assets/images/avatar1.png'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import moment from 'moment'
+import { updateProfile } from '~/services/user.service'
 export interface UserData {
   id: string
   address: string
@@ -40,23 +41,32 @@ const Profile = () => {
   })
   const handleChangeImage = (event: any) => {
     const files = event.target.files
+
     reader.readAsDataURL(files[0])
     reader.addEventListener('load', (event) => {
       setImgUpload(event.target?.result)
     })
   }
   useEffect(() => {
-    reset()
     setData(dataUser)
   }, [])
-  const onSubmit: SubmitHandler<UserData> = async (data) => {
-    console.log({
-      ...data,
-      avatar: imgUpload == avatar ? null : imgUpload,
-      dob: moment(data.dob).format('YYYY-MM-DD[T]HH:mm:ss')
-    })
+  const onSubmit: SubmitHandler<UserData> = async (data: UserData) => {
+    try {
+      const formData = new FormData()
+      for (const key in data) {
+        formData.append(key, data[key])
+      }
+      formData.append('file', inputRef.current.files[0].toString())
+      console.log(inputRef.current.files)
+      // for (const pair of formData.entries()) {
+      //   console.log(pair[0] + ', ' + pair[1])
+      // }
+      const response = await updateProfile('34d43a12-e45f-49ce-a72f-80db9e4051f3', formData)
+      console.log(response)
+    } catch (e) {
+      console.log(e)
+    }
   }
-  console.log(watch('dob'))
 
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
