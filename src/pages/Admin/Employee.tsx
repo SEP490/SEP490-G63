@@ -1,13 +1,11 @@
-import { Dialog, Transition } from '@headlessui/react'
+import { Dialog, Menu, Transition } from '@headlessui/react'
 import { Fragment, useEffect, useState } from 'react'
 import AddNewEmployee from '~/components/Admin/Employee/AddNewEmployee'
-import { PlusIcon } from '@heroicons/react/24/outline'
+import { Cog6ToothIcon, EllipsisVerticalIcon, NoSymbolIcon, PlusIcon } from '@heroicons/react/24/outline'
 import ViewEmployee from '~/components/Admin/Employee/ViewEmployee'
-import permissionsList from '~/common/const/permissions'
 import { getListEmployee } from '~/services/employee.service'
-interface CheckBoxValue {
-  [value: string]: boolean
-}
+import EditEmployee from '~/components/Admin/Employee/EditEmployee'
+
 export interface DataEmployee {
   id?: string
   name?: string
@@ -24,25 +22,18 @@ export interface DataEmployee {
 const Employee = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [viewDetail, setViewDetail] = useState(false)
+  const [editModal, setEditModal] = useState(false)
+  const [deleteModal, setDeleteModal] = useState(false)
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(5)
   const [data, setData] = useState<DataEmployee[]>([])
-  const [selectedUser, setSelectedUser] = useState<DataEmployee>()
-  const [permissions, setPermissions] = useState(
-    permissionsList.reduce((acc: CheckBoxValue, permission) => {
-      acc[permission.value] = false
-      return acc
-    }, {})
-  )
-  const handleCheckboxChange = (event: any) => {
-    const { name, checked } = event.target
-    setPermissions((prevPermissions) => ({
-      ...prevPermissions,
-      [name]: checked
-    }))
-  }
-  const getCheckedPermissions = () => {
-    return Object.keys(permissions).filter((permission) => permissions[permission])
+  const [selectedUser, setSelectedUser] = useState<DataEmployee | undefined>(undefined)
+
+  function closeAllModal() {
+    setDeleteModal(false)
+    setEditModal(false)
+    setViewDetail(false)
+    setSelectedUser(undefined)
   }
   function closeModal() {
     setIsOpen(false)
@@ -63,44 +54,6 @@ const Employee = () => {
   return (
     <div className='bg-[#e8eaed] h-full'>
       <div className='flex flex-wrap py-4'>
-        {/* <div className='font-bold hidden md:flex md:w-[20%] px-3 md:flex-col items-center '>
-          <p className='font-bold text-[28px]'>Employee</p>
-          <div className='overflow-x-auto shadow-md sm:rounded-md my-3 w-full'>
-            <div className='bg-white px-4 '>
-              <div className='flex justify-between'>
-                <p>Permissions list</p>
-                <p
-                  className={`font-normal   ${getCheckedPermissions().length == 0 ? 'hover:cursor-default text-gray-500' : 'text-blue-600 hover:cursor-pointer hover:underline'} `}
-                  onClick={() =>
-                    setPermissions(
-                      permissionsList.reduce((acc: CheckBoxValue, permission) => {
-                        acc[permission.value] = false
-                        return acc
-                      }, {})
-                    )
-                  }
-                >
-                  Clear
-                </p>
-              </div>
-
-              <div className='font-normal py-2'>
-                {permissionsList?.map((e) => (
-                  <div className='flex w-[100%]  gap-4 items-center' key={e.id}>
-                    <input
-                      type='checkbox'
-                      name={e.value}
-                      className='rounded-sm'
-                      checked={permissions[e.value]}
-                      onChange={handleCheckboxChange}
-                    />
-                    <label>{e.title}</label>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div> */}
         <div className=' w-full px-5   h-[100vh]'>
           <div className='flex gap-3 justify-between w-full'>
             <div className='relative w-[50%]'>
@@ -132,7 +85,7 @@ const Employee = () => {
               onClick={openModal}
               className='rounded-md flex gap-1 bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-[#00b63e] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
             >
-              <PlusIcon className='h-5 w-5' /> Add Employee
+              <PlusIcon className='h-5 w-5' /> Thêm mới nhân viên
             </button>
           </div>
           <div className=' overflow-x-auto shadow-md sm:rounded-lg my-3  max-h-[75vh]'>
@@ -175,9 +128,55 @@ const Employee = () => {
                     <td className='px-3 py-4'>{d.address}</td>
 
                     <td className='px-3 py-4 text-right'>
-                      <a href='#' className='font-medium text-blue-600 dark:text-blue-500 hover:underline'>
-                        Sửa
-                      </a>
+                      <Menu as='div' className='relative inline-block text-left '>
+                        <Menu.Button>
+                          <button className='flex justify-center items-center gap-3 cursor-pointer hover:text-blue-500'>
+                            <EllipsisVerticalIcon className='h-7 w-7' title='Hành động' />
+                          </button>
+                        </Menu.Button>
+
+                        <Transition
+                          as={Fragment}
+                          enter='transition ease-out duration-100'
+                          enterFrom='transform opacity-0 scale-95'
+                          enterTo='transform opacity-100 scale-100'
+                          leave='transition ease-in duration-75'
+                          leaveFrom='transform opacity-100 scale-100'
+                          leaveTo='transform opacity-0 scale-95'
+                        >
+                          <Menu.Items className='absolute right-8 top-[-100%] z-50 mt-2 w-24 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
+                            <Menu.Item>
+                              {({ active }) => (
+                                <button
+                                  title='Sửa'
+                                  onClick={() => {
+                                    setEditModal(true)
+                                    setSelectedUser(d)
+                                  }}
+                                  className={`${
+                                    active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                  } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
+                                >
+                                  <Cog6ToothIcon className='h-5' /> Sửa
+                                </button>
+                              )}
+                            </Menu.Item>
+                            <Menu.Item>
+                              {({ active }) => (
+                                <button
+                                  title='Xóa'
+                                  onClick={() => {}}
+                                  className={`${
+                                    active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                  } group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm `}
+                                >
+                                  <NoSymbolIcon className='h-5' /> Xóa
+                                </button>
+                              )}
+                            </Menu.Item>
+                          </Menu.Items>
+                        </Transition>
+                      </Menu>
                     </td>
                   </tr>
                 ))}
@@ -211,7 +210,7 @@ const Employee = () => {
                 leaveFrom='opacity-100 scale-100'
                 leaveTo='opacity-0 scale-95'
               >
-                <Dialog.Panel className='w-[100vw] md:w-[60vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+                <Dialog.Panel className='w-[100vw] md:w-[80vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
                   <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
                     Thêm mới nhân viên
                   </Dialog.Title>
@@ -223,7 +222,7 @@ const Employee = () => {
         </Dialog>
       </Transition>
       <Transition appear show={viewDetail} as={Fragment}>
-        <Dialog as='div' className='relative z-10 w-[90vw]' onClose={() => setViewDetail(false)}>
+        <Dialog as='div' className='relative z-10 w-[90vw]' onClose={closeAllModal}>
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'
@@ -247,16 +246,102 @@ const Employee = () => {
                 leaveFrom='opacity-100 scale-100'
                 leaveTo='opacity-0 scale-95'
               >
-                <Dialog.Panel className='w-[100vw] md:w-[60vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+                <Dialog.Panel className='w-[100vw] md:w-[80vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
                   <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
                     Thông tin chi tiết
                   </Dialog.Title>
-                  <ViewEmployee
-                    data={selectedUser}
-                    closeModal={() => {
-                      setViewDetail(false)
-                    }}
-                  />
+                  <ViewEmployee data={selectedUser} onClose={closeAllModal} />
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+      <Transition appear show={editModal} as={Fragment}>
+        <Dialog as='div' className='relative z-10 w-[90vw]' onClose={closeAllModal}>
+          <Transition.Child
+            as={Fragment}
+            enter='ease-out duration-300'
+            enterFrom='opacity-0'
+            enterTo='opacity-100'
+            leave='ease-in duration-200'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0'
+          >
+            <div className='fixed inset-0 bg-black/25' />
+          </Transition.Child>
+
+          <div className='fixed inset-0 overflow-y-auto'>
+            <div className='flex min-h-full  items-center justify-center p-4 text-center'>
+              <Transition.Child
+                as={Fragment}
+                enter='ease-out duration-300'
+                enterFrom='opacity-0 scale-95'
+                enterTo='opacity-100 scale-100'
+                leave='ease-in duration-200'
+                leaveFrom='opacity-100 scale-100'
+                leaveTo='opacity-0 scale-95'
+              >
+                <Dialog.Panel className='w-[100vw] md:w-[80vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+                  <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
+                    Chỉnh sửa thông tin
+                  </Dialog.Title>
+                  <EditEmployee data={selectedUser} closeModal={closeAllModal} />
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+      <Transition appear show={deleteModal} as={Fragment}>
+        <Dialog as='div' className='relative z-10 w-[90vw]' onClose={closeAllModal}>
+          <Transition.Child
+            as={Fragment}
+            enter='ease-out duration-300'
+            enterFrom='opacity-0'
+            enterTo='opacity-100'
+            leave='ease-in duration-200'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0'
+          >
+            <div className='fixed inset-0 bg-black/25' />
+          </Transition.Child>
+
+          <div className='fixed inset-0 overflow-y-auto'>
+            <div className='flex min-h-full  items-center justify-center p-4 text-center'>
+              <Transition.Child
+                as={Fragment}
+                enter='ease-out duration-300'
+                enterFrom='opacity-0 scale-95'
+                enterTo='opacity-100 scale-100'
+                leave='ease-in duration-200'
+                leaveFrom='opacity-100 scale-100'
+                leaveTo='opacity-0 scale-95'
+              >
+                <Dialog.Panel className='w-[100vw] md:w-[40vw] md:h-fit transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+                  <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
+                    Thông báo
+                  </Dialog.Title>
+                  <div>
+                    <div>Gói dịch vụ sẽ được xóa vĩnh viễn. Bạn có chắc chắn với quyết định của mình?</div>
+                    <div className='w-full flex justify-end mt-6'>
+                      <button
+                        type='button'
+                        className='middle  none center mr-4 rounded-lg bg-red-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#ff00002f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
+                        data-ripple-light='true'
+                      >
+                        Xóa
+                      </button>
+                      <button
+                        type='button'
+                        className='middle  none center mr-4 rounded-lg bg-[#49484d] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#49484d]  focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
+                        data-ripple-light='true'
+                        onClick={closeAllModal}
+                      >
+                        Hủy
+                      </button>
+                    </div>
+                  </div>
                 </Dialog.Panel>
               </Transition.Child>
             </div>
