@@ -59,6 +59,16 @@ const Routes = () => {
           )
         },
         {
+          path: '/example',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <AdminLayout>
+                <Example />
+              </AdminLayout>
+            </Suspense>
+          )
+        },
+        {
           path: '/logout',
           element: (
             <Suspense fallback={<Loading />}>

@@ -23,7 +23,7 @@ const Profile = () => {
   const [data, setData] = useState<any>(dataUser)
   const [imgUpload, setImgUpload] = useState<any>(
     useMemo(() => {
-      if (data) return data?.avatar
+      if (data?.avatar) return data?.avatar
       return avatar
     }, [data])
   )
@@ -53,15 +53,20 @@ const Profile = () => {
   const onSubmit: SubmitHandler<UserData> = async (data: UserData) => {
     try {
       const formData = new FormData()
-      for (const key in data) {
-        formData.append(key, data[key])
-      }
-      formData.append('file', inputRef.current.files[0].toString())
-      console.log(inputRef.current.files)
-      // for (const pair of formData.entries()) {
-      //   console.log(pair[0] + ', ' + pair[1])
+      // for (const key in data) {
+      //   formData.append(key, data[key])
       // }
-      const response = await updateProfile('34d43a12-e45f-49ce-a72f-80db9e4051f3', formData)
+      formData.append('file', inputRef.current.files[0])
+      formData.append('name', dataUser.name)
+      formData.append('role', dataUser.role)
+      formData.append('phone', dataUser.phone)
+      formData.append('position', dataUser.position)
+      formData.append('department', dataUser.department)
+      formData.append('status', dataUser.status)
+      for (const pair of formData.entries()) {
+        console.log(pair[0] + ', ' + pair[1])
+      }
+      const response = await updateProfile('9a9a315f-75df-41df-8a54-3e7845afa7f1', formData)
       console.log(response)
     } catch (e) {
       console.log(e)
