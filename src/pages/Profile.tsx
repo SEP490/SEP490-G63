@@ -4,6 +4,7 @@ import { dataUser } from '~/common/dataConfig'
 import avatar from '../assets/images/avatar1.png'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import moment from 'moment'
+import { updateProfile } from '~/services/user.service'
 export interface UserData {
   id: string
   address: string
@@ -22,7 +23,7 @@ const Profile = () => {
   const [data, setData] = useState<any>(dataUser)
   const [imgUpload, setImgUpload] = useState<any>(
     useMemo(() => {
-      if (data) return data?.avatar
+      if (data?.avatar) return data?.avatar
       return avatar
     }, [data])
   )
@@ -40,23 +41,37 @@ const Profile = () => {
   })
   const handleChangeImage = (event: any) => {
     const files = event.target.files
+
     reader.readAsDataURL(files[0])
     reader.addEventListener('load', (event) => {
       setImgUpload(event.target?.result)
     })
   }
   useEffect(() => {
-    reset()
     setData(dataUser)
   }, [])
-  const onSubmit: SubmitHandler<UserData> = async (data) => {
-    console.log({
-      ...data,
-      avatar: imgUpload == avatar ? null : imgUpload,
-      dob: moment(data.dob).format('YYYY-MM-DD[T]HH:mm:ss')
-    })
+  const onSubmit: SubmitHandler<UserData> = async (data: UserData) => {
+    try {
+      const formData = new FormData()
+      // for (const key in data) {
+      //   formData.append(key, data[key])
+      // }
+      formData.append('file', inputRef.current.files[0])
+      formData.append('name', dataUser.name)
+      formData.append('role', dataUser.role)
+      formData.append('phone', dataUser.phone)
+      formData.append('position', dataUser.position)
+      formData.append('department', dataUser.department)
+      formData.append('status', dataUser.status)
+      for (const pair of formData.entries()) {
+        console.log(pair[0] + ', ' + pair[1])
+      }
+      const response = await updateProfile('9a9a315f-75df-41df-8a54-3e7845afa7f1', formData)
+      console.log(response)
+    } catch (e) {
+      console.log(e)
+    }
   }
-  console.log(watch('dob'))
 
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>

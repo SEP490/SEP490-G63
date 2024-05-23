@@ -3,6 +3,7 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import permissionsList from '~/common/const/permissions'
 import { REGEX_EMAIL } from '~/common/const/regexForm'
 import useToast from '~/hooks/useToast'
+import { DataEmployee } from '~/pages/Admin/Employee'
 import { createEmployee } from '~/services/employee.service'
 type FromType = {
   password: string
@@ -20,18 +21,23 @@ interface CheckBoxValue {
   [value: string]: boolean
 }
 interface IProp {
+  data: DataEmployee | undefined
   closeModal: () => void
 }
-const AddNewEmployee = ({ closeModal }: IProp) => {
+const EditEmployee = ({ data, closeModal }: IProp) => {
   const {
     register,
     handleSubmit,
     formState: { errors }
-  } = useForm<FromType>()
+  } = useForm<FromType>({ defaultValues: data })
   const { successNotification } = useToast()
   const [permissions, setPermissions] = useState(
     permissionsList.reduce((acc: CheckBoxValue, permission) => {
-      acc[permission.value] = false
+      acc[permission.value] =
+        data?.permissions
+          ?.slice(1, -1)
+          .split(',')
+          .find((d) => d == permission.value) != undefined
       return acc
     }, {})
   )
@@ -49,6 +55,7 @@ const AddNewEmployee = ({ closeModal }: IProp) => {
     try {
       if (getCheckedPermissions.length != 0) {
         const response = await createEmployee({ ...data, permissions: getCheckedPermissions })
+        console.log({ ...data, permissions: getCheckedPermissions })
 
         if (response) {
           successNotification('OK')
@@ -213,10 +220,10 @@ const AddNewEmployee = ({ closeModal }: IProp) => {
           className='middle my-3 none center mr-4 rounded-lg bg-[#0070f4] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
           data-ripple-light='true'
         >
-          Thêm
+          Sửa
         </button>
       </div>
     </form>
   )
 }
-export default AddNewEmployee
+export default EditEmployee

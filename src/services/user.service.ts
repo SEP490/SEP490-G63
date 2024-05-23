@@ -1,3 +1,4 @@
+import { UserData } from '~/pages/Profile.tsx'
 import axiosInstant, { adminInstance } from '../config/axiosConfig.ts'
 interface LoginData {
   email: string
@@ -13,6 +14,14 @@ interface RegisterData {
 export const login = async ({ email, password }: LoginData) => {
   try {
     const response = await axiosInstant.post('public/auth/login', { email, password })
+    return response.data
+  } catch (error) {
+    console.log(error)
+  }
+}
+export const updateProfile = async (id: string, formData: any) => {
+  try {
+    const response = await axiosInstant.put(`user/${id}`, formData)
     return response.data
   } catch (error) {
     console.log(error)
