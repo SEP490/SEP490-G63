@@ -28,7 +28,7 @@ const Employee = () => {
   const [size, setSize] = useState(5)
   const [data, setData] = useState<DataEmployee[]>([])
   const [selectedUser, setSelectedUser] = useState<DataEmployee | undefined>(undefined)
-
+  const [searchData, setSearchData] = useState('')
   function closeAllModal() {
     setDeleteModal(false)
     setEditModal(false)
@@ -42,15 +42,18 @@ const Employee = () => {
   function openModal() {
     setIsOpen(true)
   }
+  const handChangeInputSearch = (e: any) => {
+    setSearchData(e.target.value)
+  }
   useEffect(() => {
     const fetchAPI = async () => {
-      const data = await getListEmployee({ size: size, page: page })
+      const data = await getListEmployee({ size: size, page: page, name: searchData })
       if (data) {
         setData(data.content)
       }
     }
     fetchAPI()
-  }, [page, size, isOpen])
+  }, [page, size, isOpen, searchData])
   return (
     <div className='bg-[#e8eaed] h-full'>
       <div className='flex flex-wrap py-4'>
@@ -76,14 +79,15 @@ const Employee = () => {
                 type='text'
                 id='table-search'
                 className='block p-2 ps-10 w-full text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                placeholder='Search for employee'
+                placeholder='Tìm kiếm nhân viên'
+                onChange={handChangeInputSearch}
               />
             </div>
 
             <button
               type='button'
               onClick={openModal}
-              className='rounded-md flex gap-1 bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-[#00b63e] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
+              className='rounded-md flex gap-1 bg-main-color px-4 py-2 text-sm font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
             >
               <PlusIcon className='h-5 w-5' /> Thêm mới nhân viên
             </button>
@@ -92,16 +96,16 @@ const Employee = () => {
             <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
               <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
                 <tr>
-                  <th className='px-3 py-3'>Employee Name</th>
+                  <th className='px-3 py-3'>Tên nhân viên</th>
                   <th className='px-3 py-3'>Email</th>
                   <th scope='col' className='px-3 py-3'>
-                    Phone
+                    Số điện thoại
                   </th>
-                  <th className='px-3 py-3'>Department</th>
+                  <th className='px-3 py-3'>Phòng ban</th>
                   <th scope='col' className='px-6 py-3'>
-                    Position
+                    Vị trí
                   </th>
-                  <th className='px-3 py-3'>Address</th>
+                  <th className='px-3 py-3'>Địa chỉ</th>
                   <th className='px-3 py-3'></th>
                 </tr>
               </thead>

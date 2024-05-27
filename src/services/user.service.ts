@@ -27,6 +27,14 @@ export const updateProfile = async (id: string, formData: any) => {
     console.log(error)
   }
 }
+export const getUserDetail = async (id: string) => {
+  try {
+    const response = await axiosInstant.get(`user/${id}`)
+    return response.data
+  } catch (error) {
+    console.log(error)
+  }
+}
 export const registerUser = async ({ company, taxCode, presenter, email, phone }: RegisterData) => {
   try {
     const response = await adminInstance.post('public/auth/register', {

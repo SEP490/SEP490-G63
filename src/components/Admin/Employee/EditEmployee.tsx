@@ -5,6 +5,7 @@ import { REGEX_EMAIL } from '~/common/const/regexForm'
 import useToast from '~/hooks/useToast'
 import { DataEmployee } from '~/pages/Admin/Employee'
 import { createEmployee } from '~/services/employee.service'
+import { updateProfile } from '~/services/user.service'
 type FromType = {
   password: string
   address: string
@@ -54,7 +55,7 @@ const EditEmployee = ({ data, closeModal }: IProp) => {
   const onSubmit: SubmitHandler<FromType> = async (data) => {
     try {
       if (getCheckedPermissions.length != 0) {
-        const response = await createEmployee({ ...data, permissions: getCheckedPermissions })
+        const response = await updateProfile({ ...data, permissions: getCheckedPermissions })
         console.log({ ...data, permissions: getCheckedPermissions })
 
         if (response) {

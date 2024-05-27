@@ -4,7 +4,7 @@ import { dataUser } from '~/common/dataConfig'
 import avatar from '../assets/images/avatar1.png'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import moment from 'moment'
-import { updateProfile } from '~/services/user.service'
+import { getUserDetail, updateProfile } from '~/services/user.service'
 export interface UserData {
   id: string
   address: string
@@ -20,7 +20,7 @@ export interface UserData {
 }
 const Profile = () => {
   const reader = new FileReader()
-  const [data, setData] = useState<any>(dataUser)
+  const [data, setData] = useState<any>()
   const [imgUpload, setImgUpload] = useState<any>(
     useMemo(() => {
       if (data?.avatar) return data?.avatar
@@ -34,11 +34,7 @@ const Profile = () => {
     reset,
     watch,
     formState: { errors }
-  } = useForm<UserData>({
-    defaultValues: useMemo(() => {
-      return { ...data, dob: moment(data.dob).format('YYYY-MM-DD') }
-    }, [data])
-  })
+  } = useForm<UserData>()
   const handleChangeImage = (event: any) => {
     const files = event.target.files
 
@@ -48,7 +44,17 @@ const Profile = () => {
     })
   }
   useEffect(() => {
-    setData(dataUser)
+    async function fetchAPI() {
+      try {
+        const response = await getUserDetail('eba90bb6-5a0c-4004-abeb-3ced32c787e0')
+        if (response.object) {
+          setData(response.object)
+        }
+      } catch (e) {
+        console.log(e)
+      }
+    }
+    fetchAPI()
   }, [])
   const onSubmit: SubmitHandler<UserData> = async (data: UserData) => {
     try {
@@ -72,6 +78,7 @@ const Profile = () => {
       console.log(e)
     }
   }
+  console.log(data)
 
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
@@ -118,6 +125,7 @@ const Profile = () => {
               <input
                 className={`${errors.name ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
                 placeholder='Enter your name'
+                defaultValue={data?.name}
                 {...register('name', {
                   required: 'This field cannot be left blank'
                 })}
@@ -129,6 +137,7 @@ const Profile = () => {
             <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
               <label className='font-bold '>Phòng ban</label>
               <input
+                defaultValue={data?.department}
                 className={`block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
                 {...register('department')}
               />
@@ -136,6 +145,7 @@ const Profile = () => {
             <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
               <label className='font-bold '>Vị trí</label>
               <input
+                defaultValue={data?.position}
                 className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
                 {...register('position')}
               />
@@ -145,6 +155,7 @@ const Profile = () => {
                 Email<sup className='text-red-500'>*</sup>
               </label>
               <input
+                defaultValue={data?.email}
                 className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
                 {...register('email')}
                 disabled
@@ -154,6 +165,7 @@ const Profile = () => {
             <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
               <label className='font-bold '>CCCD/CMT</label>
               <input
+                defaultValue={data?.identification_number}
                 className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
                 {...register('identification_number')}
               />
@@ -161,6 +173,7 @@ const Profile = () => {
             <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
               <label className='font-bold '>Số điện thoại</label>
               <input
+                defaultValue={data?.phone}
                 className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
                 {...register('phone')}
               />
@@ -168,6 +181,7 @@ const Profile = () => {
             <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
               <label className='font-bold '>Địa chỉ</label>
               <input
+                defaultValue={data?.address}
                 className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
                 {...register('address')}
               />
@@ -176,6 +190,7 @@ const Profile = () => {
               <label className='font-bold '>Ngày sinh</label>
               <input
                 type='date'
+                defaultValue={data?.dob}
                 className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
                 {...register('dob')}
               />
@@ -185,6 +200,7 @@ const Profile = () => {
               <select
                 className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
                 {...register('gender')}
+                defaultValue={data?.gender}
               >
                 <option value={0}>Nam</option>
                 <option value={1}>Nữ</option>

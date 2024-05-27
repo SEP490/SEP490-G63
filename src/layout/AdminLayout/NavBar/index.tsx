@@ -7,6 +7,7 @@ import { Menu, Transition } from '@headlessui/react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '~/provider/authProvider'
 import useToast from '~/hooks/useToast'
+import { routerAdmin } from '~/common/const/router'
 const NavBar = () => {
   const [openNav, setOpenNav] = useState(false)
   const [openProfile, setOpenProfile] = useState(false)
@@ -43,26 +44,39 @@ const NavBar = () => {
           <label className='font-bold cursor-pointer flex items-center gap-1'>0854898556</label>
         </div>
         <button
+          onClick={() => navigate('/profile')}
           className={`hover:bg-green-500 hover:text-white text-gray-900
            group flex w-full items-center  px-2 py-2 text-sm `}
         >
-          Account
+          Tài khoản
         </button>
         <button
           className={`hover:bg-green-500 hover:text-white text-gray-900
            group flex w-full items-center  px-2 py-2 text-sm `}
           onClick={() => {
             removeToken()
-            successNotification('Logout success')
+            successNotification('Đăng xuất thành công')
             navigate('/login')
           }}
         >
-          Logout
+          Đăng xuất
         </button>
       </div>
       <div
         className={`absolute z-30 h-[100vh] overflow-hidden bg-white w-[220px] left-0 transition-all duration-100 delay-100 ease-in ${openNav ? 'visible' : 'invisible'}`}
-      ></div>
+      >
+        <ul className={`flex flex-col gap-1 font-bold`}>
+          {routerAdmin.map((r) => (
+            <li
+              key={r.id}
+              onClick={() => navigate(r.slug)}
+              className={`${r.slug == location.pathname ? 'bg-main-color text-white' : ''} cursor-pointer  hover:bg-hover-main hover:text-white w-full px-2 py-3 flex items-center gap-2 text-[14px]`}
+            >
+              {r.icon} {r.title}
+            </li>
+          ))}
+        </ul>
+      </div>
       <div className='w-full flex justify-between px-4 items-center h-[10%] shadow-md'>
         <div className='font-bold flex items-center my-2 '>
           <Bars3Icon
@@ -71,7 +85,7 @@ const NavBar = () => {
           />
           <img src={logo} alt='logo' className='w-[32px]' />
           <div
-            className='bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500 text-[24px] cursor-pointer'
+            className='bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-blue-900 text-[24px] cursor-pointer'
             onClick={() => navigate('/')}
           >
             Docman
@@ -137,7 +151,7 @@ const NavBar = () => {
                         } group flex w-full items-center rounded-md px-2 py-2 text-sm `}
                         onClick={() => {
                           removeToken()
-                          successNotification('Logout success')
+                          successNotification('Đăng xuất thành công')
                           navigate('/login')
                         }}
                       >
@@ -151,6 +165,19 @@ const NavBar = () => {
           </div>
         )}
       </div>
+      {!isMobile && (
+        <ul className={`flex h-[40px] bg-main-color gap-1 px-10 text-white font-bold`}>
+          {routerAdmin.map((r) => (
+            <li
+              key={r.id}
+              onClick={() => navigate(r.slug)}
+              className={`${r.slug == location.pathname ? 'bg-hover-main' : ''} cursor-pointer rounded-md hover:bg-hover-main px-2 flex items-center gap-2 justify-center text-[12px]`}
+            >
+              {r.icon} {r.title}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }

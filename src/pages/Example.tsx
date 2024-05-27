@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createWorker } from 'tesseract.js'
+import UploadFile from '~/components/BaseComponent/Uploadfile/UploadFile'
 
 const Example = () => {
   const [file, setFile] = useState<any>()
@@ -8,7 +9,7 @@ const Example = () => {
 
     const {
       data: { text }
-    } = await Promise.all([images.map((f) => worker.recognize(f))])
+    } = await worker.recognize(images[0])
     setOcr(text)
     console.log('End:' + new Date())
   }
@@ -26,6 +27,7 @@ const Example = () => {
     <>
       <input type='file' onChange={handleFileSelected} multiple />
       <p>{ocr}</p>
+      <UploadFile />
     </>
   )
 }
