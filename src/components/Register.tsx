@@ -1,22 +1,20 @@
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { REGEX_EMAIL, REGEX_PASSWORD } from '~/common/const/regexForm'
 import '../css/login.css'
-import { login } from '~/services/user.service'
-import { getAccessToken, setAccessToken } from '~/config/accessToken'
+import { registerUser } from '~/services/user.service'
 import useToast from '~/hooks/useToast'
 import logo from '../assets/svg/Tdocman.svg'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '~/provider/authProvider'
 type FromType = {
   company: string
   taxCode: string
-  firstName: string
-  lastName: string
+  presenter: string
   email: string
   phone: string
 }
 const Register = () => {
   const navigate = useNavigate()
+  const { successNotification, errorNotification } = useToast()
   const {
     register,
     handleSubmit,
@@ -26,8 +24,12 @@ const Register = () => {
 
   const onSubmit: SubmitHandler<FromType> = async (data) => {
     try {
-      // const response = await register(data)
-      console.log(data)
+      const response = await registerUser(data)
+      console.log(response)
+
+      if (response) {
+        successNotification('Đăng ký thành công nhé')
+      } else errorNotification('Đăng ký không thành công nhé')
     } catch (error) {
       console.log(error)
     }
@@ -54,11 +56,7 @@ const Register = () => {
             className={`${errors.company ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             placeholder='Enter your company'
             {...register('company', {
-              required: 'This field cannot be left blank',
-              pattern: {
-                value: REGEX_EMAIL,
-                message: 'You must enter a valid Gmail format.'
-              }
+              required: 'This field cannot be left blank'
             })}
           />
           <div className={`text-red-500 absolute text-[12px] ${errors.company ? 'visible' : 'invisible'}`}>
@@ -81,36 +79,21 @@ const Register = () => {
             {errors.taxCode?.message}
           </div>
         </div>
+
         <div className='w-full  mt-5 relative'>
           <label className='font-bold '>
-            First name<sup className='text-red-500'>*</sup>
+            Presenter<sup className='text-red-500'>*</sup>
           </label>
           <input
-            className={`${errors.firstName ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            className={`${errors.presenter ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
             placeholder='Enter your Tax Code'
-            {...register('firstName', {
+            {...register('presenter', {
               required: 'This field cannot be left blank'
             })}
           />
-          <div className={`text-red-500 absolute text-[12px] ${errors.firstName ? 'visible' : 'invisible'}`}>
-            {errors.firstName?.message}
-          </div>
-        </div>
-        <div className='w-full  mt-5 relative'>
-          <label className='font-bold '>
-            Last Name<sup className='text-red-500'>*</sup>
-          </label>
-          <input
-            className={`${errors.lastName ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-            type='text'
-            placeholder='Enter your Tax Code'
-            {...register('lastName', {
-              required: 'This field cannot be left blank'
-            })}
-          />
-          <div className={`text-red-500 absolute text-[12px] ${errors.lastName ? 'visible' : 'invisible'}`}>
-            {errors.lastName?.message}
+          <div className={`text-red-500 absolute text-[12px] ${errors.presenter ? 'visible' : 'invisible'}`}>
+            {errors.presenter?.message}
           </div>
         </div>
         <div className='w-full  mt-5 relative'>
@@ -122,7 +105,11 @@ const Register = () => {
             type='text'
             placeholder='Enter your Tax Code'
             {...register('email', {
-              required: 'This field cannot be left blank'
+              required: 'This field cannot be left blank',
+              pattern: {
+                value: REGEX_EMAIL,
+                message: 'You must enter a valid Gmail format.'
+              }
             })}
           />
           <div className={`text-red-500 absolute text-[12px] ${errors.email ? 'visible' : 'invisible'}`}>
