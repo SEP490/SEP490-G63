@@ -9,9 +9,12 @@ function AdminLayout({ children }: any) {
     return <Navigate to='/404notfound' state={{ from: location }} replace></Navigate>
   }
   return (
-    <div className='h-[100vh] overflow-hidden'>
+    <div className='h-[100vh] overflow-hidden relative'>
       <NavBar />
-      {children}
+      <div className='h-[84vh] '>{children}</div>
+      <div className='text-xs absolute bottom-1 left-1 bg-main-color text-white px-2 py-1 rounded-lg'>
+        Liên hệ: ThangDepTrai
+      </div>
     </div>
   )
 }

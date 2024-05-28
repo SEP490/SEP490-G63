@@ -110,11 +110,9 @@ const OldContract = () => {
                       {d.contractSignDate ? moment(d.contractSignDate).format('DD/MM/YYYY') : ''}
                     </td>
                     <td className='px-3 py-4'>
-                      {' '}
                       {d.contractStartDate ? moment(d.contractStartDate).format('DD/MM/YYYY') : ''}
                     </td>
                     <td className='px-3 py-4'>
-                      {' '}
                       {d.contractEndDate ? moment(d.contractEndDate).format('DD/MM/YYYY') : ''}
                     </td>
                     <td className='px-3 py-4' align='center'>
