@@ -8,6 +8,13 @@ const axiosInstance = axios.create({
     'Content-Type': 'application/json'
   }
 })
+export const axiosInstanceFormData = axios.create({
+  baseURL: BASE_URL,
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'multipart/form-data'
+  }
+})
 export const adminInstance = axios.create({
   baseURL: BASE_ADMIN_URL,
   timeout: 5000,
@@ -56,4 +63,37 @@ axiosInstance.interceptors.response.use(
   }
 )
 
+axiosInstanceFormData.interceptors.request.use(
+  (config) => {
+    const accessToken = getAccessToken()
+    if (accessToken) {
+      config.headers['Authorization'] = 'Bearer ' + accessToken
+    }
+
+    return config
+  },
+  (error) => {
+    return Promise.reject(error)
+  }
+)
+
+axiosInstanceFormData.interceptors.response.use(
+  (response) => {
+    return response
+  },
+  (error) => {
+    switch (error?.response?.status) {
+      case UNAUTHORIZED:
+        removeAccessToken()
+        window.location.href = '/login'
+        break
+
+      case NOT_FOUND:
+        window.location.href = '/not-found'
+        break
+    }
+
+    return Promise.reject(error)
+  }
+)
 export default axiosInstance

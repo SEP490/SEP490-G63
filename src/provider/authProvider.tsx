@@ -1,12 +1,18 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { GUESS } from '~/common/const/role'
+import { createContext, useContext, useMemo, useState } from 'react'
 import { getAccessToken, removeAccessToken, setAccessToken } from '~/config/accessToken'
-import { getRoleW, removeRoleW, setRoleW } from '~/config/role'
+import { getUserW, removeUserW, setUserW } from '~/config/user'
+export type UserInformation = {
+  id: string
+  name: string
+  role: string
+  permissions: string[]
+  avatar: string
+}
 type MyContextValue = {
   token: string | undefined
-  role: string | undefined
+  user: UserInformation | null
   setToken: (token: string) => void | undefined
-  setRole: (token: string) => void | undefined
+  setUser: (user: UserInformation) => void | undefined
   removeToken: () => void | undefined
 }
 interface Props {
@@ -14,93 +20,15 @@ interface Props {
 }
 const AuthContext = createContext<MyContextValue>({
   token: '',
-  role: '',
+  user: null,
   setToken: () => {},
-  setRole: () => {},
+  setUser: () => {},
   removeToken: () => {}
 })
 
 const AuthProvider: React.FC<Props> = ({ children }) => {
   const [token, setToken_] = useState<string | undefined>(getAccessToken())
-  const [role, setRole_] = useState<string | undefined>(getRoleW())
-  // const [isExpert, setIsExpert] = useState(localStorage.getItem('isExpert'))
-  // const [connection, setConnection] = useState(null)
-  // const [api, contextHolder] = notification.useNotification()
-  // const [message, setMessage] = useState('')
-  // const [title, setTitle] = useState('Thông báo')
-  // const [description, setDescription] = useState('Bạn có thông báo mới')
-
-  // const close = () => {
-  //   console.log('Notification was closed. Either the close button was clicked or duration time elapsed.')
-  // }
-  // useEffect(() => {
-  //   const newConnection = new signalR.HubConnectionBuilder()
-  //     .withUrl(`${Server}/JobApplicationStatusHub`)
-  //     .configureLogging(signalR.LogLevel.Information)
-  //     .build()
-
-  //   if (newConnection) {
-  //     setConnection(newConnection)
-  //     newConnection
-  //       .start()
-  //       .then(() => {})
-  //       .catch((error: any) => {})
-
-  //     newConnection.on('StatusChanged', (jobApplicationId, newStatus, title, description) => {
-  //       setTitle(title)
-  //       setDescription(description)
-  //       setMessage(newStatus)
-
-  //       // Thông báo cho người dùng khi có thay đổi
-  //       // alert(message);
-  //     })
-  //   }
-
-  //   return () => {
-  //     if (newConnection) {
-  //       newConnection.off('StatusChanged')
-  //       newConnection.stop()
-  //     }
-  //   }
-  // }, [])
-  // useEffect(() => {
-  //   // Tự động mở thông báo khi có thay đổi status
-  //   if (roleId == 2 && title != 'Thông báo' && description != 'Bạn có thông báo mới') {
-  //     openNotification()
-  //   }
-  //   console.log('here')
-  // }, [message]) // Trigger when the 'message' state changes
-
-  // const openNotification = () => {
-  //   const key = `open${Date.now()}`
-  //   const btn = (
-  //     <Space>
-  //       <Button type='link' size='small' onClick={() => api.destroy()}>
-  //         Đã đọc tất cả
-  //       </Button>
-  //       <Button type='primary' size='medium' onClick={() => api.destroy(key)}>
-  //         Xác nhận
-  //       </Button>
-  //     </Space>
-  //   )
-
-  //   api.open({
-  //     message: `${title}`,
-  //     description: `${description}`,
-  //     btn,
-  //     key,
-  //     icon: (
-  //       <RecruitLogo
-  //         style={{
-  //           color: '#108ee9'
-  //         }}
-  //       />
-  //     ),
-  //     onClose: close,
-  //     duration: null,
-  //     closeIcon: null // Hoặc duration: 0
-  //   })
-  // }
+  const [user, setUser_] = useState<UserInformation | null>(getUserW())
 
   const setToken = (newToken: string) => {
     setToken_(newToken)
@@ -108,15 +36,16 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
   }
   const removeToken = () => {
     setToken_(undefined)
+    setUser_(null)
     removeAccessToken()
-    removeRoleW()
+    removeUserW()
   }
-  const setRole = (role: string) => {
-    setRole_(role)
-    setRoleW(role)
+  const setUser = (user: UserInformation) => {
+    setUser_(user)
+    setUserW(user)
   }
 
-  const contextValue = useMemo(() => ({ token, role, setToken, setRole, removeToken }), [token, role])
+  const contextValue = useMemo(() => ({ token, user, setToken, setUser, removeToken }), [token, user])
 
   return (
     <>

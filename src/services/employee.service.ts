@@ -34,15 +34,17 @@ export const createEmployee = async (data: EmployeeData) => {
     console.log(error)
   }
 }
-export const getListEmployee = async ({ size, page }: QueryDataGet) => {
+
+export const getListEmployee = async ({ size, page, name }: QueryDataGet) => {
   try {
-    const response = await axiosInstant.get(`user/search?page=${page}&size=${size}`)
+    const response = await axiosInstant.get(`user/search?page=${page}&size=${size}&name=${name}`)
 
     return response.data
   } catch (error) {
     console.log(error)
   }
 }
+
 export const registerUser = async ({ company, taxCode, presenter, email, phone }: RegisterData) => {
   try {
     const response = await adminInstance.post('public/auth/register', {
