@@ -1,5 +1,6 @@
 import { Dialog, Menu, Transition } from '@headlessui/react'
 import { EllipsisVerticalIcon, NoSymbolIcon, PlusIcon } from '@heroicons/react/24/outline'
+import moment from 'moment'
 import { Fragment, useEffect, useState } from 'react'
 import UploadFile from '~/components/BaseComponent/Uploadfile/UploadFile'
 import useToast from '~/hooks/useToast'
@@ -105,9 +106,15 @@ const OldContract = () => {
                   >
                     <td className='px-3 py-4'>{page * size + index + 1}</td>
                     <td className='px-3 py-4'>{d.contractName}</td>
-                    <td className='px-3 py-4'>{d.contractSignDate}</td>
-                    <td className='px-3 py-4'>{d.contractStartDate}</td>
-                    <td className='px-3 py-4'>{d.contractEndDate}</td>
+                    <td className='px-3 py-4'>
+                      {d.contractSignDate ? moment(d.contractSignDate).format('DD/MM/YYYY') : ''}
+                    </td>
+                    <td className='px-3 py-4'>
+                      {d.contractStartDate ? moment(d.contractStartDate).format('DD/MM/YYYY') : ''}
+                    </td>
+                    <td className='px-3 py-4'>
+                      {d.contractEndDate ? moment(d.contractEndDate).format('DD/MM/YYYY') : ''}
+                    </td>
                     <td className='px-3 py-4' align='center'>
                       <div className='cursor-pointer text-blue-500 hover:underline' onClick={() => window.open(d.file)}>
                         Xem
