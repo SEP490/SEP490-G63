@@ -39,7 +39,6 @@ const ViewEmployee = ({ data, onClose }: IProp) => {
       return acc
     }, {})
   )
-  console.log(permissions)
 
   return (
     <form className='items-center w-full rounded-lg  flex flex-wrap justify-between h-fit bg-white z-50 '>

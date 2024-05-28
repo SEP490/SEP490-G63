@@ -14,7 +14,7 @@ const NavBar = () => {
   const { width } = useViewport()
   const isMobile = width <= 1024
   const navigate = useNavigate()
-  const { removeToken } = useAuth()
+  const { removeToken, user } = useAuth()
   const { successNotification } = useToast()
   return (
     <div className='relative'>
@@ -30,28 +30,28 @@ const NavBar = () => {
       >
         <div className='flex flex-col justify-center items-center gap-3 cursor-pointer'>
           <img
-            src={avatar}
+            src={user?.avatar ? user?.avatar : avatar}
             alt='avatar'
             style={{
               width: '100px',
               height: '100px',
               objectFit: 'cover',
               borderRadius: '50%',
-              border: '2px solid green  '
+              border: '2px solid blue  '
             }}
             title='Nguyễn Hữu Thắng'
           />
-          <label className='font-bold cursor-pointer flex items-center gap-1'>0854898556</label>
+          <label className='font-bold cursor-pointer flex items-center gap-1'>{user?.name}</label>
         </div>
         <button
           onClick={() => navigate('/profile')}
-          className={`hover:bg-green-500 hover:text-white text-gray-900
+          className={`hover:bg-hover-main hover:text-white text-gray-900
            group flex w-full items-center  px-2 py-2 text-sm `}
         >
           Tài khoản
         </button>
         <button
-          className={`hover:bg-green-500 hover:text-white text-gray-900
+          className={`hover:bg-hover-main hover:text-white text-gray-900
            group flex w-full items-center  px-2 py-2 text-sm `}
           onClick={() => {
             removeToken()
@@ -104,19 +104,19 @@ const NavBar = () => {
                 <Menu.Button>
                   <div className='flex justify-center items-center gap-3 cursor-pointer'>
                     <img
-                      src={avatar}
+                      src={user?.avatar ? user?.avatar : avatar}
                       alt='avatar'
                       style={{
                         width: '38px',
                         height: '38px',
                         objectFit: 'cover',
                         borderRadius: '50%',
-                        border: '2px solid green  '
+                        border: '2px solid blue  '
                       }}
                       title='Nguyễn Hữu Thắng'
                     />
                     <label className='font-bold cursor-pointer flex items-center gap-1'>
-                      0854898556 <ChevronDownIcon className='h-4 w-4' />
+                      {user?.name} <ChevronDownIcon className='h-4 w-4' />
                     </label>
                   </div>
                 </Menu.Button>

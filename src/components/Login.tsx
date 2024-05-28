@@ -13,7 +13,7 @@ type FromType = {
 }
 const Login = () => {
   const navigate = useNavigate()
-  const { setToken, setRole } = useAuth()
+  const { setToken, setUser } = useAuth()
   const {
     register,
     handleSubmit,
@@ -26,7 +26,13 @@ const Login = () => {
       const response = await login(data)
       if (response) {
         setToken(response?.access_token)
-        setRole(response.user.role)
+        setUser({
+          id: response.user.id,
+          name: response.user.name,
+          role: response.user.role,
+          avatar: response.user.avatar,
+          permissions: response.user.permissions
+        })
         successNotification('Đăng nhập thành công')
         navigate('/')
       } else errorNotification('Đăng nhập thất bại')

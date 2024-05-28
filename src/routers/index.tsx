@@ -20,7 +20,7 @@ const HomeUser = lazy(() => import('~/pages/User/HomeUser.tsx'))
 const Profile = lazy(() => import('~/pages/Profile.tsx'))
 const OldContract = lazy(() => import('~/pages/Admin/OldContract.tsx'))
 const Routes = () => {
-  const { token, role } = useAuth()
+  const { token, user } = useAuth()
   let routes: Array<any>
 
   const routesForAuthenticatedOnly = [
@@ -189,9 +189,9 @@ const Routes = () => {
   ]
 
   if (token) {
-    if (role == ADMIN) {
+    if (user?.role == ADMIN) {
       routes = routesForAuthenticatedOnly
-    } else if (role == USER) {
+    } else if (user?.role == USER) {
       routes = routesForUser
     } else routes = routesForNotAuthenticatedOnly
   } else {

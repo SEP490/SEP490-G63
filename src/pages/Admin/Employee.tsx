@@ -5,6 +5,7 @@ import { Cog6ToothIcon, EllipsisVerticalIcon, NoSymbolIcon, PlusIcon } from '@he
 import ViewEmployee from '~/components/Admin/Employee/ViewEmployee'
 import { getListEmployee } from '~/services/employee.service'
 import EditEmployee from '~/components/Admin/Employee/EditEmployee'
+import { getUserW } from '~/config/user'
 
 export interface DataEmployee {
   id?: string

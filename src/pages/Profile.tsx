@@ -5,6 +5,7 @@ import avatar from '../assets/images/avatar1.png'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import moment from 'moment'
 import { getUserDetail, updateProfile } from '~/services/user.service'
+import { useAuth } from '~/provider/authProvider'
 export interface UserData {
   id: string
   address: string
@@ -21,20 +22,17 @@ export interface UserData {
 const Profile = () => {
   const reader = new FileReader()
   const [data, setData] = useState<any>()
-  const [imgUpload, setImgUpload] = useState<any>(
-    useMemo(() => {
-      if (data?.avatar) return data?.avatar
-      return avatar
-    }, [data])
-  )
+  const { user } = useAuth()
+  const [imgUpload, setImgUpload] = useState<any>(avatar)
   const inputRef = useRef<any>()
+
   const {
     register,
     handleSubmit,
     reset,
     watch,
     formState: { errors }
-  } = useForm<UserData>()
+  } = useForm<UserData>({ defaultValues: data })
   const handleChangeImage = (event: any) => {
     const files = event.target.files
 
@@ -43,12 +41,17 @@ const Profile = () => {
       setImgUpload(event.target?.result)
     })
   }
+  console.log(data)
+
   useEffect(() => {
     async function fetchAPI() {
       try {
-        const response = await getUserDetail('eba90bb6-5a0c-4004-abeb-3ced32c787e0')
-        if (response.object) {
-          setData(response.object)
+        if (user?.id) {
+          const response = await getUserDetail(user?.id)
+          if (response.object) {
+            setData(response.object)
+            setImgUpload(response.object?.avatar == null ? avatar : response.object?.avatar)
+          }
         }
       } catch (e) {
         console.log(e)
@@ -59,26 +62,22 @@ const Profile = () => {
   const onSubmit: SubmitHandler<UserData> = async (data: UserData) => {
     try {
       const formData = new FormData()
-      // for (const key in data) {
-      //   formData.append(key, data[key])
-      // }
+      for (const key in data) {
+        formData.append(key, data[key])
+      }
       formData.append('file', inputRef.current.files[0])
-      formData.append('name', dataUser.name)
-      formData.append('role', dataUser.role)
-      formData.append('phone', dataUser.phone)
-      formData.append('position', dataUser.position)
-      formData.append('department', dataUser.department)
-      formData.append('status', dataUser.status)
+
       for (const pair of formData.entries()) {
         console.log(pair[0] + ', ' + pair[1])
       }
-      const response = await updateProfile('9a9a315f-75df-41df-8a54-3e7845afa7f1', formData)
-      console.log(response)
+      if (user?.id) {
+        const response = await updateProfile(user?.id, formData)
+        console.log(response)
+      }
     } catch (e) {
       console.log(e)
     }
   }
-  console.log(data)
 
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
