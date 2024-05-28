@@ -6,6 +6,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import moment from 'moment'
 import { getUserDetail, updateProfile } from '~/services/user.service'
 import { useAuth } from '~/provider/authProvider'
+import useToast from '~/hooks/useToast'
+import Loading from '~/components/shared/Loading/Loading'
 export interface UserData {
   id: string
   address: string
@@ -23,16 +25,21 @@ const Profile = () => {
   const reader = new FileReader()
   const [data, setData] = useState<any>()
   const { user } = useAuth()
+  const [loading, setLoading] = useState(true)
   const [imgUpload, setImgUpload] = useState<any>(avatar)
   const inputRef = useRef<any>()
-
+  const { successNotification, errorNotification } = useToast()
   const {
     register,
     handleSubmit,
     reset,
     watch,
     formState: { errors }
-  } = useForm<UserData>({ defaultValues: data })
+  } = useForm<UserData>({
+    defaultValues: useMemo(() => {
+      return data
+    }, [data])
+  })
   const handleChangeImage = (event: any) => {
     const files = event.target.files
 
@@ -41,8 +48,6 @@ const Profile = () => {
       setImgUpload(event.target?.result)
     })
   }
-  console.log(data)
-
   useEffect(() => {
     async function fetchAPI() {
       try {
@@ -50,7 +55,10 @@ const Profile = () => {
           const response = await getUserDetail(user?.id)
           if (response.object) {
             setData(response.object)
+
+            reset(response.object)
             setImgUpload(response.object?.avatar == null ? avatar : response.object?.avatar)
+            setLoading(false)
           }
         }
       } catch (e) {
@@ -59,7 +67,8 @@ const Profile = () => {
     }
     fetchAPI()
   }, [])
-  const onSubmit: SubmitHandler<UserData> = async (data: UserData) => {
+  if (loading) return <Loading />
+  const onSubmit: SubmitHandler<UserData> = async (data: any) => {
     try {
       const formData = new FormData()
       for (const key in data) {
@@ -67,14 +76,16 @@ const Profile = () => {
       }
       formData.append('file', inputRef.current.files[0])
 
-      for (const pair of formData.entries()) {
-        console.log(pair[0] + ', ' + pair[1])
-      }
       if (user?.id) {
         const response = await updateProfile(user?.id, formData)
-        console.log(response)
+        if (response.code == '00' && response.object) {
+          successNotification('Chỉnh sửa thông tin người dùng thành công')
+        } else {
+          errorNotification('Chỉnh sửa thông tin người dùng không thành công')
+        }
       }
     } catch (e) {
+      errorNotification('Chỉnh sửa thông tin người dùng không thành cồng')
       console.log(e)
     }
   }
@@ -124,7 +135,6 @@ const Profile = () => {
               <input
                 className={`${errors.name ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
                 placeholder='Enter your name'
-                defaultValue={data?.name}
                 {...register('name', {
                   required: 'This field cannot be left blank'
                 })}
@@ -136,7 +146,6 @@ const Profile = () => {
             <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
               <label className='font-bold '>Phòng ban</label>
               <input
-                defaultValue={data?.department}
                 className={`block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
                 {...register('department')}
               />
@@ -144,7 +153,6 @@ const Profile = () => {
             <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
               <label className='font-bold '>Vị trí</label>
               <input
-                defaultValue={data?.position}
                 className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
                 {...register('position')}
               />
@@ -154,7 +162,6 @@ const Profile = () => {
                 Email<sup className='text-red-500'>*</sup>
               </label>
               <input
-                defaultValue={data?.email}
                 className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
                 {...register('email')}
                 disabled
@@ -164,7 +171,6 @@ const Profile = () => {
             <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
               <label className='font-bold '>CCCD/CMT</label>
               <input
-                defaultValue={data?.identification_number}
                 className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
                 {...register('identification_number')}
               />
@@ -172,7 +178,6 @@ const Profile = () => {
             <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
               <label className='font-bold '>Số điện thoại</label>
               <input
-                defaultValue={data?.phone}
                 className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
                 {...register('phone')}
               />
@@ -180,7 +185,6 @@ const Profile = () => {
             <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
               <label className='font-bold '>Địa chỉ</label>
               <input
-                defaultValue={data?.address}
                 className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
                 {...register('address')}
               />
@@ -189,7 +193,6 @@ const Profile = () => {
               <label className='font-bold '>Ngày sinh</label>
               <input
                 type='date'
-                defaultValue={data?.dob}
                 className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
                 {...register('dob')}
               />

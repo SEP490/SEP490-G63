@@ -6,18 +6,21 @@ import { GetTokenV2ContextProvider } from './context/GetTokenV2ContextProvider.t
 import Form from './components/BaseComponent/Form/index.tsx'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
-
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+const queryClient = new QueryClient()
 function App() {
   return (
-    <Provider store={store}>
-      <AuthProvider>
-        <GetTokenV2ContextProvider>
-          <DndProvider backend={HTML5Backend}>
-            <Routes />
-          </DndProvider>
-        </GetTokenV2ContextProvider>
-      </AuthProvider>
-    </Provider>
+    <QueryClientProvider client={queryClient}>
+      <Provider store={store}>
+        <AuthProvider>
+          <GetTokenV2ContextProvider>
+            <DndProvider backend={HTML5Backend}>
+              <Routes />
+            </DndProvider>
+          </GetTokenV2ContextProvider>
+        </AuthProvider>
+      </Provider>
+    </QueryClientProvider>
   )
 }
 
