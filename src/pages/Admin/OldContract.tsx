@@ -2,6 +2,7 @@ import { Dialog, Menu, Transition } from '@headlessui/react'
 import { EllipsisVerticalIcon, NoSymbolIcon, PlusIcon } from '@heroicons/react/24/outline'
 import moment from 'moment'
 import { Fragment, useEffect, useState } from 'react'
+import Pagination from '~/components/BaseComponent/Pagination/Pagination'
 import UploadFile from '~/components/BaseComponent/Uploadfile/UploadFile'
 import useToast from '~/hooks/useToast'
 import { deleteOldContract, getOldContract } from '~/services/contract.service'
@@ -14,6 +15,13 @@ const OldContract = () => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [selectedContract, setSelectedContract] = useState<any>(null)
   const { successNotification, errorNotification } = useToast()
+
+  const [currentPage, setCurrentPage] = useState(1)
+  const totalPages = 10
+
+  const handlePageChange = (page: any) => {
+    setCurrentPage(page)
+  }
 
   function openModal() {
     setIsOpen(true)
@@ -137,6 +145,7 @@ const OldContract = () => {
               </tbody>
             </table>
           </div>
+          <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePageChange} />
         </div>
       </div>
       <Transition appear show={isOpen} as={Fragment}>
