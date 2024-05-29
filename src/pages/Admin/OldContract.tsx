@@ -1,7 +1,9 @@
 import { Dialog, Menu, Transition } from '@headlessui/react'
-import { EllipsisVerticalIcon, NoSymbolIcon, PlusIcon } from '@heroicons/react/24/outline'
+import { EllipsisVerticalIcon, NoSymbolIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { truncate } from 'fs'
 import moment from 'moment'
 import { Fragment, useEffect, useState } from 'react'
+import ViewContract from '~/components/Admin/NewContract/ViewContract'
 import UploadFile from '~/components/BaseComponent/Uploadfile/UploadFile'
 import useToast from '~/hooks/useToast'
 import { deleteOldContract, getOldContract } from '~/services/contract.service'
@@ -14,13 +16,14 @@ const OldContract = () => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [selectedContract, setSelectedContract] = useState<any>(null)
   const { successNotification, errorNotification } = useToast()
-
+  const [openModalContract, setOpenModalContract] = useState(false)
   function openModal() {
     setIsOpen(true)
   }
   const handleCloseModal = () => {
     setDeleteModal(false)
     setIsOpen(false)
+    setOpenModalContract(false)
     setSelectedContract(null)
   }
   const handleDelete = async () => {
@@ -116,7 +119,13 @@ const OldContract = () => {
                       {d.contractEndDate ? moment(d.contractEndDate).format('DD/MM/YYYY') : ''}
                     </td>
                     <td className='px-3 py-4' align='center'>
-                      <div className='cursor-pointer text-blue-500 hover:underline' onClick={() => window.open(d.file)}>
+                      <div
+                        className='cursor-pointer text-blue-500 hover:underline'
+                        onClick={() => {
+                          setSelectedContract(d)
+                          setOpenModalContract(true)
+                        }}
+                      >
                         Xem
                       </div>
                     </td>
@@ -188,7 +197,6 @@ const OldContract = () => {
           >
             <div className='fixed inset-0 bg-black/25' />
           </Transition.Child>
-
           <div className='fixed inset-0 overflow-y-auto'>
             <div className='flex min-h-full  items-center justify-center p-4 text-center'>
               <Transition.Child
@@ -217,6 +225,43 @@ const OldContract = () => {
                       </button>
                     </div>
                   </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+      <Transition appear show={openModalContract} as={Fragment}>
+        <Dialog as='div' className='relative z-10 w-[90vw]' onClose={handleCloseModal}>
+          <Transition.Child
+            as={Fragment}
+            enter='ease-out duration-300'
+            enterFrom='opacity-0'
+            enterTo='opacity-100'
+            leave='ease-in duration-200'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0'
+          >
+            <div className='fixed inset-0 bg-black/25' />
+          </Transition.Child>
+
+          <div className='fixed inset-0 overflow-y-auto'>
+            <div className='flex min-h-full  items-center justify-center p-4 text-center'>
+              <Transition.Child
+                as={Fragment}
+                enter='ease-out duration-300'
+                enterFrom='opacity-0 scale-95'
+                enterTo='opacity-100 scale-100'
+                leave='ease-in duration-200'
+                leaveFrom='opacity-100 scale-100'
+                leaveTo='opacity-0 scale-95'
+              >
+                <Dialog.Panel className='w-[100vw] md:w-[90vw] md:h-[94vh] transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all'>
+                  <div className='flex justify-between'>
+                    <div className='font-semibold'>Xem hợp đồng</div>
+                    <XMarkIcon className='h-5 w-5 mr-3 mb-3 cursor-pointer' onClick={handleCloseModal} />
+                  </div>
+                  <ViewContract src={selectedContract?.file} />
                 </Dialog.Panel>
               </Transition.Child>
             </div>
