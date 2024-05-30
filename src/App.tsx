@@ -6,6 +6,8 @@ import { GetTokenV2ContextProvider } from './context/GetTokenV2ContextProvider.t
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import 'suneditor/dist/css/suneditor.min.css'
+
 const queryClient = new QueryClient()
 function App() {
   return (
