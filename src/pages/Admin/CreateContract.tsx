@@ -1,4 +1,4 @@
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import SunEditor from 'suneditor-react'
 import 'suneditor/dist/css/suneditor.min.css'
 import '../../css/suneditor.css'
@@ -26,6 +26,9 @@ const CreateContract = () => {
   const formInfoPartA = useForm<CompanyInfo>()
   const formInfoPartB = useForm<CompanyInfo>()
   const onSubmit = async () => {
+    console.log(getValues())
+    console.log(formInfoPartB.getValues())
+    console.log(formInfoPartA.getValues())
     const rule: any = document.getElementsByName('rule')[0]
     const term: any = document.getElementsByName('term')[0]
     const bodyData = {

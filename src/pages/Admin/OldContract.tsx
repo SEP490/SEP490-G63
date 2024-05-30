@@ -55,7 +55,7 @@ const OldContract = () => {
         console.log(e)
       }
     }
-    fetchData()
+    if (!data) fetchData()
   }, [page, size, isOpen, deleteModal])
   return (
     <div className='bg-[#e8eaed] h-full'>
