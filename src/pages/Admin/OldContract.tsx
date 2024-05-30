@@ -17,7 +17,7 @@ const OldContract = () => {
   const [selectedContract, setSelectedContract] = useState<any>(null)
   const { successNotification, errorNotification } = useToast()
   const [openModalContract, setOpenModalContract] = useState(false)
-  function openModal() {
+  const openModal = () => {
     setIsOpen(true)
   }
   const handleCloseModal = () => {
@@ -47,7 +47,7 @@ const OldContract = () => {
         console.log(e)
       }
     }
-    fetchData()
+    if (!data) fetchData()
   }, [page, size, isOpen, deleteModal])
   return (
     <div className='bg-[#e8eaed] h-full'>
