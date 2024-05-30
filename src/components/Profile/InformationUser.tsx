@@ -8,6 +8,7 @@ import { getUserDetail, updateProfile } from '~/services/user.service'
 import { useAuth } from '~/provider/authProvider'
 import useToast from '~/hooks/useToast'
 import Loading from '~/components/shared/Loading/Loading'
+import { log } from 'console'
 export interface UserData {
   id: string
   address: string
@@ -75,6 +76,8 @@ const InformationUser = () => {
         formData.append(key, data[key])
       }
       formData.append('file', inputRef.current.files[0])
+      console.log('file', inputRef.current.files[0])
+      console.log('formData', formData)
 
       if (user?.id) {
         const response = await updateProfile(user?.id, formData)

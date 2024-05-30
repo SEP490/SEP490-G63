@@ -4,6 +4,7 @@ import { truncate } from 'fs'
 import moment from 'moment'
 import { Fragment, useEffect, useState } from 'react'
 import ViewContract from '~/components/Admin/NewContract/ViewContract'
+import Pagination from '~/components/BaseComponent/Pagination/Pagination'
 import UploadFile from '~/components/BaseComponent/Uploadfile/UploadFile'
 import useToast from '~/hooks/useToast'
 import { deleteOldContract, getOldContract } from '~/services/contract.service'
@@ -17,7 +18,14 @@ const OldContract = () => {
   const [selectedContract, setSelectedContract] = useState<any>(null)
   const { successNotification, errorNotification } = useToast()
   const [openModalContract, setOpenModalContract] = useState(false)
-  const openModal = () => {
+  const [currentPage, setCurrentPage] = useState(1)
+  const totalPages = 10
+
+  const handlePageChange = (page: any) => {
+    setCurrentPage(page)
+  }
+
+  function openModal() {
     setIsOpen(true)
   }
   const handleCloseModal = () => {
@@ -146,6 +154,7 @@ const OldContract = () => {
               </tbody>
             </table>
           </div>
+          <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePageChange} />
         </div>
       </div>
       <Transition appear show={isOpen} as={Fragment}>

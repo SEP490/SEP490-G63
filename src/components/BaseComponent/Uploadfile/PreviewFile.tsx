@@ -99,10 +99,12 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef }: Iprops) => {
         formData.append('contractSignDate', moment(contractSignDate).format('DD/MM/YYYY'))
         listUrl.forEach((e: any) => {
           formData.append('images', e.file)
+          console.log('e.file', e.file)
         })
         for (const pair of formData.entries()) {
           console.log(pair[0] + ', ' + pair[1])
         }
+        console.log('formData', formData)
         const response = await createOldContract(formData)
         if (response.code == '00' && response.object) {
           successNotification('Tải lên hợp đồng cũ thành công')
