@@ -20,6 +20,7 @@ const HomeUser = lazy(() => import('~/pages/User/HomeUser.tsx'))
 const Profile = lazy(() => import('~/pages/Profile.tsx'))
 const OldContract = lazy(() => import('~/pages/Admin/OldContract.tsx'))
 const Contract = lazy(() => import('~/pages/Admin/Contract.tsx'))
+const CreateContract = lazy(() => import('~/pages/Admin/CreateContract.tsx'))
 const Routes = () => {
   const { token, user } = useAuth()
   let routes: Array<any>
@@ -75,6 +76,16 @@ const Routes = () => {
             <Suspense fallback={<Loading />}>
               <AdminLayout>
                 <Contract />
+              </AdminLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/contract/create',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <AdminLayout>
+                <CreateContract />
               </AdminLayout>
             </Suspense>
           )

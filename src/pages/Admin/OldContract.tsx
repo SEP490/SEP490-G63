@@ -60,7 +60,7 @@ const OldContract = () => {
   return (
     <div className='bg-[#e8eaed] h-full'>
       <div className='flex flex-wrap py-4'>
-        <div className=' w-full px-5   h-[100vh]'>
+        <div className=' w-full px-5  h-[100vh]'>
           <div className='flex gap-3 justify-between w-full'>
             <div className='relative w-[50%]'>
               <div className='absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none'>

@@ -44,7 +44,11 @@ const NavBar = () => {
           <label className='font-bold cursor-pointer flex items-center gap-1'>{user?.name}</label>
         </div>
         <button
-          onClick={() => navigate('/profile')}
+          onClick={() => {
+            navigate('/profile')
+            openNav && setOpenNav(false)
+            openProfile && setOpenProfile(false)
+          }}
           className={`hover:bg-hover-main hover:text-white text-gray-900
            group flex w-full items-center  px-2 py-2 text-sm `}
         >
@@ -69,7 +73,13 @@ const NavBar = () => {
           {routerAdmin.map((r) => (
             <li
               key={r.id}
-              onClick={() => navigate(r.slug)}
+              onClick={() => {
+                openNav && setOpenNav(false)
+                openProfile && setOpenProfile(false)
+                setTimeout(() => {
+                  navigate(r.slug)
+                }, 300)
+              }}
               className={`${r.slug == location.pathname ? 'bg-main-color text-white' : ''} cursor-pointer  hover:bg-hover-main hover:text-white w-full px-2 py-3 flex items-center gap-2 text-[14px]`}
             >
               {r.icon} {r.title}
@@ -80,7 +90,7 @@ const NavBar = () => {
       <div className='w-full flex justify-between px-4 items-center h-[10%] shadow-md'>
         <div className='font-bold flex items-center my-2 '>
           <Bars3Icon
-            className={`h-7 w-7 cursor-pointer hover:bg-gray-300 round  ed-md md:invisible`}
+            className={`h-7 w-7 cursor-pointer hover:bg-gray-300 round  ed-md visible ${isMobile ? 'visible' : 'invisible'}`}
             onClick={() => setOpenNav(true)}
           />
           <img src={logo} alt='logo' className='w-[32px]' />
@@ -94,7 +104,7 @@ const NavBar = () => {
 
         {isMobile ? (
           <UserIcon
-            className={`h-7 w-7 cursor-pointer hover:bg-gray-300 rounded-md md:invisible`}
+            className={`h-7 w-7 cursor-pointer hover:bg-gray-300 rounded-md`}
             onClick={() => setOpenProfile(true)}
           />
         ) : (

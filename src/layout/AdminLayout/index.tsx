@@ -11,10 +11,7 @@ function AdminLayout({ children }: any) {
   return (
     <div className='h-[100vh] overflow-hidden relative'>
       <NavBar />
-      <div className='h-[84vh] '>{children}</div>
-      <div className='text-xs absolute bottom-1 left-1 bg-main-color text-white px-2 py-1 rounded-lg'>
-        Liên hệ: ThangDepTrai
-      </div>
+      <div className='h-[84vh] overflow-auto'>{children}</div>
     </div>
   )
 }

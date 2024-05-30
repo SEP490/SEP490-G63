@@ -1,0 +1,8 @@
+.sun-editor-editable ul {
+  list-style-type: none;
+}
+
+.sun-editor-editable ul li::before {
+  content: '- ';
+  padding-right: 8px; /* Optional: Add some space between dash and text */
+}
