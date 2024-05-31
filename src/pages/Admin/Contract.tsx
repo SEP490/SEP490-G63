@@ -13,7 +13,7 @@ const Contract = () => {
     setOpenModal(false)
   }
   return (
-    <div className='bg-[#e8eaed] h-full'>
+    <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex gap-3 justify-between w-full px-5 py-3'>
         <div className='relative w-[50%]'>
           <div className='absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none'>

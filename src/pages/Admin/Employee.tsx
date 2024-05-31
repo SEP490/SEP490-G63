@@ -67,7 +67,7 @@ const Employee = () => {
   }, [page, size, isOpen, searchData])
   if (loading) return <Loading />
   return (
-    <div className='bg-[#e8eaed] h-full'>
+    <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex flex-wrap py-4'>
         <div className=' w-full px-5'>
           <div className='flex gap-3 justify-between w-full'>
@@ -104,7 +104,7 @@ const Employee = () => {
               <PlusIcon className='h-5 w-5' /> Thêm mới nhân viên
             </button>
           </div>
-          <div className=' overflow-x-auto shadow-md sm:rounded-lg my-3  max-h-[75vh]'>
+          <div className=' overflow-auto shadow-md sm:rounded-lg my-3  max-h-[73vh] '>
             <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
               <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
                 <tr>

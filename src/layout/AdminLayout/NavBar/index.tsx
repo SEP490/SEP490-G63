@@ -16,7 +16,7 @@ const NavBar = () => {
   const { removeToken, user } = useAuth()
   const { successNotification } = useToast()
   return (
-    <div className='relative'>
+    <div className='relative '>
       <div
         className={`absolute z-20 h-[100vh] overflow-hidden bg-black w-full opacity-40 transition-all duration-100 delay-100 ease-in ${openNav || openProfile ? 'visible' : 'invisible'}`}
         onClick={() => {
@@ -86,7 +86,7 @@ const NavBar = () => {
           ))}
         </ul>
       </div>
-      <div className='w-full flex justify-between px-4 items-center h-[10%] shadow-md'>
+      <div className='w-full flex justify-between px-4 items-center h-[10%] shadow-md bg-white'>
         <div className='font-bold flex items-center my-2 '>
           <Bars3Icon
             className={`h-7 w-7 cursor-pointer hover:bg-gray-300 round  ed-md visible ${isMobile ? 'visible' : 'invisible'}`}

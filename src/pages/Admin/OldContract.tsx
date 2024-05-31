@@ -63,7 +63,7 @@ const OldContract = () => {
   }, [page, size, isOpen, deleteModal])
   if (loading) return <Loading />
   return (
-    <div className='bg-[#e8eaed] h-full'>
+    <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex flex-wrap py-4'>
         <div className=' w-full px-5'>
           <div className='flex gap-3 justify-between w-full'>
