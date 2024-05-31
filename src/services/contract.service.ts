@@ -32,3 +32,20 @@ export const sendMail = async (formdata: any) => {
     console.log(error)
   }
 }
+
+export const createNewContract = async (data: any) => {
+  try {
+    const response = await axiosInstant.post(`contract`, data)
+    return response.data
+  } catch (error) {
+    console.log(error)
+  }
+}
+export const getNewContract = async (page: number, size: number) => {
+  try {
+    const response = await axiosInstant.get(`contract?page=${page}&size=${size}`)
+    return response.data
+  } catch (error) {
+    console.log(error)
+  }
+}

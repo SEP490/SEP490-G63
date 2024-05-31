@@ -1,6 +1,9 @@
 import { useForm } from 'react-hook-form'
 import SunEditor from 'suneditor-react'
 import '../../css/suneditor.css'
+import { createNewContract } from '~/services/contract.service'
+import useToast from '~/hooks/useToast'
+import { useNavigate } from 'react-router-dom'
 interface FormType {
   contractName: string
   contractNumber: string
@@ -24,10 +27,9 @@ const CreateContract = () => {
   } = useForm<FormType>()
   const formInfoPartA = useForm<CompanyInfo>()
   const formInfoPartB = useForm<CompanyInfo>()
+  const { successNotification, errorNotification } = useToast()
+  const navigate = useNavigate()
   const onSubmit = async () => {
-    console.log(getValues())
-    console.log(formInfoPartB.getValues())
-    console.log(formInfoPartA.getValues())
     const rule: any = document.getElementsByName('rule')[0]
     const term: any = document.getElementsByName('term')[0]
     const bodyData = {
@@ -37,7 +39,17 @@ const CreateContract = () => {
       partyA: formInfoPartA.getValues(),
       partyB: formInfoPartB.getValues()
     }
-    console.log(bodyData)
+    try {
+      const response = await createNewContract(bodyData)
+      if (response?.code == '00' && response.object && response.success) {
+        successNotification('Tạo hợp đồng thành công')
+        setTimeout(() => {
+          navigate('/contract')
+        }, 500)
+      } else errorNotification('Tạo hợp đồng thất bại')
+    } catch (error) {
+      console.log(error)
+    }
   }
   return (
     <div className='bg-[#e8eaed] h-fit min-h-full flex justify-center py-6'>
