@@ -3,8 +3,9 @@ import { CKEditor } from '@ckeditor/ckeditor5-react'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import ComboboxMail from '~/components/Admin/SendMail/ComboboxMail'
 import uploadIcon from '~/assets/images/uploadpdf.png'
-import axios from 'axios'
 import { sendMail } from '~/services/contract.service'
+import useToast from '~/hooks/useToast'
+import Loading from '~/components/shared/Loading/Loading'
 
 const SendMail = () => {
   const [selectedFiles, setSelectedFiles] = useState<any[]>([])
@@ -13,16 +14,14 @@ const SendMail = () => {
   const [selectedCc, setSelectedCc] = useState<any[]>([])
   const [subject, setSubject] = useState<string>('')
   const [editorData, setEditorData] = useState<string>('')
+  const { successNotification, errorNotification } = useToast()
+  const [loading, setLoading] = useState<boolean>(false)
 
   const handleFileChange = (event: any) => {
     const files = Array.from(event.target.files)
     const newPreviewUrls: string[] = []
 
     files.forEach((file: any) => {
-      console.log('File name:', file.name)
-      console.log('File size:', file.size)
-      console.log('File type:', file.type)
-
       const reader = new FileReader()
       reader.onloadend = () => {
         newPreviewUrls.push(reader.result as string)
@@ -37,14 +36,30 @@ const SendMail = () => {
   }
 
   const handleSubmit = async () => {
+    setLoading(true)
+    if (selectedTo.length === 0) {
+      errorNotification('Trường "Đến" không được để trống!')
+      setLoading(false)
+      return
+    }
+
+    if (subject.trim() === '') {
+      errorNotification('Trường "Tiêu đề" không được để trống!')
+      setLoading(false)
+      return
+    }
+
+    if (editorData.trim() === '') {
+      errorNotification('Trường "Nội dung" không được để trống!')
+      setLoading(false)
+      return
+    }
+
     const formData = new FormData()
     selectedTo.forEach((email) => {
       formData.append('to', email.value)
-      console.log('to:', email.value)
     })
     selectedCc.forEach((email) => {
-      console.log('cc:', email.value)
-
       formData.append('cc', email.value)
     })
     formData.append('subject', subject)
@@ -52,17 +67,21 @@ const SendMail = () => {
     selectedFiles.forEach((file) => {
       formData.append('attachments', file)
     })
-    console.log('Form data:', formData)
 
     try {
       const response = await sendMail(formData)
       if (response) {
-        console.log('Mail sent successfully', response.data)
+        successNotification('Gửi mail thành công!')
+      } else {
+        errorNotification('Xảy ra lỗi khi gửi mail!')
       }
     } catch (error) {
       console.error('Error sending mail:', error)
+    } finally {
+      setLoading(false)
     }
   }
+  if (loading) return <Loading />
 
   return (
     <>
@@ -99,12 +118,12 @@ const SendMail = () => {
             const data = editor.getData()
             setEditorData(data)
           }}
-          onBlur={(event, editor) => {
-            console.log('Blur.', editor)
-          }}
-          onFocus={(event, editor) => {
-            console.log('Focus.', editor)
-          }}
+          // onBlur={(event, editor) => {
+          //   console.log('Blur.', editor)
+          // }}
+          // onFocus={(event, editor) => {
+          //   console.log('Focus.', editor)
+          // }}
         />
         <div className='mt-4 text-center'>
           <input type='file' id='file-upload' className='hidden' onChange={handleFileChange} multiple />

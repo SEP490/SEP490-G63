@@ -26,8 +26,6 @@ const ComboboxMail = ({ selected, setSelected }: any) => {
   }
 
   const customValueRenderer = (selected: Option[], _options: Option[]) => {
-    // console.log('selected', selected)
-
     return selected.length
       ? selected.map(({ label, value }: Option) => (
           <div key={value} className='inline-block bg-slate-200 mx-1 px-4 py-1 rounded relative'>
