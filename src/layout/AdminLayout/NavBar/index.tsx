@@ -1,9 +1,8 @@
-import { Fragment, useState } from 'react'
+import { useState } from 'react'
 import logo from '../../../assets/svg/Tdocman.svg'
-import { Bars3Icon, UserIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, UserIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/24/outline'
 import avatar from '../../../assets/images/avatar1.png'
 import useViewport from '~/hooks/useViewport'
-import { Menu, Transition } from '@headlessui/react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '~/provider/authProvider'
 import useToast from '~/hooks/useToast'
@@ -39,7 +38,7 @@ const NavBar = () => {
               borderRadius: '50%',
               border: '2px solid blue  '
             }}
-            title='Nguyễn Hữu Thắng'
+            title={user?.name}
           />
           <label className='font-bold cursor-pointer flex items-center gap-1'>{user?.name}</label>
         </div>
@@ -108,70 +107,35 @@ const NavBar = () => {
             onClick={() => setOpenProfile(true)}
           />
         ) : (
-          <div>
-            <Menu as='div' className='relative inline-block text-left '>
-              <div>
-                <Menu.Button>
-                  <div className='flex justify-center items-center gap-3 cursor-pointer'>
-                    <img
-                      src={user?.avatar ? user?.avatar : avatar}
-                      alt='avatar'
-                      style={{
-                        width: '38px',
-                        height: '38px',
-                        objectFit: 'cover',
-                        borderRadius: '50%',
-                        border: '2px solid blue  '
-                      }}
-                      title='Nguyễn Hữu Thắng'
-                    />
-                    <label className='font-bold cursor-pointer flex items-center gap-1'>
-                      {user?.name} <ChevronDownIcon className='h-4 w-4' />
-                    </label>
-                  </div>
-                </Menu.Button>
-              </div>
-              <Transition
-                as={Fragment}
-                enter='transition ease-out duration-100'
-                enterFrom='transform opacity-0 scale-95'
-                enterTo='transform opacity-100 scale-100'
-                leave='transition ease-in duration-75'
-                leaveFrom='transform opacity-100 scale-100'
-                leaveTo='transform opacity-0 scale-95'
-              >
-                <Menu.Items className='absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none z-99'>
-                  <Menu.Item>
-                    {({ active }) => (
-                      <button
-                        onClick={() => navigate('/profile')}
-                        className={`${
-                          active ? 'bg-blue-500 text-white' : 'text-gray-900'
-                        } group flex w-full items-center rounded-md px-2 py-2 text-sm `}
-                      >
-                        Tài khoản
-                      </button>
-                    )}
-                  </Menu.Item>
-                  <Menu.Item>
-                    {({ active }) => (
-                      <button
-                        className={`${
-                          active ? 'bg-blue-500 text-white' : 'text-gray-900'
-                        } group flex w-full items-center rounded-md px-2 py-2 text-sm `}
-                        onClick={() => {
-                          removeToken()
-                          successNotification('Đăng xuất thành công')
-                          navigate('/login')
-                        }}
-                      >
-                        Đăng xuất
-                      </button>
-                    )}
-                  </Menu.Item>
-                </Menu.Items>
-              </Transition>
-            </Menu>
+          <div className='flex items-center gap-2'>
+            <div
+              className='flex justify-center items-center gap-3 cursor-pointer'
+              title='Trang cá nhân'
+              onClick={() => navigate('/profile')}
+            >
+              <img
+                src={user?.avatar ? user?.avatar : avatar}
+                alt='avatar'
+                style={{
+                  width: '38px',
+                  height: '38px',
+                  objectFit: 'cover',
+                  borderRadius: '50%',
+                  border: '2px solid blue  '
+                }}
+                title={user?.name}
+              />
+              <label className='font-bold cursor-pointer flex items-center gap-1'>{user?.name}</label>
+            </div>
+            <ArrowRightStartOnRectangleIcon
+              className='h-5 w-5 cursor-pointer'
+              title='Đăng xuất'
+              onClick={() => {
+                removeToken()
+                successNotification('Đăng xuất thành công')
+                navigate('/login')
+              }}
+            />{' '}
           </div>
         )}
       </div>

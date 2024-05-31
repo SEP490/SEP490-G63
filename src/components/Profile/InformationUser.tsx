@@ -1,14 +1,10 @@
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { REGEX_EMAIL } from '~/common/const/regexForm'
-import { dataUser } from '~/common/dataConfig'
-import avatar from '../../assets/images/avatar.png'
+import avatar from '../../assets/images/avatar1.png'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import moment from 'moment'
 import { getUserDetail, updateProfile } from '~/services/user.service'
 import { useAuth } from '~/provider/authProvider'
 import useToast from '~/hooks/useToast'
 import Loading from '~/components/shared/Loading/Loading'
-import { log } from 'console'
 export interface UserData {
   id: string
   address: string
@@ -25,7 +21,7 @@ export interface UserData {
 const InformationUser = () => {
   const reader = new FileReader()
   const [data, setData] = useState<any>()
-  const { user } = useAuth()
+  const { user, setUser } = useAuth()
   const [loading, setLoading] = useState(true)
   const [imgUpload, setImgUpload] = useState<any>(avatar)
   const inputRef = useRef<any>()
@@ -76,14 +72,11 @@ const InformationUser = () => {
         formData.append(key, data[key])
       }
       formData.append('file', inputRef.current.files[0])
-      console.log('file', inputRef.current.files[0])
-      console.log('formData', formData)
 
       if (user?.id) {
         const response = await updateProfile(user?.id, formData)
         if (response.code == '00' && response.object) {
-          console.log(response)
-
+          setUser(response.object)
           successNotification('Chỉnh sửa thông tin người dùng thành công')
         } else {
           errorNotification('Chỉnh sửa thông tin người dùng không thành công')
@@ -91,7 +84,6 @@ const InformationUser = () => {
       }
     } catch (e) {
       errorNotification('Chỉnh sửa thông tin người dùng không thành cồng')
-      console.log(e)
     }
   }
 

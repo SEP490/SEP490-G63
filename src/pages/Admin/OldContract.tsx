@@ -1,28 +1,29 @@
-import { Dialog, Menu, Transition } from '@headlessui/react'
-import { EllipsisVerticalIcon, NoSymbolIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { truncate } from 'fs'
+import { Dialog, Transition } from '@headlessui/react'
+import { NoSymbolIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import moment from 'moment'
 import { Fragment, useEffect, useState } from 'react'
+import DocumentIcon from '~/assets/svg/document'
 import ViewContract from '~/components/Admin/NewContract/ViewContract'
 import Pagination from '~/components/BaseComponent/Pagination/Pagination'
 import UploadFile from '~/components/BaseComponent/Uploadfile/UploadFile'
+import Loading from '~/components/shared/Loading/Loading'
 import useToast from '~/hooks/useToast'
 import { deleteOldContract, getOldContract } from '~/services/contract.service'
 
 const OldContract = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const [data, setData] = useState<any>()
+  const [data, setData] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(10)
+  const [totalPage, setTotalPage] = useState(1)
   const [deleteModal, setDeleteModal] = useState(false)
   const [selectedContract, setSelectedContract] = useState<any>(null)
   const { successNotification, errorNotification } = useToast()
   const [openModalContract, setOpenModalContract] = useState(false)
-  const [currentPage, setCurrentPage] = useState(1)
-  const totalPages = 10
 
   const handlePageChange = (page: any) => {
-    setCurrentPage(page)
+    setPage(page - 1)
   }
 
   function openModal() {
@@ -48,15 +49,19 @@ const OldContract = () => {
     const fetchData = async () => {
       try {
         const response = await getOldContract(page, size)
-        if (response.object) {
-          setData(response.object)
+
+        if (response) {
+          setLoading(false)
+          setData(response?.object)
+          setTotalPage(response?.object?.totalPages)
         }
       } catch (e) {
         console.log(e)
       }
     }
-    if (!data) fetchData()
+    fetchData()
   }, [page, size, isOpen, deleteModal])
+  if (loading) return <Loading />
   return (
     <div className='bg-[#e8eaed] h-full'>
       <div className='flex flex-wrap py-4'>
@@ -72,9 +77,9 @@ const OldContract = () => {
                   xmlns='http://www.w3.org/2000/svg'
                 >
                   <path
-                    fill-rule='evenodd'
+                    fillRule='evenodd'
                     d='M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z'
-                    clip-rule='evenodd'
+                    clipRule='evenodd'
                   ></path>
                 </svg>
               </div>
@@ -96,7 +101,7 @@ const OldContract = () => {
           </div>
           <div className=' overflow-x-auto shadow-md sm:rounded-lg my-3  max-h-[75vh]'>
             <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
-              <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
+              <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 shadow-md'>
                 <tr>
                   <th className='px-3 py-3'>STT</th>
                   <th className='px-3 py-3'>Tên hợp đồng</th>
@@ -109,6 +114,7 @@ const OldContract = () => {
                   <th className='px-3 py-3'></th>
                 </tr>
               </thead>
+
               <tbody className='w-full '>
                 {data?.content?.map((d: any, index: number) => (
                   <tr
@@ -153,8 +159,18 @@ const OldContract = () => {
                 ))}
               </tbody>
             </table>
+            {(!data || data?.content?.length == 0) && (
+              <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'>
+                <div className='flex flex-col justify-center items-center opacity-60'>
+                  <DocumentIcon />
+                  Bạn chưa tải lên hợp đồng cũ
+                </div>
+              </div>
+            )}
           </div>
-          <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePageChange} />
+          {data && data?.content?.length != 0 && (
+            <Pagination totalPages={totalPage} currentPage={page + 1} onPageChange={handlePageChange} />
+          )}
         </div>
       </div>
       <Transition appear show={isOpen} as={Fragment}>

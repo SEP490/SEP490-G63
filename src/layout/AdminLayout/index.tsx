@@ -10,7 +10,7 @@ function AdminLayout({ children }: any) {
   }
   return (
     <div className='h-[100vh] overflow-hidden relative'>
-      <NavBar />
+      <NavBar/>
       <div className='h-[84vh] overflow-auto'>{children}</div>
     </div>
   )
