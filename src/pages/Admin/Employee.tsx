@@ -6,6 +6,9 @@ import ViewEmployee from '~/components/Admin/Employee/ViewEmployee'
 import { getListEmployee } from '~/services/employee.service'
 import EditEmployee from '~/components/Admin/Employee/EditEmployee'
 import { getUserW } from '~/config/user'
+import DocumentIcon from '~/assets/svg/document'
+import Pagination from '~/components/BaseComponent/Pagination/Pagination'
+import Loading from '~/components/shared/Loading/Loading'
 
 export interface DataEmployee {
   id?: string
@@ -25,6 +28,8 @@ const Employee = () => {
   const [viewDetail, setViewDetail] = useState(false)
   const [editModal, setEditModal] = useState(false)
   const [deleteModal, setDeleteModal] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [totalPage, setTotalPage] = useState(1)
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(5)
   const [data, setData] = useState<DataEmployee[]>([])
@@ -35,6 +40,9 @@ const Employee = () => {
     setEditModal(false)
     setViewDetail(false)
     setSelectedUser(undefined)
+  }
+  const handlePageChange = (page: any) => {
+    setPage(page - 1)
   }
   function closeModal() {
     setIsOpen(false)
@@ -50,15 +58,18 @@ const Employee = () => {
     const fetchAPI = async () => {
       const data = await getListEmployee({ size: size, page: page, name: searchData })
       if (data) {
-        setData(data.content)
+        setData(data.object?.content)
+        setTotalPage(data?.object?.totalPages)
+        setLoading(false)
       }
     }
     fetchAPI()
   }, [page, size, isOpen, searchData])
+  if (loading) return <Loading />
   return (
-    <div className='bg-[#e8eaed] h-full'>
+    <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex flex-wrap py-4'>
-        <div className=' w-full px-5   h-[100vh]'>
+        <div className=' w-full px-5'>
           <div className='flex gap-3 justify-between w-full'>
             <div className='relative w-[50%]'>
               <div className='absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none'>
@@ -70,16 +81,16 @@ const Employee = () => {
                   xmlns='http://www.w3.org/2000/svg'
                 >
                   <path
-                    fill-rule='evenodd'
+                    fillRule='evenodd'
                     d='M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z'
-                    clip-rule='evenodd'
+                    clipRule='evenodd'
                   ></path>
                 </svg>
               </div>
               <input
                 type='text'
                 id='table-search'
-                className='block p-2 ps-10 w-full text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                className='block p-2 ps-10 w-full text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
                 placeholder='Tìm kiếm nhân viên'
                 onChange={handChangeInputSearch}
               />
@@ -93,7 +104,7 @@ const Employee = () => {
               <PlusIcon className='h-5 w-5' /> Thêm mới nhân viên
             </button>
           </div>
-          <div className=' overflow-x-auto shadow-md sm:rounded-lg my-3  max-h-[75vh]'>
+          <div className=' overflow-auto shadow-md sm:rounded-lg my-3  max-h-[73vh] '>
             <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
               <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
                 <tr>
@@ -134,10 +145,8 @@ const Employee = () => {
 
                     <td className='px-3 py-4 text-right'>
                       <Menu as='div' className='relative inline-block text-left '>
-                        <Menu.Button>
-                          <button className='flex justify-center items-center gap-3 cursor-pointer hover:text-blue-500'>
-                            <EllipsisVerticalIcon className='h-7 w-7' title='Hành động' />
-                          </button>
+                        <Menu.Button className='flex justify-center items-center gap-3 cursor-pointer hover:text-blue-500'>
+                          <EllipsisVerticalIcon className='h-7 w-7' title='Hành động' />
                         </Menu.Button>
 
                         <Transition
@@ -187,7 +196,18 @@ const Employee = () => {
                 ))}
               </tbody>
             </table>
+            {(!data || data.length == 0) && (
+              <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'>
+                <div className='flex flex-col justify-center items-center opacity-60'>
+                  <DocumentIcon />
+                  Chưa có nhân viên
+                </div>
+              </div>
+            )}
           </div>
+          {data && data?.length != 0 && (
+            <Pagination totalPages={totalPage} currentPage={page + 1} onPageChange={handlePageChange} />
+          )}
         </div>
       </div>
       <Transition appear show={isOpen} as={Fragment}>

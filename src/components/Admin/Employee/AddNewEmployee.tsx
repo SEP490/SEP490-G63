@@ -4,6 +4,7 @@ import permissionsList from '~/common/const/permissions'
 import { REGEX_EMAIL } from '~/common/const/regexForm'
 import useToast from '~/hooks/useToast'
 import { createEmployee } from '~/services/employee.service'
+import debounce from 'lodash/debounce'
 type FromType = {
   password: string
   address: string
@@ -28,7 +29,7 @@ const AddNewEmployee = ({ closeModal }: IProp) => {
     handleSubmit,
     formState: { errors }
   } = useForm<FromType>()
-  const { successNotification } = useToast()
+  const { successNotification, errorNotification } = useToast()
   const [permissions, setPermissions] = useState(
     permissionsList.reduce((acc: CheckBoxValue, permission) => {
       acc[permission.value] = false
@@ -49,12 +50,13 @@ const AddNewEmployee = ({ closeModal }: IProp) => {
     try {
       if (getCheckedPermissions.length != 0) {
         const response = await createEmployee({ ...data, permissions: getCheckedPermissions })
-
-        if (response) {
-          successNotification('OK')
+        if (response.code == '00') {
+          successNotification('Tạo nhân viên mới thành công')
           closeModal()
+        } else {
+          errorNotification('Số điện thoại hoặc email đã được sử dụng')
         }
-      }
+      } else errorNotification('Vui lòng chọn quyền cho nhân viên mới')
     } catch (error) {
       console.log(error)
     }
@@ -62,7 +64,7 @@ const AddNewEmployee = ({ closeModal }: IProp) => {
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(debounce(onSubmit, 300))}
       className='items-center w-full rounded-lg  flex flex-wrap justify-between h-fit bg-white z-50 '
     >
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
