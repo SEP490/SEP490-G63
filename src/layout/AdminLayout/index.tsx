@@ -9,8 +9,11 @@ function AdminLayout({ children }: any) {
     return <Navigate to='/404notfound' state={{ from: location }} replace></Navigate>
   }
   return (
-    <div className='h-[100vh] overflow-hidden relative'>
-      <NavBar />
+    <div className='h-[100vh] overflow-hidden'>
+      <div className='h-[16vh] bg-[#e8eaed]'>
+        <NavBar />
+      </div>
+
       <div className='h-[84vh] overflow-auto'>{children}</div>
     </div>
   )

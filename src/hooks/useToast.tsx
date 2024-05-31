@@ -3,8 +3,8 @@ import { Zoom, toast } from 'react-toastify'
 const useToast = () => {
   const successNotification = (message: string) => {
     toast.success(message, {
-      position: 'bottom-right',
-      autoClose: 3000,
+      position: 'bottom-left',
+      autoClose: 1000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: false,
@@ -16,8 +16,8 @@ const useToast = () => {
   }
   const warningNotification = (message: string) => {
     toast.warning(message, {
-      position: 'bottom-right',
-      autoClose: 3000,
+      position: 'bottom-left',
+      autoClose: 1000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: false,
@@ -29,8 +29,8 @@ const useToast = () => {
   }
   const errorNotification = (message: string) => {
     toast.error(message, {
-      position: 'bottom-right',
-      autoClose: 3000,
+      position: 'bottom-left',
+      autoClose: 1000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: false,

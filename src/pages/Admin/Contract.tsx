@@ -13,7 +13,7 @@ const Contract = () => {
     setOpenModal(false)
   }
   return (
-    <div className='bg-[#e8eaed] h-full'>
+    <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex gap-3 justify-between w-full px-5 py-3'>
         <div className='relative w-[50%]'>
           <div className='absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none'>
@@ -25,9 +25,9 @@ const Contract = () => {
               xmlns='http://www.w3.org/2000/svg'
             >
               <path
-                fill-rule='evenodd'
+                fillRule='evenodd'
                 d='M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z'
-                clip-rule='evenodd'
+                clipRule='evenodd'
               ></path>
             </svg>
           </div>
