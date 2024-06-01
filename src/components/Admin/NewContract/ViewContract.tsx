@@ -1,5 +1,5 @@
 type Iprops = {
-  src: string
+  src: any
 }
 const ViewContract = ({ src }: Iprops) => {
   return <iframe src={src} width='100%' height='100%' />

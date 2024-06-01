@@ -33,7 +33,7 @@ export const createNewContract = async (data: any) => {
 }
 export const getNewContract = async (page: number, size: number) => {
   try {
-    const response = await axiosInstant.get(`contract?page=${page}&size=${size}`)
+    const response = await axiosInstant.get(`contract/${page}/${size}`)
     return response.data
   } catch (error) {
     console.log(error)
