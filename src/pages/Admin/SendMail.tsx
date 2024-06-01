@@ -1,9 +1,88 @@
+import React, { useState } from 'react'
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import ComboboxMail from '~/components/Admin/SendMail/ComboboxMail'
 import uploadIcon from '~/assets/images/uploadpdf.png'
+import { sendMail } from '~/services/contract.service'
+import useToast from '~/hooks/useToast'
+import Loading from '~/components/shared/Loading/Loading'
 
 const SendMail = () => {
+  const [selectedFiles, setSelectedFiles] = useState<any[]>([])
+  const [previewUrls, setPreviewUrls] = useState<string[]>([])
+  const [selectedTo, setSelectedTo] = useState<any[]>([])
+  const [selectedCc, setSelectedCc] = useState<any[]>([])
+  const [subject, setSubject] = useState<string>('')
+  const [editorData, setEditorData] = useState<string>('')
+  const { successNotification, errorNotification } = useToast()
+  const [loading, setLoading] = useState<boolean>(false)
+
+  const handleFileChange = (event: any) => {
+    const files = Array.from(event.target.files)
+    const newPreviewUrls: string[] = []
+
+    files.forEach((file: any) => {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        newPreviewUrls.push(reader.result as string)
+        if (newPreviewUrls.length === files.length) {
+          setPreviewUrls(newPreviewUrls)
+        }
+      }
+      reader.readAsDataURL(file)
+    })
+
+    setSelectedFiles(files)
+  }
+
+  const handleSubmit = async () => {
+    setLoading(true)
+    if (selectedTo.length === 0) {
+      errorNotification('Trường "Đến" không được để trống!')
+      setLoading(false)
+      return
+    }
+
+    if (subject.trim() === '') {
+      errorNotification('Trường "Tiêu đề" không được để trống!')
+      setLoading(false)
+      return
+    }
+
+    if (editorData.trim() === '') {
+      errorNotification('Trường "Nội dung" không được để trống!')
+      setLoading(false)
+      return
+    }
+
+    const formData = new FormData()
+    selectedTo.forEach((email) => {
+      formData.append('to', email.value)
+    })
+    selectedCc.forEach((email) => {
+      formData.append('cc', email.value)
+    })
+    formData.append('subject', subject)
+    formData.append('htmlContent', editorData)
+    selectedFiles.forEach((file) => {
+      formData.append('attachments', file)
+    })
+
+    try {
+      const response = await sendMail(formData)
+      if (response) {
+        successNotification('Gửi mail thành công!')
+      } else {
+        errorNotification('Xảy ra lỗi khi gửi mail!')
+      }
+    } catch (error) {
+      console.error('Error sending mail:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+  if (loading) return <Loading />
+
   return (
     <>
       <div className='place-content-center m-8 rounded p-6 shadow-xl shadow-neutral-400 w-2/3 mx-auto'>
@@ -12,44 +91,58 @@ const SendMail = () => {
         </div>
         <div className='py-2 border-b-2 border-slate-200 flex items-center'>
           <span className='w-20 font-bold'>Đến</span>
-          {/* <input type='text' className='w-full border-none rounded'></input> */}
-          <ComboboxMail />
+          <ComboboxMail selected={selectedTo} setSelected={setSelectedTo} />
         </div>
         <div className='py-2 border-b-2 border-slate-200 flex items-center'>
           <span className='w-20 font-bold'>CC</span>
-          <ComboboxMail />
-          {/* <input type='text' className='w-full border-none rounded'></input> */}
+          <ComboboxMail selected={selectedCc} setSelected={setSelectedCc} />
         </div>
         <div className='py-2 border-b-2 border-slate-200 flex items-center'>
           <span className='w-20 font-bold'>Tiêu đề</span>
-          <input type='text' className='border-none w-full rounded h-8' placeholder=''></input>
+          <input
+            type='text'
+            className='border-none w-full rounded h-8'
+            placeholder=''
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+          />
         </div>
         <h2 className='mt-8 font-bold mb-4'>Nội dung</h2>
         <CKEditor
           editor={ClassicEditor}
-          data='<p>Go Youn-jung (Tiếng Hàn: 고윤정; sinh ngày 22 tháng 4 năm 1996) là nữ diễn viên và người mẫu người Hàn Quốc.[2] Cô xuất hiện lần đầu trong bộ phim truyền hình Chàng trai ngoại cảm (2019) và đã được công nhận với vai phụ trong phim Netflix Sweet Home: Thế giới ma quái (2020). Cô còn được biết đến qua các bộ phim truyền hình Trường luật (2021), Hoàn hồn (2022–2023) và phim gốc Disney+ Moving (2023) cũng như phim Săn lùng (2022).</p>'
+          data='<p>Nội dung của bạn ở đây...</p>'
           onReady={(editor) => {
-            // You can store the "editor" and use when it is needed.
             console.log('Editor is ready to use!', editor)
           }}
-          onChange={(event) => {
-            console.log(event)
+          onChange={(event, editor) => {
+            const data = editor.getData()
+            setEditorData(data)
           }}
-          onBlur={(event, editor) => {
-            console.log('Blur.', editor)
-          }}
-          onFocus={(event, editor) => {
-            console.log('Focus.', editor)
-          }}
+          // onBlur={(event, editor) => {
+          //   console.log('Blur.', editor)
+          // }}
+          // onFocus={(event, editor) => {
+          //   console.log('Focus.', editor)
+          // }}
         />
         <div className='mt-4 text-center'>
-          <input type='file' id='file-upload' className='hidden' />
+          <input type='file' id='file-upload' className='hidden' onChange={handleFileChange} multiple />
           <label htmlFor='file-upload' className='cursor-pointer inline-flex items-center justify-center rounded-full'>
             <img src={uploadIcon} alt='Upload' className='w-30 h-20' />
           </label>
         </div>
+        {previewUrls.length > 0 && (
+          <div className='mt-4 text-center'>
+            {previewUrls.map((url, index) => (
+              <img key={index} src={url} alt={`Preview ${index}`} className='max-w-full max-h-85 mx-auto mb-4' />
+            ))}
+          </div>
+        )}
       </div>
-      <button className='py-2 px-6 mb-4 rounded bg-sky-800 text-white mt-4 text-center flex justify-center mx-auto hover:bg-sky-500 active:bg-sky-800 focus:outline-none focus:ring focus:ring-sky-300'>
+      <button
+        onClick={handleSubmit}
+        className='py-2 px-6 mb-4 rounded bg-sky-800 text-white mt-4 text-center flex justify-center mx-auto hover:bg-sky-500 active:bg-sky-800 focus:outline-none focus:ring focus:ring-sky-300'
+      >
         Gửi
       </button>
     </>

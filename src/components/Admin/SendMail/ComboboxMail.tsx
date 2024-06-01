@@ -8,12 +8,8 @@ type Option = {
 }
 
 const options: Option[] = [
-  { label: 'Junggie@gmail.com', value: 'grapes' },
-  { label: 'Yujinnie@gmail.com', value: 'mango' },
-  { label: 'Minjeong@gmail.com', value: 'strawberry' },
-  { label: 'Junggie@gmail.com', value: 'grapes' },
-  { label: 'Yujinnie@gmail.com', value: 'mango' },
-  { label: 'Minjeong@gmail.com', value: 'strawberry' }
+  { label: 'phantutunao@gmail.com', value: 'phantutunao@gmail.com' },
+  { label: 'ytbstart962@gmail.com', value: 'ytbstart962@gmail.com' }
 ]
 
 const handleNewField = (value: string): Option => ({
@@ -21,12 +17,12 @@ const handleNewField = (value: string): Option => ({
   value: value.toUpperCase().replace(/\s+/g, '_')
 })
 
-const ComboboxMail = () => {
-  const [selected, setSelected] = useState<Option[]>([])
+const ComboboxMail = ({ selected, setSelected }: any) => {
+  // const [selected, setSelected] = useState<Option[]>([])
 
   const handleRemove = (value: string, event: React.MouseEvent) => {
     event.stopPropagation()
-    setSelected(selected.filter((option) => option.value !== value))
+    setSelected(selected.filter((option: any) => option.value !== value))
   }
 
   const customValueRenderer = (selected: Option[], _options: Option[]) => {

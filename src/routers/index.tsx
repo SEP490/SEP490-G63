@@ -51,6 +51,14 @@ const Routes = () => {
           )
         },
         {
+          path: '/send-mail',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <SendMail />
+            </Suspense>
+          )
+        },
+        {
           path: '/employee',
           element: (
             <Suspense fallback={<Loading />}>
@@ -184,14 +192,7 @@ const Routes = () => {
         </Suspense>
       )
     },
-    {
-      path: '/send-mail',
-      element: (
-        <Suspense fallback={<Loading />}>
-          <SendMail />
-        </Suspense>
-      )
-    },
+
     {
       path: '/landing',
       element: <Home />

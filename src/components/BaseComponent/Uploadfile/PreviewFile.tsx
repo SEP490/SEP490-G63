@@ -99,7 +99,6 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef }: Iprops) => {
         formData.append('contractSignDate', moment(contractSignDate).format('DD/MM/YYYY'))
         listUrl.forEach((e: any) => {
           formData.append('images', e.file)
-          console.log('e.file', e.file)
         })
 
         const response = await createOldContract(formData)
