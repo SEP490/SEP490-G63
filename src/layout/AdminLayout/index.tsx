@@ -9,12 +9,12 @@ function AdminLayout({ children }: any) {
     return <Navigate to='/404notfound' state={{ from: location }} replace></Navigate>
   }
   return (
-    <div className='h-[100vh] overflow-hidden'>
-      <div className='h-[16vh] bg-[#e8eaed]'>
+    <div className='h-[100vh] overflow-hidden bg-[#e8eaed]'>
+      <div className=' fixed w-full'>
         <NavBar />
       </div>
 
-      <div className='h-[84vh] overflow-auto'>{children}</div>
+      <div className='mt-[16vh] h-[100vh] overflow-auto'>{children}</div>
     </div>
   )
 }
