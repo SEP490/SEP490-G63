@@ -10,6 +10,7 @@ import About from '~/pages/landing_page/About.tsx'
 import Blogs from '~/pages/landing_page/Blogs.tsx'
 import { ADMIN, USER } from '~/common/const/role.ts'
 import SendMail from '../pages/Admin/SendMail'
+import SendMailContract from '~/components/Admin/NewContract/SendMailContract.tsx'
 const Login = lazy(() => import('~/components/Login.tsx'))
 const Logout = lazy(() => import('~/components/Logout.tsx'))
 const Example = lazy(() => import('~/pages/Example.tsx'))
@@ -51,10 +52,12 @@ const Routes = () => {
           )
         },
         {
-          path: '/send-mail',
+          path: '/send-mail/:id',
           element: (
             <Suspense fallback={<Loading />}>
-              <SendMail />
+              <AdminLayout>
+                <SendMailContract />
+              </AdminLayout>
             </Suspense>
           )
         },

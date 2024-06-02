@@ -1,7 +1,14 @@
-import { Dialog, Transition } from '@headlessui/react'
+import { Dialog, Menu, Transition } from '@headlessui/react'
 import { Fragment, useEffect, useState } from 'react'
 import ViewContract from '~/components/Admin/NewContract/ViewContract'
-import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import {
+  Cog6ToothIcon,
+  EllipsisVerticalIcon,
+  NoSymbolIcon,
+  PaperAirplaneIcon,
+  PlusIcon,
+  XMarkIcon
+} from '@heroicons/react/24/outline'
 import { useNavigate } from 'react-router-dom'
 import { getNewContract } from '~/services/contract.service'
 import DocumentIcon from '~/assets/svg/document'
@@ -18,6 +25,8 @@ const Contract = () => {
   const navigate = useNavigate()
   const [selectedContract, setSelectedContract] = useState<DataContract | null>(null)
   const [openModal, setOpenModal] = useState(false)
+  const [editModal, setEditModal] = useState(false)
+
   const [data, setData] = useState<DataContract[] | []>([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(0)
@@ -76,7 +85,7 @@ const Contract = () => {
           <PlusIcon className='h-5 w-5' /> Tạo mới
         </button>
       </div>
-      <div className=' overflow-auto shadow-md sm:rounded-lg my-3  max-h-[73vh] '>
+      <div className='shadow-md sm:rounded-lg my-3  max-h-[73vh] '>
         <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
           <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
             <tr>
@@ -85,6 +94,9 @@ const Contract = () => {
               <th className='px-3 py-3'>Người tạo</th>
               <th scope='col' className='px-3 py-3'>
                 Ngày tạo
+              </th>
+              <th scope='col' className='px-3 py-3'>
+                Trạng thái
               </th>
               <th className='px-3 py-3'>Chi tiết</th>
 
@@ -101,6 +113,7 @@ const Contract = () => {
                 <td className='px-3 py-4'>{d.name}</td>
                 <td className='px-3 py-4'>{d.createBy}</td>
                 <td className='px-3 py-4'>{d.createDate}</td>
+                <td className='px-3 py-4'>Đang chờ</td>
                 <td className='px-3 py-4'>
                   <div
                     className='cursor-pointer text-blue-500 hover:underline'
@@ -112,7 +125,72 @@ const Contract = () => {
                     Xem
                   </div>
                 </td>
-                <td className='px-3 py-4'>Hành động</td>
+                <td className='px-3 py-4'>
+                  <div>
+                    <Menu as='div' className='relative inline-block text-left '>
+                      <Menu.Button className='flex justify-center items-center gap-3 cursor-pointer hover:text-blue-500'>
+                        <EllipsisVerticalIcon className='h-7 w-7' title='Hành động' />
+                      </Menu.Button>
+
+                      <Transition
+                        as={Fragment}
+                        enter='transition ease-out duration-100'
+                        enterFrom='transform opacity-0 scale-95'
+                        enterTo='transform opacity-100 scale-100'
+                        leave='transition ease-in duration-75'
+                        leaveFrom='transform opacity-100 scale-100'
+                        leaveTo='transform opacity-0 scale-95'
+                      >
+                        <Menu.Items className='absolute right-8 top-[-100%] z-50 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
+                          <Menu.Item>
+                            {({ active }) => (
+                              <button
+                                title='Sửa'
+                                onClick={() => {
+                                  navigate(`/send-mail/${d.id}`)
+                                }}
+                                className={`${
+                                  active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
+                              >
+                                <PaperAirplaneIcon className='h-5' /> Gửi ký
+                              </button>
+                            )}
+                          </Menu.Item>
+                          <Menu.Item>
+                            {({ active }) => (
+                              <button
+                                title='Sửa'
+                                onClick={() => {
+                                  setEditModal(true)
+                                  setSelectedContract(d)
+                                }}
+                                className={`${
+                                  active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
+                              >
+                                <Cog6ToothIcon className='h-5' /> Sửa
+                              </button>
+                            )}
+                          </Menu.Item>
+                          <Menu.Item>
+                            {({ active }) => (
+                              <button
+                                title='Xóa'
+                                onClick={() => {}}
+                                className={`${
+                                  active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                } group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm `}
+                              >
+                                <NoSymbolIcon className='h-5' /> Xóa
+                              </button>
+                            )}
+                          </Menu.Item>
+                        </Menu.Items>
+                      </Transition>
+                    </Menu>
+                  </div>
+                </td>
               </tr>
             ))}
           </tbody>

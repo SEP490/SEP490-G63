@@ -89,7 +89,7 @@ const NavBar = () => {
         </div>
       </div>
 
-      <div className='w-full flex justify-between px-4 items-center h-[10%] shadow-md bg-white'>
+      <div className='w-full flex justify-between px-4 items-center h-[8vh] shadow-md bg-white'>
         <div className='font-bold flex items-center my-2 '>
           <Bars3Icon
             className={`h-7 w-7 cursor-pointer hover:bg-gray-300 round  ed-md visible ${isMobile ? 'visible' : 'invisible'}`}
@@ -143,7 +143,7 @@ const NavBar = () => {
         )}
       </div>
       {!isMobile && (
-        <div className='w-full h-[40px]'>
+        <div className='w-full h-[8vh]'>
           <ul className={`flex h-full bg-main-color gap-1 px-10 text-white font-bold`}>
             {routerAdmin.map((r) => (
               <li
