@@ -64,14 +64,14 @@ const Employee = () => {
       }
     }
     fetchAPI()
-  }, [page, size, isOpen, searchData])
+  }, [page, size, isOpen, searchData, editModal, deleteModal])
   if (loading) return <Loading />
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex flex-wrap py-4'>
         <div className='w-full px-5'>
           <div className='flex gap-3 justify-between w-full'>
-            <div>
+            <div className='flex w-[50%]'>
               <div className='relative'>
                 <div className='absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none'>
                   <svg
@@ -106,7 +106,7 @@ const Employee = () => {
               <PlusIcon className='h-5 w-5' /> Thêm mới nhân viên
             </button>
           </div>
-          <div className=' overflow-auto shadow-md sm:rounded-lg my-3  max-h-[73vh] '>
+          <div className='shadow-md sm:rounded-lg my-3  max-h-[73vh] '>
             <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
               <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
                 <tr>

@@ -49,3 +49,11 @@ export const getNewContract = async (page: number, size: number) => {
     console.log(error)
   }
 }
+export const getNewContractById = async (id: string) => {
+  try {
+    const response = await axiosInstant.get(`contract/${id}`)
+    return response.data
+  } catch (error) {
+    console.log(error)
+  }
+}

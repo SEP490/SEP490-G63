@@ -31,7 +31,7 @@ const EditEmployee = ({ data, closeModal }: IProp) => {
     handleSubmit,
     formState: { errors }
   } = useForm<FromType>({ defaultValues: data })
-  const { successNotification } = useToast()
+  const { successNotification, errorNotification } = useToast()
   const [permissions, setPermissions] = useState(
     permissionsList.reduce((acc: CheckBoxValue, permission) => {
       acc[permission.value] =
@@ -52,17 +52,17 @@ const EditEmployee = ({ data, closeModal }: IProp) => {
   const getCheckedPermissions = useMemo(() => {
     return Object.keys(permissions).filter((permission) => permissions[permission])
   }, [permissions])
-  const onSubmit: SubmitHandler<FromType> = async (data) => {
+  const onSubmit: SubmitHandler<FromType> = async (dataForm) => {
     try {
-      if (getCheckedPermissions.length != 0) {
-        const response = await updateProfile({ ...data, permissions: getCheckedPermissions })
-        console.log({ ...data, permissions: getCheckedPermissions })
+      if (getCheckedPermissions.length != 0 && data != undefined) {
+        const response = await updateProfile(data.id, { ...dataForm, permissions: getCheckedPermissions })
+        console.log(response)
 
-        if (response) {
-          successNotification('OK')
+        if (response.code == '00' && response.object) {
+          successNotification('Chỉnh sửa thông tin người dùng thành công')
           closeModal()
-        }
-      }
+        } else errorNotification('Chỉnh sửa thông tin người dùng thất bại')
+      } else errorNotification('Quyền nhân viên không được để trống')
     } catch (error) {
       console.log(error)
     }
@@ -71,7 +71,7 @@ const EditEmployee = ({ data, closeModal }: IProp) => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className='items-center w-full rounded-lg  flex flex-wrap justify-between h-fit bg-white z-50 '
+      className='items-center w-full rounded-lg  flex flex-wrap  justify-between h-fit bg-white z-50 '
     >
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
         <label className='font-bold '>
@@ -119,7 +119,7 @@ const EditEmployee = ({ data, closeModal }: IProp) => {
           {errors.email?.message}
         </div>
       </div>
-      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
+      {/* <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
         <label className='font-bold '>
           Mật khẩu <sup className='text-red-500'>*</sup>
         </label>
@@ -133,16 +133,12 @@ const EditEmployee = ({ data, closeModal }: IProp) => {
         <div className={`text-red-500 absolute text-[12px] ${errors.password ? 'visible' : 'invisible'}`}>
           {errors.password?.message}
         </div>
-      </div>
+      </div> */}
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
-          CCCD/CMT <sup className='text-red-500'>*</sup>
-        </label>
+        <label className='font-bold '>CCCD/CMT</label>
         <input
           className={`${errors.identification_number ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-          {...register('identification_number', {
-            required: 'CCCD/CMT không được bỏ trống'
-          })}
+          {...register('identification_number')}
           placeholder='Nhập CCCD/CMT nhân viên'
         />
         <div className={`text-red-500 absolute text-[12px] ${errors.identification_number ? 'visible' : 'invisible'}`}>

@@ -10,11 +10,11 @@ function AdminLayout({ children }: any) {
   }
   return (
     <div className='h-[100vh] overflow-hidden bg-[#e8eaed]'>
-      <div className=' fixed w-full'>
+      <div className='fixed w-full'>
         <NavBar />
       </div>
 
-      <div className='mt-[16vh] h-[100vh] overflow-auto'>{children}</div>
+      <div className='mt-[16vh] h-[84vh] overflow-auto'>{children}</div>
     </div>
   )
 }
