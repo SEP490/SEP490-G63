@@ -71,7 +71,7 @@ const Employee = () => {
       <div className='flex flex-wrap py-4'>
         <div className='w-full px-5'>
           <div className='flex gap-3 justify-between w-full'>
-            <div className='flex'>
+            <div className='flex w-[50%]'>
               <div className='relative'>
                 <div className='absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none'>
                   <svg

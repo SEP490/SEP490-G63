@@ -7,13 +7,15 @@ import {
   NoSymbolIcon,
   PaperAirplaneIcon,
   PlusIcon,
-  XMarkIcon
+  XMarkIcon,
+  ArrowsRightLeftIcon
 } from '@heroicons/react/24/outline'
 import { useNavigate } from 'react-router-dom'
 import { getNewContract } from '~/services/contract.service'
 import DocumentIcon from '~/assets/svg/document'
 import Pagination from '~/components/BaseComponent/Pagination/Pagination'
 import Loading from '~/components/shared/Loading/Loading'
+import moment from 'moment'
 export interface DataContract {
   id: string
   name: string
@@ -50,33 +52,36 @@ const Contract = () => {
     fetchAPI()
   }, [page, size])
   if (loading) return <Loading />
+
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex gap-3 justify-between w-full px-5 py-3'>
-        <div className='w-[50%]'>
-          {/* <div className='absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none'>
-            <svg
-              className='w-5 h-5 text-gray-500 dark:text-gray-400'
-              aria-hidden='true'
-              fill='currentColor'
-              viewBox='0 0 20 20'
-              xmlns='http://www.w3.org/2000/svg'
-            >
-              <path
-                fillRule='evenodd'
-                d='M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z'
-                clipRule='evenodd'
-              ></path>
-            </svg>
-          </div> */}
+        <div className='flex w-[50%]'>
+          <div className='relative'>
+            <div className='absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none'>
+              <svg
+                className='w-5 h-5 text-gray-500 dark:text-gray-400'
+                aria-hidden='true'
+                fill='currentColor'
+                viewBox='0 0 20 20'
+                xmlns='http://www.w3.org/2000/svg'
+              >
+                <path
+                  fillRule='evenodd'
+                  d='M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z'
+                  clipRule='evenodd'
+                ></path>
+              </svg>
+            </div>
+          </div>
           <input
             type='text'
             id='table-search'
-            className='block p-2 ps-10 w-full text-sm text-gray-900 border border-gray-300 rounded-lg  bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-            placeholder='Tìm kiếm'
+            className='block p-2 ps-10 w-full text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+            placeholder='Tìm kiếm hợp đồng'
+            // onChange={handChangeInputSearch}
           />
         </div>
-
         <button
           type='button'
           onClick={() => navigate('create')}
@@ -111,9 +116,11 @@ const Contract = () => {
               >
                 <td className='px-3 py-4'>{size * page + index + 1}</td>
                 <td className='px-3 py-4'>{d.name}</td>
-                <td className='px-3 py-4'>{d.createBy}</td>
-                <td className='px-3 py-4'>{d.createDate}</td>
-                <td className='px-3 py-4'>Đang chờ</td>
+                <td className='px-3 py-4'>{d.createdBy}</td>
+                <td className='px-3 py-4'>
+                  {d?.createdDate ? moment(d?.createdDate).format('DD-MM-YYYY') : d?.createdDate}
+                </td>
+                <td className='px-3 py-4'>{d.status}</td>
                 <td className='px-3 py-4'>
                   <div
                     className='cursor-pointer text-blue-500 hover:underline'
@@ -147,7 +154,23 @@ const Contract = () => {
                               <button
                                 title='Sửa'
                                 onClick={() => {
-                                  navigate(`/send-mail/${d.id}`)
+                                  navigate(`/send-mail/${d.id}/1`)
+                                }}
+                                className={`${
+                                  active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
+                              >
+                                <ArrowsRightLeftIcon className='h-5' /> Trình ký
+                              </button>
+                            )}
+                          </Menu.Item>
+
+                          <Menu.Item>
+                            {({ active }) => (
+                              <button
+                                title='Sửa'
+                                onClick={() => {
+                                  navigate(`/send-mail/${d.id}/2`)
                                 }}
                                 className={`${
                                   active ? 'bg-blue-500 text-white' : 'text-gray-900'

@@ -52,7 +52,7 @@ const Routes = () => {
           )
         },
         {
-          path: '/send-mail/:id',
+          path: '/send-mail/:id/:type',
           element: (
             <Suspense fallback={<Loading />}>
               <AdminLayout>

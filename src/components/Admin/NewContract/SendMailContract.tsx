@@ -16,8 +16,8 @@ const SendMailContract = () => {
   const [subject, setSubject] = useState<string>('')
   const [editorData, setEditorData] = useState<string>('')
   const { successNotification, errorNotification } = useToast()
-  const [loading, setLoading] = useState<boolean>(false)
-  const { id } = useParams()
+  const [loading, setLoading] = useState<boolean>(true)
+  const { id, type } = useParams()
   const handleFileChange = (event: any) => {
     const files = Array.from(event.target.files)
     const newPreviewUrls: string[] = []
@@ -87,16 +87,22 @@ const SendMailContract = () => {
       try {
         if (id) {
           const response = await getNewContractById(id)
-          console.log(response)
+          if (response.code == '00' && response.object) {
+            if (type == '1') {
+              setSelectedTo([{ label: response.object.partyA.email, value: response.object.partyA.email }])
+            } else if (type == '2') {
+              setSelectedTo([{ label: response.object.partyB.email, value: response.object.partyB.email }])
+            }
+          } else errorNotification('Không tìm thấy thông tin')
+          setLoading(false)
         }
       } catch (e) {
         console.log(e)
       }
     }
     fetchApi()
-  }, [id])
+  }, [id, type])
   if (loading) return <Loading />
-
   return (
     <div className='h-full'>
       <div className='place-content-center bg-white m-8 rounded p-6 shadow-xl shadow-neutral-400 w-2/3 mx-auto'>
@@ -115,7 +121,7 @@ const SendMailContract = () => {
           <span className='w-20 font-bold'>Tiêu đề</span>
           <input
             type='text'
-            className='border-none w-full rounded h-8'
+            className=' w-full rounded h-8'
             placeholder=''
             value={subject}
             onChange={(e) => setSubject(e.target.value)}

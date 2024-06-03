@@ -71,7 +71,7 @@ const EditEmployee = ({ data, closeModal }: IProp) => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className='items-center w-full rounded-lg  flex flex-wrap justify-start justify-between h-fit bg-white z-50 '
+      className='items-center w-full rounded-lg  flex flex-wrap  justify-between h-fit bg-white z-50 '
     >
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
         <label className='font-bold '>
