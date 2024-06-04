@@ -54,8 +54,8 @@ const Contract = () => {
   if (loading) return <Loading />
 
   return (
-    <div className='bg-[#e8eaed] h-full overflow-auto'>
-      <div className='flex gap-3 justify-between w-full px-5 py-3'>
+    <div className='bg-[#e8eaed] h-full overflow-auto px-5'>
+      <div className='flex gap-3 justify-between w-full py-3'>
         <div className='flex w-[50%]'>
           <div className='relative'>
             <div className='absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none'>
@@ -90,7 +90,7 @@ const Contract = () => {
           <PlusIcon className='h-5 w-5' /> Tạo mới
         </button>
       </div>
-      <div className='shadow-md sm:rounded-lg my-3  max-h-[73vh] '>
+      <div className='shadow-md sm:rounded-lg my-3 max-h-[73vh] '>
         <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
           <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
             <tr>
@@ -228,7 +228,13 @@ const Contract = () => {
         )}
       </div>
       {data && data?.length != 0 && (
-        <Pagination totalPages={totalPage} currentPage={page + 1} onPageChange={handlePageChange} />
+        <Pagination
+          totalPages={totalPage}
+          currentPage={page + 1}
+          size={size}
+          setSize={setSize}
+          onPageChange={handlePageChange}
+        />
       )}
       <Transition appear show={openModal} as={Fragment}>
         <Dialog as='div' className='relative z-10 w-[90vw]' onClose={closeModal}>

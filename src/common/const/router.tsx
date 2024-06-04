@@ -24,5 +24,11 @@ export const routerAdmin = [
     title: 'Hợp đồng cũ',
     slug: '/old-contract',
     icon: <ClipboardDocumentListIcon className='h-4 w-4' />
+  },
+  {
+    id: 5,
+    title: 'Hợp đồng mẫu',
+    slug: '/template-contract',
+    icon: <ClipboardDocumentListIcon className='h-4 w-4' />
   }
 ]

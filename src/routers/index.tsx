@@ -5,12 +5,10 @@ import { lazy, Suspense } from 'react'
 import Error from '~/components/shared/Error/Error.tsx'
 import AdminLayout from '~/layout/AdminLayout/index.tsx'
 import Loading from '~/components/shared/Loading/Loading.tsx'
-import Layout from '~/pages/landing_page/Layout.tsx'
+
 import About from '~/pages/landing_page/About.tsx'
 import Blogs from '~/pages/landing_page/Blogs.tsx'
 import { ADMIN, USER } from '~/common/const/role.ts'
-import SendMail from '../pages/Admin/SendMail'
-import SendMailContract from '~/components/Admin/NewContract/SendMailContract.tsx'
 const Login = lazy(() => import('~/components/Login.tsx'))
 const Logout = lazy(() => import('~/components/Logout.tsx'))
 const Example = lazy(() => import('~/pages/Example.tsx'))
@@ -22,6 +20,8 @@ const Profile = lazy(() => import('~/pages/Profile.tsx'))
 const OldContract = lazy(() => import('~/pages/Admin/OldContract.tsx'))
 const Contract = lazy(() => import('~/pages/Admin/Contract.tsx'))
 const CreateContract = lazy(() => import('~/pages/Admin/CreateContract.tsx'))
+const TemplateContract = lazy(() => import('~/pages/Admin/TemplateContract.tsx'))
+const SendMailContract = lazy(() => import('~/components/Admin/NewContract/SendMailContract.tsx'))
 const Routes = () => {
   const { token, user } = useAuth()
   let routes: Array<any>
@@ -77,6 +77,16 @@ const Routes = () => {
             <Suspense fallback={<Loading />}>
               <AdminLayout>
                 <OldContract />
+              </AdminLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/template-contract',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <AdminLayout>
+                <TemplateContract />
               </AdminLayout>
             </Suspense>
           )

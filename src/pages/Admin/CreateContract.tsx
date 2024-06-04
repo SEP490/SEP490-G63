@@ -121,6 +121,7 @@ const CreateContract = () => {
           <SunEditor
             name='rule'
             placeholder='Căn cứ vào điều luật...'
+            height='60vh'
             setOptions={{
               buttonList: [
                 ['undo', 'redo'],
@@ -502,7 +503,7 @@ const CreateContract = () => {
           <SunEditor
             name='term'
             placeholder='Điều khoản'
-            height='100vh'
+            height='60vh'
             setOptions={{
               buttonList: [
                 ['undo', 'redo'],
@@ -531,7 +532,7 @@ const CreateContract = () => {
             className='middle my-3 none center mr-4 rounded-lg bg-[#0070f4] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
             data-ripple-light='true'
           >
-            Lưu bản nháp
+            Lưu bản mẫu
           </button>
           <button
             type='button'
