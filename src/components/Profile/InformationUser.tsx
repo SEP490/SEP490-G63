@@ -12,7 +12,7 @@ export interface UserData {
   department: string
   dob: string
   email: string
-  gender: number
+  gender: boolean
   identification_number: string
   name: string
   phone: string
@@ -88,8 +88,8 @@ const InformationUser = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className='w-full md:w-[80%]'>
-      <div className='flex flex-col items-center mx-3 py-4 px-3 justify-center bg-white rounded-md shadow-md'>
+    <form onSubmit={handleSubmit(onSubmit)} className='w-full md:w-[80%] '>
+      <div className='flex flex-col items-center mx-3 py-4 px-3 justify-center md:min-h-[70vh] bg-white rounded-md shadow-md'>
         <div className=' flex w-full px-3 flex-col items-center justify-center '>
           <img src={imgUpload} className='w-[100px] h-[100px] object-cover rounded-[50%]' />
           <input type='file' ref={inputRef} accept='.jpg, .png' onChange={handleChangeImage} className='hidden' />
@@ -186,6 +186,7 @@ const InformationUser = () => {
           </div>
           <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
             <label className='font-semibold text-xs'>Ngày sinh</label>
+
             <input
               type='date'
               className={`text-xs block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
@@ -197,10 +198,9 @@ const InformationUser = () => {
             <select
               className={`text-xs block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
               {...register('gender')}
-              defaultValue={data?.gender}
             >
-              <option value={0}>Nam</option>
-              <option value={1}>Nữ</option>
+              <option value={'true'}>Nam</option>
+              <option value={'false'}>Nữ</option>
             </select>
           </div>
           <div className='w-full flex justify-end'>
