@@ -46,7 +46,8 @@
     "react-toastify": "^10.0.5",
     "suneditor": "^2.46.3",
     "suneditor-react": "^3.6.1",
-    "tesseract.js": "^5.1.0"
+    "tesseract.js": "^5.1.0",
+    "vietqr": "^1.1.9"
   },
   "devDependencies": {
     "@types/aos": "^3.0.7",

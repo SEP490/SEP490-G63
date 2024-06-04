@@ -6,9 +6,11 @@ import useToast from '~/hooks/useToast'
 import { useNavigate } from 'react-router-dom'
 import { Dialog, Transition } from '@headlessui/react'
 
-import { useState, Fragment } from 'react'
+import { useState, Fragment, useEffect, SetStateAction } from 'react'
 import { createTemplateContract } from '~/services/template-contract.service'
-import { validateEmailDebounced } from '~/utils/checkMail'
+import { handleSubmitBank, validateEmailDebounced } from '~/utils/checkMail'
+import { VietQR } from 'vietqr'
+import Loading from '~/components/shared/Loading/Loading'
 interface FormType {
   name: string
   number: string
@@ -37,7 +39,34 @@ const CreateContract = () => {
   const { successNotification, errorNotification } = useToast()
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState<boolean>(true)
+
+  const [banks, setBanks] = useState([])
+  const clientID = '258d5960-4516-48c5-9316-bb95b978424f'
+  const apiKey = '5fe49afb-2e07-4079-baf6-ca58356deadd'
+  const [selectedBankA, setSelectedBankA] = useState('')
+  const [selectedBankB, setSelectedBankB] = useState('')
+  const [accountNumberA, setAccountNumberA] = useState<any>()
+  const [accountNumberB, setAccountNumberB] = useState<any>()
+
+  useEffect(() => {
+    const vietQR = new VietQR({
+      clientID,
+      apiKey
+    })
+
+    vietQR
+      .getBanks()
+      .then((response: { data: SetStateAction<never[]> }) => {
+        setBanks(response.data)
+      })
+      .catch((err: any) => {
+        console.error('Error fetching banks:', err)
+      })
+  }, [])
+
   const onSubmit = async () => {
+    setLoading(true)
     const rule: any = document.getElementsByName('rule')[0]
     const term: any = document.getElementsByName('term')[0]
     const bodyData = {
@@ -48,6 +77,12 @@ const CreateContract = () => {
       partyB: formInfoPartB.getValues()
     }
     try {
+      const resultA = await handleSubmitBank(selectedBankA, accountNumberA)
+      const resultB = await handleSubmitBank(selectedBankB, accountNumberB)
+      if (resultA === false || resultB === false) {
+        errorNotification('Số tài khoản không hợp lệ, Vui lòng kiểm tra lại!')
+        return
+      }
       const response = await createNewContract(bodyData)
       if (response?.code == '00' && response.object && response.success) {
         successNotification('Tạo hợp đồng thành công')
@@ -57,6 +92,8 @@ const CreateContract = () => {
       } else errorNotification('Tạo hợp đồng thất bại')
     } catch (error) {
       console.log(error)
+    } finally {
+      setLoading(false)
     }
   }
   const handleCreateContractTemplate = async () => {
@@ -79,6 +116,7 @@ const CreateContract = () => {
       errorNotification('Không thể tạo mới mẫu hợp đồng')
     }
   }
+  if (loading) return <Loading />
   return (
     <div className='bg-[#e8eaed] h-fit min-h-full flex justify-center py-6'>
       <form
@@ -269,6 +307,7 @@ const CreateContract = () => {
             Số TK ngân hàng<sup className='text-red-500'>*</sup>
           </label>
           <input
+            onInput={(e: any) => setAccountNumberA(e.target.value)}
             className={`${formInfoPartA.formState.errors.bankId ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
             placeholder='Nhập STK'
@@ -286,14 +325,27 @@ const CreateContract = () => {
           <label className='font-light '>
             Tên ngân hàng<sup className='text-red-500'>*</sup>
           </label>
-          <input
+          {/* <input
             className={`${formInfoPartA.formState.errors.bankName ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
             placeholder='Nhập tên ngân hàng'
             {...formInfoPartA.register('bankName', {
               required: 'Tên ngân hàng không được để trống'
             })}
-          />
+          /> */}
+          <select className='block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'>
+            {banks.map((bank: { id: number; code: string; shortName: string; logo: string; bin: string }, index) => (
+              <option
+                {...formInfoPartA.register('bankName')}
+                key={bank.id}
+                value={bank.code}
+                selected={index === 0}
+                onChange={() => setSelectedBankA(bank.code)}
+              >
+                ({bank.bin}){bank.shortName}
+              </option>
+            ))}
+          </select>
           <div
             className={`text-red-500 absolute text-[12px] ${formInfoPartA.formState.errors.bankName ? 'visible' : 'invisible'}`}
           >
@@ -452,6 +504,7 @@ const CreateContract = () => {
             Số TK ngân hàng<sup className='text-red-500'>*</sup>
           </label>
           <input
+            onInput={(e: any) => setAccountNumberB(e.target.value)}
             className={`${formInfoPartB.formState.errors.bankId ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
             placeholder='Nhập STK'
@@ -469,14 +522,27 @@ const CreateContract = () => {
           <label className='font-light '>
             Tên ngân hàng<sup className='text-red-500'>*</sup>
           </label>
-          <input
+          {/* <input
             className={`${formInfoPartB.formState.errors.bankName ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
             placeholder='Nhập tên ngân hàng'
             {...formInfoPartB.register('bankName', {
               required: 'Tên ngân hàng không được để trống'
             })}
-          />
+          /> */}
+          <select className='block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'>
+            {banks.map((bank: { id: number; code: string; shortName: string; logo: string; bin: string }, index) => (
+              <option
+                {...formInfoPartB.register('bankName')}
+                key={bank.id}
+                value={bank.code}
+                selected={index === 0}
+                onChange={() => setSelectedBankB(bank.code)}
+              >
+                ({bank.bin}){bank.shortName}
+              </option>
+            ))}
+          </select>
           <div
             className={`text-red-500 absolute text-[12px] ${formInfoPartB.formState.errors.bankName ? 'visible' : 'invisible'}`}
           >

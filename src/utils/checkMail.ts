@@ -55,3 +55,34 @@ export async function validateEmailWithDebounce(email: string) {
   }
 }
 export const validateEmailDebounced = debounce(validateEmailWithDebounce, 3000)
+
+export const handleSubmitBank = async (bin: string, accountNumber: number) => {
+  const clientID = '258d5960-4516-48c5-9316-bb95b978424f'
+  const apiKey = '5fe49afb-2e07-4079-baf6-ca58356deadd'
+  try {
+    const response = await axios.post(
+      'https://api.vietqr.io/v2/lookup',
+      {
+        bin,
+        accountNumber
+      },
+      {
+        headers: {
+          'x-client-id': clientID,
+          'x-api-key': apiKey,
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+
+    const data = response.data
+    if (data.code === '00') {
+      return true
+    } else {
+      return false
+    }
+  } catch (error) {
+    console.error(error)
+    alert('Lỗi khi truy cập API')
+  }
+}
