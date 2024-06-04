@@ -5,7 +5,6 @@ import { Cog6ToothIcon, EllipsisVerticalIcon, NoSymbolIcon, PlusIcon } from '@he
 import ViewEmployee from '~/components/Admin/Employee/ViewEmployee'
 import { getListEmployee } from '~/services/employee.service'
 import EditEmployee from '~/components/Admin/Employee/EditEmployee'
-import { getUserW } from '~/config/user'
 import DocumentIcon from '~/assets/svg/document'
 import Pagination from '~/components/BaseComponent/Pagination/Pagination'
 import Loading from '~/components/shared/Loading/Loading'
@@ -208,7 +207,13 @@ const Employee = () => {
             )}
           </div>
           {data && data?.length != 0 && (
-            <Pagination totalPages={totalPage} currentPage={page + 1} onPageChange={handlePageChange} />
+            <Pagination
+              totalPages={totalPage}
+              currentPage={page + 1}
+              size={size}
+              setSize={setSize}
+              onPageChange={handlePageChange}
+            />
           )}
         </div>
       </div>
