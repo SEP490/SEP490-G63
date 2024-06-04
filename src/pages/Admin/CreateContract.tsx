@@ -39,7 +39,7 @@ const CreateContract = () => {
   const { successNotification, errorNotification } = useToast()
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
-  const [loading, setLoading] = useState<boolean>(true)
+  const [loading, setLoading] = useState<boolean>(false)
 
   const [banks, setBanks] = useState([])
   const clientID = '258d5960-4516-48c5-9316-bb95b978424f'
