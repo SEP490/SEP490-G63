@@ -1,57 +1,103 @@
-import React, { useState } from 'react'
-import { MultiSelect } from 'react-multi-select-component'
-import { MdClear } from 'react-icons/md'
+import React, { useState, useEffect } from 'react'
+import AsyncCreatableSelect from 'react-select/async-creatable'
+import axios from 'axios'
+import useToast from '~/hooks/useToast'
 
-type Option = {
-  label: string
-  value: string
-}
-
-const options: Option[] = [
-  { label: 'phantutunao@gmail.com', value: 'phantutunao@gmail.com' },
-  { label: 'ytbstart962@gmail.com', value: 'ytbstart962@gmail.com' }
+const colourOptions: any[] = [
+  { label: 'tu@gmail.com', value: 'tu@gmail.com' },
+  { label: 'ha@gmail.com', value: 'ha@gmail.com' },
+  { label: 'hai@gmail.com', value: 'hai@gmail.com' }
 ]
 
-const handleNewField = (value: string): Option => ({
-  label: value,
-  value: value.toUpperCase().replace(/\s+/g, '_')
-})
+const filterColors = (inputValue: string) => {
+  return colourOptions.filter((i) => i.label.toLowerCase().includes(inputValue.toLowerCase()))
+}
 
-const ComboboxMail = ({ selected, setSelected }: any) => {
-  // const [selected, setSelected] = useState<Option[]>([])
+const promiseOptions = (inputValue: string) =>
+  new Promise<any[]>((resolve) => {
+    setTimeout(() => {
+      resolve(filterColors(inputValue))
+    }, 500)
+  })
 
-  const handleRemove = (value: string, event: React.MouseEvent) => {
-    event.stopPropagation()
-    setSelected(selected.filter((option: any) => option.value !== value))
+const validateEmail = async (email: string) => {
+  const apiKey = '5e309805ed0446e2949c9c8722d5b02d'
+
+  try {
+    const response = await axios.get('https://emailvalidation.abstractapi.com/v1/', {
+      params: {
+        api_key: apiKey,
+        email: email
+      }
+    })
+
+    return response.data.deliverability === 'DELIVERABLE'
+  } catch (error) {
+    console.error('Error checking email:', error)
+    return false
+  }
+}
+
+const AsyncCreatableSelectComponent = ({ selected, setSelected }: any) => {
+  const { successNotification, errorNotification } = useToast()
+
+  const createOption = async (inputValue: string) => {
+    const isValidEmail = await validateEmail(inputValue)
+
+    if (isValidEmail) {
+      return {
+        label: inputValue,
+        value: inputValue.toLowerCase().replace(/\s+/g, '_')
+      }
+    } else {
+      errorNotification('Email không tồn tại hoặc không hợp lệ!')
+      return null
+    }
   }
 
-  const customValueRenderer = (selected: Option[], _options: Option[]) => {
-    return selected.length
-      ? selected.map(({ label, value }: Option) => (
-          <div key={value} className='inline-block bg-slate-200 mx-1 px-4 py-1 rounded relative'>
-            {label}
-            <MdClear
-              className='absolute top-1 right-0 cursor-pointer'
-              onClick={(event) => handleRemove(value, event)}
-            />
-          </div>
-        ))
-      : 'Tìm kiếm'
+  const handleCreate = async (inputValue: string) => {
+    const newOption = await createOption(inputValue)
+    if (newOption) {
+      setSelected((prevOptions: any) => [...prevOptions, newOption])
+    }
+  }
+
+  const customStyles = {
+    control: (provided: any) => ({
+      ...provided,
+      border: '1px solid transparent',
+      boxShadow: 'none',
+      '&:hover': {
+        border: '1px solid transparent'
+      }
+    }),
+    input: (provided: any) => ({
+      ...provided,
+      boxShadow: 'none',
+      '& input': {
+        boxShadow: 'none !important',
+        border: 'none !important',
+        '&:focus': {
+          boxShadow: 'none !important',
+          border: 'none !important'
+        }
+      }
+    })
   }
 
   return (
     <div className='w-full'>
-      <MultiSelect
-        options={options}
+      <AsyncCreatableSelect
+        cacheOptions
+        loadOptions={promiseOptions}
+        isMulti
         value={selected}
         onChange={setSelected}
-        labelledBy='Tìm kiếm'
-        isCreatable={true}
-        onCreateOption={handleNewField}
-        valueRenderer={customValueRenderer}
+        onCreateOption={handleCreate}
+        styles={customStyles}
       />
     </div>
   )
 }
 
-export default ComboboxMail
+export default AsyncCreatableSelectComponent
