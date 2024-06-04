@@ -8,6 +8,7 @@ import { Dialog, Transition } from '@headlessui/react'
 
 import { useState, Fragment } from 'react'
 import { createTemplateContract } from '~/services/template-contract.service'
+import { validateEmailDebounced } from '~/utils/checkMail'
 interface FormType {
   name: string
   number: string
@@ -159,6 +160,7 @@ const CreateContract = () => {
             Email<sup className='text-red-500'>*</sup>
           </label>
           <input
+            onInput={(event) => validateEmailDebounced((event.target as HTMLInputElement).value)}
             className={`${formInfoPartA.formState.errors.email ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
             placeholder='Nhập email công ty'
@@ -341,6 +343,7 @@ const CreateContract = () => {
             Email<sup className='text-red-500'>*</sup>
           </label>
           <input
+            onInput={(event) => validateEmailDebounced((event.target as HTMLInputElement).value)}
             className={`${formInfoPartB.formState.errors.email ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
             placeholder='Nhập email công ty'

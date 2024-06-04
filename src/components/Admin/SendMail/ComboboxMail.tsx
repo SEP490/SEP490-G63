@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react'
 import AsyncCreatableSelect from 'react-select/async-creatable'
-import axios from 'axios'
 import useToast from '~/hooks/useToast'
+import { validateEmail } from '~/utils/checkMail'
 
 const colourOptions: any[] = [
   { label: 'tu@gmail.com', value: 'tu@gmail.com' },
@@ -20,26 +19,8 @@ const promiseOptions = (inputValue: string) =>
     }, 500)
   })
 
-const validateEmail = async (email: string) => {
-  const apiKey = '5e309805ed0446e2949c9c8722d5b02d'
-
-  try {
-    const response = await axios.get('https://emailvalidation.abstractapi.com/v1/', {
-      params: {
-        api_key: apiKey,
-        email: email
-      }
-    })
-
-    return response.data.deliverability === 'DELIVERABLE'
-  } catch (error) {
-    console.error('Error checking email:', error)
-    return false
-  }
-}
-
 const AsyncCreatableSelectComponent = ({ selected, setSelected }: any) => {
-  const { successNotification, errorNotification } = useToast()
+  const { errorNotification } = useToast()
 
   const createOption = async (inputValue: string) => {
     const isValidEmail = await validateEmail(inputValue)
