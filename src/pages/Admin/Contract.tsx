@@ -55,8 +55,14 @@ const Contract = () => {
     setPage(page - 1)
   }
 
-  const { data, error, isError, isLoading, refetch, isFetching } = useQuery('new-contract', () =>
-    getNewContract(page, size)
+  const { data, error, isError, isLoading, refetch, isFetching } = useQuery(
+    'new-contract',
+    () => getNewContract(page, size),
+    {
+      onSuccess: (response) => {
+        setTotalPage(response.object?.totalPages)
+      }
+    }
   )
 
   const deleteTemplate = useMutation(deleteNewContract, {
@@ -275,13 +281,15 @@ const Contract = () => {
         )}
       </div>
       {data && data?.length != 0 && (
-        <Pagination
-          totalPages={totalPage}
-          currentPage={page + 1}
-          size={size}
-          setSize={setSize}
-          onPageChange={handlePageChange}
-        />
+        <div className='fixed bottom-10 left-1/2 transform -translate-x-1/2'>
+          <Pagination
+            totalPages={totalPage}
+            currentPage={page + 1}
+            size={size}
+            setSize={setSize}
+            onPageChange={handlePageChange}
+          />
+        </div>
       )}
       <Transition appear show={openModal} as={Fragment}>
         <Dialog as='div' className='relative z-10 w-[90vw]' onClose={closeModal}>

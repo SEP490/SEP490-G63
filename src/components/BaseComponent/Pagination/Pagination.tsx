@@ -18,7 +18,7 @@ const Pagination = ({ totalPages, currentPage, onPageChange, size, setSize }: an
 
     if (startPage > 1) {
       pages.push(
-        <button key={1} onClick={() => handlePageChange(1)}>
+        <button className='rounded-md' key={1} onClick={() => handlePageChange(1)}>
           1
         </button>
       )
@@ -29,7 +29,7 @@ const Pagination = ({ totalPages, currentPage, onPageChange, size, setSize }: an
 
     for (let i = startPage; i <= endPage; i++) {
       pages.push(
-        <button key={i} onClick={() => handlePageChange(i)} className={i === page ? 'active' : ''}>
+        <button key={i} onClick={() => handlePageChange(i)} className={`${i === page ? 'active' : ''} rounded-md`}>
           {i}
         </button>
       )
@@ -51,17 +51,17 @@ const Pagination = ({ totalPages, currentPage, onPageChange, size, setSize }: an
 
   return (
     <div className='pagination-container'>
-      <button onClick={() => handlePageChange(page - 1)} disabled={page === 1}>
+      <button className='rounded-md' onClick={() => handlePageChange(page - 1)} disabled={page === 1}>
         <h6 style={{ fontSize: 12, padding: 3 }}>Previous</h6>
       </button>
       {renderPages()}
-      <button onClick={() => handlePageChange(page + 1)} disabled={page === totalPages}>
+      <button className='rounded-md' onClick={() => handlePageChange(page + 1)} disabled={page === totalPages}>
         <h6 style={{ fontSize: 12, padding: 3 }}>Next</h6>
       </button>
 
       <Listbox value={size} onChange={setSize}>
         <div className='flex flex-col'>
-          <Listbox.Button className='w-[100px] m-0 cursor-default rounded-sm bg-white py-3 flex justify-center  px-3 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm'>
+          <Listbox.Button className='w-[90px] m-0 cursor-default rounded-md bg-white py-12 flex justify-center  px-3 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm'>
             {size} / page
           </Listbox.Button>
           <div className='relative mx-1'>
