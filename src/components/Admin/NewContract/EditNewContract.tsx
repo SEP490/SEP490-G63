@@ -1,16 +1,17 @@
 import { useForm } from 'react-hook-form'
 import SunEditor from 'suneditor-react'
-import '../../css/suneditor.css'
-import { createNewContract } from '~/services/contract.service'
+import '../../../css/suneditor.css'
+import { createNewContract, getNewContractById, updateNewContract } from '~/services/contract.service'
 import useToast from '~/hooks/useToast'
 import { useNavigate } from 'react-router-dom'
-import { Dialog, Transition } from '@headlessui/react'
-
-import { useState, Fragment, useEffect, SetStateAction } from 'react'
-import { createTemplateContract } from '~/services/template-contract.service'
-import { handleSubmitBank, validateEmailDebounced } from '~/utils/checkMail'
+import { SetStateAction, useEffect, useMemo, useState } from 'react'
+import { useMutation, useQueryClient } from 'react-query'
+import { updateTemplateContract } from '~/services/template-contract.service'
+import { AxiosError } from 'axios'
+import { validateEmailDebounced } from '~/utils/checkMail'
 import { VietQR } from 'vietqr'
 import Loading from '~/components/shared/Loading/Loading'
+
 interface FormType {
   name: string
   number: string
@@ -27,27 +28,36 @@ interface CompanyInfo {
   bankName: string
   bankAccOwer: string
 }
-const CreateContract = () => {
-  const {
-    register,
-    getValues,
-    trigger,
-    formState: { errors }
-  } = useForm<FormType>()
+
+const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) => {
+  console.log('selectedContract', selectedContract)
+
+  const { successNotification, errorNotification } = useToast()
   const formInfoPartA = useForm<CompanyInfo>()
   const formInfoPartB = useForm<CompanyInfo>()
-  const { successNotification, errorNotification } = useToast()
-  const navigate = useNavigate()
-  const [open, setOpen] = useState(false)
-  const [loading, setLoading] = useState<boolean>(false)
-
-  const [banks, setBanks] = useState([])
-  const clientID = '258d5960-4516-48c5-9316-bb95b978424f'
-  const apiKey = '5fe49afb-2e07-4079-baf6-ca58356deadd'
   const [selectedBankA, setSelectedBankA] = useState('')
   const [selectedBankB, setSelectedBankB] = useState('')
   const [accountNumberA, setAccountNumberA] = useState<any>()
   const [accountNumberB, setAccountNumberB] = useState<any>()
+  const [loading, setLoading] = useState(true)
+  const [detailContract, setDetailContract] = useState<any>()
+  const queryClient = useQueryClient()
+
+  const {
+    register,
+    getValues,
+    trigger,
+    reset,
+    formState: { errors }
+  } = useForm<FormType>({
+    defaultValues: useMemo(() => {
+      return detailContract
+    }, [detailContract])
+  })
+
+  const [banks, setBanks] = useState([])
+  const clientID = '258d5960-4516-48c5-9316-bb95b978424f'
+  const apiKey = '5fe49afb-2e07-4079-baf6-ca58356deadd'
 
   useEffect(() => {
     const vietQR = new VietQR({
@@ -65,60 +75,79 @@ const CreateContract = () => {
       })
   }, [])
 
+  useEffect(() => {
+    async function fetchAPI() {
+      try {
+        if (selectedContract?.id) {
+          const response = await getNewContractById(selectedContract.id)
+          if (response.object) {
+            setDetailContract(response.object)
+            reset(response.object)
+            if (response.object.partyA) {
+              formInfoPartA.reset(response.object.partyA)
+            }
+            if (response.object.partyB) {
+              formInfoPartB.reset(response.object.partyB)
+            }
+            setLoading(false)
+          }
+        }
+      } catch (e) {
+        console.log(e)
+      }
+    }
+    fetchAPI()
+  }, [formInfoPartA, formInfoPartB, reset, selectedContract?.id])
+
+  const updateContract = useMutation(updateNewContract, {
+    onSuccess: () => {
+      console.log('Done API')
+      successNotification('Cập nhật hợp đồng thành công')
+      queryClient.invalidateQueries('new-contract')
+      queryClient.invalidateQueries('contract-history')
+      handleCloseModal()
+      setTimeout(() => refetch(), 500)
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      errorNotification(error.response?.data.message || '')
+    }
+  })
+
   const onSubmit = async () => {
     setLoading(true)
     const rule: any = document.getElementsByName('rule')[0]
     const term: any = document.getElementsByName('term')[0]
     const bodyData = {
       ...getValues(),
+      id: detailContract?.id,
       rule: rule.value,
       term: term.value,
       partyA: formInfoPartA.getValues(),
       partyB: formInfoPartB.getValues()
     }
-    try {
-      const resultA = await handleSubmitBank(selectedBankA, accountNumberA)
-      const resultB = await handleSubmitBank(selectedBankB, accountNumberB)
-      if (resultA === false || resultB === false) {
-        errorNotification('Số tài khoản không hợp lệ, Vui lòng kiểm tra lại!')
-        return
-      }
-      const response = await createNewContract(bodyData)
-      if (response?.code == '00' && response.object && response.success) {
-        successNotification('Tạo hợp đồng thành công')
-        setTimeout(() => {
-          navigate('/contract')
-        }, 500)
-      } else errorNotification('Tạo hợp đồng thất bại')
-    } catch (error) {
-      console.log(error)
-    } finally {
-      setLoading(false)
-    }
+    updateContract.mutate(bodyData)
+    // try {
+    //   //   const resultA = await handleSubmitBank(selectedBankA, accountNumberA)
+    //   //   const resultB = await handleSubmitBank(selectedBankB, accountNumberB)
+    //   //   if (resultA === false || resultB === false) {
+    //   //     errorNotification('Số tài khoản không hợp lệ, Vui lòng kiểm tra lại!')
+    //   //     return
+    //   //   }
+    //   const response = await updateNewContract(bodyData)
+    //   if (response?.code == '00' && response.object && response.success) {
+    //     successNotification('Cập nhật hợp đồng thành công')
+    //   } else errorNotification('Cập nhật hợp đồng thất bại')
+    // } catch (error) {
+    //   console.log(error)
+    // } finally {
+    //   setLoading(false)
+    // }
   }
-  const handleCreateContractTemplate = async () => {
-    try {
-      const rule: any = document.getElementsByName('rule')[0]
-      const term: any = document.getElementsByName('term')[0]
-      const dataTemplate = {
-        nameContract: getValues().name,
-        numberContract: getValues().number,
-        ruleContract: rule.value,
-        termContract: term.value,
-        ...formInfoPartA.getValues()
-      }
-      const response = await createTemplateContract(dataTemplate)
-      if (response.success && response.code == '00') {
-        successNotification('Tạo mẫu hợp đồng thành công')
-        setOpen(false)
-      } else errorNotification('Tạo mới mẫu hợp đồng thất bại')
-    } catch (e) {
-      errorNotification('Không thể tạo mới mẫu hợp đồng')
-    }
-  }
+
   if (loading) return <Loading />
+
   return (
-    <div className='bg-[#e8eaed] h-fit min-h-full flex justify-center py-6'>
+    <div className='full flex justify-center overflow-auto h-[90%] mb-6'>
       <form
         className='justify-center sm:justify-between w-[90%] md:w-[90%] rounded-md border flex flex-wrap px-4 h-fit bg-white py-4'
         autoComplete='on'
@@ -161,6 +190,7 @@ const CreateContract = () => {
             name='rule'
             placeholder='Căn cứ vào điều luật...'
             height='60vh'
+            setContents={detailContract?.rule}
             setOptions={{
               buttonList: [
                 ['undo', 'redo'],
@@ -339,7 +369,7 @@ const CreateContract = () => {
                 {...formInfoPartA.register('bankName')}
                 key={bank.id}
                 value={bank.code}
-                selected={index === 0}
+                selected={detailContract?.partyA?.bankName == bank.shortName}
                 onChange={() => setSelectedBankA(bank.code)}
               >
                 ({bank.bin}){bank.shortName}
@@ -536,7 +566,7 @@ const CreateContract = () => {
                 {...formInfoPartB.register('bankName')}
                 key={bank.id}
                 value={bank.code}
-                selected={index === 0}
+                selected={detailContract?.partyB?.bankName == bank.shortName}
                 onChange={() => setSelectedBankB(bank.code)}
               >
                 ({bank.bin}){bank.shortName}
@@ -573,6 +603,7 @@ const CreateContract = () => {
             name='term'
             placeholder='Điều khoản'
             height='60vh'
+            setContents={detailContract?.term}
             setOptions={{
               buttonList: [
                 ['undo', 'redo'],
@@ -596,16 +627,6 @@ const CreateContract = () => {
           <button
             type='button'
             onClick={async () => {
-              setOpen(true)
-            }}
-            className='middle my-3 none center mr-4 rounded-lg bg-[#0070f4] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
-            data-ripple-light='true'
-          >
-            Lưu bản mẫu
-          </button>
-          <button
-            type='button'
-            onClick={async () => {
               const result = await trigger()
               const result2 = await formInfoPartB.trigger()
               const result3 = await formInfoPartA.trigger()
@@ -617,59 +638,11 @@ const CreateContract = () => {
             className='middle my-3 none center mr-4 rounded-lg bg-[#0070f4] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
             data-ripple-light='true'
           >
-            Tạo
+            Cập nhật
           </button>
         </div>
       </form>
-      <Transition appear show={open} as={Fragment}>
-        <Dialog as='div' className='relative z-10 w-[90vw]' onClose={() => setOpen(false)}>
-          <Transition.Child
-            as={Fragment}
-            enter='ease-out duration-300'
-            enterFrom='opacity-0'
-            enterTo='opacity-100'
-            leave='ease-in duration-200'
-            leaveFrom='opacity-100'
-            leaveTo='opacity-0'
-          >
-            <div className='fixed inset-0 bg-black/25' />
-          </Transition.Child>
-
-          <div className='fixed inset-0 overflow-y-auto'>
-            <div className='flex min-h-full  items-center justify-center p-4 text-center'>
-              <Transition.Child
-                as={Fragment}
-                enter='ease-out duration-300'
-                enterFrom='opacity-0 scale-95'
-                enterTo='opacity-100 scale-100'
-                leave='ease-in duration-200'
-                leaveFrom='opacity-100 scale-100'
-                leaveTo='opacity-0 scale-95'
-              >
-                <Dialog.Panel className='w-[100vw] md:w-[40vw] md:h-fittransform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all'>
-                  <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
-                    Thông báo
-                  </Dialog.Title>
-                  <div>
-                    <div>Xác định lưu hợp đồng thành bản mẫu?</div>
-                    <div className='w-full flex justify-end mt-6'>
-                      <button
-                        onClick={handleCreateContractTemplate}
-                        type='button'
-                        className='middle  none center mr-4 rounded-lg bg-red-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#ff00002f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
-                        data-ripple-light='true'
-                      >
-                        Xác nhận
-                      </button>
-                    </div>
-                  </div>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
     </div>
   )
 }
-export default CreateContract
+export default EditNewContract
