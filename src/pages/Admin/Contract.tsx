@@ -11,11 +11,16 @@ import {
   ArrowsRightLeftIcon
 } from '@heroicons/react/24/outline'
 import { useNavigate } from 'react-router-dom'
-import { getNewContract } from '~/services/contract.service'
+import { deleteNewContract, getNewContract } from '~/services/contract.service'
 import DocumentIcon from '~/assets/svg/document'
 import Pagination from '~/components/BaseComponent/Pagination/Pagination'
 import Loading from '~/components/shared/Loading/Loading'
 import moment from 'moment'
+import { useMutation, useQuery } from 'react-query'
+import { AxiosError } from 'axios'
+import useToast from '~/hooks/useToast'
+import EditNewContract from '~/components/Admin/NewContract/EditNewContract'
+import EditTemplateContract from '~/components/Admin/TemplateContract/EditTemplateContract'
 export interface DataContract {
   id: string
   name: string
@@ -25,33 +30,70 @@ export interface DataContract {
 }
 const Contract = () => {
   const navigate = useNavigate()
+  const { successNotification, errorNotification } = useToast()
   const [selectedContract, setSelectedContract] = useState<DataContract | null>(null)
   const [openModal, setOpenModal] = useState(false)
   const [editModal, setEditModal] = useState(false)
+  const [deleteModal, setDeleteModal] = useState(false)
 
-  const [data, setData] = useState<DataContract[] | []>([])
-  const [loading, setLoading] = useState(true)
+  // const [data, setData] = useState<DataContract[] | []>([])
+  // const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(5)
   const [totalPage, setTotalPage] = useState(1)
   const closeModal = () => {
     setOpenModal(false)
   }
+  const handleCloseModal = () => {
+    setDeleteModal(false)
+    setOpenModal(false)
+    setEditModal(false)
+    setSelectedContract(null)
+  }
+
   const handlePageChange = (page: any) => {
     setPage(page - 1)
   }
-  useEffect(() => {
-    const fetchAPI = async () => {
-      const response = await getNewContract(page, size)
-      if (response) {
-        setData(response.object?.content)
-        setTotalPage(response?.object?.totalPages)
-        setLoading(false)
-      }
+
+  const { data, error, isError, isLoading, refetch, isFetching } = useQuery('new-contract', () =>
+    getNewContract(page, size)
+  )
+
+  const deleteTemplate = useMutation(deleteNewContract, {
+    onSuccess: () => {
+      successNotification('Xóa thành công!')
+      handleCloseModal()
+      setTimeout(() => refetch(), 500)
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      errorNotification(error.response?.data.message || '')
     }
-    fetchAPI()
-  }, [page, size])
-  if (loading) return <Loading />
+  })
+  const handleDelete = () => {
+    if (selectedContract) deleteTemplate.mutate(selectedContract.id)
+  }
+
+  useEffect(() => {
+    if (isError) {
+      errorNotification((error as AxiosError)?.message || '')
+    }
+  }, [data, isError, error, errorNotification])
+  useEffect(() => {
+    refetch()
+  }, [page, refetch, size])
+  if (isLoading || isFetching) return <Loading />
+
+  // useEffect(() => {
+  //   const fetchAPI = async () => {
+  //     const response = await getNewContract(page, size)
+  //     if (response) {
+  //       setData(response.object?.content)
+  //       setTotalPage(response?.object?.totalPages)
+  //       setLoading(false)
+  //     }
+  //   }
+  //   fetchAPI()
+  // }, [page, size])
 
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto px-5'>
@@ -109,7 +151,7 @@ const Contract = () => {
             </tr>
           </thead>
           <tbody className='w-full '>
-            {data?.map((d: any, index: number) => (
+            {data?.object?.content?.map((d: any, index: number) => (
               <tr
                 key={d.id}
                 className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
@@ -182,25 +224,30 @@ const Contract = () => {
                           </Menu.Item>
                           <Menu.Item>
                             {({ active }) => (
-                              <button
-                                title='Sửa'
-                                onClick={() => {
-                                  setEditModal(true)
-                                  setSelectedContract(d)
-                                }}
-                                className={`${
-                                  active ? 'bg-blue-500 text-white' : 'text-gray-900'
-                                } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
-                              >
-                                <Cog6ToothIcon className='h-5' /> Sửa
-                              </button>
+                              <>
+                                <button
+                                  title='Sửa'
+                                  onClick={() => {
+                                    setEditModal(true)
+                                    setSelectedContract(d)
+                                  }}
+                                  className={`${
+                                    active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                  } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
+                                >
+                                  <Cog6ToothIcon className='h-5' /> Sửa
+                                </button>
+                              </>
                             )}
                           </Menu.Item>
                           <Menu.Item>
                             {({ active }) => (
                               <button
                                 title='Xóa'
-                                onClick={() => {}}
+                                onClick={() => {
+                                  setDeleteModal(true)
+                                  setSelectedContract(d)
+                                }}
                                 className={`${
                                   active ? 'bg-blue-500 text-white' : 'text-gray-900'
                                 } group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm `}
@@ -266,6 +313,9 @@ const Contract = () => {
                     <div className='font-semibold'>Xem hợp đồng</div>
                     <div className='flex gap-3 items-center'>
                       <button
+                        onClick={() => {
+                          navigate(`history/${selectedContract?.id}`)
+                        }}
                         type='button'
                         className='center rounded-lg bg-[#0070f4] py-2 px-4 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
                       >
@@ -275,6 +325,94 @@ const Contract = () => {
                     </div>
                   </div>
                   <ViewContract src={selectedContract?.file} />
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+      <Transition appear show={editModal} as={Fragment}>
+        <Dialog as='div' className='relative z-10 w-[90vw]' onClose={handleCloseModal}>
+          <Transition.Child
+            as={Fragment}
+            enter='ease-out duration-300'
+            enterFrom='opacity-0'
+            enterTo='opacity-100'
+            leave='ease-in duration-200'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0'
+          >
+            <div className='fixed inset-0 bg-black/25' />
+          </Transition.Child>
+
+          <div className='fixed inset-0 overflow-y-auto'>
+            <div className='flex min-h-full items-center justify-center p-4 text-center'>
+              <Transition.Child
+                as={Fragment}
+                enter='ease-out duration-300'
+                enterFrom='opacity-0 scale-95'
+                enterTo='opacity-100 scale-100'
+                leave='ease-in duration-200'
+                leaveFrom='opacity-100 scale-100'
+                leaveTo='opacity-0 scale-95'
+              >
+                <Dialog.Panel className='w-[100vw] md:w-[90vw] md:h-[94vh] transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all'>
+                  <div className='flex justify-between mb-2'>
+                    <div className='font-semibold'>Chỉnh sửa</div>
+                    <XMarkIcon className='h-5 w-5 mr-3 mb-3 cursor-pointer' onClick={handleCloseModal} />
+                  </div>
+                  <EditNewContract
+                    selectedContract={selectedContract}
+                    handleCloseModal={handleCloseModal}
+                    refetch={refetch}
+                  />
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+      <Transition appear show={deleteModal} as={Fragment}>
+        <Dialog as='div' className='relative z-10 w-[90vw]' onClose={handleCloseModal}>
+          <Transition.Child
+            as={Fragment}
+            enter='ease-out duration-300'
+            enterFrom='opacity-0'
+            enterTo='opacity-100'
+            leave='ease-in duration-200'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0'
+          >
+            <div className='fixed inset-0 bg-black/25' />
+          </Transition.Child>
+          <div className='fixed inset-0 overflow-y-auto'>
+            <div className='flex min-h-full  items-center justify-center p-4 text-center'>
+              <Transition.Child
+                as={Fragment}
+                enter='ease-out duration-300'
+                enterFrom='opacity-0 scale-95'
+                enterTo='opacity-100 scale-100'
+                leave='ease-in duration-200'
+                leaveFrom='opacity-100 scale-100'
+                leaveTo='opacity-0 scale-95'
+              >
+                <Dialog.Panel className='w-[100vw] md:w-[40vw] md:h-fit transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+                  <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
+                    Xóa hợp đồng
+                  </Dialog.Title>
+                  <div>
+                    <div>Bạn có chắc chắn với quyết định của mình?</div>
+                    <div className='w-full flex justify-end mt-6'>
+                      <button
+                        type='button'
+                        className='middle  none center mr-4 rounded-lg bg-red-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#ff00002f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
+                        data-ripple-light='true'
+                        onClick={() => handleDelete()}
+                      >
+                        Đồng ý
+                      </button>
+                    </div>
+                  </div>
                 </Dialog.Panel>
               </Transition.Child>
             </div>
