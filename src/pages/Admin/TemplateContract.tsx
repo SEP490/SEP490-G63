@@ -64,7 +64,7 @@ const TemplateContract = () => {
   useEffect(() => {
     refetch()
   }, [page, size])
-  if (isLoading || isFetching) return <Loading />
+  // if (isLoading || isFetching) return <Loading />
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex flex-wrap py-4'>
