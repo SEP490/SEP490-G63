@@ -57,3 +57,30 @@ export const getNewContractById = async (id: string) => {
     console.log(error)
   }
 }
+
+export const updateNewContract = async (data: any) => {
+  try {
+    const response = await axiosInstant.post(`contract`, data)
+    return response.data
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const deleteNewContract = async (id: string) => {
+  try {
+    const response = await axiosInstant.delete(`contract/${id}`)
+    return response.data
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const getContractHistory = async (contract: string) => {
+  try {
+    const response = await axiosInstant.get(`contract-history?contract=${contract}`)
+    return response.data
+  } catch (error) {
+    console.log(error)
+  }
+}
