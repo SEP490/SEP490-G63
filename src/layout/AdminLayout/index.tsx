@@ -13,7 +13,7 @@ function AdminLayout({ children }: any) {
   }
   return (
     <div className='h-[100vh] overflow-hidden bg-[#e8eaed]'>
-      <div className='fixed w-full'>
+      <div className='fixed w-full z-30'>
         <NavBar />
       </div>
 

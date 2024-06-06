@@ -30,13 +30,9 @@ interface CompanyInfo {
 }
 
 const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) => {
-  console.log('selectedContract', selectedContract)
-
   const { successNotification, errorNotification } = useToast()
   const formInfoPartA = useForm<CompanyInfo>()
   const formInfoPartB = useForm<CompanyInfo>()
-  const [selectedBankA, setSelectedBankA] = useState('')
-  const [selectedBankB, setSelectedBankB] = useState('')
   const [accountNumberA, setAccountNumberA] = useState<any>()
   const [accountNumberB, setAccountNumberB] = useState<any>()
   const [loading, setLoading] = useState(true)
@@ -49,11 +45,7 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
     trigger,
     reset,
     formState: { errors }
-  } = useForm<FormType>({
-    defaultValues: useMemo(() => {
-      return detailContract
-    }, [detailContract])
-  })
+  } = useForm<FormType>()
 
   const [banks, setBanks] = useState([])
   const clientID = '258d5960-4516-48c5-9316-bb95b978424f'
@@ -64,7 +56,6 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
       clientID,
       apiKey
     })
-
     vietQR
       .getBanks()
       .then((response: { data: SetStateAction<never[]> }) => {
@@ -114,7 +105,6 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
   })
 
   const onSubmit = async () => {
-    setLoading(true)
     const rule: any = document.getElementsByName('rule')[0]
     const term: any = document.getElementsByName('term')[0]
     const bodyData = {
@@ -125,6 +115,7 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
       partyA: formInfoPartA.getValues(),
       partyB: formInfoPartB.getValues()
     }
+
     updateContract.mutate(bodyData)
     // try {
     //   //   const resultA = await handleSubmitBank(selectedBankA, accountNumberA)
@@ -144,12 +135,12 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
     // }
   }
 
-  if (loading) return <Loading />
+  if (updateContract.isLoading || loading) return <Loading />
 
   return (
     <div className='full flex justify-center overflow-auto h-[90%] mb-6'>
       <form
-        className='justify-center sm:justify-between w-[90%] md:w-[90%] rounded-md border flex flex-wrap px-4 h-fit bg-white py-4'
+        className='justify-center sm:justify-between w-full rounded-md flex flex-wrap  h-full bg-white my=5'
         autoComplete='on'
       >
         <div className='w-full mt-3 font-bold'>Thông tin cơ bản</div>
@@ -363,16 +354,13 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
               required: 'Tên ngân hàng không được để trống'
             })}
           /> */}
-          <select className='block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'>
-            {banks.map((bank: { id: number; code: string; shortName: string; logo: string; bin: string }, index) => (
-              <option
-                {...formInfoPartA.register('bankName')}
-                key={bank.id}
-                value={bank.code}
-                selected={detailContract?.partyA?.bankName == bank.shortName}
-                onChange={() => setSelectedBankA(bank.code)}
-              >
-                ({bank.bin}){bank.shortName}
+          <select
+            {...formInfoPartA.register('bankName')}
+            className='block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+          >
+            {banks.map((bank: { id: number; code: string; shortName: string; logo: string; bin: string }) => (
+              <option key={bank.id} value={bank.shortName}>
+                {bank.shortName}
               </option>
             ))}
           </select>
@@ -560,16 +548,13 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
               required: 'Tên ngân hàng không được để trống'
             })}
           /> */}
-          <select className='block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'>
-            {banks.map((bank: { id: number; code: string; shortName: string; logo: string; bin: string }, index) => (
-              <option
-                {...formInfoPartB.register('bankName')}
-                key={bank.id}
-                value={bank.code}
-                selected={detailContract?.partyB?.bankName == bank.shortName}
-                onChange={() => setSelectedBankB(bank.code)}
-              >
-                ({bank.bin}){bank.shortName}
+          <select
+            {...formInfoPartB.register('bankName')}
+            className='block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+          >
+            {banks.map((bank: { id: number; code: string; shortName: string; logo: string; bin: string }) => (
+              <option key={bank.id} value={bank.shortName}>
+                {bank.shortName}
               </option>
             ))}
           </select>

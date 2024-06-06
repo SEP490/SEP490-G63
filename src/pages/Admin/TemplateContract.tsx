@@ -13,6 +13,7 @@ import { Fragment, useEffect, useState } from 'react'
 import { useMutation, useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import EditTemplateContract from '~/components/Admin/TemplateContract/EditTemplateContract'
+import ViewTemplateContract from '~/components/Admin/TemplateContract/ViewTemplateContract'
 import Pagination from '~/components/BaseComponent/Pagination/Pagination'
 import Loading from '~/components/shared/Loading/Loading'
 import useToast from '~/hooks/useToast'
@@ -24,6 +25,7 @@ const TemplateContract = () => {
   const [totalPage, setTotalPage] = useState(1)
   const [deleteModal, setDeleteModal] = useState(false)
   const [openModal, setOpenModal] = useState(false)
+  const [detailModal, setDetailModal] = useState(false)
   const navigate = useNavigate()
   const [selectedContract, setSelectedContract] = useState<any>(null)
   const { successNotification, errorNotification } = useToast()
@@ -37,6 +39,7 @@ const TemplateContract = () => {
   const handleCloseModal = () => {
     setDeleteModal(false)
     setOpenModal(false)
+    setDetailModal(false)
     setSelectedContract(null)
   }
   const deleteTemplate = useMutation(deleteTemplateContract, {
@@ -64,7 +67,7 @@ const TemplateContract = () => {
   useEffect(() => {
     refetch()
   }, [page, size])
-  // if (isLoading || isFetching) return <Loading />
+  if (isLoading || isFetching) return <Loading />
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex flex-wrap py-4'>
@@ -111,7 +114,7 @@ const TemplateContract = () => {
                 <tr>
                   <th className='px-3 py-3'>STT</th>
                   <th className='px-3 py-3'>Tên hợp đồng</th>
-                  <th className='px-3 py-3'>Người tạo</th>
+                  <th className='px-3 py-3'>Chi tiết</th>
                   <th className='px-3 py-3'>Ngày tạo</th>
 
                   <th className='px-3 py-3 w-1'></th>
@@ -126,7 +129,17 @@ const TemplateContract = () => {
                   >
                     <td className='px-3 py-4'>{page * size + index + 1}</td>
                     <td className='px-3 py-4'>{d.nameContract}</td>
-                    <td className='px-3 py-4'>{d.createdBy}</td>
+                    <td className='px-3 py-4'>
+                      <div
+                        className='cursor-pointer text-blue-500 hover:underline'
+                        onClick={() => {
+                          setSelectedContract(d)
+                          setDetailModal(true)
+                        }}
+                      >
+                        Xem
+                      </div>
+                    </td>
 
                     <td className='px-3 py-4'>{d.createdDate ? moment(d.createdDate).format('DD/MM/YYYY') : ''}</td>
 
@@ -206,44 +219,9 @@ const TemplateContract = () => {
           )}
         </div>
       </div>
-      {/* <Transition appear show={isOpen} as={Fragment}>
-    <Dialog as='div' className='relative z-10 w-[90vw]' onClose={handleCloseModal}>
-      <Transition.Child
-        as={Fragment}
-        enter='ease-out duration-300'
-        enterFrom='opacity-0'
-        enterTo='opacity-100'
-        leave='ease-in duration-200'
-        leaveFrom='opacity-100'
-        leaveTo='opacity-0'
-      >
-        <div className='fixed inset-0 bg-black/25' />
-      </Transition.Child>
 
-      <div className='fixed inset-0 overflow-y-auto'>
-        <div className='flex min-h-full  items-center justify-center p-4 text-center'>
-          <Transition.Child
-            as={Fragment}
-            enter='ease-out duration-300'
-            enterFrom='opacity-0 scale-95'
-            enterTo='opacity-100 scale-100'
-            leave='ease-in duration-200'
-            leaveFrom='opacity-100 scale-100'
-            leaveTo='opacity-0 scale-95'
-          >
-            <Dialog.Panel className='w-[100vw] md:w-[80vw] min-h-[90vh] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
-              <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
-                Tải lên
-              </Dialog.Title>
-              <UploadFile handleCloseModal={handleCloseModal} />
-            </Dialog.Panel>
-          </Transition.Child>
-        </div>
-      </div>
-    </Dialog>
-  </Transition> */}
       <Transition appear show={deleteModal} as={Fragment}>
-        <Dialog as='div' className='relative z-10 w-[90vw]' onClose={handleCloseModal}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={handleCloseModal}>
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'
@@ -290,7 +268,7 @@ const TemplateContract = () => {
         </Dialog>
       </Transition>
       <Transition appear show={openModal} as={Fragment}>
-        <Dialog as='div' className='relative z-10 w-[90vw]' onClose={handleCloseModal}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={handleCloseModal}>
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'
@@ -320,6 +298,47 @@ const TemplateContract = () => {
                     <XMarkIcon className='h-5 w-5 mr-3 mb-3 cursor-pointer' onClick={handleCloseModal} />
                   </div>
                   <EditTemplateContract
+                    selectedContract={selectedContract}
+                    handleCloseModal={handleCloseModal}
+                    refetch={refetch}
+                  />
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+      <Transition appear show={detailModal} as={Fragment}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={handleCloseModal}>
+          <Transition.Child
+            as={Fragment}
+            enter='ease-out duration-300'
+            enterFrom='opacity-0'
+            enterTo='opacity-100'
+            leave='ease-in duration-200'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0'
+          >
+            <div className='fixed inset-0 bg-black/25' />
+          </Transition.Child>
+
+          <div className='fixed inset-0 overflow-y-auto'>
+            <div className='flex min-h-full items-center justify-center p-4 text-center'>
+              <Transition.Child
+                as={Fragment}
+                enter='ease-out duration-300'
+                enterFrom='opacity-0 scale-95'
+                enterTo='opacity-100 scale-100'
+                leave='ease-in duration-200'
+                leaveFrom='opacity-100 scale-100'
+                leaveTo='opacity-0 scale-95'
+              >
+                <Dialog.Panel className='w-[100vw] md:w-[90vw] md:h-[94vh] transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all'>
+                  <div className='flex justify-between'>
+                    <div className='font-semibold'>Chi tiết</div>
+                    <XMarkIcon className='h-5 w-5 mr-3 mb-3 cursor-pointer' onClick={handleCloseModal} />
+                  </div>
+                  <ViewTemplateContract
                     selectedContract={selectedContract}
                     handleCloseModal={handleCloseModal}
                     refetch={refetch}
