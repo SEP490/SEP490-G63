@@ -88,19 +88,6 @@ const Contract = () => {
     refetch()
   }, [page, refetch, size])
   if (isLoading || isFetching) return <Loading />
-
-  // useEffect(() => {
-  //   const fetchAPI = async () => {
-  //     const response = await getNewContract(page, size)
-  //     if (response) {
-  //       setData(response.object?.content)
-  //       setTotalPage(response?.object?.totalPages)
-  //       setLoading(false)
-  //     }
-  //   }
-  //   fetchAPI()
-  // }, [page, size])
-
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto px-5'>
       <div className='flex gap-3 justify-between w-full py-3'>
@@ -138,7 +125,7 @@ const Contract = () => {
           <PlusIcon className='h-5 w-5' /> Tạo mới
         </button>
       </div>
-      <div className='shadow-md sm:rounded-lg my-3 max-h-[73vh] '>
+      <div className='shadow-md sm:rounded-lg my-3 '>
         <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
           <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
             <tr>
@@ -153,7 +140,7 @@ const Contract = () => {
               </th>
               <th className='px-3 py-3'>Chi tiết</th>
 
-              <th className='px-3 py-3'>Hành động</th>
+              <th className='px-3 py-3 w-[30px]'></th>
             </tr>
           </thead>
           <tbody className='w-full '>
@@ -166,7 +153,7 @@ const Contract = () => {
                 <td className='px-3 py-4'>{d.name}</td>
                 <td className='px-3 py-4'>{d.createdBy}</td>
                 <td className='px-3 py-4'>
-                  {d?.createdDate ? moment(d?.createdDate).format('DD-MM-YYYY') : d?.createdDate}
+                  {d?.createdDate ? moment(d?.createdDate).format('DD/MM/YYYY') : d?.createdDate}
                 </td>
                 <td className='px-3 py-4'>{d.status}</td>
                 <td className='px-3 py-4'>
@@ -230,20 +217,18 @@ const Contract = () => {
                           </Menu.Item>
                           <Menu.Item>
                             {({ active }) => (
-                              <>
-                                <button
-                                  title='Sửa'
-                                  onClick={() => {
-                                    setEditModal(true)
-                                    setSelectedContract(d)
-                                  }}
-                                  className={`${
-                                    active ? 'bg-blue-500 text-white' : 'text-gray-900'
-                                  } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
-                                >
-                                  <Cog6ToothIcon className='h-5' /> Sửa
-                                </button>
-                              </>
+                              <button
+                                title='Sửa'
+                                onClick={() => {
+                                  setEditModal(true)
+                                  setSelectedContract(d)
+                                }}
+                                className={`${
+                                  active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
+                              >
+                                <Cog6ToothIcon className='h-5' /> Sửa
+                              </button>
                             )}
                           </Menu.Item>
                           <Menu.Item>
@@ -281,18 +266,17 @@ const Contract = () => {
         )}
       </div>
       {data && data?.length != 0 && (
-        <div className='fixed bottom-10 left-1/2 transform -translate-x-1/2'>
-          <Pagination
-            totalPages={totalPage}
-            currentPage={page + 1}
-            size={size}
-            setSize={setSize}
-            onPageChange={handlePageChange}
-          />
-        </div>
+        <Pagination
+          totalPages={totalPage}
+          currentPage={page + 1}
+          size={size}
+          setSize={setSize}
+          setPage={setPage}
+          onPageChange={handlePageChange}
+        />
       )}
       <Transition appear show={openModal} as={Fragment}>
-        <Dialog as='div' className='relative z-10 w-[90vw]' onClose={closeModal}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeModal}>
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'
@@ -340,7 +324,7 @@ const Contract = () => {
         </Dialog>
       </Transition>
       <Transition appear show={editModal} as={Fragment}>
-        <Dialog as='div' className='relative z-10 w-[90vw]' onClose={handleCloseModal}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={handleCloseModal}>
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'
@@ -381,7 +365,7 @@ const Contract = () => {
         </Dialog>
       </Transition>
       <Transition appear show={deleteModal} as={Fragment}>
-        <Dialog as='div' className='relative z-10 w-[90vw]' onClose={handleCloseModal}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={handleCloseModal}>
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'

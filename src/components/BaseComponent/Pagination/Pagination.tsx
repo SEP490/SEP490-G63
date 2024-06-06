@@ -2,11 +2,11 @@ import { useState, Fragment } from 'react'
 import './Pagination.css' // Import CSS file
 import { Listbox, Transition } from '@headlessui/react'
 const sizeData = [5, 10, 20]
-const Pagination = ({ totalPages, currentPage, onPageChange, size, setSize }: any) => {
-  const [page, setPage] = useState(currentPage)
+const Pagination = ({ totalPages, currentPage, onPageChange, size, setSize, setPage }: any) => {
+  const [page, setPage_] = useState(currentPage)
 
   const handlePageChange = (newPage: any) => {
-    setPage(newPage)
+    setPage_(newPage)
     onPageChange(newPage)
   }
 
@@ -59,7 +59,13 @@ const Pagination = ({ totalPages, currentPage, onPageChange, size, setSize }: an
         <h6 style={{ fontSize: 12, padding: 3 }}>Next</h6>
       </button>
 
-      <Listbox value={size} onChange={setSize}>
+      <Listbox
+        value={size}
+        onChange={(v) => {
+          setSize(v)
+          setPage(0)
+        }}
+      >
         <div className='flex flex-col'>
           <Listbox.Button className='w-[90px] m-0 cursor-default rounded-md bg-white py-12 flex justify-center  px-3 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm'>
             {size} / page

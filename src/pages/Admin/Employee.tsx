@@ -218,7 +218,7 @@ const Employee = () => {
         </div>
       </div>
       <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as='div' className='relative z-10 w-[90vw]' onClose={closeModal}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeModal}>
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'
@@ -254,7 +254,7 @@ const Employee = () => {
         </Dialog>
       </Transition>
       <Transition appear show={viewDetail} as={Fragment}>
-        <Dialog as='div' className='relative z-10 w-[90vw]' onClose={closeAllModal}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeAllModal}>
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'
@@ -290,7 +290,7 @@ const Employee = () => {
         </Dialog>
       </Transition>
       <Transition appear show={editModal} as={Fragment}>
-        <Dialog as='div' className='relative z-10 w-[90vw]' onClose={closeAllModal}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeAllModal}>
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'
@@ -326,7 +326,7 @@ const Employee = () => {
         </Dialog>
       </Transition>
       <Transition appear show={deleteModal} as={Fragment}>
-        <Dialog as='div' className='relative z-10 w-[90vw]' onClose={closeAllModal}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeAllModal}>
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'

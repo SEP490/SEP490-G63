@@ -4,12 +4,11 @@ import '../../../css/suneditor.css'
 import { createNewContract } from '~/services/contract.service'
 import useToast from '~/hooks/useToast'
 import { useNavigate } from 'react-router-dom'
-import { SetStateAction, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useMutation } from 'react-query'
 import { updateTemplateContract } from '~/services/template-contract.service'
 import { AxiosError } from 'axios'
-import Loading from '~/components/shared/Loading/Loading'
-import { VietQR } from 'vietqr'
+
 interface FormType {
   nameContract: string
   numberContract: string
@@ -25,61 +24,16 @@ interface FormType {
   email: string
 }
 
-const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: any) => {
+const ViewTemplateContract = ({ selectedContract, handleCloseModal, refetch }: any) => {
   const {
     register,
-    getValues,
-    handleSubmit,
     formState: { errors }
   } = useForm<FormType>({ defaultValues: selectedContract })
 
-  const { successNotification, errorNotification } = useToast()
-  const navigate = useNavigate()
-  const updateTemplate = useMutation(updateTemplateContract, {
-    onSuccess: () => {
-      successNotification('Sửa thành công')
-      handleCloseModal()
-      setTimeout(() => refetch(), 500)
-    },
-    onError: (error: AxiosError<{ message: string }>) => {
-      errorNotification(error.response?.data.message || '')
-    }
-  })
-  const [banks, setBanks] = useState([])
-  const clientID = '258d5960-4516-48c5-9316-bb95b978424f'
-  const apiKey = '5fe49afb-2e07-4079-baf6-ca58356deadd'
-
-  useEffect(() => {
-    const vietQR = new VietQR({
-      clientID,
-      apiKey
-    })
-    vietQR
-      .getBanks()
-      .then((response: { data: SetStateAction<never[]> }) => {
-        setBanks(response.data)
-      })
-      .catch((err: any) => {
-        console.error('Error fetching banks:', err)
-      })
-  }, [])
-
-  const onSubmit = async () => {
-    const rule: any = document.getElementsByName('rule')[0]
-    const term: any = document.getElementsByName('term')[0]
-    const bodyData = {
-      ...getValues(),
-      ruleContract: rule.value,
-      termContract: term.value
-    }
-    updateTemplate.mutate({ id: selectedContract.id, data: bodyData })
-  }
-  if (updateTemplate.isLoading) return <Loading />
   return (
-    <div className=' full flex justify-center overflow-auto h-[90%] mb-6'>
+    <div className=' full flex justify-center overflow-auto h-[90%] '>
       <form
-        onSubmit={handleSubmit(onSubmit)}
-        className='justify-center sm:justify-between w-full rounded-md flex h-full flex-wrap my-5 bg-white'
+        className='justify-center sm:justify-between w-full rounded-md flex h-full flex-wrap mb-5 bg-white'
         autoComplete='on'
       >
         <div className='w-full mt-5 relative'>
@@ -89,6 +43,7 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
           <input
             className={`${errors.nameContract ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             placeholder='Nhập tên hợp đồng'
+            disabled
             {...register('nameContract', {
               required: 'Tên hợp đồng không được để trống'
             })}
@@ -104,6 +59,7 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
           <input
             className={`${errors.numberContract ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled
             placeholder='Nhập số hợp đồng'
             {...register('numberContract', {
               required: 'Số hợp đồng không được để trống'
@@ -119,6 +75,7 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             name='rule'
             placeholder='Căn cứ vào điều luật...'
             height='40vh'
+            disable
             setContents={selectedContract?.ruleContract}
             setOptions={{
               buttonList: [
@@ -141,6 +98,7 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
           <input
             className={`${errors.taxNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled
             placeholder='Nhập mã số thuế'
             {...register('taxNumber', {
               required: 'Mã số thuế không được để trống'
@@ -158,6 +116,7 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             className={`${errors.name ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
             placeholder='Nhập tên công ty'
+            disabled
             {...register('name', {
               required: 'Tên công ty không được để trống'
             })}
@@ -173,6 +132,7 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
           <input
             className={`${errors.email ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled
             placeholder='Nhập email công ty'
             {...register('email', {
               required: 'Email công ty không được để trống'
@@ -189,6 +149,7 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
           <input
             className={`${errors.address ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled
             placeholder='Nhập địa chỉ công ty'
             {...register('address', {
               required: 'Mã số thuế không được để trống'
@@ -207,6 +168,7 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             className={`${errors.presenter ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
             placeholder='Nhập tên người đại diện'
+            disabled
             {...register('presenter', {
               required: 'Người đại diện không được để trống'
             })}
@@ -222,6 +184,7 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
           <input
             className={`${errors.position ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled
             placeholder='Nhập vị trí làm việc'
             {...register('position', {
               required: 'Vị trí làm việc không được để trống'
@@ -238,6 +201,7 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
           <input
             className={`${errors.businessNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled
             placeholder='Nhập thông tin'
             {...register('businessNumber', {
               required: 'Giấy phép ĐKKD không được để trống'
@@ -254,6 +218,7 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
           <input
             className={`${errors.bankId ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled
             placeholder='Nhập STK'
             {...register('bankId', {
               required: 'STK không được để trống'
@@ -267,16 +232,15 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
           <label className='font-light '>
             Tên ngân hàng<sup className='text-red-500'>*</sup>
           </label>
-          <select
-            {...register('bankName')}
-            className='block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
-          >
-            {banks.map((bank: { id: number; code: string; shortName: string; logo: string; bin: string }) => (
-              <option key={bank.id} value={bank.shortName}>
-                {bank.shortName}
-              </option>
-            ))}
-          </select>
+          <input
+            disabled
+            className={`${errors.bankName ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            type='text'
+            placeholder='Nhập tên ngân hàng'
+            {...register('bankName', {
+              required: 'Tên ngân hàng không được để trống'
+            })}
+          />
           <div className={`text-red-500 absolute text-[12px] ${errors.bankName ? 'visible' : 'invisible'}`}>
             {errors.bankName?.message}
           </div>
@@ -286,6 +250,7 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             Chủ tài khoản<sup className='text-red-500'>*</sup>
           </label>
           <input
+            disabled
             className={`${errors.bankAccOwer ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
             placeholder='Nhập tên tài khoản ngân hàng'
@@ -304,6 +269,7 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             name='term'
             placeholder='Điều khoản'
             height='60vh'
+            disable
             setContents={selectedContract?.termContract}
             setOptions={{
               buttonList: [
@@ -324,15 +290,8 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             }}
           />
         </div>
-
-        <button
-          type='submit'
-          className='middle my-3 none center mr-4 rounded-lg bg-[#0070f4] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
-        >
-          Lưu
-        </button>
       </form>
     </div>
   )
 }
-export default EditTemplateContract
+export default ViewTemplateContract
