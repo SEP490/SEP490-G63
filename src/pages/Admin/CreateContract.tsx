@@ -1,16 +1,17 @@
 import { useForm } from 'react-hook-form'
 import SunEditor from 'suneditor-react'
 import '../../css/suneditor.css'
-import { createNewContract } from '~/services/contract.service'
+import { createNewContract, getDataByTaxNumber } from '~/services/contract.service'
 import useToast from '~/hooks/useToast'
 import { useNavigate } from 'react-router-dom'
-import { Dialog, Transition } from '@headlessui/react'
+import { Dialog, Listbox, Transition } from '@headlessui/react'
 
 import { useState, Fragment, useEffect, SetStateAction } from 'react'
-import { createTemplateContract } from '~/services/template-contract.service'
+import { createTemplateContract, getTemplateContract } from '~/services/template-contract.service'
 import { handleSubmitBank, validateEmailDebounced } from '~/utils/checkMail'
 import { VietQR } from 'vietqr'
 import Loading from '~/components/shared/Loading/Loading'
+import { useQuery } from 'react-query'
 interface FormType {
   name: string
   number: string
@@ -32,6 +33,7 @@ const CreateContract = () => {
     register,
     getValues,
     trigger,
+    reset,
     formState: { errors }
   } = useForm<FormType>()
   const formInfoPartA = useForm<CompanyInfo>()
@@ -40,6 +42,7 @@ const CreateContract = () => {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState<boolean>(false)
+  const [selectedTeplate, setSelectedTemplate] = useState<any>(null)
 
   const [banks, setBanks] = useState([])
   const clientID = '258d5960-4516-48c5-9316-bb95b978424f'
@@ -48,7 +51,7 @@ const CreateContract = () => {
   const [selectedBankB, setSelectedBankB] = useState('')
   const [accountNumberA, setAccountNumberA] = useState<any>()
   const [accountNumberB, setAccountNumberB] = useState<any>()
-
+  const { data, isLoading } = useQuery('template-contract', () => getTemplateContract(0, 100))
   useEffect(() => {
     const vietQR = new VietQR({
       clientID,
@@ -91,9 +94,40 @@ const CreateContract = () => {
         }, 500)
       } else errorNotification('Tạo hợp đồng thất bại')
     } catch (error) {
-      console.log(error)
+      errorNotification('Tạo hợp đồng thất bại')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleAutoFillPartyA = async () => {
+    const result = await formInfoPartA.trigger('taxNumber')
+    if (result) {
+      try {
+        const taxNumber = formInfoPartA.getValues('taxNumber')
+        const response = await getDataByTaxNumber(taxNumber)
+        if (response.success && response.object) {
+          formInfoPartA.reset(response.object)
+          successNotification('Lấy thông tin thành công')
+        } else errorNotification('Không tìm thấy thông tin')
+      } catch (e) {
+        errorNotification('Không tìm thấy thông tin')
+      }
+    }
+  }
+  const handleAutoFillPartyB = async () => {
+    const result = await formInfoPartB.trigger('taxNumber')
+    if (result) {
+      try {
+        const taxNumber = formInfoPartB.getValues('taxNumber')
+        const response = await getDataByTaxNumber(taxNumber)
+        if (response.success && response.object) {
+          formInfoPartB.reset(response.object)
+          successNotification('Lấy thông tin thành công')
+        } else errorNotification('Không tìm thấy thông tin')
+      } catch (e) {
+        errorNotification('Không tìm thấy thông tin')
+      }
     }
   }
   const handleCreateContractTemplate = async () => {
@@ -116,14 +150,54 @@ const CreateContract = () => {
       errorNotification('Không thể tạo mới mẫu hợp đồng')
     }
   }
-  if (loading) return <Loading />
+  const handleFillData = (s: any) => {
+    reset({ name: s.nameContract, number: s.numberContract })
+    formInfoPartA.reset(s)
+    setSelectedTemplate(s)
+    successNotification('Sử dụng hợp đồng mẫu thành công')
+  }
+  if (loading || isLoading) return <Loading />
   return (
     <div className='bg-[#e8eaed] h-fit min-h-full flex justify-center py-6'>
       <form
         className='justify-center sm:justify-between w-[90%] md:w-[90%] rounded-md border flex flex-wrap px-4 h-fit bg-white py-4'
         autoComplete='on'
       >
-        <div className='w-full mt-3 font-bold'>Thông tin cơ bản</div>
+        <div className='w-full mt-5 flex gap-6 items-center'>
+          <div className='font-bold'>Thông tin cơ bản</div>
+          <Listbox
+            // value={size}
+            onChange={(s) => {
+              handleFillData(s)
+            }}
+          >
+            <div className='flex flex-col'>
+              <Listbox.Button className='none center mr-4 rounded-md bg-blue-500 py-2 px-4 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#7565b52f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'>
+                Sử dụng hợp đồng mẫu
+              </Listbox.Button>
+              <div className='relative mx-1'>
+                <Transition
+                  as={Fragment}
+                  leave='transition ease-in duration-100'
+                  leaveFrom='opacity-100'
+                  leaveTo='opacity-0'
+                >
+                  <Listbox.Options className='absolute z-30 none center mr-4 rounded-md bg-white py-2 px-2 font-sans text-xs text-black shadow-md border shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#7565b52f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'>
+                    {data?.object?.content.map((s: any) => (
+                      <Listbox.Option
+                        key={s.id}
+                        className={`cursor-pointer hover:bg-blue-200 rounded-md select-none px-2 py-1 text-gray-900`}
+                        value={s}
+                      >
+                        {s.nameContract}
+                      </Listbox.Option>
+                    ))}
+                  </Listbox.Options>
+                </Transition>
+              </div>
+            </div>
+          </Listbox>
+        </div>
         <div className='w-full mt-5 relative'>
           <label className='font-light '>
             Tên hợp đồng<sup className='text-red-500'>*</sup>
@@ -161,6 +235,7 @@ const CreateContract = () => {
             name='rule'
             placeholder='Căn cứ vào điều luật...'
             height='60vh'
+            setContents={selectedTeplate?.ruleContract}
             setOptions={{
               buttonList: [
                 ['undo', 'redo'],
@@ -174,7 +249,36 @@ const CreateContract = () => {
             }}
           />
         </div>
-        <div className='w-full mt-5 font-bold'>Thông tin bên A</div>
+        <div className='w-full mt-5 flex gap-6 items-center'>
+          <div className='font-bold'>Thông tin bên A</div>
+          <button
+            onClick={handleAutoFillPartyA}
+            type='button'
+            className='none center mr-4 rounded-md bg-blue-500 py-2 px-4 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#7565b52f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
+            data-ripple-light='true'
+          >
+            Tự động điền theo mã số thuế
+          </button>
+        </div>
+
+        <div className='w-full md:w-[30%] mt-5 relative '>
+          <label className='font-light '>
+            Mã số thuế<sup className='text-red-500'>*</sup>
+          </label>
+          <input
+            className={`${formInfoPartA.formState.errors.taxNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            type='text'
+            placeholder='Nhập mã số thuế'
+            {...formInfoPartA.register('taxNumber', {
+              required: 'Mã số thuế không được để trống'
+            })}
+          />
+          <div
+            className={`text-red-500 absolute text-[12px] ${formInfoPartA.formState.errors.taxNumber ? 'visible' : 'invisible'}`}
+          >
+            {formInfoPartA.formState.errors.taxNumber?.message}
+          </div>
+        </div>
         <div className='w-full md:w-[30%] mt-5 relative '>
           <label className='font-light '>
             Tên công ty<sup className='text-red-500'>*</sup>
@@ -230,24 +334,7 @@ const CreateContract = () => {
             {formInfoPartA.formState.errors.address?.message}
           </div>
         </div>
-        <div className='w-full md:w-[30%] mt-5 relative '>
-          <label className='font-light '>
-            Mã số thuế<sup className='text-red-500'>*</sup>
-          </label>
-          <input
-            className={`${formInfoPartA.formState.errors.taxNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-            type='text'
-            placeholder='Nhập mã số thuế'
-            {...formInfoPartA.register('taxNumber', {
-              required: 'Mã số thuế không được để trống'
-            })}
-          />
-          <div
-            className={`text-red-500 absolute text-[12px] ${formInfoPartA.formState.errors.taxNumber ? 'visible' : 'invisible'}`}
-          >
-            {formInfoPartA.formState.errors.taxNumber?.message}
-          </div>
-        </div>
+
         <div className='w-full md:w-[30%] mt-5 relative '>
           <label className='font-light '>
             Người đại diện<sup className='text-red-500'>*</sup>
@@ -333,16 +420,16 @@ const CreateContract = () => {
               required: 'Tên ngân hàng không được để trống'
             })}
           /> */}
-          <select className='block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'>
-            {banks.map((bank: { id: number; code: string; shortName: string; logo: string; bin: string }, index) => (
-              <option
-                {...formInfoPartA.register('bankName')}
-                key={bank.id}
-                value={bank.code}
-                selected={index === 0}
-                onChange={() => setSelectedBankA(bank.code)}
-              >
-                ({bank.bin}){bank.shortName}
+          <select
+            {...formInfoPartA.register('bankName')}
+            className='block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+          >
+            <option key={null} value={'Tên ngân hàng'}>
+              Tên ngân hàng
+            </option>
+            {banks.map((bank: { id: number; code: string; shortName: string; logo: string; bin: string }) => (
+              <option key={bank.id} value={bank.shortName}>
+                {bank.shortName}
               </option>
             ))}
           </select>
@@ -371,7 +458,35 @@ const CreateContract = () => {
           </div>
         </div>
         {/* Thông tin công ty B */}
-        <div className='w-full mt-5 font-bold'>Thông tin bên B</div>
+        <div className='w-full mt-5 flex gap-6 items-center'>
+          <div className='font-bold'>Thông tin bên B</div>
+          <button
+            onClick={handleAutoFillPartyB}
+            type='button'
+            className='none center mr-4 rounded-md bg-blue-500 py-2 px-4 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#7565b52f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
+            data-ripple-light='true'
+          >
+            Tự động điền theo mã số thuế
+          </button>
+        </div>
+        <div className='w-full md:w-[30%] mt-5 relative '>
+          <label className='font-light '>
+            Mã số thuế<sup className='text-red-500'>*</sup>
+          </label>
+          <input
+            className={`${formInfoPartB.formState.errors.taxNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            type='text'
+            placeholder='Nhập mã số thuế'
+            {...formInfoPartB.register('taxNumber', {
+              required: 'Mã số thuế không được để trống'
+            })}
+          />
+          <div
+            className={`text-red-500 absolute text-[12px] ${formInfoPartB.formState.errors.taxNumber ? 'visible' : 'invisible'}`}
+          >
+            {formInfoPartB.formState.errors.taxNumber?.message}
+          </div>
+        </div>
         <div className='w-full md:w-[30%] mt-5 relative '>
           <label className='font-light '>
             Tên công ty<sup className='text-red-500'>*</sup>
@@ -427,24 +542,7 @@ const CreateContract = () => {
             {formInfoPartB.formState.errors.address?.message}
           </div>
         </div>
-        <div className='w-full md:w-[30%] mt-5 relative '>
-          <label className='font-light '>
-            Mã số thuế<sup className='text-red-500'>*</sup>
-          </label>
-          <input
-            className={`${formInfoPartB.formState.errors.taxNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-            type='text'
-            placeholder='Nhập mã số thuế'
-            {...formInfoPartB.register('taxNumber', {
-              required: 'Mã số thuế không được để trống'
-            })}
-          />
-          <div
-            className={`text-red-500 absolute text-[12px] ${formInfoPartB.formState.errors.taxNumber ? 'visible' : 'invisible'}`}
-          >
-            {formInfoPartB.formState.errors.taxNumber?.message}
-          </div>
-        </div>
+
         <div className='w-full md:w-[30%] mt-5 relative '>
           <label className='font-light '>
             Người đại diện<sup className='text-red-500'>*</sup>
@@ -530,16 +628,16 @@ const CreateContract = () => {
               required: 'Tên ngân hàng không được để trống'
             })}
           /> */}
-          <select className='block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'>
-            {banks.map((bank: { id: number; code: string; shortName: string; logo: string; bin: string }, index) => (
-              <option
-                {...formInfoPartB.register('bankName')}
-                key={bank.id}
-                value={bank.code}
-                selected={index === 0}
-                onChange={() => setSelectedBankB(bank.code)}
-              >
-                ({bank.bin}){bank.shortName}
+          <select
+            {...formInfoPartB.register('bankName')}
+            className='block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+          >
+            <option key={null} value={'Tên ngân hàng'}>
+              Tên ngân hàng
+            </option>
+            {banks.map((bank: { id: number; code: string; shortName: string; logo: string; bin: string }) => (
+              <option key={bank.id} value={bank.shortName}>
+                {bank.shortName}
               </option>
             ))}
           </select>
@@ -573,6 +671,7 @@ const CreateContract = () => {
             name='term'
             placeholder='Điều khoản'
             height='60vh'
+            setContents={selectedTeplate?.termContract}
             setOptions={{
               buttonList: [
                 ['undo', 'redo'],
@@ -622,7 +721,7 @@ const CreateContract = () => {
         </div>
       </form>
       <Transition appear show={open} as={Fragment}>
-        <Dialog as='div' className='relative z-10 w-[90vw]' onClose={() => setOpen(false)}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={() => setOpen(false)}>
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'

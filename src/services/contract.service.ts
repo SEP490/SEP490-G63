@@ -44,3 +44,7 @@ export const getContractHistory = async (contract: string) => {
   const response = await axiosInstant.get(`contract-history?contract=${contract}`)
   return response.data
 }
+export const getDataByTaxNumber = async (id: string) => {
+  const response = await axiosInstant.get(`contract/party/${id}`)
+  return response.data
+}
