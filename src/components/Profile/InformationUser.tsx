@@ -5,6 +5,7 @@ import { getUserDetail, updateProfile } from '~/services/user.service'
 import { useAuth } from '~/provider/authProvider'
 import useToast from '~/hooks/useToast'
 import Loading from '~/components/shared/Loading/Loading'
+import moment from 'moment'
 export interface UserData {
   id: string
   address: string
@@ -13,7 +14,7 @@ export interface UserData {
   dob: string
   email: string
   gender: boolean
-  identification_number: string
+  identificationNumber: string
   name: string
   phone: string
   position: string
@@ -34,7 +35,7 @@ const InformationUser = () => {
     formState: { errors }
   } = useForm<UserData>({
     defaultValues: useMemo(() => {
-      return data
+      return { ...data, dob: data?.dob != null ? moment('data?.dob').format('YYYY-MM-DD') : data?.dob }
     }, [data])
   })
   const handleChangeImage = (event: any) => {
@@ -45,6 +46,7 @@ const InformationUser = () => {
       setImgUpload(event.target?.result)
     })
   }
+
   useEffect(() => {
     async function fetchAPI() {
       try {
@@ -52,8 +54,11 @@ const InformationUser = () => {
           const response = await getUserDetail(user?.id)
           if (response.object) {
             setData(response.object)
-
-            reset(response.object)
+            reset({
+              ...response.object,
+              dob:
+                response.object?.dob != null ? moment(response.object?.dob).format('YYYY-MM-DD') : response.object?.dob
+            })
             setImgUpload(response.object?.avatar == null ? avatar : response.object?.avatar)
             setLoading(false)
           }
@@ -67,9 +72,10 @@ const InformationUser = () => {
   if (loading) return <Loading />
   const onSubmit: SubmitHandler<UserData> = async (data: any) => {
     try {
+      const dataFormat = { ...data, dob: data.dob ? moment(data.dob).format('DD/MM/YYYY') : data.dob }
       const formData = new FormData()
-      for (const key in data) {
-        formData.append(key, data[key])
+      for (const key in dataFormat) {
+        formData.append(key, dataFormat[key])
       }
       formData.append('file', inputRef.current.files[0])
 
@@ -167,7 +173,7 @@ const InformationUser = () => {
             <label className='font-semibold text-xs'>CCCD/CMT</label>
             <input
               className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-              {...register('identification_number')}
+              {...register('identificationNumber')}
             />
           </div>
           <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
