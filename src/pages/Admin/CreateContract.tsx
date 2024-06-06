@@ -42,7 +42,7 @@ const CreateContract = () => {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState<boolean>(false)
-  const [selectedTeplate, setSelectedTemplate] = useState(null)
+  const [selectedTeplate, setSelectedTemplate] = useState<any>(null)
 
   const [banks, setBanks] = useState([])
   const clientID = '258d5960-4516-48c5-9316-bb95b978424f'
@@ -151,7 +151,10 @@ const CreateContract = () => {
     }
   }
   const handleFillData = (s: any) => {
-    reset({ name: s.contractName, number: s.contractNumber })
+    reset({ name: s.nameContract, number: s.numberContract })
+    formInfoPartA.reset(s)
+    setSelectedTemplate(s)
+    successNotification('Sử dụng hợp đồng mẫu thành công')
   }
   if (loading || isLoading) return <Loading />
   return (
@@ -165,8 +168,6 @@ const CreateContract = () => {
           <Listbox
             // value={size}
             onChange={(s) => {
-              console.log(s)
-
               handleFillData(s)
             }}
           >
@@ -234,6 +235,7 @@ const CreateContract = () => {
             name='rule'
             placeholder='Căn cứ vào điều luật...'
             height='60vh'
+            setContents={selectedTeplate?.ruleContract}
             setOptions={{
               buttonList: [
                 ['undo', 'redo'],
@@ -669,6 +671,7 @@ const CreateContract = () => {
             name='term'
             placeholder='Điều khoản'
             height='60vh'
+            setContents={selectedTeplate?.termContract}
             setOptions={{
               buttonList: [
                 ['undo', 'redo'],
