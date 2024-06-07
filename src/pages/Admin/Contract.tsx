@@ -256,7 +256,7 @@ const Contract = () => {
             ))}
           </tbody>
         </table>
-        {(!data || data.length == 0) && (
+        {(data == null || data.object.content.length == 0) && (
           <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'>
             <div className='flex flex-col justify-center items-center opacity-60'>
               <DocumentIcon />
@@ -265,7 +265,7 @@ const Contract = () => {
           </div>
         )}
       </div>
-      {data && data?.length != 0 && (
+      {data.object.content.length != 0 && (
         <Pagination
           totalPages={totalPage}
           currentPage={page + 1}

@@ -80,12 +80,12 @@ const CreateContract = () => {
       partyB: formInfoPartB.getValues()
     }
     try {
-      const resultA = await handleSubmitBank(selectedBankA, accountNumberA)
-      const resultB = await handleSubmitBank(selectedBankB, accountNumberB)
-      if (resultA === false || resultB === false) {
-        errorNotification('Số tài khoản không hợp lệ, Vui lòng kiểm tra lại!')
-        return
-      }
+      // const resultA = await handleSubmitBank(selectedBankA, accountNumberA)
+      // const resultB = await handleSubmitBank(selectedBankB, accountNumberB)
+      // if (resultA === false || resultB === false) {
+      //   errorNotification('Số tài khoản không hợp lệ, Vui lòng kiểm tra lại!')
+      //   return
+      // }
       const response = await createNewContract(bodyData)
       if (response?.code == '00' && response.object && response.success) {
         successNotification('Tạo hợp đồng thành công')

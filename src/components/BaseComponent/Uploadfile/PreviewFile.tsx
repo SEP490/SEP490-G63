@@ -102,14 +102,16 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef }: Iprops) => {
         })
 
         const response = await createOldContract(formData)
+        console.log(response)
+
         if (response.code == '00' && response.object) {
           successNotification('Tải lên hợp đồng cũ thành công')
           handleCloseModal()
-        }
+        } else errorNotification('Tải lên thất bại')
         setIsSubmit(false)
         document.body.style.cursor = 'default'
       } catch (e) {
-        console.log(e)
+        errorNotification('Tải lên thất bại')
       }
     } else {
       errorNotification('Hãy tải ảnh hợp đồng')
