@@ -23,6 +23,7 @@ const Contract = lazy(() => import('~/pages/Admin/Contract.tsx'))
 const CreateContract = lazy(() => import('~/pages/Admin/CreateContract.tsx'))
 const TemplateContract = lazy(() => import('~/pages/Admin/TemplateContract.tsx'))
 const SendMailContract = lazy(() => import('~/components/Admin/NewContract/SendMailContract.tsx'))
+const ViewSignContract = lazy(() => import('~/pages/BasePage/ViewSignContract.tsx'))
 const Routes = () => {
   const { token, user } = useAuth()
   let routes: Array<any>
@@ -184,6 +185,14 @@ const Routes = () => {
 
   // Define routes accessible only to non-authenticated users
   const routesForNotAuthenticatedOnly = [
+    {
+      path: '/view/:id',
+      element: (
+        <Suspense fallback={<Loading />}>
+          <ViewSignContract />
+        </Suspense>
+      )
+    },
     {
       path: '/',
       element: (
