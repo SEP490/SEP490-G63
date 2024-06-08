@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useQuery } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 import logo from '../../../assets/svg/Tdocman.svg'
 import { useNavigate, useParams } from 'react-router-dom'
 import Loading from '~/components/shared/Loading/Loading'
@@ -7,6 +7,8 @@ import { getSearchContract } from '~/services/contract.service'
 import { debounce } from 'lodash'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import ItemNewContract from '~/components/Admin/SearchResult/ItemNewContract'
+import ItemOldContract from '~/components/Admin/SearchResult/ItemOldContract'
+import Pagination from '~/components/BaseComponent/Pagination/Pagination'
 type FormData = {
   searchText: string
   fieldSearch: string
@@ -15,23 +17,30 @@ const SearchPageResult = () => {
   const { fieldSearch, searchText } = useParams()
   const navigate = useNavigate()
   const refForm = useRef<any>()
+  const [totalPage, setTotalPage] = useState(1)
   const [page, setPage] = useState(0)
-  const [size, setSize] = useState(6)
-  const { register, handleSubmit, getValues, setValue, watch } = useForm<FormData>({
+  const [size, setSize] = useState(5)
+  const [data, setData] = useState<any>()
+  const { register, handleSubmit, getValues, setValue } = useForm<FormData>({
     defaultValues: { fieldSearch, searchText }
   })
-
-  const { data, isLoading, refetch, isRefetching } = useQuery(['search-result', fieldSearch, searchText], () =>
-    getSearchContract(getValues('fieldSearch'), { page, size, key: getValues('searchText') })
-  )
+  useEffect(() => {
+    searchQuery.mutate({ fieldSearch: getValues('fieldSearch'), data: { page, size, key: getValues('searchText') } })
+  }, [page, size])
+  const searchQuery = useMutation(getSearchContract, {
+    onSuccess: (result) => {
+      setData(result.object)
+      setTotalPage(result?.object?.totalPages)
+    }
+  })
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     navigate(`../search/${data.fieldSearch}/${data.searchText}`, { replace: true })
-    refetch()
+    searchQuery.mutate({ fieldSearch: getValues('fieldSearch'), data: { page, size, key: getValues('searchText') } })
   }
-
-  if (isLoading || isRefetching) return <Loading />
-  console.log(data)
-
+  const handlePageChange = (page: any) => {
+    setPage(page - 1)
+  }
+  if (searchQuery.isLoading || searchQuery.isIdle) return <Loading />
   return (
     <div>
       <div className='flex items-center justify-start gap-5 shadow-lg bg-white'>
@@ -94,12 +103,24 @@ const SearchPageResult = () => {
         </form>
       </div>
 
-      <div className='bg-white'>
-        <div>
-          Hiển thị {data.object.totalElements} kết quả cho "{searchText}" của
+      <div className='bg-gray'>
+        <div className='pl-5'>
+          Hiển thị {data?.totalElements} kết quả cho "{getValues('searchText')}" của
           {fieldSearch == 'contract' ? ' Hợp đồng mới' : ' Hợp đồng cũ'}
         </div>
-        {data?.object?.content?.map((d: any) => <ItemNewContract data={d} />)}
+        <div className='flex flex-wrap gap-6 px-6 mt-4'>
+          {data?.content?.map((d: any) =>
+            fieldSearch == 'contract' ? <ItemNewContract data={d} /> : <ItemOldContract data={d} />
+          )}
+        </div>
+        <Pagination
+          totalPages={totalPage}
+          currentPage={page + 1}
+          size={size}
+          setSize={setSize}
+          setPage={setPage}
+          onPageChange={handlePageChange}
+        />
       </div>
     </div>
   )
