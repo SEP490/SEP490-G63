@@ -26,15 +26,15 @@ export const NavbarLinks = [
 
 const DropdownLinks = [
   {
-    name: 'Our Services',
+    name: 'Dịch vụ',
     link: '/#services'
   },
   {
-    name: 'Top Brands',
+    name: 'Điều khoản',
     link: '/#mobile_brands'
   },
   {
-    name: 'Location',
+    name: 'Cài đặt',
     link: '/#location'
   }
 ]
@@ -67,20 +67,20 @@ const Navbar = () => {
             <div className='hidden md:block grow'>
               <ul className='flex justify-center items-center gap-14 '>
                 <li className='py-4'>
-                  <NavLink to='/'>Home</NavLink>
+                  <NavLink to='/'>Trang chủ</NavLink>
                 </li>
                 <li className='py-4'>
-                  <NavLink to='/blogs'>Blogs</NavLink>
+                  <NavLink to='/blogs'>Bài viết</NavLink>
                 </li>
                 <li className='py-4'>
-                  <NavLink to='/best-places'>Best Service</NavLink>
+                  <NavLink to='/best-places'>Dịch vụ</NavLink>
                 </li>
                 <li className='py-4'>
-                  <NavLink to='/about'>About</NavLink>
+                  <NavLink to='/about'>Thông tin</NavLink>
                 </li>
                 <li className='group relative cursor-pointer'>
                   <a href='/#home' className='flex h-[72px] items-center gap-[2px]'>
-                    Quick Links{' '}
+                    Tiện ích{' '}
                     <span>
                       <FaCaretDown className='transition-all duration-200 group-hover:rotate-180' />
                     </span>
@@ -106,7 +106,7 @@ const Navbar = () => {
                   navigate('/login')
                 }}
               >
-                Sign In
+                Đăng nhập
               </button>
               <button
                 className='bg-gradient-to-r from-cyan-500 to-teal-500 hover:bg-bg-gradient-to-r hover:from-secondary hover:bg-primary transition-all duration-600 text-white px-3 py-1 rounded-full'
@@ -115,7 +115,7 @@ const Navbar = () => {
                   navigate('/register')
                 }}
               >
-                Try for free
+                Đăng ký
               </button>
               {/* Mobile Hamburger icon */}
               <div className='md:hidden block'>
