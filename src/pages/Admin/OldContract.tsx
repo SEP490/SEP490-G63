@@ -49,7 +49,6 @@ const OldContract = () => {
     const fetchData = async () => {
       try {
         const response = await getOldContract(page, size)
-
         if (response) {
           setLoading(false)
           setData(response?.object)
