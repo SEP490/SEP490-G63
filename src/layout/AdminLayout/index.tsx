@@ -18,7 +18,7 @@ function AdminLayout({ children }: any) {
       </div>
 
       <div
-        className={`${isMobile ? 'mt-[60px] h-[calc(100vh-70px)]' : 'mt-[120px] h-[calc(100vh-140px)]'} overflow-auto`}
+        className={`${isMobile ? 'mt-[50px] h-[calc(100vh-50px)]' : 'mt-[100px] h-[calc(100vh-100px)]'} overflow-auto`}
       >
         {children}
       </div>
