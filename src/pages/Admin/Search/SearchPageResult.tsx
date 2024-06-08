@@ -42,8 +42,8 @@ const SearchPageResult = () => {
   }
   if (searchQuery.isLoading || searchQuery.isIdle) return <Loading />
   return (
-    <div>
-      <div className='flex items-center justify-start gap-5 shadow-lg bg-white'>
+    <div className='bg-white h-full'>
+      <div className='flex items-center justify-start gap-5 shadow-lg bg-white h-[100px]'>
         <div className='flex justify-center items-center select-none p-6'>
           <img src={logo} alt='logo' className='w-[20px] md:w-[50px]' />
           <div
@@ -103,7 +103,7 @@ const SearchPageResult = () => {
         </form>
       </div>
 
-      <div className='bg-gray'>
+      <div className='h-[calc(100%-100px)] overflow-auto'>
         <div className='pl-5'>
           Hiển thị {data?.totalElements} kết quả cho "{getValues('searchText')}" của
           {fieldSearch == 'contract' ? ' Hợp đồng mới' : ' Hợp đồng cũ'}
@@ -113,14 +113,16 @@ const SearchPageResult = () => {
             fieldSearch == 'contract' ? <ItemNewContract data={d} /> : <ItemOldContract data={d} />
           )}
         </div>
-        <Pagination
-          totalPages={totalPage}
-          currentPage={page + 1}
-          size={size}
-          setSize={setSize}
-          setPage={setPage}
-          onPageChange={handlePageChange}
-        />
+        <div className='mt-6'>
+          <Pagination
+            totalPages={totalPage}
+            currentPage={page + 1}
+            size={size}
+            setSize={setSize}
+            setPage={setPage}
+            onPageChange={handlePageChange}
+          />
+        </div>
       </div>
     </div>
   )
