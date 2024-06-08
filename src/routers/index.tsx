@@ -24,6 +24,8 @@ const CreateContract = lazy(() => import('~/pages/Admin/CreateContract.tsx'))
 const TemplateContract = lazy(() => import('~/pages/Admin/TemplateContract.tsx'))
 const SendMailContract = lazy(() => import('~/components/Admin/NewContract/SendMailContract.tsx'))
 const ViewSignContract = lazy(() => import('~/pages/BasePage/ViewSignContract.tsx'))
+const SearchPage = lazy(() => import('~/pages/Admin/Search/SearchPage.tsx'))
+const SearchPageResult = lazy(() => import('~/pages/Admin/Search/SearchPageResult.tsx'))
 const Routes = () => {
   const { token, user } = useAuth()
   let routes: Array<any>
@@ -38,7 +40,17 @@ const Routes = () => {
           element: (
             <Suspense fallback={<Loading />}>
               <AdminLayout>
-                <Employee />
+                <SearchPage />
+              </AdminLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/search/:fieldSearch/:searchText',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <AdminLayout>
+                <SearchPageResult />
               </AdminLayout>
             </Suspense>
           )
