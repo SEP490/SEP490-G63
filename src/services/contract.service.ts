@@ -48,3 +48,7 @@ export const getDataByTaxNumber = async (id: string) => {
   const response = await axiosInstant.get(`contract/party/${id}`)
   return response.data
 }
+export const getSearchContract = async (fieldSearch: string | undefined, data: any) => {
+  const response = await axiosInstant.post(`${fieldSearch}/search`, data)
+  return response.data
+}
