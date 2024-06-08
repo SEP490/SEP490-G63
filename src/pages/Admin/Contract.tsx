@@ -1,5 +1,5 @@
 import { Dialog, Menu, Transition } from '@headlessui/react'
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import ViewContract from '~/components/Admin/NewContract/ViewContract'
 import {
   Cog6ToothIcon,
@@ -20,7 +20,6 @@ import { useMutation, useQuery } from 'react-query'
 import { AxiosError } from 'axios'
 import useToast from '~/hooks/useToast'
 import EditNewContract from '~/components/Admin/NewContract/EditNewContract'
-import EditTemplateContract from '~/components/Admin/TemplateContract/EditTemplateContract'
 export interface DataContract {
   id: string
   name: string
@@ -41,6 +40,9 @@ const Contract = () => {
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(5)
   const [totalPage, setTotalPage] = useState(1)
+  const prevPageRef = useRef(page)
+  const prevSizeRef = useRef(size)
+
   const closeModal = () => {
     setOpenModal(false)
   }
@@ -79,14 +81,20 @@ const Contract = () => {
     if (selectedContract) deleteTemplate.mutate(selectedContract.id)
   }
 
+  // useEffect(() => {
+  //   if (isError) {
+  //     errorNotification((error as AxiosError)?.message || '')
+  //   }
+  // }, [data, isError, error, errorNotification])
+
   useEffect(() => {
-    if (isError) {
-      errorNotification((error as AxiosError)?.message || '')
+    if (prevPageRef.current !== page || prevSizeRef.current !== size) {
+      prevPageRef.current = page
+      prevSizeRef.current = size
+      refetch()
     }
-  }, [data, isError, error, errorNotification])
-  useEffect(() => {
-    refetch()
   }, [page, refetch, size])
+
   if (isLoading || isFetching) return <Loading />
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto px-5'>
