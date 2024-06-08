@@ -44,7 +44,7 @@ const Home = () => {
         {/* <BlogsComp /> */}
         <Banner />
         <Banner1 />
-        <Banner2 />
+        {/* <Banner2 /> */}
         <ServicesBoxx />
         {/* <Testimonial /> */}
       </div>
