@@ -16,7 +16,7 @@ const SearchPage = () => {
   return (
     <div className='w-full h-full flex flex-col justify-between pb-6'>
       <div className='w-full'>
-        <div className='flex flex-col justify-center items-center mt-6 select-none'>
+        <div className='flex flex-col justify-center items-center mt-[20vh] select-none'>
           <img src={logo} alt='logo' className='w-[80px] md:w-[100px]' />
           <div
             className=' bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-blue-900 text-[32px] md:text-[48px] cursor-pointer'

@@ -176,6 +176,7 @@ const OldContract = () => {
               currentPage={page + 1}
               size={size}
               setSize={setSize}
+              setPage={setPage}
               onPageChange={handlePageChange}
             />
           )}
