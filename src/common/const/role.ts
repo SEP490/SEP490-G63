@@ -1,3 +1,3 @@
-export const GUESS = 0
-export const ADMIN = 1
-export const USER = 2
+export const GUESS = 'GUESS'
+export const ADMIN = 'ADMIN'
+export const USER = 'USER'

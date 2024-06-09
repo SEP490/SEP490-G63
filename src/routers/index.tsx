@@ -4,21 +4,30 @@ import { ProtectedRoute } from './ProtectedRouter.tsx'
 import { lazy, Suspense } from 'react'
 import Error from '~/components/shared/Error/Error.tsx'
 import AdminLayout from '~/layout/AdminLayout/index.tsx'
-import NavBar from '~/layout/AdminLayout/NavBar/index.tsx'
 import Loading from '~/components/shared/Loading/Loading.tsx'
-import Home from '../pages/landing_page/Home.tsx'
-import Layout from '~/pages/landing_page/Layout.tsx'
+
 import About from '~/pages/landing_page/About.tsx'
 import Blogs from '~/pages/landing_page/Blogs.tsx'
-import BlogsComp from '~/components/landing_page/Blogs/BlogsComp.tsx'
-
+import { ADMIN, USER } from '~/common/const/role.ts'
+import ContractHistory from '~/pages/Admin/ContractHistory.tsx'
 const Login = lazy(() => import('~/components/Login.tsx'))
 const Logout = lazy(() => import('~/components/Logout.tsx'))
 const Example = lazy(() => import('~/pages/Example.tsx'))
 const Employee = lazy(() => import('~/pages/Admin/Employee.tsx'))
 const Register = lazy(() => import('~/components/Register.tsx'))
+const Home = lazy(() => import('~/pages/landing_page/Home.tsx'))
+const HomeUser = lazy(() => import('~/pages/User/HomeUser.tsx'))
+const Profile = lazy(() => import('~/pages/Profile.tsx'))
+const OldContract = lazy(() => import('~/pages/Admin/OldContract.tsx'))
+const Contract = lazy(() => import('~/pages/Admin/Contract.tsx'))
+const CreateContract = lazy(() => import('~/pages/Admin/CreateContract.tsx'))
+const TemplateContract = lazy(() => import('~/pages/Admin/TemplateContract.tsx'))
+const SendMailContract = lazy(() => import('~/components/Admin/NewContract/SendMailContract.tsx'))
+const ViewSignContract = lazy(() => import('~/pages/BasePage/ViewSignContract.tsx'))
+const SearchPage = lazy(() => import('~/pages/Admin/Search/SearchPage.tsx'))
+const SearchPageResult = lazy(() => import('~/pages/Admin/Search/SearchPageResult.tsx'))
 const Routes = () => {
-  const { token } = useAuth()
+  const { token, user } = useAuth()
   let routes: Array<any>
 
   const routesForAuthenticatedOnly = [
@@ -31,7 +40,37 @@ const Routes = () => {
           element: (
             <Suspense fallback={<Loading />}>
               <AdminLayout>
-                <NavBar />
+                <SearchPage />
+              </AdminLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/search/:fieldSearch/:searchText',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <AdminLayout>
+                <SearchPageResult />
+              </AdminLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/profile',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <AdminLayout>
+                <Profile />
+              </AdminLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/send-mail/:id/:type',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <AdminLayout>
+                <SendMailContract />
               </AdminLayout>
             </Suspense>
           )
@@ -42,6 +81,98 @@ const Routes = () => {
             <Suspense fallback={<Loading />}>
               <AdminLayout>
                 <Employee />
+              </AdminLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/old-contract',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <AdminLayout>
+                <OldContract />
+              </AdminLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/template-contract',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <AdminLayout>
+                <TemplateContract />
+              </AdminLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/contract',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <AdminLayout>
+                <Contract />
+              </AdminLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/contract/create',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <AdminLayout>
+                <CreateContract />
+              </AdminLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/contract/history/:id',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <AdminLayout>
+                <ContractHistory />
+              </AdminLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/example',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <AdminLayout>
+                <Example />
+              </AdminLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/logout',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <AdminLayout>
+                <Logout />
+              </AdminLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '*',
+          element: <Error />
+        }
+      ]
+    }
+  ]
+  const routesForUser = [
+    {
+      path: '/',
+      element: <ProtectedRoute />, // Wrap the component in ProtectedRoute
+      children: [
+        {
+          path: '/',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <AdminLayout>
+                <HomeUser />
               </AdminLayout>
             </Suspense>
           )
@@ -67,8 +198,20 @@ const Routes = () => {
   // Define routes accessible only to non-authenticated users
   const routesForNotAuthenticatedOnly = [
     {
+      path: '/view/:id',
+      element: (
+        <Suspense fallback={<Loading />}>
+          <ViewSignContract />
+        </Suspense>
+      )
+    },
+    {
       path: '/',
-      element: <Loading />
+      element: (
+        <Suspense fallback={<Loading />}>
+          <Home />
+        </Suspense>
+      )
     },
     {
       path: '/register',
@@ -94,19 +237,10 @@ const Routes = () => {
         </Suspense>
       )
     },
+
     {
       path: '/landing',
-      element: <Home />,
-      // children: [
-      //   {
-      //     path: '/',
-      //     element: <Home />
-      //   },
-      //   {
-      //     path: '/about',
-      //     element: <About />
-      //   }
-      // ]
+      element: <Home />
     },
     {
       path: '/blogs',
@@ -123,7 +257,11 @@ const Routes = () => {
   ]
 
   if (token) {
-    routes = routesForAuthenticatedOnly
+    if (user?.role == ADMIN) {
+      routes = routesForAuthenticatedOnly
+    } else if (user?.role == USER) {
+      routes = routesForUser
+    } else routes = routesForNotAuthenticatedOnly
   } else {
     routes = routesForNotAuthenticatedOnly
   }

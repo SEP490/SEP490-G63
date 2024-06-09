@@ -1,4 +1,4 @@
-import axiosInstant, { adminInstance } from '../config/axiosConfig.ts'
+import axiosInstant, { adminInstance, axiosInstanceFormData } from '../config/axiosConfig.ts'
 interface LoginData {
   email: string
   password: string
@@ -6,8 +6,7 @@ interface LoginData {
 interface RegisterData {
   company: string
   taxCode: string
-  firstName: string
-  lastName: string
+  presenter: string
   email: string
   phone: string
 }
@@ -19,10 +18,32 @@ export const login = async ({ email, password }: LoginData) => {
     console.log(error)
   }
 }
-export const register = async ({ company, taxCode, firstName, lastName, email, phone }: RegisterData) => {
+export const updateProfile = async (id: any, formData: any) => {
   try {
-    const response = await adminInstance.post('', { company, taxCode, firstName, lastName, email, phone })
+    const response = await axiosInstanceFormData.put(`user/${id}`, formData)
     return response.data
+  } catch (error) {
+    console.log(error)
+  }
+}
+export const getUserDetail = async (id: string) => {
+  try {
+    const response = await axiosInstant.get(`user/${id}`)
+    return response.data
+  } catch (error) {
+    console.log(error)
+  }
+}
+export const registerUser = async ({ company, taxCode, presenter, email, phone }: RegisterData) => {
+  try {
+    const response = await adminInstance.post('public/auth/register', {
+      companyName: company,
+      taxCode,
+      presenter,
+      email,
+      phone
+    })
+    return response
   } catch (error) {
     console.log(error)
   }
