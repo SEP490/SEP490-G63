@@ -8,40 +8,43 @@ const Services = [
   {
     name: 'UX research',
     description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum laudantium beatae quidem.',
-    image: 'https://picsum.photos/200/300',
+    img: 'https://i.ibb.co/GMpmHhQ/ui-ux-representations-with-laptop.jpg',
     icon: <AiFillLayout className='text-4xl' />,
-    bgColor: 'bg-blue-500/70'
+    bgColor: 'bg-teal-500/70'
   },
   {
     name: 'App Development',
     description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum laudantium beatae quidem.',
-    image: 'https://picsum.photos/200/301',
+    img: 'https://i.ibb.co/926XjM3/1f9c840fb15b4fb92a3a122bdef2968b.png',
     icon: <MdOutlinePhoneAndroid className='text-4xl' />,
-    bgColor: 'bg-lime-500/70'
+    bgColor: 'bg-teal-500/70'
   },
+
   {
-    name: 'Web App Development',
+    name: 'Web Development',
     description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum laudantium beatae quidem.',
-    image: 'https://picsum.photos/200/302',
+    img: 'https://i.ibb.co/Kb1VSHc/images.jpg',
     icon: <HiMiniComputerDesktop className='text-4xl' />,
-    bgColor: 'bg-fuchsia-500/70'
+    bgColor: 'bg-teal-500/70'
   },
   {
     name: 'Security',
     description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum laudantium beatae quidem.',
-    image: 'https://picsum.photos/200/303',
+    img: 'https://i.ibb.co/GsdrnCQ/images-1.jpg',
     icon: <MdSecurity className='text-4xl' />,
-    bgColor: 'bg-orange-500/70'
+    bgColor: 'bg-teal-500/70'
   }
 ]
+
 const ServicesBoxx = () => {
   return (
     <section id='services' className='my-10 container'>
       <div className='grid grid-cols-1 sm:grid-cols-2 gap-6'>
-        {Services.map(({ name, description, image, icon, bgColor }) => (
+        {Services.map(({ name, description, img, icon, bgColor }) => (
           <div
             key={name}
-            className={` ${bgColor} rounded-xl  bg-blue-500/70 text-white  bg-[url('${image}')] bg-cover bg-no-repeat bg-center bg-blend-overlay`}
+            className={` ${bgColor} rounded-xl text-white bg-cover bg-no-repeat bg-center bg-blend-overlay`}
+            style={{ backgroundImage: `url(${img})` }}
           >
             <div className='p-3 md:p-16 backdrop-blur-sm space-y-3 rounded-xl'>
               {icon}
