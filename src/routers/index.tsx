@@ -5,11 +5,11 @@ import { lazy, Suspense } from 'react'
 import Error from '~/components/shared/Error/Error.tsx'
 import AdminLayout from '~/layout/AdminLayout/index.tsx'
 import Loading from '~/components/shared/Loading/Loading.tsx'
-import Layout from '~/pages/landing_page/Layout.tsx'
+
 import About from '~/pages/landing_page/About.tsx'
 import Blogs from '~/pages/landing_page/Blogs.tsx'
 import { ADMIN, USER } from '~/common/const/role.ts'
-import SendMail from '../pages/Admin/SendMail'
+import ContractHistory from '~/pages/Admin/ContractHistory.tsx'
 const Login = lazy(() => import('~/components/Login.tsx'))
 const Logout = lazy(() => import('~/components/Logout.tsx'))
 const Example = lazy(() => import('~/pages/Example.tsx'))
@@ -21,6 +21,11 @@ const Profile = lazy(() => import('~/pages/Profile.tsx'))
 const OldContract = lazy(() => import('~/pages/Admin/OldContract.tsx'))
 const Contract = lazy(() => import('~/pages/Admin/Contract.tsx'))
 const CreateContract = lazy(() => import('~/pages/Admin/CreateContract.tsx'))
+const TemplateContract = lazy(() => import('~/pages/Admin/TemplateContract.tsx'))
+const SendMailContract = lazy(() => import('~/components/Admin/NewContract/SendMailContract.tsx'))
+const ViewSignContract = lazy(() => import('~/pages/BasePage/ViewSignContract.tsx'))
+const SearchPage = lazy(() => import('~/pages/Admin/Search/SearchPage.tsx'))
+const SearchPageResult = lazy(() => import('~/pages/Admin/Search/SearchPageResult.tsx'))
 const Routes = () => {
   const { token, user } = useAuth()
   let routes: Array<any>
@@ -35,7 +40,17 @@ const Routes = () => {
           element: (
             <Suspense fallback={<Loading />}>
               <AdminLayout>
-                <Employee />
+                <SearchPage />
+              </AdminLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/search/:fieldSearch/:searchText',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <AdminLayout>
+                <SearchPageResult />
               </AdminLayout>
             </Suspense>
           )
@@ -46,6 +61,16 @@ const Routes = () => {
             <Suspense fallback={<Loading />}>
               <AdminLayout>
                 <Profile />
+              </AdminLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/send-mail/:id/:type',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <AdminLayout>
+                <SendMailContract />
               </AdminLayout>
             </Suspense>
           )
@@ -71,6 +96,16 @@ const Routes = () => {
           )
         },
         {
+          path: '/template-contract',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <AdminLayout>
+                <TemplateContract />
+              </AdminLayout>
+            </Suspense>
+          )
+        },
+        {
           path: '/contract',
           element: (
             <Suspense fallback={<Loading />}>
@@ -86,6 +121,16 @@ const Routes = () => {
             <Suspense fallback={<Loading />}>
               <AdminLayout>
                 <CreateContract />
+              </AdminLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/contract/history/:id',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <AdminLayout>
+                <ContractHistory />
               </AdminLayout>
             </Suspense>
           )
@@ -153,6 +198,14 @@ const Routes = () => {
   // Define routes accessible only to non-authenticated users
   const routesForNotAuthenticatedOnly = [
     {
+      path: '/view/:id',
+      element: (
+        <Suspense fallback={<Loading />}>
+          <ViewSignContract />
+        </Suspense>
+      )
+    },
+    {
       path: '/',
       element: (
         <Suspense fallback={<Loading />}>
@@ -184,14 +237,7 @@ const Routes = () => {
         </Suspense>
       )
     },
-    {
-      path: '/send-mail',
-      element: (
-        <Suspense fallback={<Loading />}>
-          <SendMail />
-        </Suspense>
-      )
-    },
+
     {
       path: '/landing',
       element: <Home />

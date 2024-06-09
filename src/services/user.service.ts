@@ -1,4 +1,3 @@
-import { UserData } from '~/pages/Profile.tsx'
 import axiosInstant, { adminInstance, axiosInstanceFormData } from '../config/axiosConfig.ts'
 interface LoginData {
   email: string
@@ -19,7 +18,7 @@ export const login = async ({ email, password }: LoginData) => {
     console.log(error)
   }
 }
-export const updateProfile = async (id: string, formData: any) => {
+export const updateProfile = async (id: any, formData: any) => {
   try {
     const response = await axiosInstanceFormData.put(`user/${id}`, formData)
     return response.data

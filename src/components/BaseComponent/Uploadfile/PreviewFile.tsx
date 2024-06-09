@@ -99,18 +99,19 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef }: Iprops) => {
         formData.append('contractSignDate', moment(contractSignDate).format('DD/MM/YYYY'))
         listUrl.forEach((e: any) => {
           formData.append('images', e.file)
-          console.log('e.file', e.file)
         })
 
         const response = await createOldContract(formData)
+        console.log(response)
+
         if (response.code == '00' && response.object) {
           successNotification('Tải lên hợp đồng cũ thành công')
           handleCloseModal()
-        }
+        } else errorNotification('Tải lên thất bại')
         setIsSubmit(false)
         document.body.style.cursor = 'default'
       } catch (e) {
-        console.log(e)
+        errorNotification('Tải lên thất bại')
       }
     } else {
       errorNotification('Hãy tải ảnh hợp đồng')

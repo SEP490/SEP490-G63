@@ -1,11 +1,25 @@
-import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { QueryClient, QueryClientProvider } from 'react-query'
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60000, // Data stays fresh for 60 seconds
+      cacheTime: 300000, // Data is cached for 5 minutes
+      refetchOnWindowFocus: false, // Don't automatically refresh when the window regains focus
+      retry: 0
+    },
+    mutations: {
+      retry: 0
+    }
+  }
+})
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
+  <QueryClientProvider client={queryClient}>
     <App />
     <ToastContainer
       position='top-right'
@@ -19,7 +33,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       pauseOnHover={false}
       theme='colored'
     />
-    {/* Same as */}
+
     <ToastContainer />
-  </React.StrictMode>
+  </QueryClientProvider>
 )

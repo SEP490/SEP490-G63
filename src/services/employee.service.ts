@@ -27,35 +27,23 @@ interface QueryDataGet {
   size?: number
 }
 export const createEmployee = async (data: EmployeeData) => {
-  try {
-    const response = await axiosInstant.post('user/register-for-user', { ...data, role: 'USER' })
-    return response.data
-  } catch (error) {
-    console.log(error)
-  }
+  const response = await axiosInstant.post('user/register-for-user', { ...data, role: 'USER' })
+  return response.data
 }
 
 export const getListEmployee = async ({ size, page, name }: QueryDataGet) => {
-  try {
-    const response = await axiosInstant.get(`user/search?page=${page}&size=${size}&name=${name}`)
+  const response = await axiosInstant.get(`user/search?page=${page}&size=${size}&name=${name}`)
 
-    return response.data
-  } catch (error) {
-    console.log(error)
-  }
+  return response.data
 }
 
 export const registerUser = async ({ company, taxCode, presenter, email, phone }: RegisterData) => {
-  try {
-    const response = await adminInstance.post('public/auth/register', {
-      companyName: company,
-      taxCode,
-      presenter,
-      email,
-      phone
-    })
-    return response
-  } catch (error) {
-    console.log(error)
-  }
+  const response = await adminInstance.post('public/auth/register', {
+    companyName: company,
+    taxCode,
+    presenter,
+    email,
+    phone
+  })
+  return response
 }

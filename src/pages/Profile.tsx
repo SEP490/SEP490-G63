@@ -6,9 +6,8 @@ const Profile = () => {
   const [tab, setTab] = useState(1)
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
-      <p className='font-bold text-[28px] my-4 mx-4'>Tác vụ cá nhân</p>
-      <div className='flex flex-col md:flex-row  justify-center md:justify-between'>
-        <div className='w-full md:w-[20%] bg-white min-h-[70vh] rounded-md shadow-md mx-3'>
+      <div className='flex flex-col md:flex-row mt-3 justify-center md:justify-between'>
+        <div className='w-full md:w-[20%] bg-white md:h-[80vh] rounded-md shadow-md mx-3 mb-2'>
           <ul className='flex flex-row md:flex-col gap-3 m-3'>
             <li
               onClick={() => setTab(1)}

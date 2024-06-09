@@ -1,13 +1,14 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import ComboboxMail from '~/components/Admin/SendMail/ComboboxMail'
 import uploadIcon from '~/assets/images/uploadpdf.png'
-import { sendMail } from '~/services/contract.service'
+import { getNewContractById, sendMail } from '~/services/contract.service'
 import useToast from '~/hooks/useToast'
 import Loading from '~/components/shared/Loading/Loading'
+import { useParams } from 'react-router-dom'
 
-const SendMail = () => {
+const SendMailContract = () => {
   const [selectedFiles, setSelectedFiles] = useState<any[]>([])
   const [previewUrls, setPreviewUrls] = useState<string[]>([])
   const [selectedTo, setSelectedTo] = useState<any[]>([])
@@ -15,8 +16,8 @@ const SendMail = () => {
   const [subject, setSubject] = useState<string>('')
   const [editorData, setEditorData] = useState<string>('')
   const { successNotification, errorNotification } = useToast()
-  const [loading, setLoading] = useState<boolean>(false)
-
+  const [loading, setLoading] = useState<boolean>(true)
+  const { id, type } = useParams()
   const handleFileChange = (event: any) => {
     const files = Array.from(event.target.files)
     const newPreviewUrls: string[] = []
@@ -81,11 +82,30 @@ const SendMail = () => {
       setLoading(false)
     }
   }
+  useEffect(() => {
+    const fetchApi = async () => {
+      try {
+        if (id) {
+          const response = await getNewContractById(id)
+          if (response.code == '00' && response.object) {
+            if (type == '1') {
+              setSelectedTo([{ label: response.object.partyA.email, value: response.object.partyA.email }])
+            } else if (type == '2') {
+              setSelectedTo([{ label: response.object.partyB.email, value: response.object.partyB.email }])
+            }
+          } else errorNotification('Không tìm thấy thông tin')
+          setLoading(false)
+        }
+      } catch (e) {
+        console.log(e)
+      }
+    }
+    fetchApi()
+  }, [id, type])
   if (loading) return <Loading />
-
   return (
-    <>
-      <div className='place-content-center m-8 rounded p-6 shadow-xl shadow-neutral-400 w-2/3 mx-auto'>
+    <div className='h-full'>
+      <div className='place-content-center bg-white m-8 rounded p-6 shadow-xl shadow-neutral-400 w-2/3 mx-auto'>
         <div className='font-bold rounded text-3xl mb-8'>
           <span>Thư mới</span>
         </div>
@@ -101,7 +121,7 @@ const SendMail = () => {
           <span className='w-20 font-bold'>Tiêu đề</span>
           <input
             type='text'
-            className='border-none w-full rounded h-8'
+            className=' w-full rounded h-8'
             placeholder=''
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
@@ -118,12 +138,6 @@ const SendMail = () => {
             const data = editor.getData()
             setEditorData(data)
           }}
-          // onBlur={(event, editor) => {
-          //   console.log('Blur.', editor)
-          // }}
-          // onFocus={(event, editor) => {
-          //   console.log('Focus.', editor)
-          // }}
         />
         <div className='mt-4 text-center'>
           <input type='file' id='file-upload' className='hidden' onChange={handleFileChange} multiple />
@@ -145,8 +159,8 @@ const SendMail = () => {
       >
         Gửi
       </button>
-    </>
+    </div>
   )
 }
 
-export default SendMail
+export default SendMailContract

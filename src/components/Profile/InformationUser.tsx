@@ -5,6 +5,8 @@ import { getUserDetail, updateProfile } from '~/services/user.service'
 import { useAuth } from '~/provider/authProvider'
 import useToast from '~/hooks/useToast'
 import Loading from '~/components/shared/Loading/Loading'
+import moment from 'moment'
+import { useQuery } from 'react-query'
 export interface UserData {
   id: string
   address: string
@@ -12,31 +14,51 @@ export interface UserData {
   department: string
   dob: string
   email: string
-  gender: number
-  identification_number: string
+  gender: boolean
+  identificationNumber: string
   name: string
   phone: string
   position: string
 }
 const InformationUser = () => {
   const reader = new FileReader()
-  const [data, setData] = useState<any>()
+  // const [data, setData] = useState<any>()
   const { user, setUser } = useAuth()
   const [loading, setLoading] = useState(true)
   const [imgUpload, setImgUpload] = useState<any>(avatar)
   const inputRef = useRef<any>()
   const { successNotification, errorNotification } = useToast()
+
   const {
     register,
     handleSubmit,
     reset,
-    watch,
     formState: { errors }
-  } = useForm<UserData>({
-    defaultValues: useMemo(() => {
-      return data
-    }, [data])
+  } = useForm<UserData>()
+
+  const { data, isLoading, error } = useQuery(['userDetail', user?.id], () => getUserDetail(user?.id as string), {
+    enabled: !!user?.id,
+    onSuccess: (response) => {
+      if (response.object) {
+        reset({
+          ...response.object,
+          dob: response.object?.dob != null ? moment(response.object?.dob).format('YYYY-MM-DD') : response.object?.dob
+        })
+        setImgUpload(response.object?.avatar == null ? avatar : response.object?.avatar)
+      }
+    }
   })
+
+  useEffect(() => {
+    if (data?.object) {
+      reset({
+        ...data.object,
+        dob: data.object?.dob != null ? moment(data.object?.dob).format('YYYY-MM-DD') : data.object?.dob
+      })
+      setImgUpload(data.object?.avatar == null ? avatar : data.object?.avatar)
+    }
+  }, [data, reset])
+
   const handleChangeImage = (event: any) => {
     const files = event.target.files
 
@@ -45,33 +67,16 @@ const InformationUser = () => {
       setImgUpload(event.target?.result)
     })
   }
-  useEffect(() => {
-    async function fetchAPI() {
-      try {
-        if (user?.id) {
-          const response = await getUserDetail(user?.id)
-          if (response.object) {
-            setData(response.object)
 
-            reset(response.object)
-            setImgUpload(response.object?.avatar == null ? avatar : response.object?.avatar)
-            setLoading(false)
-          }
-        }
-      } catch (e) {
-        console.log(e)
-      }
-    }
-    fetchAPI()
-  }, [])
-  if (loading) return <Loading />
   const onSubmit: SubmitHandler<UserData> = async (data: any) => {
     try {
+      const dataFormat = { ...data, dob: data.dob ? moment(data.dob).format('DD/MM/YYYY') : data.dob }
       const formData = new FormData()
-      for (const key in data) {
-        formData.append(key, data[key])
+      for (const key in dataFormat) {
+        formData.append(key, dataFormat[key])
       }
       formData.append('file', inputRef.current.files[0])
+      // console.log('file: ', inputRef.current.files[0])
 
       if (user?.id) {
         const response = await updateProfile(user?.id, formData)
@@ -86,10 +91,12 @@ const InformationUser = () => {
       errorNotification('Chỉnh sửa thông tin người dùng không thành cồng')
     }
   }
+  if (isLoading) return <Loading />
+  if (error) return <div>Lỗi hiển thị thông tin</div>
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className='w-full md:w-[80%]'>
-      <div className='flex flex-col items-center mx-3 py-4 px-3 justify-center bg-white rounded-md shadow-md'>
+    <form onSubmit={handleSubmit(onSubmit)} className='w-full md:w-[80%] '>
+      <div className='flex flex-col items-center mx-3 py-4 px-3 justify-center md:min-h-[70vh] bg-white rounded-md shadow-md'>
         <div className=' flex w-full px-3 flex-col items-center justify-center '>
           <img src={imgUpload} className='w-[100px] h-[100px] object-cover rounded-[50%]' />
           <input type='file' ref={inputRef} accept='.jpg, .png' onChange={handleChangeImage} className='hidden' />
@@ -167,7 +174,7 @@ const InformationUser = () => {
             <label className='font-semibold text-xs'>CCCD/CMT</label>
             <input
               className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-              {...register('identification_number')}
+              {...register('identificationNumber')}
             />
           </div>
           <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
@@ -186,6 +193,7 @@ const InformationUser = () => {
           </div>
           <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
             <label className='font-semibold text-xs'>Ngày sinh</label>
+
             <input
               type='date'
               className={`text-xs block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
@@ -197,10 +205,9 @@ const InformationUser = () => {
             <select
               className={`text-xs block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
               {...register('gender')}
-              defaultValue={data?.gender}
             >
-              <option value={0}>Nam</option>
-              <option value={1}>Nữ</option>
+              <option value={'true'}>Nam</option>
+              <option value={'false'}>Nữ</option>
             </select>
           </div>
           <div className='w-full flex justify-end'>
