@@ -1,3 +1,5 @@
 export const GUESS = 'GUESS'
 export const ADMIN = 'ADMIN'
 export const USER = 'USER'
+export const ADMIN_OFFICER = 'ADMIN_OFFICER'
+export const SALE = 'SALE'

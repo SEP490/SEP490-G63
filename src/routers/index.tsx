@@ -8,8 +8,13 @@ import Loading from '~/components/shared/Loading/Loading.tsx'
 
 import About from '~/pages/landing_page/About.tsx'
 import Blogs from '~/pages/landing_page/Blogs.tsx'
-import { ADMIN, USER } from '~/common/const/role.ts'
+import { ADMIN, ADMIN_OFFICER, SALE, USER } from '~/common/const/role.ts'
 import ContractHistory from '~/pages/Admin/ContractHistory.tsx'
+import AdminOfficerLayout from '~/layout/AdminOfficerLayout/index.tsx'
+import SaleLayout from '~/layout/SaleLayout/index.tsx'
+import HomeAdminOfficer from '~/pages/AdminOfficer/HomeAdminOfficer.tsx'
+import HomeSale from '~/pages/Sale/HomeSale.tsx'
+import UserLayout from '~/layout/UserLayout/index.tsx'
 const Login = lazy(() => import('~/components/Login.tsx'))
 const Logout = lazy(() => import('~/components/Logout.tsx'))
 const Example = lazy(() => import('~/pages/Example.tsx'))
@@ -171,9 +176,9 @@ const Routes = () => {
           path: '/',
           element: (
             <Suspense fallback={<Loading />}>
-              <AdminLayout>
+              <UserLayout>
                 <HomeUser />
-              </AdminLayout>
+              </UserLayout>
             </Suspense>
           )
         },
@@ -181,9 +186,73 @@ const Routes = () => {
           path: '/logout',
           element: (
             <Suspense fallback={<Loading />}>
-              <AdminLayout>
+              <UserLayout>
                 <Logout />
-              </AdminLayout>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '*',
+          element: <Error />
+        }
+      ]
+    }
+  ]
+  const routesForAdminOfficer = [
+    {
+      path: '/',
+      element: <ProtectedRoute />,
+      children: [
+        {
+          path: '/',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <AdminOfficerLayout>
+                <HomeAdminOfficer />
+              </AdminOfficerLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/logout',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <AdminOfficerLayout>
+                <Logout />
+              </AdminOfficerLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '*',
+          element: <Error />
+        }
+      ]
+    }
+  ]
+  const routesForSale = [
+    {
+      path: '/',
+      element: <ProtectedRoute />, // Wrap the component in ProtectedRoute
+      children: [
+        {
+          path: '/',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <SaleLayout>
+                <HomeSale />
+              </SaleLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/logout',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <SaleLayout>
+                <Logout />
+              </SaleLayout>
             </Suspense>
           )
         },
@@ -261,6 +330,10 @@ const Routes = () => {
       routes = routesForAuthenticatedOnly
     } else if (user?.role == USER) {
       routes = routesForUser
+    } else if (user?.role == ADMIN_OFFICER) {
+      routes = routesForAdminOfficer
+    } else if (user?.role == SALE) {
+      routes = routesForSale
     } else routes = routesForNotAuthenticatedOnly
   } else {
     routes = routesForNotAuthenticatedOnly
