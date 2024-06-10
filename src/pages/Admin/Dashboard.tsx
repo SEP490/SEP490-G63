@@ -1,7 +1,7 @@
 import ChartOne from '~/components/Admin/Charts/ChartOne'
 import ChartThree from '~/components/Admin/Charts/ChartThree'
 import ChartTwo from '~/components/Admin/Charts/ChartTwo'
-import DefaultLayout from '~/layout/DefaultLayout'
+import DefaultLayout from '~/layout/Sidebar/DefaultLayout'
 import CardDataStats from '~/layout/Sidebar/CardDataStats'
 
 export default function Dashboard() {
