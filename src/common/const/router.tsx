@@ -1,5 +1,8 @@
 import { EyeIcon, UserGroupIcon, ClipboardDocumentListIcon, DocumentTextIcon } from '@heroicons/react/24/outline'
-
+//Admin: tổng quan, employee, hợp đồng, hợp đồng cũ, hợp đồng mẫu, gửi mail, ký, hợp đòng với admin tdocman
+//AdminOficer: tổng quan, employee, hợp đồng, hợp đồng cũ, hợp đồng mẫu, gửi mail,
+//sale: tổng quan, hợp đồng, hợp đồng cũ, hợp đồng mẫu, gửi mail,
+//staffOfficer:profile
 export const routerAdmin = [
   {
     id: 1,
