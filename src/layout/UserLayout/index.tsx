@@ -2,15 +2,16 @@ import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '~/provider/authProvider'
 import NavBar from './NavBar'
 import useViewport from '~/hooks/useViewport'
-import { useState } from 'react'
+import { USER } from '~/common/const/role'
 
 function UserLayout({ children }: any) {
   const location = useLocation()
   const { token, user } = useAuth()
   const { width } = useViewport()
   const isMobile = width <= 1024
-  const [permissions, setPermissions] = useState(['a', 'b'])
-  if (!token && user?.permissions !== permissions) {
+  console.log(user)
+
+  if (!token || user?.role != USER) {
     return <Navigate to='/404notfound' state={{ from: location }} replace></Navigate>
   }
   return (
