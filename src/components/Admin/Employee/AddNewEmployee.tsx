@@ -12,7 +12,7 @@ type FromType = {
   dob: string
   email: string
   gender: number
-  identification_number: string
+  identificationNumber: string
   name: string
   phone: string
   position: string
@@ -83,20 +83,34 @@ const AddNewEmployee = ({ closeModal }: IProp) => {
         </div>
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>Phòng ban</label>
+        <label className='font-bold '>
+          Phòng ban<sup className='text-red-500'>*</sup>
+        </label>
         <input
-          className={`block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-          {...register('department')}
+          className={`${errors.department ? 'ring-red-600' : ''}  block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+          {...register('department', {
+            required: 'Phòng ban không được bỏ trống'
+          })}
           placeholder='Nhập phòng ban nhân viên'
         />
+        <div className={`text-red-500 absolute text-[12px] ${errors.department ? 'visible' : 'invisible'}`}>
+          {errors.department?.message}
+        </div>
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>Vị trí</label>
+        <label className='font-bold '>
+          Vị trí<sup className='text-red-500'>*</sup>
+        </label>
         <input
-          className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-          {...register('position')}
+          className={`${errors.position ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+          {...register('position', {
+            required: 'Vị trí không được bỏ trống'
+          })}
           placeholder='Nhập vị trí nhân viên'
         />
+        <div className={`text-red-500 absolute text-[12px] ${errors.position ? 'visible' : 'invisible'}`}>
+          {errors.position?.message}
+        </div>
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
         <label className='font-bold '>
@@ -133,14 +147,14 @@ const AddNewEmployee = ({ closeModal }: IProp) => {
           CCCD/CMT <sup className='text-red-500'>*</sup>
         </label>
         <input
-          className={`${errors.identification_number ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-          {...register('identification_number', {
+          className={`${errors.identificationNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+          {...register('identificationNumber', {
             required: 'CCCD/CMT không được bỏ trống'
           })}
           placeholder='Nhập CCCD/CMT nhân viên'
         />
-        <div className={`text-red-500 absolute text-[12px] ${errors.identification_number ? 'visible' : 'invisible'}`}>
-          {errors.identification_number?.message}
+        <div className={`text-red-500 absolute text-[12px] ${errors.identificationNumber ? 'visible' : 'invisible'}`}>
+          {errors.identificationNumber?.message}
         </div>
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
@@ -159,20 +173,34 @@ const AddNewEmployee = ({ closeModal }: IProp) => {
         </div>
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>Địa chỉ</label>
+        <label className='font-bold '>
+          Địa chỉ<sup className='text-red-500'>*</sup>
+        </label>
         <input
-          className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-          {...register('address')}
+          className={`${errors.address ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+          {...register('address', {
+            required: 'Địa chỉ không được bỏ trống'
+          })}
           placeholder='Nhập địa chỉ nhân viên'
         />
+        <div className={`text-red-500 absolute text-[12px] ${errors.address ? 'visible' : 'invisible'}`}>
+          {errors.address?.message}
+        </div>
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>Ngày sinh</label>
+        <label className='font-bold '>
+          Ngày sinh<sup className='text-red-500'>*</sup>
+        </label>
         <input
           type='date'
-          className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-          {...register('dob')}
+          className={`${errors.dob ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+          {...register('dob', {
+            required: 'Ngày sinh không được bỏ trống'
+          })}
         />
+        <div className={`text-red-500 absolute text-[12px] ${errors.dob ? 'visible' : 'invisible'}`}>
+          {errors.dob?.message}
+        </div>
       </div>
 
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>

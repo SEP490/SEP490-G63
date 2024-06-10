@@ -5,6 +5,7 @@ export type UserInformation = {
   id: string
   name: string
   role: string
+  email: string
   permissions: string[]
   avatar: string
 }
