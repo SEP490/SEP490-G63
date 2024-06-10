@@ -1,6 +1,5 @@
 import React from 'react'
 import Hero from '~/components/landing_page/Hero/Hero'
-// import NatureVid from '~/assets/video/a.mp4'
 import Welcome from '~/assets/places/Kinh-doanh-la-gi-cho-vi-du.jpg'
 import Places from '~/components/landing_page/Places/Places'
 // import Testimonial from "~/components/landing_page/Testimonial/Testimonial";
@@ -31,9 +30,6 @@ const Home = () => {
       <Navbar />
       <div>
         <div className='h-[700px] relative'>
-          {/* <video autoPlay loop muted className='absolute right-0 top-0 h-[700px] w-full object-cover z-[-1]'>
-            <source src={NatureVid} type='video/mp4' />
-          </video> */}
           <img src={Welcome} className='absolute right-0 top-0 h-[700px] w-full object-cover z-[-1]'></img>
 
           <Hero />
@@ -44,7 +40,7 @@ const Home = () => {
         {/* <BlogsComp /> */}
         <Banner />
         <Banner1 />
-        <Banner2 />
+        {/* <Banner2 /> */}
         <ServicesBoxx />
         {/* <Testimonial /> */}
       </div>

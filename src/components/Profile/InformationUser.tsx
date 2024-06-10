@@ -6,6 +6,7 @@ import { useAuth } from '~/provider/authProvider'
 import useToast from '~/hooks/useToast'
 import Loading from '~/components/shared/Loading/Loading'
 import moment from 'moment'
+import { useQuery } from 'react-query'
 export interface UserData {
   id: string
   address: string
@@ -21,23 +22,43 @@ export interface UserData {
 }
 const InformationUser = () => {
   const reader = new FileReader()
-  const [data, setData] = useState<any>()
+  // const [data, setData] = useState<any>()
   const { user, setUser } = useAuth()
   const [loading, setLoading] = useState(true)
   const [imgUpload, setImgUpload] = useState<any>(avatar)
   const inputRef = useRef<any>()
   const { successNotification, errorNotification } = useToast()
+
   const {
     register,
     handleSubmit,
     reset,
-    watch,
     formState: { errors }
-  } = useForm<UserData>({
-    defaultValues: useMemo(() => {
-      return { ...data, dob: data?.dob != null ? moment('data?.dob').format('YYYY-MM-DD') : data?.dob }
-    }, [data])
+  } = useForm<UserData>()
+
+  const { data, isLoading, error } = useQuery(['userDetail', user?.id], () => getUserDetail(user?.id as string), {
+    enabled: !!user?.id,
+    onSuccess: (response) => {
+      if (response.object) {
+        reset({
+          ...response.object,
+          dob: response.object?.dob != null ? moment(response.object?.dob).format('YYYY-MM-DD') : response.object?.dob
+        })
+        setImgUpload(response.object?.avatar == null ? avatar : response.object?.avatar)
+      }
+    }
   })
+
+  useEffect(() => {
+    if (data?.object) {
+      reset({
+        ...data.object,
+        dob: data.object?.dob != null ? moment(data.object?.dob).format('YYYY-MM-DD') : data.object?.dob
+      })
+      setImgUpload(data.object?.avatar == null ? avatar : data.object?.avatar)
+    }
+  }, [data, reset])
+
   const handleChangeImage = (event: any) => {
     const files = event.target.files
 
@@ -47,29 +68,6 @@ const InformationUser = () => {
     })
   }
 
-  useEffect(() => {
-    async function fetchAPI() {
-      try {
-        if (user?.id) {
-          const response = await getUserDetail(user?.id)
-          if (response.object) {
-            setData(response.object)
-            reset({
-              ...response.object,
-              dob:
-                response.object?.dob != null ? moment(response.object?.dob).format('YYYY-MM-DD') : response.object?.dob
-            })
-            setImgUpload(response.object?.avatar == null ? avatar : response.object?.avatar)
-            setLoading(false)
-          }
-        }
-      } catch (e) {
-        console.log(e)
-      }
-    }
-    fetchAPI()
-  }, [])
-  if (loading) return <Loading />
   const onSubmit: SubmitHandler<UserData> = async (data: any) => {
     try {
       const dataFormat = { ...data, dob: data.dob ? moment(data.dob).format('DD/MM/YYYY') : data.dob }
@@ -78,6 +76,7 @@ const InformationUser = () => {
         formData.append(key, dataFormat[key])
       }
       formData.append('file', inputRef.current.files[0])
+      // console.log('file: ', inputRef.current.files[0])
 
       if (user?.id) {
         const response = await updateProfile(user?.id, formData)
@@ -92,6 +91,8 @@ const InformationUser = () => {
       errorNotification('Chỉnh sửa thông tin người dùng không thành cồng')
     }
   }
+  if (isLoading) return <Loading />
+  if (error) return <div>Lỗi hiển thị thông tin</div>
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='w-full md:w-[80%] '>

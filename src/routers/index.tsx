@@ -186,7 +186,9 @@ const Routes = () => {
           element: (
             <Suspense fallback={<Loading />}>
               <UserLayout>
-                <Logout />
+                <UserLayout>
+                  <Logout />
+                </UserLayout>
               </UserLayout>
             </Suspense>
           )

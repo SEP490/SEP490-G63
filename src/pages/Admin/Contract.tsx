@@ -1,5 +1,5 @@
-import { Dialog, Menu, Transition } from '@headlessui/react'
-import { Fragment, useEffect, useState } from 'react'
+import { Dialog, Listbox, Menu, Transition } from '@headlessui/react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import ViewContract from '~/components/Admin/NewContract/ViewContract'
 import {
   Cog6ToothIcon,
@@ -20,7 +20,7 @@ import { useMutation, useQuery } from 'react-query'
 import { AxiosError } from 'axios'
 import useToast from '~/hooks/useToast'
 import EditNewContract from '~/components/Admin/NewContract/EditNewContract'
-import EditTemplateContract from '~/components/Admin/TemplateContract/EditTemplateContract'
+import ContractHistory from './ContractHistory'
 export interface DataContract {
   id: string
   name: string
@@ -35,12 +35,17 @@ const Contract = () => {
   const [openModal, setOpenModal] = useState(false)
   const [editModal, setEditModal] = useState(false)
   const [deleteModal, setDeleteModal] = useState(false)
+  const [historyModal, setHistoryModal] = useState(false)
+  const [selectedHistory, setSelectedHistory] = useState(null)
 
   // const [data, setData] = useState<DataContract[] | []>([])
   // const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(5)
   const [totalPage, setTotalPage] = useState(1)
+  const prevPageRef = useRef(page)
+  const prevSizeRef = useRef(size)
+
   const closeModal = () => {
     setOpenModal(false)
   }
@@ -48,7 +53,11 @@ const Contract = () => {
     setDeleteModal(false)
     setOpenModal(false)
     setEditModal(false)
+    setHistoryModal(false)
     setSelectedContract(null)
+  }
+  const handleCloseHistoryModal = () => {
+    setHistoryModal(false)
   }
 
   const handlePageChange = (page: any) => {
@@ -79,14 +88,20 @@ const Contract = () => {
     if (selectedContract) deleteTemplate.mutate(selectedContract.id)
   }
 
+  // useEffect(() => {
+  //   if (isError) {
+  //     errorNotification((error as AxiosError)?.message || '')
+  //   }
+  // }, [data, isError, error, errorNotification])
+
   useEffect(() => {
-    if (isError) {
-      errorNotification((error as AxiosError)?.message || '')
+    if (prevPageRef.current !== page || prevSizeRef.current !== size) {
+      prevPageRef.current = page
+      prevSizeRef.current = size
+      refetch()
     }
-  }, [data, isError, error, errorNotification])
-  useEffect(() => {
-    refetch()
   }, [page, refetch, size])
+
   if (isLoading || isFetching) return <Loading />
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto px-5'>
@@ -290,7 +305,7 @@ const Contract = () => {
           </Transition.Child>
 
           <div className='fixed inset-0 overflow-y-auto'>
-            <div className='flex min-h-full  items-center justify-center p-4 text-center'>
+            <div className='flex min-h-full items-center justify-center p-4 text-center'>
               <Transition.Child
                 as={Fragment}
                 enter='ease-out duration-300'
@@ -304,18 +319,37 @@ const Contract = () => {
                   <div className='flex justify-between mb-2'>
                     <div className='font-semibold'>Xem hợp đồng</div>
                     <div className='flex gap-3 items-center'>
-                      <button
-                        onClick={() => {
-                          navigate(`history/${selectedContract?.id}`)
-                        }}
-                        type='button'
-                        className='center rounded-lg bg-[#0070f4] py-2 px-4 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
-                      >
-                        Lịch sử hợp đồng
-                      </button>
-                      <XMarkIcon className='h-5 w-5 mr-3 mb-3 cursor-pointer' onClick={() => setOpenModal(false)} />
+                      <Listbox>
+                        <div className='relative'>
+                          <Listbox.Button className='px-4 py-2 cursor-default rounded-sm bg-blue-500 text-white flex justify-center text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm'>
+                            Lịch sử hợp đồng
+                          </Listbox.Button>
+                          <Transition
+                            as={Fragment}
+                            leave='transition ease-in duration-100'
+                            leaveFrom='opacity-100'
+                            leaveTo='opacity-0'
+                          >
+                            <Listbox.Options className='absolute mt-1 w-[40vw] md:w-[30vw] right-0 bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm'>
+                              <Listbox.Option
+                                key='history'
+                                className={({ active }) =>
+                                  `cursor-default select-none relative py-2 pl-4 pr-4 ${
+                                    active ? 'text-amber-900' : 'text-gray-900'
+                                  }`
+                                }
+                                value='history'
+                              >
+                                {() => <ContractHistory selectedContract={selectedContract?.id} />}
+                              </Listbox.Option>
+                            </Listbox.Options>
+                          </Transition>
+                        </div>
+                      </Listbox>
+                      <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeModal()} />
                     </div>
                   </div>
+
                   <ViewContract src={selectedContract?.file} />
                 </Dialog.Panel>
               </Transition.Child>
@@ -358,6 +392,43 @@ const Contract = () => {
                     handleCloseModal={handleCloseModal}
                     refetch={refetch}
                   />
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+      <Transition appear show={historyModal} as={Fragment}>
+        <Dialog as='div' className='relative z-50 w-[25vw]' onClose={handleCloseHistoryModal}>
+          <Transition.Child
+            as={Fragment}
+            enter='ease-out duration-300'
+            enterFrom='opacity-0'
+            enterTo='opacity-100'
+            leave='ease-in duration-200'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0'
+          >
+            <div className='fixed inset-0 bg-black/25' />
+          </Transition.Child>
+
+          <div className='fixed inset-0 overflow-y-auto'>
+            <div className='flex min-h-full items-center justify-center p-4 text-center'>
+              <Transition.Child
+                as={Fragment}
+                enter='ease-out duration-300'
+                enterFrom='opacity-0 scale-95'
+                enterTo='opacity-100 scale-100'
+                leave='ease-in duration-200'
+                leaveFrom='opacity-100 scale-100'
+                leaveTo='opacity-0 scale-95'
+              >
+                <Dialog.Panel className=' w-[50vw] md:w-[40vw] md:h-[30vh] transform overflow-y-auto rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all'>
+                  <div className='flex justify-between mb-2'>
+                    <p className='font-semibold'>Lịch sử hợp đồng</p>
+                    <XMarkIcon className='h-5 w-5 mr-3 mb-3 cursor-pointer' onClick={handleCloseHistoryModal} />
+                  </div>
+                  <ContractHistory selectedContract={selectedContract?.id} />
                 </Dialog.Panel>
               </Transition.Child>
             </div>
