@@ -10,6 +10,7 @@ import About from '~/pages/landing_page/About.tsx'
 import Blogs from '~/pages/landing_page/Blogs.tsx'
 import { ADMIN, USER } from '~/common/const/role.ts'
 import ContractHistory from '~/pages/Admin/ContractHistory.tsx'
+import AdminOfficer from '~/middleware/AdminOfficer/index.tsx'
 const Login = lazy(() => import('~/components/Login.tsx'))
 const Logout = lazy(() => import('~/components/Logout.tsx'))
 const Example = lazy(() => import('~/pages/Example.tsx'))
@@ -40,7 +41,9 @@ const Routes = () => {
           element: (
             <Suspense fallback={<Loading />}>
               <AdminLayout>
-                <SearchPage />
+                <AdminOfficer>
+                  <SearchPage />
+                </AdminOfficer>
               </AdminLayout>
             </Suspense>
           )

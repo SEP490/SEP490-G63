@@ -1,3 +1,9 @@
+export const permissionObject = {
+  OFFICE_ADMIN: 'OFFICE_ADMIN',
+  SALE: 'SALE',
+  OFFICE_STAFF: 'OFFICE_STAFF',
+  MANAGER: 'MANAGER'
+}
 const permissions = [
   {
     id: 1,
@@ -13,13 +19,13 @@ const permissions = [
   },
   {
     id: 3,
-    title: 'OFFICE_ADMIN',
+    title: 'OFFICE ADMIN',
     tooltip: 'PERMISSION OFFICE ADMIN',
     value: 'OFFICE_ADMIN'
   },
   {
     id: 4,
-    title: 'OFFICE_STAFF',
+    title: 'OFFICE STAFF',
     tooltip: 'PERMISSION OFFICE STAFF',
     value: 'OFFICE_STAFF'
   }
