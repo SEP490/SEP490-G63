@@ -12,6 +12,9 @@ import { ADMIN, USER } from '~/common/const/role.ts'
 import ContractHistory from '~/pages/Admin/ContractHistory.tsx'
 import AdminOfficer from '~/middleware/AdminOfficer/index.tsx'
 import UserLayout from '~/layout/UserLayout/index.tsx'
+import { permissionObject } from '~/common/const/permissions.ts'
+import Sale from '~/middleware/Sale/index.tsx'
+import StaffOfficer from '~/middleware/StaffOfficer/index.tsx'
 const Login = lazy(() => import('~/components/Login.tsx'))
 const Logout = lazy(() => import('~/components/Logout.tsx'))
 const Example = lazy(() => import('~/pages/Example.tsx'))
@@ -43,6 +46,16 @@ const Routes = () => {
             <Suspense fallback={<Loading />}>
               <AdminLayout>
                 <SearchPage />
+              </AdminLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/view/:id/sign/:customer',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <AdminLayout>
+                <ViewSignContract />
               </AdminLayout>
             </Suspense>
           )
@@ -164,7 +177,7 @@ const Routes = () => {
       ]
     }
   ]
-  const routesForUser = [
+  const routesForAdminOfficer = [
     {
       path: '/',
       element: <ProtectedRoute />, // Wrap the component in ProtectedRoute
@@ -200,7 +213,76 @@ const Routes = () => {
       ]
     }
   ]
-
+  const routesForSale = [
+    {
+      path: '/',
+      element: <ProtectedRoute />, // Wrap the component in ProtectedRoute
+      children: [
+        {
+          path: '/',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <Sale>
+                  <HomeUser />
+                </Sale>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/logout',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <Logout />
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '*',
+          element: <Error />
+        }
+      ]
+    }
+  ]
+  const routesForStaff = [
+    {
+      path: '/',
+      element: <ProtectedRoute />, // Wrap the component in ProtectedRoute
+      children: [
+        {
+          path: '/',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <StaffOfficer>
+                  <HomeUser />
+                </StaffOfficer>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/logout',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <StaffOfficer>
+                  <Logout />
+                </StaffOfficer>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '*',
+          element: <Error />
+        }
+      ]
+    }
+  ]
   // Define routes accessible only to non-authenticated users
   const routesForNotAuthenticatedOnly = [
     {
@@ -265,8 +347,12 @@ const Routes = () => {
   if (token) {
     if (user?.role == ADMIN) {
       routes = routesForAuthenticatedOnly
-    } else if (user?.role == USER) {
-      routes = routesForUser
+    } else if (user?.role == USER && user?.permissions.includes(permissionObject.OFFICE_ADMIN)) {
+      routes = routesForAdminOfficer
+    } else if (user?.role == USER && user?.permissions.includes(permissionObject.SALE)) {
+      routes = routesForSale
+    } else if (user?.role == USER && user?.permissions.includes(permissionObject.OFFICE_STAFF)) {
+      routes = routesForStaff
     } else routes = routesForNotAuthenticatedOnly
   } else {
     routes = routesForNotAuthenticatedOnly
