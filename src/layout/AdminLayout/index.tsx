@@ -2,14 +2,15 @@ import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '~/provider/authProvider'
 import NavBar from './NavBar'
 import useViewport from '~/hooks/useViewport'
-import { USER } from '~/common/const/role'
+import { ADMIN } from '~/common/const/role'
 
 function AdminLayout({ children }: any) {
   const location = useLocation()
   const { token, user } = useAuth()
+
   const { width } = useViewport()
   const isMobile = width <= 1024
-  if (!token && user?.role !== USER) {
+  if (!token || user?.role != ADMIN) {
     return <Navigate to='/404notfound' state={{ from: location }} replace></Navigate>
   }
   return (
