@@ -25,7 +25,7 @@ export const getNewContract = async (page: number, size: number) => {
   const response = await axiosInstant.get(`contract/${page}/${size}`)
   return response.data
 }
-export const getNewContractById = async (id: string) => {
+export const getNewContractById = async (id: any) => {
   const response = await axiosInstant.get(`contract/${id}`)
   return response.data
 }
