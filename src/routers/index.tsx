@@ -150,16 +150,7 @@ const Routes = () => {
             </Suspense>
           )
         },
-        {
-          path: '/example',
-          element: (
-            <Suspense fallback={<Loading />}>
-              <AdminLayout>
-                <Example />
-              </AdminLayout>
-            </Suspense>
-          )
-        },
+
         {
           path: '/logout',
           element: (
@@ -172,7 +163,11 @@ const Routes = () => {
         },
         {
           path: '*',
-          element: <Error />
+          element: (
+            <AdminLayout>
+              <Error />
+            </AdminLayout>
+          )
         }
       ]
     }
@@ -188,7 +183,91 @@ const Routes = () => {
             <Suspense fallback={<Loading />}>
               <UserLayout>
                 <AdminOfficer>
-                  <HomeUser />
+                  <SearchPage />
+                </AdminOfficer>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/search/:fieldSearch/:searchText',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <AdminOfficer>
+                  <SearchPageResult />
+                </AdminOfficer>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/send-mail/:id/:type',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <AdminOfficer>
+                  <SendMailContract />
+                </AdminOfficer>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/employee',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <AdminOfficer>
+                  <Employee />
+                </AdminOfficer>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/old-contract',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <AdminOfficer>
+                  <OldContract />
+                </AdminOfficer>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/template-contract',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <AdminOfficer>
+                  <TemplateContract />
+                </AdminOfficer>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/contract',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <AdminOfficer>
+                  <Contract />
+                </AdminOfficer>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/contract/create',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <AdminOfficer>
+                  <CreateContract />
                 </AdminOfficer>
               </UserLayout>
             </Suspense>
@@ -199,16 +278,22 @@ const Routes = () => {
           element: (
             <Suspense fallback={<Loading />}>
               <UserLayout>
-                <UserLayout>
+                <AdminOfficer>
                   <Logout />
-                </UserLayout>
+                </AdminOfficer>
               </UserLayout>
             </Suspense>
           )
         },
         {
           path: '*',
-          element: <Error />
+          element: (
+            <UserLayout>
+              <AdminOfficer>
+                <Error />
+              </AdminOfficer>
+            </UserLayout>
+          )
         }
       ]
     }
@@ -224,7 +309,80 @@ const Routes = () => {
             <Suspense fallback={<Loading />}>
               <UserLayout>
                 <Sale>
-                  <HomeUser />
+                  <SearchPage />
+                </Sale>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/search/:fieldSearch/:searchText',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <Sale>
+                  <SearchPageResult />
+                </Sale>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/send-mail/:id/:type',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <Sale>
+                  <SendMailContract />
+                </Sale>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+
+        {
+          path: '/old-contract',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <Sale>
+                  <OldContract />
+                </Sale>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/template-contract',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <Sale>
+                  <TemplateContract />
+                </Sale>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/contract',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <Sale>
+                  <Contract />
+                </Sale>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/contract/create',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <Sale>
+                  <CreateContract />
                 </Sale>
               </UserLayout>
             </Suspense>
@@ -235,14 +393,22 @@ const Routes = () => {
           element: (
             <Suspense fallback={<Loading />}>
               <UserLayout>
-                <Logout />
+                <Sale>
+                  <Logout />
+                </Sale>
               </UserLayout>
             </Suspense>
           )
         },
         {
           path: '*',
-          element: <Error />
+          element: (
+            <UserLayout>
+              <Sale>
+                <Error />
+              </Sale>
+            </UserLayout>
+          )
         }
       ]
     }
@@ -278,7 +444,13 @@ const Routes = () => {
         },
         {
           path: '*',
-          element: <Error />
+          element: (
+            <UserLayout>
+              <StaffOfficer>
+                <Error />
+              </StaffOfficer>
+            </UserLayout>
+          )
         }
       ]
     }
