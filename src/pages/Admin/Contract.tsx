@@ -21,6 +21,7 @@ import { AxiosError } from 'axios'
 import useToast from '~/hooks/useToast'
 import EditNewContract from '~/components/Admin/NewContract/EditNewContract'
 import ContractHistory from './ContractHistory'
+import { status } from '~/common/const/status'
 export interface DataContract {
   id: string
   name: string
@@ -143,10 +144,12 @@ const Contract = () => {
               <th scope='col' className='px-3 py-3'>
                 Ngày tạo
               </th>
-              <th scope='col' className='px-3 py-3'>
+              <th scope='col' className='px-3 py-3' align='center'>
                 Trạng thái
               </th>
-              <th className='px-3 py-3'>Chi tiết</th>
+              <th className='px-3 py-3 ' align='center'>
+                Chi tiết
+              </th>
 
               <th className='px-3 py-3 w-[30px]'></th>
             </tr>
@@ -163,8 +166,10 @@ const Contract = () => {
                 <td className='px-3 py-4'>
                   {d?.createdDate ? moment(d?.createdDate).format('DD/MM/YYYY') : d?.createdDate}
                 </td>
-                <td className='px-3 py-4'>{d.status}</td>
-                <td className='px-3 py-4'>
+                <td className={`px-3 py-4 font-semibold ${status[d.status].color}`} align='center'>
+                  {status[d.status].title}
+                </td>
+                <td className='px-3 py-4' align='center'>
                   <div
                     className='cursor-pointer text-blue-500 hover:underline'
                     onClick={() => {
