@@ -12,6 +12,9 @@ import { ADMIN, USER } from '~/common/const/role.ts'
 import ContractHistory from '~/pages/Admin/ContractHistory.tsx'
 import AdminOfficer from '~/middleware/AdminOfficer/index.tsx'
 import UserLayout from '~/layout/UserLayout/index.tsx'
+import { permissionObject } from '~/common/const/permissions.ts'
+import Sale from '~/middleware/Sale/index.tsx'
+import StaffOfficer from '~/middleware/StaffOfficer/index.tsx'
 import Dashboard from '~/pages/Admin/Dashboard.tsx'
 const Login = lazy(() => import('~/components/Login.tsx'))
 const Logout = lazy(() => import('~/components/Logout.tsx'))
@@ -44,6 +47,16 @@ const Routes = () => {
             <Suspense fallback={<Loading />}>
               <AdminLayout>
                 <SearchPage />
+              </AdminLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/view/:id/sign/:customer',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <AdminLayout>
+                <ViewSignContract />
               </AdminLayout>
             </Suspense>
           )
@@ -139,16 +152,7 @@ const Routes = () => {
             </Suspense>
           )
         },
-        {
-          path: '/example',
-          element: (
-            <Suspense fallback={<Loading />}>
-              <AdminLayout>
-                <Example />
-              </AdminLayout>
-            </Suspense>
-          )
-        },
+
         {
           path: '/logout',
           element: (
@@ -161,12 +165,16 @@ const Routes = () => {
         },
         {
           path: '*',
-          element: <Error />
+          element: (
+            <AdminLayout>
+              <Error />
+            </AdminLayout>
+          )
         }
       ]
     }
   ]
-  const routesForUser = [
+  const routesForAdminOfficer = [
     {
       path: '/',
       element: <ProtectedRoute />, // Wrap the component in ProtectedRoute
@@ -177,7 +185,91 @@ const Routes = () => {
             <Suspense fallback={<Loading />}>
               <UserLayout>
                 <AdminOfficer>
-                  <HomeUser />
+                  <SearchPage />
+                </AdminOfficer>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/search/:fieldSearch/:searchText',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <AdminOfficer>
+                  <SearchPageResult />
+                </AdminOfficer>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/send-mail/:id/:type',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <AdminOfficer>
+                  <SendMailContract />
+                </AdminOfficer>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/employee',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <AdminOfficer>
+                  <Employee />
+                </AdminOfficer>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/old-contract',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <AdminOfficer>
+                  <OldContract />
+                </AdminOfficer>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/template-contract',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <AdminOfficer>
+                  <TemplateContract />
+                </AdminOfficer>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/contract',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <AdminOfficer>
+                  <Contract />
+                </AdminOfficer>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/contract/create',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <AdminOfficer>
+                  <CreateContract />
                 </AdminOfficer>
               </UserLayout>
             </Suspense>
@@ -188,21 +280,183 @@ const Routes = () => {
           element: (
             <Suspense fallback={<Loading />}>
               <UserLayout>
-                <UserLayout>
+                <AdminOfficer>
                   <Logout />
-                </UserLayout>
+                </AdminOfficer>
               </UserLayout>
             </Suspense>
           )
         },
         {
           path: '*',
-          element: <Error />
+          element: (
+            <UserLayout>
+              <AdminOfficer>
+                <Error />
+              </AdminOfficer>
+            </UserLayout>
+          )
         }
       ]
     }
   ]
+  const routesForSale = [
+    {
+      path: '/',
+      element: <ProtectedRoute />, // Wrap the component in ProtectedRoute
+      children: [
+        {
+          path: '/',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <Sale>
+                  <SearchPage />
+                </Sale>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/search/:fieldSearch/:searchText',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <Sale>
+                  <SearchPageResult />
+                </Sale>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/send-mail/:id/:type',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <Sale>
+                  <SendMailContract />
+                </Sale>
+              </UserLayout>
+            </Suspense>
+          )
+        },
 
+        {
+          path: '/old-contract',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <Sale>
+                  <OldContract />
+                </Sale>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/template-contract',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <Sale>
+                  <TemplateContract />
+                </Sale>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/contract',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <Sale>
+                  <Contract />
+                </Sale>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/contract/create',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <Sale>
+                  <CreateContract />
+                </Sale>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/logout',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <Sale>
+                  <Logout />
+                </Sale>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '*',
+          element: (
+            <UserLayout>
+              <Sale>
+                <Error />
+              </Sale>
+            </UserLayout>
+          )
+        }
+      ]
+    }
+  ]
+  const routesForStaff = [
+    {
+      path: '/',
+      element: <ProtectedRoute />, // Wrap the component in ProtectedRoute
+      children: [
+        {
+          path: '/',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <StaffOfficer>
+                  <HomeUser />
+                </StaffOfficer>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/logout',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <StaffOfficer>
+                  <Logout />
+                </StaffOfficer>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '*',
+          element: (
+            <UserLayout>
+              <StaffOfficer>
+                <Error />
+              </StaffOfficer>
+            </UserLayout>
+          )
+        }
+      ]
+    }
+  ]
   // Define routes accessible only to non-authenticated users
   const routesForNotAuthenticatedOnly = [
     {
@@ -275,8 +529,12 @@ const Routes = () => {
   if (token) {
     if (user?.role == ADMIN) {
       routes = routesForAuthenticatedOnly
-    } else if (user?.role == USER) {
-      routes = routesForUser
+    } else if (user?.role == USER && user?.permissions.includes(permissionObject.OFFICE_ADMIN)) {
+      routes = routesForAdminOfficer
+    } else if (user?.role == USER && user?.permissions.includes(permissionObject.SALE)) {
+      routes = routesForSale
+    } else if (user?.role == USER && user?.permissions.includes(permissionObject.OFFICE_STAFF)) {
+      routes = routesForStaff
     } else routes = routesForNotAuthenticatedOnly
   } else {
     routes = routesForNotAuthenticatedOnly
