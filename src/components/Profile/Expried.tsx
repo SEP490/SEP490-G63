@@ -32,7 +32,7 @@ const Expried = ({ closeModal, selectedCustomer }: Iprops) => {
         const response = await extendService({
           companyId: selectedCustomer?.id,
           pricePlanId: selectedPlan?.id,
-          payed: true
+          payed: false
         })
         console.log('response', response)
 

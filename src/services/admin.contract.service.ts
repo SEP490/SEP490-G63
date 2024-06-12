@@ -20,7 +20,7 @@ export const getContract = async (email: string | undefined, code: string) => {
 
 export const extendService = async (data: any) => {
   try {
-    const response = await adminInstance.post(`manager/queueExtend/`, data)
+    const response = await adminInstance.post(`manager/queueExtend`, data)
     return response.data
   } catch (error) {
     console.log(error)
