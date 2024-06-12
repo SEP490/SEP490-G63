@@ -64,15 +64,14 @@ const Contract = () => {
     setPage(page - 1)
   }
 
-  const { data, error, isError, isLoading, refetch, isFetching } = useQuery(
-    'new-contract',
-    () => getNewContract(page, size),
-    {
-      onSuccess: (response) => {
-        setTotalPage(response.object?.totalPages)
-      }
+  const { data, isLoading, refetch, isFetching } = useQuery('new-contract', () => getNewContract(page, size), {
+    onSuccess: (response) => {
+      setTotalPage(response.object?.totalPages)
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
     }
-  )
+  })
 
   const deleteTemplate = useMutation(deleteNewContract, {
     onSuccess: () => {
@@ -81,18 +80,12 @@ const Contract = () => {
       setTimeout(() => refetch(), 500)
     },
     onError: (error: AxiosError<{ message: string }>) => {
-      errorNotification(error.response?.data.message || '')
+      errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
     }
   })
   const handleDelete = () => {
     if (selectedContract) deleteTemplate.mutate(selectedContract.id)
   }
-
-  // useEffect(() => {
-  //   if (isError) {
-  //     errorNotification((error as AxiosError)?.message || '')
-  //   }
-  // }, [data, isError, error, errorNotification])
 
   useEffect(() => {
     if (prevPageRef.current !== page || prevSizeRef.current !== size) {

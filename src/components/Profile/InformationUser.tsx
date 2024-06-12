@@ -7,6 +7,7 @@ import useToast from '~/hooks/useToast'
 import Loading from '~/components/shared/Loading/Loading'
 import moment from 'moment'
 import { useQuery } from 'react-query'
+import { AxiosError } from 'axios'
 export interface UserData {
   id: string
   address: string
@@ -37,8 +38,6 @@ const InformationUser = () => {
   const { data, isLoading, error } = useQuery(['userDetail', user?.id], () => getUserDetail(user?.id as string), {
     enabled: !!user?.id,
     onSuccess: (response) => {
-      console.log(response)
-
       if (response.object) {
         reset({
           ...response.object,
@@ -61,6 +60,9 @@ const InformationUser = () => {
         })
         setImgUpload(response.object?.avatar == null ? avatar : response.object?.avatar)
       }
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
     }
   })
 
