@@ -1,10 +1,10 @@
 import { useQuery } from 'react-query'
 import { useAuth } from '~/provider/authProvider'
-import { getContract, getContractAdmin } from '~/services/admin.contract.service'
+import { banContract, getContract, getContractAdmin } from '~/services/admin.contract.service'
 import Loading from '../shared/Loading/Loading'
 import { Fragment, useState } from 'react'
 import moment from 'moment'
-import { Menu, Transition } from '@headlessui/react'
+import { Dialog, Menu, Transition } from '@headlessui/react'
 import {
   ArrowPathIcon,
   ArrowUpOnSquareIcon,
@@ -12,15 +12,23 @@ import {
   EyeIcon,
   LockOpenIcon,
   NoSymbolIcon,
-  PaperAirplaneIcon
+  PaperAirplaneIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline'
 import DatePicker from 'react-datepicker'
+import useToast from '~/hooks/useToast'
+import Expried from './Expried'
 
 const ContractInformation = () => {
   const { user } = useAuth()
   const [code, setCode] = useState('')
   const [isSend, setIsSend] = useState(false)
-  const data1: any[] = []
+  const [data1, setData1] = useState<any>([])
+  const [isOpen, setIsOpen] = useState(false)
+  const [extendModal, setExtendModal] = useState(false)
+  const [deleteModal, setDeleteModal] = useState(false)
+  const { successNotification, errorNotification } = useToast()
+  const [selectedModal, setSelectedModal] = useState(null)
 
   const handleCodeChange = (e: any) => {
     setCode(e.target.value)
@@ -28,12 +36,36 @@ const ContractInformation = () => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault()
-    const response = await getContract(user?.email, code)
-    if (response) {
-      setIsSend(true)
-      console.log(response)
+    try {
+      const response = await getContract(user?.email, code)
+      if (response) {
+        setIsSend(true)
+        setData1(response.object)
+        successNotification('Xác minh thành công')
+        console.log(response)
+      } else {
+        errorNotification('Xác minh thất bại')
+        console.log(response)
+      }
+    } catch (error) {
+      errorNotification('Lỗi xác minh hợp đồng')
+      console.log(error)
     }
-    console.log('Verification Code:', code)
+  }
+  function closeModal() {
+    setDeleteModal(false)
+    setExtendModal(false)
+    setSelectedModal(null)
+    setIsOpen(false)
+  }
+  const handleBanCompany = async () => {
+    if (data1?.id) {
+      const response = await banContract(data1?.id)
+      if (response) {
+        successNotification('Hủy dịch vụ thành công')
+        closeModal()
+      }
+    }
   }
 
   const { data, isError, isLoading } = useQuery('get-contract-admin', () => getContractAdmin(user?.email), {
@@ -49,7 +81,7 @@ const ContractInformation = () => {
 
   return (
     <>
-      {isSend ? (
+      {!isSend ? (
         <div className='w-full md:w-[80%] flex flex-col items-center mx-3 py-4 px-3 justify-center bg-white rounded-md shadow-md'>
           <h2 className='text-xl font-bold mb-4'>Nhập mã xác minh</h2>
           <form onSubmit={handleSubmit} className='w-full flex flex-col items-center'>
@@ -94,7 +126,7 @@ const ContractInformation = () => {
                     type='text'
                     id='table-search'
                     className='block p-2 ps-10 w-full text-xs text-gray-900 border border-gray-300 rounded-md  bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                    placeholder='Tìm kiếm tên công ty'
+                    placeholder='Tìm kiếm tên hợp đồng'
                   />
                 </div>
                 <div className='w-[40%] h-full '>
@@ -129,11 +161,11 @@ const ContractInformation = () => {
               <table className='w-full text-sm text-left shadow-md sm:rounded-lg rtl:text-right text-gray-500 dark:text-gray-400 overflow-auto z-0'>
                 <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
                   <tr>
-                    <th scope='col' className='px-2 py-3 text-center'>
+                    {/* <th scope='col' className='px-2 py-3 text-center'>
                       STT
-                    </th>
+                    </th> */}
                     <th scope='col' className='px-2 py-3 text-center'>
-                      Tên khách hàng
+                      Tên hợp đồng
                     </th>
                     <th scope='col' className='px-2 py-3 text-center'>
                       Ngày bắt đầu
@@ -157,155 +189,367 @@ const ContractInformation = () => {
                   </tr>
                 </thead>
                 <tbody className='w-full'>
-                  {data1?.map((d: any, index: number) => (
-                    <tr className=' w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'>
-                      <td className='px-2 py-2 text-center'>{index + 1}</td>
-                      <td className='px-2 py-2 text-center'>{d?.companyName}</td>
-                      <td className='px-2 py-2 text-center'>
-                        {d?.startDateUseService
-                          ? moment(d?.startDateUseService).format('DD-MM-YYYY')
-                          : d?.startDateUseService}
-                      </td>
-                      <td className='px-2 py-2 text-center'>
-                        {d?.endDateUseService
-                          ? moment(d?.endDateUseService).format('DD-MM-YYYY')
-                          : d?.endDateUseService}
-                      </td>
-                      <td className='px-2 py-2 text-center'>
-                        {d?.registerDate ? moment(d?.registerDate).format('DD-MM-YYYY') : d?.registerDate}
-                      </td>
-                      <td className='px-2 py-2 text-center'>{d?.taxCode}</td>
-                      <td className={`px-2 py-2 text-center`}>Status</td>
-                      <td className='px-2 py-2 text-center'>
-                        {d?.price == null ? 0 : (d?.price + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                      </td>
-                      <td className='px-2 py-2 text-center'>
-                        <Menu as='div' className='relative inline-block text-left '>
-                          <Menu.Button>
-                            <button className='flex justify-center items-center gap-3 cursor-pointer hover:text-blue-500'>
-                              <EllipsisVerticalIcon className='h-7 w-7' title='Hành động' />
-                            </button>
-                          </Menu.Button>
+                  {/* {data1?.map((d: any, index: number) => ( */}
+                  <tr className=' w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'>
+                    {/* <td className='px-2 py-2 text-center'>{data1?.id}</td> */}
+                    <td className='px-2 py-2 text-center'>{data1?.companyName || 'N/A'}</td>
+                    <td className='px-2 py-2 text-center'>
+                      {data1?.startDateUseService
+                        ? moment(data1?.startDateUseService).format('DD-MM-YYYY')
+                        : data1?.startDateUseService || 'N/A'}
+                    </td>
+                    <td className='px-2 py-2 text-center'>
+                      {data1?.endDateUseService
+                        ? moment(data1?.endDateUseService).format('DD-MM-YYYY')
+                        : data1?.endDateUseService || 'N/A'}
+                    </td>
+                    <td className='px-2 py-2 text-center'>
+                      {data1?.registerDate
+                        ? moment(data1?.registerDate).format('DD-MM-YYYY')
+                        : data1?.registerDate || 'N/A'}
+                    </td>
+                    <td className='px-2 py-2 text-center'>{data1?.taxCode || 'N/A'}</td>
+                    <td className={`px-2 py-2 text-center`}>{data1?.status || 'N/A'}</td>
+                    <td className='px-2 py-2 text-center'>
+                      {data1?.price == null ? 0 : (data1?.price + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',') || 'N/A'}
+                    </td>
+                    <td className='px-2 py-2 text-center'>
+                      <Menu as='div' className='relative inline-block text-left '>
+                        <Menu.Button>
+                          <button className='flex justify-center items-center gap-3 cursor-pointer hover:text-blue-500'>
+                            <EllipsisVerticalIcon className='h-7 w-7' title='Hành động' />
+                          </button>
+                        </Menu.Button>
 
-                          <Transition
-                            as={Fragment}
-                            enter='transition ease-out duration-100'
-                            enterFrom='transform opacity-0 scale-95'
-                            enterTo='transform opacity-100 scale-100'
-                            leave='transition ease-in duration-75'
-                            leaveFrom='transform opacity-100 scale-100'
-                            leaveTo='transform opacity-0 scale-95'
-                          >
-                            <Menu.Items className='absolute right-8 top-[-100%] z-50 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
-                              {d?.status == 'PROCESSING' ? (
+                        <Transition
+                          as={Fragment}
+                          enter='transition ease-out duration-100'
+                          enterFrom='transform opacity-0 scale-95'
+                          enterTo='transform opacity-100 scale-100'
+                          leave='transition ease-in duration-75'
+                          leaveFrom='transform opacity-100 scale-100'
+                          leaveTo='transform opacity-0 scale-95'
+                        >
+                          <Menu.Items className='absolute right-8 top-[-100%] z-50 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
+                            {data1?.status == 'PROCESSING' ? (
+                              <>
                                 <Menu.Item>
                                   {({ active }) => (
                                     <button
-                                      title='Xác nhận'
-                                      onClick={() => {
-                                        // setSelectedCustomer(d)
-                                        // setApproveModal(true)
-                                      }}
+                                      onClick={() => setIsOpen(true)}
+                                      title='Xem'
                                       className={`${
                                         active ? 'bg-green-500 text-white' : 'text-gray-900'
                                       } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
                                     >
-                                      <LockOpenIcon className='h-5' /> Kích hoạt
+                                      <EyeIcon className='h-5' /> Xem
                                     </button>
                                   )}
                                 </Menu.Item>
-                              ) : (
-                                <>
-                                  <Menu.Item>
-                                    {({ active }) => (
-                                      <button
-                                        title='Xem'
-                                        className={`${
-                                          active ? 'bg-green-500 text-white' : 'text-gray-900'
-                                        } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
-                                      >
-                                        <EyeIcon className='h-5' /> Xem
-                                      </button>
-                                    )}
-                                  </Menu.Item>
-                                  <Menu.Item>
-                                    {({ active }) => (
-                                      <button
-                                        title='Gia hạn'
-                                        className={`${
-                                          active ? 'bg-green-500 text-white' : 'text-gray-900'
-                                        } group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm `}
-                                      >
-                                        <PaperAirplaneIcon className='h-5' /> Gửi mail
-                                      </button>
-                                    )}
-                                  </Menu.Item>
-                                  {d?.status != 'LOCKED' && d?.status != 'EXPIRED' && (
-                                    <Menu.Item>
-                                      {({ active }) => (
-                                        <button
-                                          title='Chặn'
-                                          onClick={() => {
-                                            // setSelectedCustomer(d)
-                                            // setBanModal(true)
-                                          }}
-                                          className={`${
-                                            active ? 'bg-green-500 text-white' : 'text-gray-900'
-                                          } group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm `}
-                                        >
-                                          <NoSymbolIcon className='h-5' /> Hủy
-                                        </button>
-                                      )}
-                                    </Menu.Item>
+                                <Menu.Item>
+                                  {({ active }) => (
+                                    <button
+                                      title='Gia hạn'
+                                      className={`${
+                                        active ? 'bg-green-500 text-white' : 'text-gray-900'
+                                      } group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm `}
+                                    >
+                                      <PaperAirplaneIcon className='h-5' /> Gửi mail
+                                    </button>
                                   )}
-
+                                </Menu.Item>
+                                {data1?.status != 'LOCKED' && data1?.status != 'EXPIRED' && (
                                   <Menu.Item>
                                     {({ active }) => (
                                       <button
-                                        title='Gia hạn'
+                                        title='Chặn'
                                         onClick={() => {
                                           // setSelectedCustomer(d)
-                                          // setExtendModal(true)
+                                          // setBanModal(true)
                                         }}
                                         className={`${
                                           active ? 'bg-green-500 text-white' : 'text-gray-900'
                                         } group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm `}
                                       >
-                                        <ArrowPathIcon className='h-5' /> Gia hạn
+                                        <NoSymbolIcon className='h-5' /> Hủy
                                       </button>
                                     )}
                                   </Menu.Item>
+                                )}
 
-                                  <Menu.Item>
-                                    {({ active }) => (
-                                      <button
-                                        onClick={() => {
-                                          // setFileModal(true)
-                                          // setSelectedCustomer(d)
-                                        }}
-                                        title='Tải file'
-                                        className={`${
-                                          active ? 'bg-green-500 text-white' : 'text-gray-900'
-                                        } group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm `}
-                                      >
-                                        <ArrowUpOnSquareIcon className='h-5' /> Tải file
-                                      </button>
-                                    )}
-                                  </Menu.Item>
-                                </>
-                              )}
-                            </Menu.Items>
-                          </Transition>
-                        </Menu>
-                      </td>
-                    </tr>
-                  ))}
+                                <Menu.Item>
+                                  {({ active }) => (
+                                    <button
+                                      title='Gia hạn'
+                                      onClick={() => {
+                                        setSelectedModal(data?.id)
+                                        setExtendModal(true)
+                                      }}
+                                      className={`${
+                                        active ? 'bg-green-500 text-white' : 'text-gray-900'
+                                      } group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm `}
+                                    >
+                                      <ArrowPathIcon className='h-5' /> Gia hạn
+                                    </button>
+                                  )}
+                                </Menu.Item>
+
+                                <Menu.Item>
+                                  {({ active }) => (
+                                    <button
+                                      onClick={() => {
+                                        // setFileModal(true)
+                                        // setSelectedCustomer(d)
+                                      }}
+                                      title='Tải file'
+                                      className={`${
+                                        active ? 'bg-green-500 text-white' : 'text-gray-900'
+                                      } group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm `}
+                                    >
+                                      <ArrowUpOnSquareIcon className='h-5' /> Tải file
+                                    </button>
+                                  )}
+                                </Menu.Item>
+                              </>
+                            ) : (
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <button
+                                    title='Xác nhận'
+                                    onClick={() => {
+                                      // setSelectedCustomer(d)
+                                      // setApproveModal(true)
+                                    }}
+                                    className={`${
+                                      active ? 'bg-green-500 text-white' : 'text-gray-900'
+                                    } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
+                                  >
+                                    <LockOpenIcon className='h-5' /> Kích hoạt
+                                  </button>
+                                )}
+                              </Menu.Item>
+                            )}
+                          </Menu.Items>
+                        </Transition>
+                      </Menu>
+                    </td>
+                  </tr>
+                  {/* ))} */}
                 </tbody>
               </table>
             </div>
           </div>
         </div>
       )}
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog as='div' className='relative z-10' onClose={closeModal}>
+          <Transition.Child
+            as={Fragment}
+            enter='ease-out duration-300'
+            enterFrom='opacity-0 scale-95'
+            enterTo='opacity-100 scale-100'
+            leave='ease-in duration-200'
+            leaveFrom='opacity-100 scale-100'
+            leaveTo='opacity-0 scale-95'
+          >
+            <div className='fixed inset-0 bg-black bg-opacity-25' />
+          </Transition.Child>
+
+          <div className='fixed inset-0 overflow-y-auto'>
+            <div className='flex min-h-full items-center justify-center p-4 text-center'>
+              <Transition.Child
+                as={Fragment}
+                enter='ease-out duration-300'
+                enterFrom='opacity-0 scale-95'
+                enterTo='opacity-100 scale-100'
+                leave='ease-in duration-200'
+                leaveFrom='opacity-100 scale-100'
+                leaveTo='opacity-0 scale-95'
+              >
+                <Dialog.Panel className='w-full max-h-[70vh] max-w-2xl transform overflow-y-auto rounded-md bg-white p-6 text-left align-middle shadow-xl transition-all'>
+                  <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900 mb-4'>
+                    <div className='flex justify-between'>
+                      <p>Thông tin hợp đồng</p>
+                      <XMarkIcon className='h-5 w-5 mr-3 mb-3 cursor-pointer' onClick={closeModal} />
+                    </div>
+                  </Dialog.Title>
+                  <div className='mt-2'>
+                    <table className='min-w-full divide-y divide-gray-200'>
+                      <tbody className='bg-white divide-y divide-gray-200'>
+                        <tr>
+                          <td className='px-6 py-4 whitespace-nowrap font-medium'>Tên công ty:</td>
+                          <td className='px-6 py-4 whitespace-nowrap'>{data1?.companyName || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                          <td className='px-6 py-4 whitespace-nowrap font-medium'>Mã số thuế:</td>
+                          <td className='px-6 py-4 whitespace-nowrap'>{data1?.taxCode || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                          <td className='px-6 py-4 whitespace-nowrap font-medium'>Người đại diện:</td>
+                          <td className='px-6 py-4 whitespace-nowrap'>{data1?.presenter || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                          <td className='px-6 py-4 whitespace-nowrap font-medium'>Điện thoại:</td>
+                          <td className='px-6 py-4 whitespace-nowrap'>{data1?.phone || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                          <td className='px-6 py-4 whitespace-nowrap font-medium'>Email:</td>
+                          <td className='px-6 py-4 whitespace-nowrap'>{data1?.email || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                          <td className='px-6 py-4 whitespace-nowrap font-medium'>Trạng thái:</td>
+                          <td className='px-6 py-4 whitespace-nowrap'>{data1?.status || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                          <td className='px-6 py-4 whitespace-nowrap font-medium'>Ngày tạo:</td>
+                          <td className='px-6 py-4 whitespace-nowrap'>
+                            {data1?.createdDate ? moment(data1?.createdDate).format('DD-MM-YYYY') : 'N/A'}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className='px-6 py-4 whitespace-nowrap font-medium'>Ngày cập nhật:</td>
+                          <td className='px-6 py-4 whitespace-nowrap'>
+                            {data1?.updatedDate ? moment(data1?.updatedDate).format('DD-MM-YYYY') : 'N/A'}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className='px-6 py-4 whitespace-nowrap font-medium'>Ngày bắt đầu sử dụng dịch vụ:</td>
+                          <td className='px-6 py-4 whitespace-nowrap'>
+                            {data1?.startDateUseService
+                              ? moment(data1?.startDateUseService).format('DD-MM-YYYY')
+                              : 'N/A'}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className='px-6 py-4 whitespace-nowrap font-medium'>Ngày kết thúc sử dụng dịch vụ:</td>
+                          <td className='px-6 py-4 whitespace-nowrap'>
+                            {data1?.endDateUseService ? moment(data1?.endDateUseService).format('DD-MM-YYYY') : 'N/A'}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className='px-6 py-4 whitespace-nowrap font-medium'>Ngày đăng ký:</td>
+                          <td className='px-6 py-4 whitespace-nowrap'>
+                            {data1?.registerDate ? moment(data1?.registerDate).format('DD-MM-YYYY') : 'N/A'}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className='px-6 py-4 whitespace-nowrap font-medium'>Thành tiền (VND):</td>
+                          <td className='px-6 py-4 whitespace-nowrap'>
+                            {data1?.price ? data1?.price.toLocaleString('en-US') : 'N/A'}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className='px-6 py-4 whitespace-nowrap font-medium'>Gói giá ID:</td>
+                          <td className='px-6 py-4 whitespace-nowrap'>{data1?.pricePlanId || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                          <td className='px-6 py-4 whitespace-nowrap font-medium'>Tên gói giá:</td>
+                          <td className='px-6 py-4 whitespace-nowrap'>{data1?.pricePlanName || 'N/A'}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+      <Transition appear show={deleteModal} as={Fragment}>
+        <Dialog as='div' className='relative z-10 w-[90vw]' onClose={closeModal}>
+          <Transition.Child
+            as={Fragment}
+            enter='ease-out duration-300'
+            enterFrom='opacity-0'
+            enterTo='opacity-100'
+            leave='ease-in duration-200'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0'
+          >
+            <div className='fixed inset-0 bg-black/25' />
+          </Transition.Child>
+
+          <div className='fixed inset-0 overflow-y-auto'>
+            <div className='flex min-h-full  items-center justify-center p-4 text-center'>
+              <Transition.Child
+                as={Fragment}
+                enter='ease-out duration-300'
+                enterFrom='opacity-0 scale-95'
+                enterTo='opacity-100 scale-100'
+                leave='ease-in duration-200'
+                leaveFrom='opacity-100 scale-100'
+                leaveTo='opacity-0 scale-95'
+              >
+                <Dialog.Panel className='w-[100vw] md:w-[40vw]  transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+                  <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
+                    Hủy dịch vụ
+                  </Dialog.Title>
+                  <div>
+                    <div>
+                      Gói dịch vụ sẽ được hủy với công ty {data1?.companyName || 'N/A'}. Bạn có chắc chắn với quyết định
+                      của mình?
+                    </div>
+                    <div className='w-full flex justify-end mt-6'>
+                      <button
+                        type='button'
+                        className='middle  none center mr-4 rounded-lg bg-red-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#ff00002f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
+                        data-ripple-light='true'
+                        onClick={handleBanCompany}
+                      >
+                        Chấp nhận
+                      </button>
+                      <button
+                        type='button'
+                        className='middle  none center mr-4 rounded-lg bg-[#49484d] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#49484d]  focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
+                        data-ripple-light='true'
+                        onClick={closeModal}
+                      >
+                        Hủy
+                      </button>
+                    </div>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+      <Transition appear show={extendModal} as={Fragment}>
+        <Dialog as='div' className='relative z-10 w-[90vw]' onClose={closeModal}>
+          <Transition.Child
+            as={Fragment}
+            enter='ease-out duration-300'
+            enterFrom='opacity-0'
+            enterTo='opacity-100'
+            leave='ease-in duration-200'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0'
+          >
+            <div className='fixed inset-0 bg-black/25' />
+          </Transition.Child>
+
+          <div className='fixed inset-0 overflow-y-auto'>
+            <div className='flex min-h-full  items-center justify-center p-4 text-center'>
+              <Transition.Child
+                as={Fragment}
+                enter='ease-out duration-300'
+                enterFrom='opacity-0 scale-95'
+                enterTo='opacity-100 scale-100'
+                leave='ease-in duration-200'
+                leaveFrom='opacity-100 scale-100'
+                leaveTo='opacity-0 scale-95'
+              >
+                <Dialog.Panel className='w-[100vw] md:w-[40vw]  transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+                  <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
+                    Gia hạn dịch vụ
+                  </Dialog.Title>
+                  <Expried closeModal={closeModal} selectedCustomer={data1} />
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
     </>
   )
 }
