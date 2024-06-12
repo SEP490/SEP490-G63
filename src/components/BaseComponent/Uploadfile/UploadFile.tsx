@@ -12,7 +12,7 @@ const UploadFile = ({ handleCloseModal }: Iprops) => {
   }
 
   return (
-    <>
+    <div className='w-full'>
       <input
         type='file'
         ref={inputFileRef}
@@ -22,7 +22,7 @@ const UploadFile = ({ handleCloseModal }: Iprops) => {
         className='hidden'
       />
       <PreviewFile files={files} handleCloseModal={handleCloseModal} inputFileRef={inputFileRef} />
-    </>
+    </div>
   )
 }
 export default UploadFile

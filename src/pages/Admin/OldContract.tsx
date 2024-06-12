@@ -183,7 +183,7 @@ const OldContract = () => {
         </div>
       </div>
       <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={handleCloseModal}>
+        <Dialog as='div' className='relative z-40 w-[90vw]' onClose={handleCloseModal}>
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'
