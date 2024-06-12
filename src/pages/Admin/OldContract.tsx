@@ -1,7 +1,9 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { NoSymbolIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { AxiosError } from 'axios'
 import moment from 'moment'
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
+import { useQuery } from 'react-query'
 import DocumentIcon from '~/assets/svg/document'
 import ViewContract from '~/components/Admin/NewContract/ViewContract'
 import Pagination from '~/components/BaseComponent/Pagination/Pagination'
@@ -13,7 +15,6 @@ import { deleteOldContract, getOldContract } from '~/services/contract.service'
 const OldContract = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [data, setData] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(10)
   const [totalPage, setTotalPage] = useState(1)
@@ -21,7 +22,8 @@ const OldContract = () => {
   const [selectedContract, setSelectedContract] = useState<any>(null)
   const { successNotification, errorNotification } = useToast()
   const [openModalContract, setOpenModalContract] = useState(false)
-
+  const prevPageRef = useRef(page)
+  const prevSizeRef = useRef(size)
   const handlePageChange = (page: any) => {
     setPage(page - 1)
   }
@@ -45,22 +47,28 @@ const OldContract = () => {
     }
   }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getOldContract(page, size)
-        if (response) {
-          setLoading(false)
-          setData(response?.object)
-          setTotalPage(response?.object?.totalPages)
-        }
-      } catch (e) {
-        console.log(e)
+  const { isLoading, refetch, isFetching } = useQuery(
+    ['old-contract-list', page, size],
+    () => getOldContract(page, size),
+    {
+      onSuccess: (response: any) => {
+        setData(response?.object)
+        setTotalPage(response?.object?.totalPages)
+      },
+      onError: (error: AxiosError<{ message: string }>) => {
+        errorNotification(error.response?.data.message || 'Lỗi hệ thống')
       }
     }
-    fetchData()
-  }, [page, size, isOpen, deleteModal])
-  if (loading) return <Loading />
+  )
+  useEffect(() => {
+    if (prevPageRef.current !== page || prevSizeRef.current !== size) {
+      prevPageRef.current = page
+      prevSizeRef.current = size
+      refetch()
+    }
+  }, [page, refetch, size])
+
+  if (isLoading || isFetching) return <Loading />
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex flex-wrap py-4'>
@@ -183,7 +191,7 @@ const OldContract = () => {
         </div>
       </div>
       <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={handleCloseModal}>
+        <Dialog as='div' className='relative z-40 w-[90vw]' onClose={handleCloseModal}>
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'

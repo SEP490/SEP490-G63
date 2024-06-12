@@ -15,6 +15,7 @@ import { useQuery } from 'react-query'
 interface FormType {
   name: string
   number: string
+  urgent: boolean
 }
 interface CompanyInfo {
   name: string
@@ -87,6 +88,8 @@ const CreateContract = () => {
       //   return
       // }
       const response = await createNewContract(bodyData)
+      console.log(response)
+
       if (response?.code == '00' && response.object && response.success) {
         successNotification('Tạo hợp đồng thành công')
         setTimeout(() => {
@@ -690,6 +693,15 @@ const CreateContract = () => {
               imageUploadSizeLimit: 5 * 1024 * 1024
             }}
           />
+        </div>
+        <div className='w-full mt-5 relative'>
+          <input
+            className={`text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400  sm:text-sm sm:leading-6 mr-3`}
+            placeholder='Nhập tên hợp đồng'
+            type='checkbox'
+            {...register('urgent')}
+          />
+          <label className='font-light '>Tạo hợp đồng với trạng thái khẩn cấp</label>
         </div>
         <div className='w-full flex justify-end'>
           <button

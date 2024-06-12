@@ -21,6 +21,7 @@ import { AxiosError } from 'axios'
 import useToast from '~/hooks/useToast'
 import EditNewContract from '~/components/Admin/NewContract/EditNewContract'
 import ContractHistory from './ContractHistory'
+import { status } from '~/common/const/status'
 export interface DataContract {
   id: string
   name: string
@@ -64,15 +65,14 @@ const Contract = () => {
     setPage(page - 1)
   }
 
-  const { data, error, isError, isLoading, refetch, isFetching } = useQuery(
-    'new-contract',
-    () => getNewContract(page, size),
-    {
-      onSuccess: (response) => {
-        setTotalPage(response.object?.totalPages)
-      }
+  const { data, isLoading, refetch, isFetching } = useQuery('new-contract', () => getNewContract(page, size), {
+    onSuccess: (response) => {
+      setTotalPage(response.object?.totalPages)
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
     }
-  )
+  })
 
   const deleteTemplate = useMutation(deleteNewContract, {
     onSuccess: () => {
@@ -81,18 +81,12 @@ const Contract = () => {
       setTimeout(() => refetch(), 500)
     },
     onError: (error: AxiosError<{ message: string }>) => {
-      errorNotification(error.response?.data.message || '')
+      errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
     }
   })
   const handleDelete = () => {
     if (selectedContract) deleteTemplate.mutate(selectedContract.id)
   }
-
-  // useEffect(() => {
-  //   if (isError) {
-  //     errorNotification((error as AxiosError)?.message || '')
-  //   }
-  // }, [data, isError, error, errorNotification])
 
   useEffect(() => {
     if (prevPageRef.current !== page || prevSizeRef.current !== size) {
@@ -150,10 +144,12 @@ const Contract = () => {
               <th scope='col' className='px-3 py-3'>
                 Ngày tạo
               </th>
-              <th scope='col' className='px-3 py-3'>
+              <th scope='col' className='px-3 py-3' align='center'>
                 Trạng thái
               </th>
-              <th className='px-3 py-3'>Chi tiết</th>
+              <th className='px-3 py-3 ' align='center'>
+                Chi tiết
+              </th>
 
               <th className='px-3 py-3 w-[30px]'></th>
             </tr>
@@ -170,8 +166,10 @@ const Contract = () => {
                 <td className='px-3 py-4'>
                   {d?.createdDate ? moment(d?.createdDate).format('DD/MM/YYYY') : d?.createdDate}
                 </td>
-                <td className='px-3 py-4'>{d.status}</td>
-                <td className='px-3 py-4'>
+                <td className={`px-3 py-4 font-semibold ${status[d.status].color}`} align='center'>
+                  {status[d.status].title}
+                </td>
+                <td className='px-3 py-4' align='center'>
                   <div
                     className='cursor-pointer text-blue-500 hover:underline'
                     onClick={() => {

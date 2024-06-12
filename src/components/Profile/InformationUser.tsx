@@ -7,6 +7,7 @@ import useToast from '~/hooks/useToast'
 import Loading from '~/components/shared/Loading/Loading'
 import moment from 'moment'
 import { useQuery } from 'react-query'
+import { AxiosError } from 'axios'
 export interface UserData {
   id: string
   address: string
@@ -22,9 +23,7 @@ export interface UserData {
 }
 const InformationUser = () => {
   const reader = new FileReader()
-  // const [data, setData] = useState<any>()
   const { user, setUser } = useAuth()
-  const [loading, setLoading] = useState(true)
   const [imgUpload, setImgUpload] = useState<any>(avatar)
   const inputRef = useRef<any>()
   const { successNotification, errorNotification } = useToast()
@@ -42,10 +41,28 @@ const InformationUser = () => {
       if (response.object) {
         reset({
           ...response.object,
-          dob: response.object?.dob != null ? moment(response.object?.dob).format('YYYY-MM-DD') : response.object?.dob
+          dob:
+            response.object?.dob != null || response.object?.dob != 'null'
+              ? moment(response.object?.dob).format('YYYY-MM-DD')
+              : response.object?.dob,
+          address:
+            response.object?.address != null || response.object?.address != 'null' ? response.object?.address : '',
+          department:
+            response.object?.department != null || response.object?.department != 'null'
+              ? response.object?.department
+              : '',
+          identificationNumber:
+            response.object?.identificationNumber != null || response.object?.identificationNumber != 'null'
+              ? response.object?.identificationNumber
+              : '',
+          position:
+            response.object?.position != null || response.object?.position != 'null' ? response.object?.position : ''
         })
         setImgUpload(response.object?.avatar == null ? avatar : response.object?.avatar)
       }
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
     }
   })
 

@@ -6,7 +6,8 @@ import useViewport from '~/hooks/useViewport'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '~/provider/authProvider'
 import useToast from '~/hooks/useToast'
-import { routerAdmin } from '~/common/const/router'
+import { routerAdmin, routerAdminOfficer, routerSale } from '~/common/const/router'
+import { permissionObject } from '~/common/const/permissions'
 const NavBar = () => {
   const [openNav, setOpenNav] = useState(false)
   const [openProfile, setOpenProfile] = useState(false)
@@ -15,6 +16,11 @@ const NavBar = () => {
   const navigate = useNavigate()
   const { removeToken, user } = useAuth()
   const { successNotification } = useToast()
+  const navigateUser = user?.permissions.includes(permissionObject.OFFICE_ADMIN)
+    ? routerAdminOfficer
+    : user?.permissions.includes(permissionObject.SALE)
+      ? routerSale
+      : routerAdmin
   return (
     <div>
       <div className='relative visible'>
@@ -145,7 +151,7 @@ const NavBar = () => {
       {!isMobile && (
         <div className='w-full h-[50px]'>
           <ul className={`flex h-full bg-main-color gap-1 px-10 text-white font-bold`}>
-            {routerAdmin.map((r) => (
+            {navigateUser.map((r) => (
               <li
                 key={r.id}
                 onClick={() => navigate(r.slug)}

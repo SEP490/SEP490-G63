@@ -1,15 +1,24 @@
+import { AxiosError } from 'axios'
 import React from 'react'
 import { Stage, Layer, Line } from 'react-konva'
-import { ArrowPathIcon, CheckIcon } from '@heroicons/react/24/outline'
-const SignContract = () => {
-  const [tool, setTool] = React.useState('pen')
+import { useMutation } from 'react-query'
+import { useNavigate } from 'react-router-dom'
+import useToast from '~/hooks/useToast'
+import { signContract } from '~/services/contract.service'
+interface IProps {
+  id: string | undefined
+  customer: string | undefined
+}
+const SignContract = ({ id, customer }: IProps) => {
   const [lines, setLines] = React.useState<any>([])
   const isDrawing = React.useRef(false)
   const stageRef = React.useRef<any>(null)
+  const { successNotification, errorNotification } = useToast()
+
   const handleMouseDown = (e: any) => {
     isDrawing.current = true
     const pos = e.target.getStage().getPointerPosition()
-    setLines([...lines, { tool, points: [pos.x, pos.y] }])
+    setLines([...lines, { tool: 'pen', points: [pos.x, pos.y] }])
   }
 
   const handleMouseMove = (e: any) => {
@@ -31,8 +40,24 @@ const SignContract = () => {
   const handleMouseUp = () => {
     isDrawing.current = false
   }
+  const signQuery = useMutation(signContract, {
+    onSuccess: () => {
+      successNotification('Ký hợp đồng thành công')
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      errorNotification(error.response?.data.message || '')
+    }
+  })
   const handleExport = () => {
     const uri = stageRef.current.toDataURL()
+    const dataRequest = {
+      contractId: id as string,
+      signImage: uri,
+      createdBy: '',
+      comment: 'Ký OK nhá',
+      customer: customer == '1'
+    }
+    signQuery.mutate(dataRequest)
   }
   return (
     <>

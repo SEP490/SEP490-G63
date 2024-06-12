@@ -1,18 +1,18 @@
 export const status = {
   NEW: {
     title: 'NEW',
-    color: 'blue'
+    color: 'text-blue-500'
   },
   PROCESS: {
     title: 'PROCESS',
-    color: 'yellow'
+    color: 'text-yellow-500'
   },
-  SUCCESSFUL: {
-    title: 'SUCCESSFULL',
-    color: 'green'
+  SUCCESS: {
+    title: 'SUCCESS',
+    color: 'text-green-500'
   },
   REJECT: {
     title: 'REJECT',
-    color: 'red'
+    color: 'text-red-500'
   }
 }
