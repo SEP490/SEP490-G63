@@ -8,7 +8,8 @@ import {
   PaperAirplaneIcon,
   PlusIcon,
   XMarkIcon,
-  ArrowsRightLeftIcon
+  ArrowsRightLeftIcon,
+  PencilIcon
 } from '@heroicons/react/24/outline'
 import { useNavigate } from 'react-router-dom'
 import { deleteNewContract, getNewContract } from '~/services/contract.service'
@@ -181,7 +182,7 @@ const Contract = () => {
                   </div>
                 </td>
                 <td className='px-3 py-4'>
-                  <div>
+                  <div className={`${d.status == 'SUCCESS' ? 'invisible' : 'visible'}`}>
                     <Menu as='div' className='relative inline-block text-left '>
                       <Menu.Button className='flex justify-center items-center gap-3 cursor-pointer hover:text-blue-500'>
                         <EllipsisVerticalIcon className='h-7 w-7' title='Hành động' />
@@ -197,6 +198,21 @@ const Contract = () => {
                         leaveTo='transform opacity-0 scale-95'
                       >
                         <Menu.Items className='absolute right-8 top-[-100%] z-50 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
+                          <Menu.Item>
+                            {({ active }) => (
+                              <button
+                                title='Sửa'
+                                onClick={() => {
+                                  navigate(`/view/${d.id}/sign/2`)
+                                }}
+                                className={`${
+                                  active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
+                              >
+                                <PencilIcon className='h-5' /> Ký hợp đồng
+                              </button>
+                            )}
+                          </Menu.Item>
                           <Menu.Item>
                             {({ active }) => (
                               <button
