@@ -1,5 +1,5 @@
 import { Dialog, Listbox, Menu, Transition } from '@headlessui/react'
-import { Fragment, useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import ViewContract from '~/components/Admin/NewContract/ViewContract'
 import {
   Cog6ToothIcon,
@@ -23,6 +23,10 @@ import useToast from '~/hooks/useToast'
 import EditNewContract from '~/components/Admin/NewContract/EditNewContract'
 import ContractHistory from './ContractHistory'
 import { status } from '~/common/const/status'
+import { useAuth } from '~/provider/authProvider'
+import { permissionObject } from '~/common/const/permissions'
+import { ADMIN } from '~/common/const/role'
+import UrgentIcon from '~/assets/svg/urgentIcon'
 export interface DataContract {
   id: string
   name: string
@@ -39,7 +43,14 @@ const Contract = () => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [historyModal, setHistoryModal] = useState(false)
   const [selectedHistory, setSelectedHistory] = useState(null)
-
+  const { user } = useAuth()
+  const permissionUser = useMemo(() => {
+    if (user?.role == ADMIN) return ADMIN
+    else if (user?.permissions.includes(permissionObject.OFFICE_ADMIN)) return 'OFFICE_ADMIN'
+    else if (user?.permissions.includes(permissionObject.SALE)) return 'SALE'
+    else return 'OFFICE_STAFF'
+  }, [user])
+  const [statusContract, setStatusContract] = useState<any>('NEW')
   // const [data, setData] = useState<DataContract[] | []>([])
   // const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(0)
@@ -99,8 +110,8 @@ const Contract = () => {
 
   if (isLoading || isFetching) return <Loading />
   return (
-    <div className='bg-[#e8eaed] h-full overflow-auto px-5'>
-      <div className='flex gap-3 justify-between w-full py-3'>
+    <div className='bg-[#e8eaed] h-full overflow-auto'>
+      <div className='flex gap-3 justify-between w-full py-3 h-[60px] px-5'>
         <div className='flex w-[50%]'>
           <div className='relative'>
             <div className='absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none'>
@@ -122,7 +133,7 @@ const Contract = () => {
           <input
             type='text'
             id='table-search'
-            className='block p-2 ps-10 w-full text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+            className='block p-2 ps-10 w-full shadow-md text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
             placeholder='Tìm kiếm hợp đồng'
             // onChange={handChangeInputSearch}
           />
@@ -130,180 +141,205 @@ const Contract = () => {
         <button
           type='button'
           onClick={() => navigate('create')}
-          className='rounded-md flex gap-1 bg-main-color px-4 py-2 text-sm font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
+          className='rounded-md shadow-md flex gap-1 bg-main-color px-4 py-2 text-sm font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
         >
           <PlusIcon className='h-5 w-5' /> Tạo mới
         </button>
       </div>
-      <div className='shadow-md sm:rounded-lg my-3 '>
-        <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
-          <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
-            <tr>
-              <th className='px-3 py-3'>STT</th>
-              <th className='px-3 py-3'>Tên hợp đồng</th>
-              <th className='px-3 py-3'>Người tạo</th>
-              <th scope='col' className='px-3 py-3'>
-                Ngày tạo
-              </th>
-              <th scope='col' className='px-3 py-3' align='center'>
-                Trạng thái
-              </th>
-              <th className='px-3 py-3 ' align='center'>
-                Chi tiết
-              </th>
-
-              <th className='px-3 py-3 w-[30px]'></th>
-            </tr>
-          </thead>
-          <tbody className='w-full '>
-            {data?.object?.content?.map((d: any, index: number) => (
-              <tr
-                key={d.id}
-                className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
-              >
-                <td className='px-3 py-4'>{size * page + index + 1}</td>
-                <td className='px-3 py-4'>{d.name}</td>
-                <td className='px-3 py-4'>{d.createdBy}</td>
-                <td className='px-3 py-4'>
-                  {d?.createdDate ? moment(d?.createdDate).format('DD/MM/YYYY') : d?.createdDate}
-                </td>
-                <td className={`px-3 py-4 font-semibold ${status[d.status].color}`} align='center'>
-                  {status[d.status].title}
-                </td>
-                <td className='px-3 py-4' align='center'>
-                  <div
-                    className='cursor-pointer text-blue-500 hover:underline'
-                    onClick={() => {
-                      setSelectedContract(d)
-                      setOpenModal(true)
-                    }}
-                  >
-                    Xem
-                  </div>
-                </td>
-                <td className='px-3 py-4'>
-                  <div className={`${d.status == 'SUCCESS' ? 'invisible' : 'visible'}`}>
-                    <Menu as='div' className='relative inline-block text-left '>
-                      <Menu.Button className='flex justify-center items-center gap-3 cursor-pointer hover:text-blue-500'>
-                        <EllipsisVerticalIcon className='h-7 w-7' title='Hành động' />
-                      </Menu.Button>
-
-                      <Transition
-                        as={Fragment}
-                        enter='transition ease-out duration-100'
-                        enterFrom='transform opacity-0 scale-95'
-                        enterTo='transform opacity-100 scale-100'
-                        leave='transition ease-in duration-75'
-                        leaveFrom='transform opacity-100 scale-100'
-                        leaveTo='transform opacity-0 scale-95'
-                      >
-                        <Menu.Items className='absolute right-8 top-[-100%] z-50 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
-                          <Menu.Item>
-                            {({ active }) => (
-                              <button
-                                title='Sửa'
-                                onClick={() => {
-                                  navigate(`/view/${d.id}/sign/2`)
-                                }}
-                                className={`${
-                                  active ? 'bg-blue-500 text-white' : 'text-gray-900'
-                                } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
-                              >
-                                <PencilIcon className='h-5' /> Ký hợp đồng
-                              </button>
-                            )}
-                          </Menu.Item>
-                          <Menu.Item>
-                            {({ active }) => (
-                              <button
-                                title='Sửa'
-                                onClick={() => {
-                                  navigate(`/send-mail/${d.id}/1`)
-                                }}
-                                className={`${
-                                  active ? 'bg-blue-500 text-white' : 'text-gray-900'
-                                } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
-                              >
-                                <ArrowsRightLeftIcon className='h-5' /> Trình ký
-                              </button>
-                            )}
-                          </Menu.Item>
-
-                          <Menu.Item>
-                            {({ active }) => (
-                              <button
-                                title='Sửa'
-                                onClick={() => {
-                                  navigate(`/send-mail/${d.id}/2`)
-                                }}
-                                className={`${
-                                  active ? 'bg-blue-500 text-white' : 'text-gray-900'
-                                } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
-                              >
-                                <PaperAirplaneIcon className='h-5' /> Gửi ký
-                              </button>
-                            )}
-                          </Menu.Item>
-                          <Menu.Item>
-                            {({ active }) => (
-                              <button
-                                title='Sửa'
-                                onClick={() => {
-                                  setEditModal(true)
-                                  setSelectedContract(d)
-                                }}
-                                className={`${
-                                  active ? 'bg-blue-500 text-white' : 'text-gray-900'
-                                } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
-                              >
-                                <Cog6ToothIcon className='h-5' /> Sửa
-                              </button>
-                            )}
-                          </Menu.Item>
-                          <Menu.Item>
-                            {({ active }) => (
-                              <button
-                                title='Xóa'
-                                onClick={() => {
-                                  setDeleteModal(true)
-                                  setSelectedContract(d)
-                                }}
-                                className={`${
-                                  active ? 'bg-blue-500 text-white' : 'text-gray-900'
-                                } group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm `}
-                              >
-                                <NoSymbolIcon className='h-5' /> Xóa
-                              </button>
-                            )}
-                          </Menu.Item>
-                        </Menu.Items>
-                      </Transition>
-                    </Menu>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {(data == null || data.object.content.length == 0) && (
-          <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'>
-            <div className='flex flex-col justify-center items-center opacity-60'>
-              <DocumentIcon />
-              Chưa có hợp đồng
-            </div>
+      <div className='flex h-[calc(100%-70px)] '>
+        <div className='w-full h-full md:w-[16%] bg-white shadow-md mx-2 p-2'>
+          <div
+            className={`cursor-pointer rounded-md my-1 px-3 py-1 ${statusContract == 'NEW' ? 'bg-main-color text-white' : 'text-black'} hover:bg-hover-main hover:text-white`}
+            onClick={() => setStatusContract('NEW')}
+          >
+            Hợp đồng mới
           </div>
-        )}
+          <div
+            className={`cursor-pointer rounded-md my-1 px-3 py-1 ${statusContract == 'SUCCESS' ? 'bg-main-color text-white' : 'text-black'} hover:bg-hover-main hover:text-white`}
+            onClick={() => setStatusContract('SUCCESS')}
+          >
+            Hợp đồng hoàn thành
+          </div>
+        </div>
+        <div className='w-full md:w-[84%] overflow-auto mx-2'>
+          <div className='shadow-md sm:rounded-lg '>
+            <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
+              <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
+                <tr>
+                  <th className='px-3 py-3'>STT</th>
+                  <th className='px-3 py-3'>Tên hợp đồng</th>
+                  <th className='px-3 py-3'>Người tạo</th>
+                  <th scope='col' className='px-3 py-3'>
+                    Ngày tạo
+                  </th>
+                  <th scope='col' className='px-3 py-3' align='center'>
+                    Trạng thái
+                  </th>
+                  <th className='px-3 py-3 ' align='center'>
+                    Chi tiết
+                  </th>
+
+                  <th className='px-3 py-3 w-[30px]'></th>
+                </tr>
+              </thead>
+              <tbody className='w-full '>
+                {data?.object?.content?.map((d: any, index: number) => (
+                  <tr
+                    key={d.id}
+                    className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
+                  >
+                    <td className='px-3 py-4'>{size * page + index + 1}</td>
+                    <td
+                      className={`px-3 py-4 flex gap-4 items-center ${d.status != 'SUCCESS' && d.urgent ? 'text-red-700' : ''}`}
+                    >
+                      {d.name} {d.status != 'SUCCESS' && d.urgent && <UrgentIcon className='w-6 h-6' />}
+                    </td>
+                    <td className='px-3 py-4'>{d.createdBy}</td>
+                    <td className='px-3 py-4'>
+                      {d?.createdDate ? moment(d?.createdDate).format('DD/MM/YYYY') : d?.createdDate}
+                    </td>
+                    <td className={`px-3 py-4 font-semibold ${status[d.status].color}`} align='center'>
+                      {status[d.status].title}
+                    </td>
+                    <td className='px-3 py-4' align='center'>
+                      <div
+                        className='cursor-pointer text-blue-500 hover:underline'
+                        onClick={() => {
+                          setSelectedContract(d)
+                          setOpenModal(true)
+                        }}
+                      >
+                        Xem
+                      </div>
+                    </td>
+                    <td className='px-3 py-4'>
+                      <div className={`${d.status == 'SUCCESS' ? 'invisible' : 'visible'}`}>
+                        <Menu as='div' className='relative inline-block text-left '>
+                          <Menu.Button className='flex justify-center items-center gap-3 cursor-pointer hover:text-blue-500'>
+                            <EllipsisVerticalIcon className='h-7 w-7' title='Hành động' />
+                          </Menu.Button>
+
+                          <Transition
+                            as={Fragment}
+                            enter='transition ease-out duration-100'
+                            enterFrom='transform opacity-0 scale-95'
+                            enterTo='transform opacity-100 scale-100'
+                            leave='transition ease-in duration-75'
+                            leaveFrom='transform opacity-100 scale-100'
+                            leaveTo='transform opacity-0 scale-95'
+                          >
+                            <Menu.Items className='absolute right-5 top-2 z-50 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
+                              {permissionUser == ADMIN && (
+                                <Menu.Item>
+                                  {({ active }) => (
+                                    <button
+                                      title='Sửa'
+                                      onClick={() => {
+                                        navigate(`/view/${d.id}/sign/2`)
+                                      }}
+                                      className={`${
+                                        active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                      } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
+                                    >
+                                      <PencilIcon className='h-5' /> Ký hợp đồng
+                                    </button>
+                                  )}
+                                </Menu.Item>
+                              )}
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <button
+                                    title='Sửa'
+                                    onClick={() => {
+                                      navigate(`/send-mail/${d.id}/1`)
+                                    }}
+                                    className={`${
+                                      active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                    } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
+                                  >
+                                    <ArrowsRightLeftIcon className='h-5' /> Trình ký
+                                  </button>
+                                )}
+                              </Menu.Item>
+
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <button
+                                    title='Sửa'
+                                    onClick={() => {
+                                      navigate(`/send-mail/${d.id}/2`)
+                                    }}
+                                    className={`${
+                                      active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                    } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
+                                  >
+                                    <PaperAirplaneIcon className='h-5' /> Gửi ký
+                                  </button>
+                                )}
+                              </Menu.Item>
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <button
+                                    title='Sửa'
+                                    onClick={() => {
+                                      setEditModal(true)
+                                      setSelectedContract(d)
+                                    }}
+                                    className={`${
+                                      active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                    } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
+                                  >
+                                    <Cog6ToothIcon className='h-5' /> Sửa
+                                  </button>
+                                )}
+                              </Menu.Item>
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <button
+                                    title='Xóa'
+                                    onClick={() => {
+                                      setDeleteModal(true)
+                                      setSelectedContract(d)
+                                    }}
+                                    className={`${
+                                      active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                    } group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm `}
+                                  >
+                                    <NoSymbolIcon className='h-5' /> Xóa
+                                  </button>
+                                )}
+                              </Menu.Item>
+                            </Menu.Items>
+                          </Transition>
+                        </Menu>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {(data == null || data.object.content.length == 0) && (
+              <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'>
+                <div className='flex flex-col justify-center items-center opacity-60'>
+                  <DocumentIcon />
+                  Chưa có hợp đồng
+                </div>
+              </div>
+            )}
+          </div>
+          {data.object.content.length != 0 && (
+            <Pagination
+              totalPages={totalPage}
+              currentPage={page + 1}
+              size={size}
+              setSize={setSize}
+              setPage={setPage}
+              onPageChange={handlePageChange}
+            />
+          )}
+        </div>
       </div>
-      {data.object.content.length != 0 && (
-        <Pagination
-          totalPages={totalPage}
-          currentPage={page + 1}
-          size={size}
-          setSize={setSize}
-          setPage={setPage}
-          onPageChange={handlePageChange}
-        />
-      )}
+
       <Transition appear show={openModal} as={Fragment}>
         <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeModal}>
           <Transition.Child
