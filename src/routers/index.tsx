@@ -52,6 +52,14 @@ const Routes = () => {
           )
         },
         {
+          path: '/dashboard',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <Dashboard />
+            </Suspense>
+          )
+        },
+        {
           path: '/view/:id/sign/:customer',
           element: (
             <Suspense fallback={<Loading />}>
@@ -475,14 +483,7 @@ const Routes = () => {
         </Suspense>
       )
     },
-    {
-      path: '/dashboard',
-      element: (
-        <Suspense fallback={<Loading />}>
-          <Dashboard />
-        </Suspense>
-      )
-    },
+
     {
       path: '/register',
       element: (

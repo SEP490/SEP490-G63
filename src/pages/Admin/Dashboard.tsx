@@ -1,8 +1,10 @@
 import ChartOne from '~/components/Admin/Charts/ChartOne'
 import ChartThree from '~/components/Admin/Charts/ChartThree'
 import ChartTwo from '~/components/Admin/Charts/ChartTwo'
-import DefaultLayout from '~/layout/Sidebar/DefaultLayout'
-import CardDataStats from '~/layout/Sidebar/CardDataStats'
+import DefaultLayout from '~/layout/DashboardSidebar/DefaultLayout'
+import CardDataStats from '~/layout/DashboardSidebar/CardDataStats'
+import TableOne from '~/components/Admin/Charts/Tables/TableOne'
+import ChatCard from '~/components/Admin/Charts/Chat/ChatCard'
 
 export default function Dashboard() {
   return (
@@ -93,10 +95,15 @@ export default function Dashboard() {
           </svg>
         </CardDataStats>
       </div>
-      <div className='grid grid-cols-12 gap-4 md:gap-6 2xl:gap-7.5'>
+
+      <div className='mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5'>
         <ChartOne />
         <ChartTwo />
         <ChartThree />
+        <div className='col-span-12 xl:col-span-8'>
+          <TableOne />
+        </div>
+        <ChatCard />
       </div>
     </DefaultLayout>
   )
