@@ -44,3 +44,12 @@ export const banContract = async (id: string) => {
     console.log(error)
   }
 }
+
+export const handleBankTransaction = async (data: any) => {
+  try {
+    const response = await adminInstance.post(`payment/generateQR`, data)
+    return response.data
+  } catch (error) {
+    console.log(error)
+  }
+}
