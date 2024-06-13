@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import ComboboxMail from '~/components/Admin/SendMail/ComboboxMail'
@@ -7,6 +7,7 @@ import { getNewContractById, sendMail } from '~/services/contract.service'
 import useToast from '~/hooks/useToast'
 import Loading from '~/components/shared/Loading/Loading'
 import { useParams } from 'react-router-dom'
+import { BASE_URL_FE } from '~/common/const'
 
 const SendMailContract = () => {
   const [selectedFiles, setSelectedFiles] = useState<any[]>([])
@@ -17,11 +18,11 @@ const SendMailContract = () => {
   const [editorData, setEditorData] = useState<string>('')
   const { successNotification, errorNotification } = useToast()
   const [loading, setLoading] = useState<boolean>(true)
+  const contractFile = useRef<any>()
   const { id, type } = useParams()
   const handleFileChange = (event: any) => {
     const files = Array.from(event.target.files)
     const newPreviewUrls: string[] = []
-
     files.forEach((file: any) => {
       const reader = new FileReader()
       reader.onloadend = () => {
@@ -64,7 +65,10 @@ const SendMailContract = () => {
       formData.append('cc', email.value)
     })
     formData.append('subject', subject)
-    formData.append('htmlContent', editorData)
+    const htmlContent = editorData + `<a href="${BASE_URL_FE}view/${id}/sign/2">Ký ngay</a>`
+    formData.append('htmlContent', htmlContent)
+    formData.append('contractId ', id as string)
+    formData.append('attachments', contractFile.current, 'Hợp_Đồng.pdf')
     selectedFiles.forEach((file) => {
       formData.append('attachments', file)
     })
@@ -77,7 +81,9 @@ const SendMailContract = () => {
         errorNotification('Xảy ra lỗi khi gửi mail!')
       }
     } catch (error) {
-      console.error('Error sending mail:', error)
+      console.log(error)
+
+      errorNotification('Xảy ra lỗi khi gửi mail!')
     } finally {
       setLoading(false)
     }
@@ -93,11 +99,41 @@ const SendMailContract = () => {
             } else if (type == '2') {
               setSelectedTo([{ label: response.object.partyB.email, value: response.object.partyB.email }])
             }
+            const fileUrl = response.object.file
+            const fileData = await fetch(fileUrl)
+            const blob = await fileData.blob()
+            contractFile.current = blob
           } else errorNotification('Không tìm thấy thông tin')
-          setLoading(false)
         }
       } catch (e) {
-        console.log(e)
+        errorNotification('Không tìm thấy thông tin')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchApi()
+  }, [id, type])
+  useEffect(() => {
+    const fetchApi = async () => {
+      try {
+        if (id) {
+          const response = await getNewContractById(id)
+          if (response.code == '00' && response.object) {
+            if (type == '1') {
+              setSelectedTo([{ label: response.object.partyA.email, value: response.object.partyA.email }])
+            } else if (type == '2') {
+              setSelectedTo([{ label: response.object.partyB.email, value: response.object.partyB.email }])
+            }
+            const fileUrl = response.object.file
+            const fileData = await fetch(fileUrl)
+            const blob = await fileData.blob()
+            contractFile.current = blob
+          } else errorNotification('Không tìm thấy thông tin')
+        }
+      } catch (e) {
+        errorNotification('Không tìm thấy thông tin')
+      } finally {
+        setLoading(false)
       }
     }
     fetchApi()
@@ -131,10 +167,7 @@ const SendMailContract = () => {
         <CKEditor
           editor={ClassicEditor}
           data='<p>Nội dung của bạn ở đây...</p>'
-          onReady={(editor) => {
-            console.log('Editor is ready to use!', editor)
-          }}
-          onChange={(event, editor) => {
+          onChange={(_, editor) => {
             const data = editor.getData()
             setEditorData(data)
           }}

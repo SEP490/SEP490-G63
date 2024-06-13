@@ -198,8 +198,8 @@ const Contract = () => {
                     <td className='px-3 py-4'>
                       {d?.createdDate ? moment(d?.createdDate).format('DD/MM/YYYY') : d?.createdDate}
                     </td>
-                    <td className={`px-3 py-4 font-semibold ${status[d.status].color}`} align='center'>
-                      {status[d.status].title}
+                    <td className={`px-3 py-4 font-semibold ${status[d.status]?.color}`} align='center'>
+                      {status[d.status]?.title}
                     </td>
                     <td className='px-3 py-4' align='center'>
                       <div

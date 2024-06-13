@@ -9,7 +9,6 @@ function UserLayout({ children }: any) {
   const { token, user } = useAuth()
   const { width } = useViewport()
   const isMobile = width <= 1024
-  console.log(user)
 
   if (!token || user?.role != USER) {
     return <Navigate to='/404notfound' state={{ from: location }} replace></Navigate>
