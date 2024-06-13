@@ -19,8 +19,8 @@ export const deleteOldContract = async (id: string) => {
   return response.data
 }
 
-export const sendMail = async (formdata: any) => {
-  const response = await axiosInstanceFormData.post(`contract/send-mail`, formdata)
+export const sendMail = async (formData: any) => {
+  const response = await axiosInstanceFormData.post(`contract/send-mail`, formData)
   return response.data
 }
 
