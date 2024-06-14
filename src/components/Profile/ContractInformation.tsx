@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query'
+import { useQuery, useMutation } from 'react-query'
 import { useAuth } from '~/provider/authProvider'
 import { banContract, getContract, getContractAdmin } from '~/services/admin.contract.service'
 import Loading from '../shared/Loading/Loading'
@@ -18,6 +18,7 @@ import {
 import DatePicker from 'react-datepicker'
 import useToast from '~/hooks/useToast'
 import Expried from './Expried'
+import ViewContract from '../Admin/NewContract/ViewContract'
 
 const ContractInformation = () => {
   const { user } = useAuth()
@@ -29,52 +30,69 @@ const ContractInformation = () => {
   const [deleteModal, setDeleteModal] = useState(false)
   const { successNotification, errorNotification } = useToast()
   const [selectedModal, setSelectedModal] = useState(null)
+  const [bankModal, setBankModal] = useState(false)
+  const [bankImage, setBankImage] = useState(null)
 
   const handleCodeChange = (e: any) => {
     setCode(e.target.value)
-  }
-
-  const handleSubmit = async (e: any) => {
-    e.preventDefault()
-    try {
-      const response = await getContract(user?.email, code)
-      if (response) {
-        setIsSend(true)
-        setData1(response.object)
-        successNotification('Xác minh thành công')
-        console.log(response)
-      } else {
-        errorNotification('Xác minh thất bại')
-        console.log(response)
-      }
-    } catch (error) {
-      errorNotification('Lỗi xác minh hợp đồng')
-      console.log(error)
-    }
-  }
-  function closeModal() {
-    setDeleteModal(false)
-    setExtendModal(false)
-    setSelectedModal(null)
-    setIsOpen(false)
-  }
-  const handleBanCompany = async () => {
-    if (data1?.id) {
-      const response = await banContract(data1?.id)
-      if (response) {
-        successNotification('Hủy dịch vụ thành công')
-        closeModal()
-      }
-    }
   }
 
   const { data, isError, isLoading } = useQuery('get-contract-admin', () => getContractAdmin(user?.email), {
     enabled: !!user?.email
   })
 
-  if (isLoading) {
-    return <Loading />
+  const getContractMutation = useMutation(
+    (emailAndCode: { email: string; code: string }) => getContract(emailAndCode.email, emailAndCode.code),
+    {
+      onSuccess: (response) => {
+        setIsSend(true)
+        setData1(response.object)
+        successNotification('Xác minh thành công')
+      },
+      onError: () => {
+        errorNotification('Xác minh thất bại')
+      }
+    }
+  )
+
+  const handleSubmit = (e: any) => {
+    e.preventDefault()
+    if (user?.email) {
+      getContractMutation.mutate({ email: user?.email, code })
+    }
   }
+
+  const banContractMutation = useMutation((id: string) => banContract(id), {
+    onSuccess: () => {
+      successNotification('Hủy dịch vụ thành công')
+      closeModal()
+    }
+  })
+
+  const handleBanCompany = () => {
+    if (data1?.id) {
+      banContractMutation.mutate(data1.id)
+    }
+  }
+
+  function closeModal() {
+    setDeleteModal(false)
+    setExtendModal(false)
+    setSelectedModal(null)
+    setIsOpen(false)
+    setBankModal(false)
+    setBankImage(null)
+  }
+
+  if (isLoading) {
+    return (
+      <div className='w-full md:w-[80%] flex flex-col items-center mx-3 py-4 px-3 justify-center bg-white rounded-md shadow-md'>
+        <h2 className='text-xl font-bold mb-4'>Kiểm tra email để lấy mã xác minh</h2>
+        <Loading />
+      </div>
+    )
+  }
+
   if (isError) {
     return <div>Lỗi tải hợp đồng</div>
   }
@@ -192,26 +210,26 @@ const ContractInformation = () => {
                   {/* {data1?.map((d: any, index: number) => ( */}
                   <tr className=' w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'>
                     {/* <td className='px-2 py-2 text-center'>{data1?.id}</td> */}
-                    <td className='px-2 py-2 text-center'>{data1?.companyName || 'N/A'}</td>
+                    <td className='px-2 py-2 text-center'>{data1?.companyName || '___'}</td>
                     <td className='px-2 py-2 text-center'>
                       {data1?.startDateUseService
                         ? moment(data1?.startDateUseService).format('DD-MM-YYYY')
-                        : data1?.startDateUseService || 'N/A'}
+                        : data1?.startDateUseService || '___'}
                     </td>
                     <td className='px-2 py-2 text-center'>
                       {data1?.endDateUseService
                         ? moment(data1?.endDateUseService).format('DD-MM-YYYY')
-                        : data1?.endDateUseService || 'N/A'}
+                        : data1?.endDateUseService || '___'}
                     </td>
                     <td className='px-2 py-2 text-center'>
                       {data1?.registerDate
                         ? moment(data1?.registerDate).format('DD-MM-YYYY')
-                        : data1?.registerDate || 'N/A'}
+                        : data1?.registerDate || '___'}
                     </td>
-                    <td className='px-2 py-2 text-center'>{data1?.taxCode || 'N/A'}</td>
-                    <td className={`px-2 py-2 text-center`}>{data1?.status || 'N/A'}</td>
+                    <td className='px-2 py-2 text-center'>{data1?.taxCode || '___'}</td>
+                    <td className={`px-2 py-2 text-center`}>{data1?.status || '___'}</td>
                     <td className='px-2 py-2 text-center'>
-                      {data1?.price == null ? 0 : (data1?.price + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',') || 'N/A'}
+                      {data1?.price == null ? 0 : (data1?.price + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',') || '___'}
                     </td>
                     <td className='px-2 py-2 text-center'>
                       <Menu as='div' className='relative inline-block text-left '>
@@ -231,7 +249,7 @@ const ContractInformation = () => {
                           leaveTo='transform opacity-0 scale-95'
                         >
                           <Menu.Items className='absolute right-8 top-[-100%] z-50 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
-                            {data1?.status == 'PROCESSING' ? (
+                            {data1?.status == 'INUSE' ? (
                               <>
                                 <Menu.Item>
                                   {({ active }) => (
@@ -250,14 +268,19 @@ const ContractInformation = () => {
                                   {({ active }) => (
                                     <button
                                       title='Gia hạn'
+                                      onClick={() => {
+                                        setSelectedModal(data?.id)
+                                        setExtendModal(true)
+                                      }}
                                       className={`${
                                         active ? 'bg-green-500 text-white' : 'text-gray-900'
                                       } group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm `}
                                     >
-                                      <PaperAirplaneIcon className='h-5' /> Gửi mail
+                                      <ArrowPathIcon className='h-5' /> Gia hạn
                                     </button>
                                   )}
                                 </Menu.Item>
+
                                 {data1?.status != 'LOCKED' && data1?.status != 'EXPIRED' && (
                                   <Menu.Item>
                                     {({ active }) => (
@@ -276,40 +299,6 @@ const ContractInformation = () => {
                                     )}
                                   </Menu.Item>
                                 )}
-
-                                <Menu.Item>
-                                  {({ active }) => (
-                                    <button
-                                      title='Gia hạn'
-                                      onClick={() => {
-                                        setSelectedModal(data?.id)
-                                        setExtendModal(true)
-                                      }}
-                                      className={`${
-                                        active ? 'bg-green-500 text-white' : 'text-gray-900'
-                                      } group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm `}
-                                    >
-                                      <ArrowPathIcon className='h-5' /> Gia hạn
-                                    </button>
-                                  )}
-                                </Menu.Item>
-
-                                <Menu.Item>
-                                  {({ active }) => (
-                                    <button
-                                      onClick={() => {
-                                        // setFileModal(true)
-                                        // setSelectedCustomer(d)
-                                      }}
-                                      title='Tải file'
-                                      className={`${
-                                        active ? 'bg-green-500 text-white' : 'text-gray-900'
-                                      } group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm `}
-                                    >
-                                      <ArrowUpOnSquareIcon className='h-5' /> Tải file
-                                    </button>
-                                  )}
-                                </Menu.Item>
                               </>
                             ) : (
                               <Menu.Item>
@@ -378,38 +367,38 @@ const ContractInformation = () => {
                       <tbody className='bg-white divide-y divide-gray-200'>
                         <tr>
                           <td className='px-6 py-4 whitespace-nowrap font-medium'>Tên công ty:</td>
-                          <td className='px-6 py-4 whitespace-nowrap'>{data1?.companyName || 'N/A'}</td>
+                          <td className='px-6 py-4 whitespace-nowrap'>{data1?.companyName || '___'}</td>
                         </tr>
                         <tr>
                           <td className='px-6 py-4 whitespace-nowrap font-medium'>Mã số thuế:</td>
-                          <td className='px-6 py-4 whitespace-nowrap'>{data1?.taxCode || 'N/A'}</td>
+                          <td className='px-6 py-4 whitespace-nowrap'>{data1?.taxCode || '___'}</td>
                         </tr>
                         <tr>
                           <td className='px-6 py-4 whitespace-nowrap font-medium'>Người đại diện:</td>
-                          <td className='px-6 py-4 whitespace-nowrap'>{data1?.presenter || 'N/A'}</td>
+                          <td className='px-6 py-4 whitespace-nowrap'>{data1?.presenter || '___'}</td>
                         </tr>
                         <tr>
                           <td className='px-6 py-4 whitespace-nowrap font-medium'>Điện thoại:</td>
-                          <td className='px-6 py-4 whitespace-nowrap'>{data1?.phone || 'N/A'}</td>
+                          <td className='px-6 py-4 whitespace-nowrap'>{data1?.phone || '___'}</td>
                         </tr>
                         <tr>
                           <td className='px-6 py-4 whitespace-nowrap font-medium'>Email:</td>
-                          <td className='px-6 py-4 whitespace-nowrap'>{data1?.email || 'N/A'}</td>
+                          <td className='px-6 py-4 whitespace-nowrap'>{data1?.email || '___'}</td>
                         </tr>
                         <tr>
                           <td className='px-6 py-4 whitespace-nowrap font-medium'>Trạng thái:</td>
-                          <td className='px-6 py-4 whitespace-nowrap'>{data1?.status || 'N/A'}</td>
+                          <td className='px-6 py-4 whitespace-nowrap'>{data1?.status || '___'}</td>
                         </tr>
                         <tr>
                           <td className='px-6 py-4 whitespace-nowrap font-medium'>Ngày tạo:</td>
                           <td className='px-6 py-4 whitespace-nowrap'>
-                            {data1?.createdDate ? moment(data1?.createdDate).format('DD-MM-YYYY') : 'N/A'}
+                            {data1?.createdDate ? moment(data1?.createdDate).format('DD-MM-YYYY') : '___'}
                           </td>
                         </tr>
                         <tr>
                           <td className='px-6 py-4 whitespace-nowrap font-medium'>Ngày cập nhật:</td>
                           <td className='px-6 py-4 whitespace-nowrap'>
-                            {data1?.updatedDate ? moment(data1?.updatedDate).format('DD-MM-YYYY') : 'N/A'}
+                            {data1?.updatedDate ? moment(data1?.updatedDate).format('DD-MM-YYYY') : '___'}
                           </td>
                         </tr>
                         <tr>
@@ -417,34 +406,34 @@ const ContractInformation = () => {
                           <td className='px-6 py-4 whitespace-nowrap'>
                             {data1?.startDateUseService
                               ? moment(data1?.startDateUseService).format('DD-MM-YYYY')
-                              : 'N/A'}
+                              : '___'}
                           </td>
                         </tr>
                         <tr>
                           <td className='px-6 py-4 whitespace-nowrap font-medium'>Ngày kết thúc sử dụng dịch vụ:</td>
                           <td className='px-6 py-4 whitespace-nowrap'>
-                            {data1?.endDateUseService ? moment(data1?.endDateUseService).format('DD-MM-YYYY') : 'N/A'}
+                            {data1?.endDateUseService ? moment(data1?.endDateUseService).format('DD-MM-YYYY') : '___'}
                           </td>
                         </tr>
                         <tr>
                           <td className='px-6 py-4 whitespace-nowrap font-medium'>Ngày đăng ký:</td>
                           <td className='px-6 py-4 whitespace-nowrap'>
-                            {data1?.registerDate ? moment(data1?.registerDate).format('DD-MM-YYYY') : 'N/A'}
+                            {data1?.registerDate ? moment(data1?.registerDate).format('DD-MM-YYYY') : '___'}
                           </td>
                         </tr>
                         <tr>
                           <td className='px-6 py-4 whitespace-nowrap font-medium'>Thành tiền (VND):</td>
                           <td className='px-6 py-4 whitespace-nowrap'>
-                            {data1?.price ? data1?.price.toLocaleString('en-US') : 'N/A'}
+                            {data1?.price ? data1?.price.toLocaleString('en-US') : '___'}
                           </td>
                         </tr>
                         <tr>
                           <td className='px-6 py-4 whitespace-nowrap font-medium'>Gói giá ID:</td>
-                          <td className='px-6 py-4 whitespace-nowrap'>{data1?.pricePlanId || 'N/A'}</td>
+                          <td className='px-6 py-4 whitespace-nowrap'>{data1?.pricePlanId || '___'}</td>
                         </tr>
                         <tr>
                           <td className='px-6 py-4 whitespace-nowrap font-medium'>Tên gói giá:</td>
-                          <td className='px-6 py-4 whitespace-nowrap'>{data1?.pricePlanName || 'N/A'}</td>
+                          <td className='px-6 py-4 whitespace-nowrap'>{data1?.pricePlanName || '___'}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -486,7 +475,7 @@ const ContractInformation = () => {
                   </Dialog.Title>
                   <div>
                     <div>
-                      Gói dịch vụ sẽ được hủy với công ty {data1?.companyName || 'N/A'}. Bạn có chắc chắn với quyết định
+                      Gói dịch vụ sẽ được hủy với công ty {data1?.companyName || '___'}. Bạn có chắc chắn với quyết định
                       của mình?
                     </div>
                     <div className='w-full flex justify-end mt-6'>
@@ -543,7 +532,55 @@ const ContractInformation = () => {
                   <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
                     Gia hạn dịch vụ
                   </Dialog.Title>
-                  <Expried closeModal={closeModal} selectedCustomer={data1} />
+                  <Expried
+                    closeModal={closeModal}
+                    selectedCustomer={data1}
+                    bankModal={bankModal}
+                    setBankModal={setBankModal}
+                    bankImage={bankImage}
+                    setBankImage={setBankImage}
+                  />
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+      <Transition appear show={bankModal} as={Fragment}>
+        <Dialog as='div' className='relative z-10' onClose={closeModal}>
+          <Transition.Child
+            as={Fragment}
+            enter='ease-out duration-300'
+            enterFrom='opacity-0 scale-95'
+            enterTo='opacity-100 scale-100'
+            leave='ease-in duration-200'
+            leaveFrom='opacity-100 scale-100'
+            leaveTo='opacity-0 scale-95'
+          >
+            <div className='fixed inset-0 bg-black bg-opacity-25' />
+          </Transition.Child>
+
+          <div className='fixed inset-0 overflow-y-auto'>
+            <div className='flex min-h-full items-center justify-center p-4 text-center'>
+              <Transition.Child
+                as={Fragment}
+                enter='ease-out duration-300'
+                enterFrom='opacity-0 scale-95'
+                enterTo='opacity-100 scale-100'
+                leave='ease-in duration-200'
+                leaveFrom='opacity-100 scale-100'
+                leaveTo='opacity-0 scale-95'
+              >
+                <Dialog.Panel className='w-full h-[500px]  max-w-2xl transform overflow-y-hidden rounded-md bg-white p-6 text-left align-middle shadow-xl transition-all'>
+                  <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900 mb-4'>
+                    <div className='flex justify-between'>
+                      <p>Quét mã để thanh toán</p>
+                      <XMarkIcon className='h-5 w-5 mr-3 mb-3 cursor-pointer' onClick={closeModal} />
+                    </div>
+                  </Dialog.Title>
+                  <div className='mt-2 h-full'>
+                    <ViewContract src={bankImage} />
+                  </div>
                 </Dialog.Panel>
               </Transition.Child>
             </div>
