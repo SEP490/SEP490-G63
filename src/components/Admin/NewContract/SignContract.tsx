@@ -55,13 +55,12 @@ const SignContract = ({ id, customer }: IProps) => {
       signImage: uri,
       createdBy: '',
       comment: 'Ký OK nhá',
-      customer: customer == '1'
+      customer: customer == '2'
     }
     signQuery.mutate(dataRequest)
   }
   return (
     <>
-      {' '}
       <div className='shadow-lg' style={{ width: 300, border: '1px solid black', margin: 1 }}>
         <div>
           <Stage

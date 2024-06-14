@@ -1,3 +1,4 @@
+import axios from 'axios'
 import axiosInstant, { axiosInstanceFormData } from '../config/axiosConfig.ts'
 type SignRequest = {
   contractId: string
@@ -34,6 +35,12 @@ export const getNewContract = async (page: number, size: number) => {
 }
 export const getNewContractById = async (id: any) => {
   const response = await axiosInstant.get(`contract/${id}`)
+  return response.data
+}
+export const getNewContractByIdNotToken = async (id: any) => {
+  const response = await axiosInstant.get(`contract/public/sign-contract/${id}`)
+  console.log(response)
+
   return response.data
 }
 

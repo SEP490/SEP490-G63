@@ -5,9 +5,21 @@ type Iprops = {
 }
 const UploadFile = ({ handleCloseModal }: Iprops) => {
   const inputFileRef = useRef<any>(null)
+  const inputPdfRef = useRef<any>(null)
   const [files, setFiles] = useState<any>([])
+  const fileType = useRef<any>('none')
   const handUploadFile = (event: any) => {
     const files = event.target.files
+    if (files.length != 0) fileType.current = 'img'
+    else fileType.current = 'none'
+    setFiles(files)
+  }
+  const handUploadPdf = (event: any) => {
+    const files = event.target.files
+    console.log(files)
+
+    if (files.length != 0) fileType.current = 'pdf'
+    else fileType.current = 'none'
     setFiles(files)
   }
 
@@ -21,7 +33,15 @@ const UploadFile = ({ handleCloseModal }: Iprops) => {
         multiple
         className='hidden'
       />
-      <PreviewFile files={files} handleCloseModal={handleCloseModal} inputFileRef={inputFileRef} />
+      <input type='file' ref={inputPdfRef} accept='.pdf' onChange={handUploadPdf} className='hidden' />
+      <PreviewFile
+        files={files}
+        setFiles={setFiles}
+        handleCloseModal={handleCloseModal}
+        inputFileRef={inputFileRef}
+        inputPdfRef={inputPdfRef}
+        fileType={fileType}
+      />
     </div>
   )
 }
