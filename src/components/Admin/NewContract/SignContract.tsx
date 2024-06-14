@@ -3,13 +3,17 @@ import React from 'react'
 import { Stage, Layer, Line } from 'react-konva'
 import { useMutation } from 'react-query'
 import { useNavigate } from 'react-router-dom'
+import Loading from '~/components/shared/Loading/Loading'
 import useToast from '~/hooks/useToast'
 import { signContract } from '~/services/contract.service'
 interface IProps {
   id: string | undefined
   customer: string | undefined
+  comment: string
+  setModalSign: any
+  refetch: any
 }
-const SignContract = ({ id, customer }: IProps) => {
+const SignContract = ({ id, customer, comment, setModalSign, refetch }: IProps) => {
   const [lines, setLines] = React.useState<any>([])
   const isDrawing = React.useRef(false)
   const stageRef = React.useRef<any>(null)
@@ -42,6 +46,8 @@ const SignContract = ({ id, customer }: IProps) => {
   }
   const signQuery = useMutation(signContract, {
     onSuccess: () => {
+      setModalSign(false)
+      refetch()
       successNotification('Ký hợp đồng thành công')
     },
     onError: (error: AxiosError<{ message: string }>) => {
@@ -53,12 +59,12 @@ const SignContract = ({ id, customer }: IProps) => {
     const dataRequest = {
       contractId: id as string,
       signImage: uri,
-      createdBy: '',
-      comment: 'Ký OK nhá',
+      comment: comment,
       customer: customer == '2'
     }
     signQuery.mutate(dataRequest)
   }
+  if (signQuery.isLoading) return <Loading />
   return (
     <>
       <div className='shadow-lg' style={{ width: 300, border: '1px solid black', margin: 1 }}>

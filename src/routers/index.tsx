@@ -499,7 +499,9 @@ const Routes = () => {
       path: '/view/:id/sign/:customer',
       element: (
         <Suspense fallback={<Loading />}>
-          <ViewSignContract />
+          <div className='w-[100vw] h-[100vh]'>
+            <ViewSignContract />
+          </div>
         </Suspense>
       )
     },

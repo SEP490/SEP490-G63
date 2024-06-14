@@ -160,6 +160,12 @@ const Contract = () => {
           >
             Hợp đồng hoàn thành
           </div>
+          <div
+            className={`cursor-pointer rounded-md my-1 px-3 py-1 ${statusContract == 'PROCESSING' ? 'bg-main-color text-white' : 'text-black'} hover:bg-hover-main hover:text-white`}
+            onClick={() => setStatusContract('PROCESSING')}
+          >
+            Hợp đồng chờ ký
+          </div>
         </div>
         <div className='w-full md:w-[84%] overflow-auto mx-2'>
           <div className='shadow-md sm:rounded-lg '>
@@ -235,7 +241,7 @@ const Contract = () => {
                                     <button
                                       title='Sửa'
                                       onClick={() => {
-                                        navigate(`/view/${d.id}/sign/2`)
+                                        navigate(`/view/${d.id}/sign/1`)
                                       }}
                                       className={`${
                                         active ? 'bg-blue-500 text-white' : 'text-gray-900'

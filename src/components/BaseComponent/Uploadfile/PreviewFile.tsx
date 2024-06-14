@@ -9,7 +9,6 @@ import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import moment from 'moment'
 import { Controller, useForm } from 'react-hook-form'
-import ViewContract from '~/components/Admin/NewContract/ViewContract'
 import { Dialog, Transition } from '@headlessui/react'
 interface Iprops {
   files: any[]

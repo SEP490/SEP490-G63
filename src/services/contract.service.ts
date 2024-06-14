@@ -1,9 +1,7 @@
-import axios from 'axios'
 import axiosInstant, { axiosInstanceFormData } from '../config/axiosConfig.ts'
 type SignRequest = {
   contractId: string
   signImage: string
-  createdBy: string
   comment: string
   customer: boolean
 }
