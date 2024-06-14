@@ -16,29 +16,33 @@ const ViewSignContract = () => {
   console.log(data)
 
   return (
-    <div className='w-full h-[100vh] flex justify-center flex-wrap'>
-      <div className='w-full'>
-        <button
-          type='button'
-          className='middle my-3 none center mr-4 rounded-lg bg-[#0070f4] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
-          data-ripple-light='true'
-          onClick={() => setModalReject(true)}
-        >
-          Từ chối
-        </button>
-        <button
-          type='button'
-          className='middle my-3 none center mr-4 rounded-lg bg-[#0070f4] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
-          data-ripple-light='true'
-          onClick={() => setModalSign(true)}
-        >
-          Ký hợp đồng
-        </button>
+    <div className='w-full h-full flex flex-col md:flex-row justify-center  bg-white overflow-auto'>
+      <div className='w-full md:w-[20vw]'>
+        <div className='w-full'>
+          <div className='w-full text-center font-bold text-[24px] my-3'>Ký hợp đồng</div>
+          <div className='w-full flex gap-1 justify-center'>
+            <button
+              type='button'
+              className=' my-3 none center mr-4 rounded-lg bg-red-500 px-2 py-2 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#ad649191] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
+              data-ripple-light='true'
+              onClick={() => setModalReject(true)}
+            >
+              Từ chối ký
+            </button>
+            <button
+              type='button'
+              className=' my-3 none center mr-4 rounded-lg bg-[#0070f4] px-2 py-2 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
+              data-ripple-light='true'
+              onClick={() => setModalSign(true)}
+            >
+              Ký hợp đồng
+            </button>
+          </div>
+        </div>
       </div>
-      <div className='w-[80vw] h-full'>
-        <ViewContract src={data.object.file} />
+      <div className='w-full md:w-[80vw] h-full shadow-lg'>
+        <ViewContract src={data?.object?.file} />
       </div>
-
       <Transition appear show={modalSign} as={Fragment}>
         <Dialog as='div' className='relative z-50 w-[90vw]' onClose={() => setModalSign(false)}>
           <Transition.Child
@@ -68,7 +72,7 @@ const ViewSignContract = () => {
                   <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
                     Ký hợp đồng
                   </Dialog.Title>
-                  <SignContract />
+                  <SignContract id={id} customer={customer} />
                 </Dialog.Panel>
               </Transition.Child>
             </div>

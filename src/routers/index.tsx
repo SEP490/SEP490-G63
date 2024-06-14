@@ -200,6 +200,18 @@ const Routes = () => {
           )
         },
         {
+          path: '/profile',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <AdminOfficer>
+                  <Profile />
+                </AdminOfficer>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
           path: '/search/:fieldSearch/:searchText',
           element: (
             <Suspense fallback={<Loading />}>
@@ -320,6 +332,18 @@ const Routes = () => {
               <UserLayout>
                 <Sale>
                   <SearchPage />
+                </Sale>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/profile',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <Sale>
+                  <Profile />
                 </Sale>
               </UserLayout>
             </Suspense>
@@ -453,6 +477,18 @@ const Routes = () => {
           )
         },
         {
+          path: '/profile',
+          element: (
+            <Suspense fallback={<Loading />}>
+              <UserLayout>
+                <StaffOfficer>
+                  <Profile />
+                </StaffOfficer>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
           path: '*',
           element: (
             <UserLayout>
@@ -468,7 +504,7 @@ const Routes = () => {
   // Define routes accessible only to non-authenticated users
   const routesForNotAuthenticatedOnly = [
     {
-      path: '/view/:id',
+      path: '/view/:id/sign/:customer',
       element: (
         <Suspense fallback={<Loading />}>
           <ViewSignContract />
@@ -500,15 +536,6 @@ const Routes = () => {
         </Suspense>
       )
     },
-    {
-      path: '/example',
-      element: (
-        <Suspense fallback={<Loading />}>
-          <Example />
-        </Suspense>
-      )
-    },
-
     {
       path: '/landing',
       element: <Home />

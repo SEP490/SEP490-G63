@@ -103,7 +103,7 @@ const ItemImage = ({ index, id, file, base64, moveCard, removeCard }: Iprops) =>
         />
       </div>
       <Transition appear show={open} as={Fragment}>
-        <Dialog as='div' className='relative z-10 w-[90vw]' onClose={() => setOpen(false)}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={() => setOpen(false)}>
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'
