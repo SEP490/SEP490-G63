@@ -11,7 +11,7 @@ const ItemNewContract = ({ data }: any) => {
         <div className='text-blue-700 hover:underline text-[20px] cursor-pointer' onClick={() => navigate('/contract')}>
           {data.name} | {data.number}
         </div>
-        <div className='text-gray-500'>
+        <div className='text-black'>
           <div>
             Bên A: {data.partyA?.name}; Đại diện bởi {data.partyA?.position}:{data.partyA?.presenter}; Địa chỉ:{' '}
             {data.partyA?.address}
