@@ -4,7 +4,7 @@ import { formatDate } from '~/utils/formatDate'
 const ItemOldContract = ({ data }: any) => {
   const navigate = useNavigate()
   return (
-    <div className='flex gap-2 w-full' key={data.id}>
+    <div className='flex gap-2 w-full border-b-2 border-slate-300' key={data.id}>
       <div className='border shadow-md'>
         <iframe scrolling='no' src={data.file} />
       </div>

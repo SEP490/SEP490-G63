@@ -44,7 +44,7 @@ const SearchPageResult = () => {
   if (searchQuery.isLoading || searchQuery.isIdle) return <Loading />
   return (
     <div className=' h-full'>
-      <div className='flex items-center justify-start gap-5 shadow-lg bg-[url(https://c4.wallpaperflare.com/wallpaper/459/667/799/urban-austria-hallstatt-snow-wallpaper-preview.jpg)] bg-cover h-[100px]'>
+      <div className='flex items-center justify-start gap-5 shadow-lg bg-[url(https://i.ibb.co/QMrFzkS/wallpaperflare-com-wallpaper-13.jpg)] bg-cover h-[100px]'>
         <div className='flex justify-center items-center select-none p-6 '>
           <img src={logo} alt='logo' className='w-[20px] md:w-[50px]' />
           <div
@@ -106,11 +106,11 @@ const SearchPageResult = () => {
       </div>
 
       <div className='h-[calc(100%-100px)] overflow-auto'>
-        <div className='pl-5 text-black'>
-          Hiển thị {data?.totalElements} kết quả cho "{getValues('searchText')}" của
+        <div className='pl-5 text-black mt-2 bg-slate-300 rounded-3xl py-1'>
+          👉 Hiển thị {data?.totalElements} kết quả cho "{getValues('searchText')}" của
           {fieldSearch == 'contract' ? ' Hợp đồng mới' : ' Hợp đồng cũ'}
         </div>
-        <div className='flex flex-wrap gap-6 px-6 mt-4'>
+        <div className='flex flex-wrap gap-5 px-6 lg:px-52 mt-4'>
           {data?.content?.map((d: any) =>
             fieldSearch == 'contract' ? <ItemNewContract data={d} /> : <ItemOldContract data={d} />
           )}
