@@ -58,6 +58,10 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
 // AuthProvider.propTypes = {
 //   children: PropTypes.node.isRequired
 // }
+//connection.on("send-mesage",(user,message) => {
+//connection.emit("send-mesage",user1,"Code đi")
+//connection.emit("send-mesage",user1,"Code đi")
+//connection.emit("send-mesage",user1,"Code đi")
 
 export const useAuth = () => {
   return useContext(AuthContext)

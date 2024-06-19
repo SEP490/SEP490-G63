@@ -1,17 +1,11 @@
 import { Dialog, Menu, Transition } from '@headlessui/react'
-import {
-  Cog6ToothIcon,
-  DocumentIcon,
-  EllipsisVerticalIcon,
-  NoSymbolIcon,
-  PlusIcon,
-  XMarkIcon
-} from '@heroicons/react/24/outline'
+import { Cog6ToothIcon, EllipsisVerticalIcon, NoSymbolIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { AxiosError } from 'axios'
 import moment from 'moment'
 import { Fragment, useEffect, useState } from 'react'
 import { useMutation, useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
+import DocumentIcon from '~/assets/svg/document'
 import EditTemplateContract from '~/components/Admin/TemplateContract/EditTemplateContract'
 import ViewTemplateContract from '~/components/Admin/TemplateContract/ViewTemplateContract'
 import Pagination from '~/components/BaseComponent/Pagination/Pagination'

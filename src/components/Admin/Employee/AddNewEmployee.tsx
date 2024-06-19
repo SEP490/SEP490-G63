@@ -1,10 +1,13 @@
-import { ChangeEventHandler, EventHandler, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import permissionsList from '~/common/const/permissions'
-import { REGEX_EMAIL } from '~/common/const/regexForm'
+import { REGEX_ADDRESS, REGEX_CCCD, REGEX_EMAIL, REGEX_NAME, REGEX_PHONE } from '~/common/const/regexForm'
 import useToast from '~/hooks/useToast'
 import { createEmployee } from '~/services/employee.service'
 import debounce from 'lodash/debounce'
+import { Button, Tooltip } from 'flowbite-react'
+import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline'
+import TooltipComponent from '~/components/BaseComponent/TooltipComponent'
 type FromType = {
   password: string
   address: string
@@ -65,24 +68,35 @@ const AddNewEmployee = ({ closeModal }: IProp) => {
   return (
     <form
       onSubmit={handleSubmit(debounce(onSubmit, 300))}
-      className='items-center w-full rounded-lg  flex flex-wrap justify-between h-fit bg-white z-50 '
+      className='items-center w-full rounded-lg mt-2  flex flex-wrap justify-between h-fit bg-white z-50 '
     >
-      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
-          Tên nhân viên <sup className='text-red-500'>*</sup>
+      <div className='w-[100%] sm:w-[48%] md:w-[29%] relative'>
+        <label className=' flex items-center'>
+          <div className='font-bold'>
+            Tên nhân viên <sup className='text-red-500'>*</sup>
+          </div>
+          <TooltipComponent
+            content='Chỉ chứa kí tự chữ cái,khoảng trống, tối thiểu 8 và tối đa 30 kí tự'
+            className='w-5 h-5 cursor-pointer'
+            style='dark'
+          />
         </label>
         <input
           className={`${errors.name ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
           placeholder='Nhập tên nhân viên'
           {...register('name', {
-            required: 'Tên không được bỏ trống'
+            required: 'Tên không được bỏ trống',
+            pattern: {
+              value: REGEX_NAME,
+              message: 'Tên nhân viên không hợp lệ'
+            }
           })}
         />
         <div className={`text-red-500 absolute text-[12px] ${errors.name ? 'visible' : 'invisible'}`}>
           {errors.name?.message}
         </div>
       </div>
-      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
+      <div className='w-[100%] sm:w-[48%] md:w-[29%] relative'>
         <label className='font-bold '>
           Phòng ban<sup className='text-red-500'>*</sup>
         </label>
@@ -97,7 +111,7 @@ const AddNewEmployee = ({ closeModal }: IProp) => {
           {errors.department?.message}
         </div>
       </div>
-      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
+      <div className='w-[100%] sm:w-[48%] md:w-[29%] relative'>
         <label className='font-bold '>
           Vị trí<sup className='text-red-500'>*</sup>
         </label>
@@ -119,7 +133,11 @@ const AddNewEmployee = ({ closeModal }: IProp) => {
         <input
           className={`${errors.email ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
           {...register('email', {
-            required: 'Email không được bỏ trống'
+            required: 'Email không được bỏ trống',
+            pattern: {
+              value: REGEX_EMAIL,
+              message: 'Email không hợp lệ'
+            }
           })}
           placeholder='Nhập email của nhân viên'
         />
@@ -129,27 +147,16 @@ const AddNewEmployee = ({ closeModal }: IProp) => {
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
         <label className='font-bold '>
-          Mật khẩu <sup className='text-red-500'>*</sup>
-        </label>
-        <input
-          className={`${errors.password ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-          {...register('password', {
-            required: 'Mật khẩu không được bỏ trống'
-          })}
-          placeholder='Nhập mật khẩu'
-        />
-        <div className={`text-red-500 absolute text-[12px] ${errors.password ? 'visible' : 'invisible'}`}>
-          {errors.password?.message}
-        </div>
-      </div>
-      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
           CCCD/CMT <sup className='text-red-500'>*</sup>
         </label>
         <input
           className={`${errors.identificationNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
           {...register('identificationNumber', {
-            required: 'CCCD/CMT không được bỏ trống'
+            required: 'CCCD/CMT không được bỏ trống',
+            pattern: {
+              value: REGEX_CCCD,
+              message: 'Số CCCD/CMT không hợp lệ'
+            }
           })}
           placeholder='Nhập CCCD/CMT nhân viên'
         />
@@ -164,7 +171,11 @@ const AddNewEmployee = ({ closeModal }: IProp) => {
         <input
           className={`${errors.phone ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
           {...register('phone', {
-            required: 'Số điện thoại không được bỏ trống'
+            required: 'Số điện thoại không được bỏ trống',
+            pattern: {
+              value: REGEX_PHONE,
+              message: 'Số điện thoại không hợp lệ'
+            }
           })}
           placeholder='Nhập số điện thoại nhân viên'
         />
@@ -179,7 +190,11 @@ const AddNewEmployee = ({ closeModal }: IProp) => {
         <input
           className={`${errors.address ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
           {...register('address', {
-            required: 'Địa chỉ không được bỏ trống'
+            required: 'Địa chỉ không được bỏ trống',
+            pattern: {
+              value: REGEX_ADDRESS,
+              message: 'Địa chỉ không hợp lệ'
+            }
           })}
           placeholder='Nhập địa chỉ nhân viên'
         />
@@ -219,15 +234,19 @@ const AddNewEmployee = ({ closeModal }: IProp) => {
         </label>
         <div className='flex flex-wrap justify-between'>
           {permissionsList?.map((e) => (
-            <div className='flex w-[100%] md:w-[48%] gap-4 items-center' key={e.id}>
+            <div className='relative flex w-[100%] md:w-[48%] gap-4 items-center' key={e.id}>
               <input
                 type='checkbox'
                 name={e.value}
                 className='rounded-sm'
+                disabled={getCheckedPermissions.length != 0 && !permissions[e.value]}
                 checked={permissions[e.value]}
                 onChange={handleCheckboxChange}
               />
-              <label>{e.title}</label>
+              <label className='flex items-center gap-1'>
+                {e.title}
+                <TooltipComponent content={<div>{e.tooltip}</div>} className='w-4 h-4 cursor-pointer' style='dark' />
+              </label>
             </div>
           ))}
         </div>

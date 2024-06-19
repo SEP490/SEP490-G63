@@ -3,6 +3,7 @@ type SignRequest = {
   contractId: string
   signImage: string
   comment: string
+  createdBy: string
   customer: boolean
 }
 export const createOldContract = async (formData: any) => {

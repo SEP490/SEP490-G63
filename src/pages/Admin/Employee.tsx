@@ -1,13 +1,16 @@
 import { Dialog, Menu, Transition } from '@headlessui/react'
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import AddNewEmployee from '~/components/Admin/Employee/AddNewEmployee'
-import { Cog6ToothIcon, EllipsisVerticalIcon, NoSymbolIcon, PlusIcon } from '@heroicons/react/24/outline'
+import { Cog6ToothIcon, EllipsisVerticalIcon, NoSymbolIcon, PlusIcon, UserIcon } from '@heroicons/react/24/outline'
 import ViewEmployee from '~/components/Admin/Employee/ViewEmployee'
 import { getListEmployee } from '~/services/employee.service'
 import EditEmployee from '~/components/Admin/Employee/EditEmployee'
 import DocumentIcon from '~/assets/svg/document'
 import Pagination from '~/components/BaseComponent/Pagination/Pagination'
 import Loading from '~/components/shared/Loading/Loading'
+import { useQuery } from 'react-query'
+import { AxiosError } from 'axios'
+import useToast from '~/hooks/useToast'
 
 export interface DataEmployee {
   id?: string
@@ -27,11 +30,13 @@ const Employee = () => {
   const [viewDetail, setViewDetail] = useState(false)
   const [editModal, setEditModal] = useState(false)
   const [deleteModal, setDeleteModal] = useState(false)
-  const [loading, setLoading] = useState(true)
   const [totalPage, setTotalPage] = useState(1)
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(5)
-  const [data, setData] = useState<DataEmployee[]>([])
+  const { errorNotification } = useToast()
+  const prevPageRef = useRef(page)
+  const prevSizeRef = useRef(size)
+
   const [selectedUser, setSelectedUser] = useState<DataEmployee | undefined>(undefined)
   const [searchData, setSearchData] = useState('')
   function closeAllModal() {
@@ -53,18 +58,27 @@ const Employee = () => {
   const handChangeInputSearch = (e: any) => {
     setSearchData(e.target.value)
   }
-  useEffect(() => {
-    const fetchAPI = async () => {
-      const data = await getListEmployee({ size: size, page: page, name: searchData })
-      if (data) {
-        setData(data.object?.content)
-        setTotalPage(data?.object?.totalPages)
-        setLoading(false)
+  const { data, isLoading, refetch, isFetching } = useQuery(
+    'employee-list',
+    () => getListEmployee({ size: size, page: page, name: searchData }),
+    {
+      onSuccess: (result) => {
+        setTotalPage(result?.object?.totalPages)
+      },
+      onError: (error: AxiosError<{ message: string }>) => {
+        errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
       }
     }
-    fetchAPI()
-  }, [page, size, isOpen, searchData, editModal, deleteModal])
-  if (loading) return <Loading />
+  )
+  useEffect(() => {
+    if (prevPageRef.current !== page || prevSizeRef.current !== size) {
+      prevPageRef.current = page
+      prevSizeRef.current = size
+      refetch()
+    }
+  }, [page, refetch, size])
+
+  if (isLoading || isFetching) return <Loading />
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex flex-wrap py-4'>
@@ -123,7 +137,7 @@ const Employee = () => {
                 </tr>
               </thead>
               <tbody className='w-full '>
-                {data?.map((d: DataEmployee) => (
+                {data?.object?.content?.map((d: DataEmployee) => (
                   <tr
                     key={d.id}
                     className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
@@ -200,13 +214,13 @@ const Employee = () => {
             {(!data || data.length == 0) && (
               <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'>
                 <div className='flex flex-col justify-center items-center opacity-60'>
-                  <DocumentIcon />
+                  <UserIcon width={50} height={50} />
                   Chưa có nhân viên
                 </div>
               </div>
             )}
           </div>
-          {data && data?.length != 0 && (
+          {data && data?.object?.content?.length != 0 && (
             <Pagination
               totalPages={totalPage}
               currentPage={page + 1}
@@ -356,7 +370,7 @@ const Employee = () => {
                     Thông báo
                   </Dialog.Title>
                   <div>
-                    <div>Gói dịch vụ sẽ được xóa vĩnh viễn. Bạn có chắc chắn với quyết định của mình?</div>
+                    <div>Nhân viên sẽ được xóa khỏi hệ thống. Bạn có chắc chắn với quyết định của mình?</div>
                     <div className='w-full flex justify-end mt-6'>
                       <button
                         type='button'
