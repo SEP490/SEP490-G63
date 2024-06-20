@@ -52,7 +52,7 @@ const AddNewEmployee = ({ closeModal }: IProp) => {
   const onSubmit: SubmitHandler<FromType> = async (data) => {
     try {
       if (getCheckedPermissions.length != 0) {
-        const response = await createEmployee({ ...data, permissions: getCheckedPermissions })
+        const response = await createEmployee({ ...data, permissions: getCheckedPermissions, password: 'Tdocman123' })
         if (response.code == '00') {
           successNotification('Tạo nhân viên mới thành công')
           closeModal()

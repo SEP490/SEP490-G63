@@ -1,34 +1,38 @@
 export const status = {
   NEW: {
-    title: 'Mới tạo',
+    title: 'Tạo mới',
     color: 'text-blue-500'
   },
-  PROCESSING: {
-    title: 'Đang xử lí',
+  WAIT_APPROVE: {
+    title: 'Chờ duyệt',
     color: 'text-yellow-500'
   },
+  APPROVE_FAIL: {
+    title: 'Bị từ chối duyệt',
+    color: 'text-green-500'
+  },
+  WAIT_SIGN_A: {
+    title: 'Chờ bên A ký',
+    color: 'text-green-500'
+  },
+  SIGN_A_FAIL: {
+    title: 'Bên A từ chối ký',
+    color: 'text-green-500'
+  },
+  WAIT_SIGN_B: {
+    title: 'Chờ bên B ký',
+    color: 'text-green-500'
+  },
+  SIGN_B_FAIL: {
+    title: 'Bên B từ chối ký',
+    color: 'text-green-500'
+  },
   SUCCESS: {
-    title: 'Thành công',
+    title: 'Ký thành công',
     color: 'text-green-500'
   },
-  SIGN_A: {
-    title: 'Bên A đã ký',
+  DONE: {
+    title: 'Hoàn thành hợp đồng',
     color: 'text-green-500'
-  },
-  UPDATE: {
-    title: 'Đã sửa',
-    color: 'text-green-500'
-  },
-  SIGN_B: {
-    title: 'Bên B đã ký',
-    color: 'text-green-500'
-  },
-  REJECT_A: {
-    title: 'Bên A từ chối',
-    color: 'text-red-500'
-  },
-  REJECT_B: {
-    title: 'Bên B từ chối',
-    color: 'text-red-500'
   }
 }
