@@ -3,7 +3,7 @@ import { Fragment, useEffect, useRef, useState } from 'react'
 import AddNewEmployee from '~/components/Admin/Employee/AddNewEmployee'
 import { Cog6ToothIcon, EllipsisVerticalIcon, NoSymbolIcon, PlusIcon, UserIcon } from '@heroicons/react/24/outline'
 import ViewEmployee from '~/components/Admin/Employee/ViewEmployee'
-import { getListEmployee } from '~/services/employee.service'
+import { deleteEmployee, getListEmployee } from '~/services/employee.service'
 import EditEmployee from '~/components/Admin/Employee/EditEmployee'
 import DocumentIcon from '~/assets/svg/document'
 import Pagination from '~/components/BaseComponent/Pagination/Pagination'
@@ -33,7 +33,7 @@ const Employee = () => {
   const [totalPage, setTotalPage] = useState(1)
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(5)
-  const { errorNotification } = useToast()
+  const { errorNotification, successNotification } = useToast()
   const prevPageRef = useRef(page)
   const prevSizeRef = useRef(size)
 
@@ -77,7 +77,20 @@ const Employee = () => {
       refetch()
     }
   }, [page, refetch, size])
-
+  const handleDeleteEmployee = async () => {
+    try {
+      if (selectedUser) {
+        const data = await deleteEmployee(selectedUser?.id)
+        if (data?.code == '00') {
+          successNotification('Xóa người dùng thành công!!!')
+          refetch()
+          closeAllModal()
+        } else errorNotification('Xóa người dùng thất bại')
+      } else errorNotification('Xóa người dùng thất bại')
+    } catch (e) {
+      errorNotification('Xóa người dùng thất bại')
+    }
+  }
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex flex-wrap py-4'>
@@ -192,7 +205,10 @@ const Employee = () => {
                                 {({ active }) => (
                                   <button
                                     title='Xóa'
-                                    onClick={() => {}}
+                                    onClick={() => {
+                                      setDeleteModal(true)
+                                      setSelectedUser(d)
+                                    }}
                                     className={`${
                                       active ? 'bg-blue-500 text-white' : 'text-gray-900'
                                     } group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm `}
@@ -376,16 +392,9 @@ const Employee = () => {
                         type='button'
                         className='middle  none center mr-4 rounded-lg bg-red-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#ff00002f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
                         data-ripple-light='true'
+                        onClick={handleDeleteEmployee}
                       >
                         Xóa
-                      </button>
-                      <button
-                        type='button'
-                        className='middle  none center mr-4 rounded-lg bg-[#49484d] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#49484d]  focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
-                        data-ripple-light='true'
-                        onClick={closeAllModal}
-                      >
-                        Hủy
                       </button>
                     </div>
                   </div>
