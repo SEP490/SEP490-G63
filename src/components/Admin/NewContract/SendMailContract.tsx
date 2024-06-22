@@ -113,31 +113,7 @@ const SendMailContract = () => {
     }
     fetchApi()
   }, [id, type])
-  useEffect(() => {
-    const fetchApi = async () => {
-      try {
-        if (id) {
-          const response = await getNewContractById(id)
-          if (response.code == '00' && response.object) {
-            if (type == '1') {
-              setSelectedTo([{ label: response.object.partyA.email, value: response.object.partyA.email }])
-            } else if (type == '2') {
-              setSelectedTo([{ label: response.object.partyB.email, value: response.object.partyB.email }])
-            }
-            const fileUrl = response.object.file
-            const fileData = await fetch(fileUrl)
-            const blob = await fileData.blob()
-            contractFile.current = blob
-          } else errorNotification('Không tìm thấy thông tin')
-        }
-      } catch (e) {
-        errorNotification('Không tìm thấy thông tin')
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchApi()
-  }, [id, type])
+
   if (loading) return <Loading />
   return (
     <div className='h-full'>

@@ -23,11 +23,12 @@ import { AxiosError } from 'axios'
 import useToast from '~/hooks/useToast'
 import EditNewContract from '~/components/Admin/NewContract/EditNewContract'
 import ContractHistory from './ContractHistory'
-import { status } from '~/common/const/status'
+import { status, statusRequest } from '~/common/const/status'
 import { useAuth } from '~/provider/authProvider'
 import { permissionObject } from '~/common/const/permissions'
 import { ADMIN } from '~/common/const/role'
 import UrgentIcon from '~/assets/svg/urgentIcon'
+import SendMailUpdateStatus from '~/components/Admin/NewContract/SendMailUpdateSatatus'
 export interface DataContract {
   id: string
   name: string
@@ -38,7 +39,8 @@ export interface DataContract {
 type ActionType = {
   id: number
   title: string | ReactNode
-  status: string
+  status?: string
+  disable?: any
   callback: any
 }
 type STATUS = 'ADMIN' | 'OFFICE_ADMIN' | 'SALE' | 'OFFICE_STAFF'
@@ -49,7 +51,15 @@ const Contract = () => {
   const [openModal, setOpenModal] = useState(false)
   const [editModal, setEditModal] = useState(false)
   const [deleteModal, setDeleteModal] = useState(false)
+  const [changeStatus, setChangeStatus] = useState(false)
   const [historyModal, setHistoryModal] = useState(false)
+  const [statusContract, setStatusContract] = useState<any>('NEW')
+  const [status, setStatus] = useState<number>(0)
+  const [page, setPage] = useState(0)
+  const [size, setSize] = useState(5)
+  const [totalPage, setTotalPage] = useState(1)
+  const prevPageRef = useRef(page)
+  const prevSizeRef = useRef(size)
   const { user } = useAuth()
   const permissionUser: STATUS = useMemo(() => {
     if (user?.role == ADMIN || user?.permissions.includes(permissionObject.MANAGER)) return ADMIN
@@ -57,13 +67,6 @@ const Contract = () => {
     else if (user?.permissions.includes(permissionObject.SALE)) return 'SALE'
     else return 'OFFICE_STAFF'
   }, [user])
-  const [statusContract, setStatusContract] = useState<any>('NEW')
-  const [page, setPage] = useState(0)
-  const [size, setSize] = useState(5)
-  const [totalPage, setTotalPage] = useState(1)
-  const prevPageRef = useRef(page)
-  const prevSizeRef = useRef(size)
-  console.log(permissionUser)
 
   const closeModal = () => {
     setOpenModal(false)
@@ -73,6 +76,8 @@ const Contract = () => {
     setOpenModal(false)
     setEditModal(false)
     setHistoryModal(false)
+    setChangeStatus(false)
+    setStatus(0)
     setSelectedContract(null)
   }
   const handleCloseHistoryModal = () => {
@@ -103,8 +108,12 @@ const Contract = () => {
           <ArrowUpOnSquareIcon className='h-5' /> Trình duyệt
         </>
       ),
-      status: 'WAIT_APPROVE',
-      callback: (d: any) => {}
+      disable: (d: any) => true,
+      callback: (d: any) => {
+        setSelectedContract(d)
+        setStatus(1)
+        setChangeStatus(true)
+      }
     },
     {
       id: 2,
@@ -414,14 +423,13 @@ const Contract = () => {
                             >
                               <Menu.Items className='absolute right-4 top-3 z-50 mt-2 w-48 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
                                 {actionTable[permissionUser]?.map((action: ActionType) => (
-                                  <Menu.Item key={d.id}>
+                                  <Menu.Item key={action.id}>
                                     {({ active }) => (
                                       <button
-                                        disabled={d.status == action.status}
                                         onClick={() => action.callback(d)}
                                         className={`${
                                           active ? 'bg-blue-500 text-white' : 'text-gray-900'
-                                        } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
+                                        } group flex w-full items-center disabled:text-gray-500  disabled:bg-white gap-3 rounded-md px-2 py-2 text-sm `}
                                       >
                                         {action.title}
                                       </button>
@@ -460,7 +468,48 @@ const Contract = () => {
           )}
         </div>
       </div>
+      {/* Modal thay đổi trạng thái hợp đồng */}
+      <Transition appear show={changeStatus} as={Fragment}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={handleCloseModal}>
+          <Transition.Child
+            as={Fragment}
+            enter='ease-out duration-300'
+            enterFrom='opacity-0'
+            enterTo='opacity-100'
+            leave='ease-in duration-200'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0'
+          >
+            <div className='fixed inset-0 bg-black/25' />
+          </Transition.Child>
 
+          <div className='fixed inset-0 overflow-y-auto'>
+            <div className='flex min-h-full items-center justify-center p-4 text-center'>
+              <Transition.Child
+                as={Fragment}
+                enter='ease-out duration-300'
+                enterFrom='opacity-0 scale-95'
+                enterTo='opacity-100 scale-100'
+                leave='ease-in duration-200'
+                leaveFrom='opacity-100 scale-100'
+                leaveTo='opacity-0 scale-95'
+              >
+                <Dialog.Panel className='w-[100vw] md:w-[90vw] md:h-[94vh] transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all'>
+                  <div className='flex justify-between mb-2'>
+                    <div className='font-semibold'>{statusRequest[status]?.title}</div>
+                    <div className='flex gap-3 items-center'>
+                      <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => handleCloseModal()} />
+                    </div>
+                  </div>
+
+                  <SendMailUpdateStatus id={selectedContract?.id} status={status} closeModal={handleCloseModal} />
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+      {/* Modal xem chi tiết hợp đồng */}
       <Transition appear show={openModal} as={Fragment}>
         <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeModal}>
           <Transition.Child
@@ -528,6 +577,7 @@ const Contract = () => {
           </div>
         </Dialog>
       </Transition>
+      {/* Modal chỉnh sửa hợp đồng */}
       <Transition appear show={editModal} as={Fragment}>
         <Dialog as='div' className='relative z-50 w-[90vw]' onClose={handleCloseModal}>
           <Transition.Child
@@ -569,6 +619,7 @@ const Contract = () => {
           </div>
         </Dialog>
       </Transition>
+      {/* Modal hiển thị lịch sử hợp đồng */}
       <Transition appear show={historyModal} as={Fragment}>
         <Dialog as='div' className='relative z-50 w-[25vw]' onClose={handleCloseHistoryModal}>
           <Transition.Child
@@ -606,6 +657,7 @@ const Contract = () => {
           </div>
         </Dialog>
       </Transition>
+      {/* Modal xóa hợp đồng */}
       <Transition appear show={deleteModal} as={Fragment}>
         <Dialog as='div' className='relative z-50 w-[90vw]' onClose={handleCloseModal}>
           <Transition.Child
