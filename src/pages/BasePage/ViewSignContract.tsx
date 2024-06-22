@@ -39,8 +39,6 @@ const ViewSignContract = () => {
     formState: { errors }
   } = useForm<FormType>()
   const onSubmit = async (data: any) => {
-    console.log(data)
-
     try {
       const response = await verifyOtp(data)
       if (response.code == '00') {
@@ -205,6 +203,7 @@ const ViewSignContract = () => {
                   </Dialog.Title>
                   <SignContract
                     id={id}
+                    createdBy={customer == '1' ? user?.email : getValues('email')}
                     customer={customer}
                     comment={commentRef.current?.value}
                     refetch={refetch}

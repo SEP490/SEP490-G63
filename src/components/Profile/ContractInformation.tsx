@@ -84,23 +84,10 @@ const ContractInformation = () => {
     setBankImage(null)
   }
 
-  if (isLoading) {
-    return (
-      <div className='w-full md:w-[80%] flex flex-col items-center mx-3 py-4 px-3 justify-center bg-white rounded-md shadow-md'>
-        <h2 className='text-xl font-bold mb-4'>Kiểm tra email để lấy mã xác minh</h2>
-        <Loading />
-      </div>
-    )
-  }
-
-  if (isError) {
-    return <div>Lỗi tải hợp đồng</div>
-  }
-
   return (
     <>
       {!isSend ? (
-        <div className='w-full md:w-[80%] flex flex-col items-center mx-3 py-4 px-3 justify-center bg-white rounded-md shadow-md'>
+        <div className='w-full md:w-[80%] flex flex-col items-center justify-center bg-white rounded-md shadow-md'>
           <h2 className='text-xl font-bold mb-4'>Nhập mã xác minh</h2>
           <form onSubmit={handleSubmit} className='w-full flex flex-col items-center'>
             <input

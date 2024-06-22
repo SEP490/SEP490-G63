@@ -16,6 +16,8 @@ import { permissionObject } from '~/common/const/permissions.ts'
 import Sale from '~/middleware/Sale/index.tsx'
 import StaffOfficer from '~/middleware/StaffOfficer/index.tsx'
 import Dashboard from '~/pages/Admin/Dashboard.tsx'
+import SendMailUpdateStatus from '~/components/Admin/NewContract/SendMailUpdateSatatus.tsx'
+import LoadingPage from '~/components/shared/LoadingPage/LoadingPage.tsx'
 const Login = lazy(() => import('~/components/Login.tsx'))
 const Logout = lazy(() => import('~/components/Logout.tsx'))
 const Example = lazy(() => import('~/pages/Example.tsx'))
@@ -44,7 +46,7 @@ const Routes = () => {
         {
           path: '/',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <AdminLayout>
                 <SearchPage />
               </AdminLayout>
@@ -54,7 +56,7 @@ const Routes = () => {
         {
           path: '/dashboard',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <Dashboard />
             </Suspense>
           )
@@ -62,7 +64,7 @@ const Routes = () => {
         {
           path: '/view/:id/sign/:customer',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <AdminLayout>
                 <ViewSignContract />
               </AdminLayout>
@@ -72,7 +74,7 @@ const Routes = () => {
         {
           path: '/search/:fieldSearch/:searchText',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <AdminLayout>
                 <SearchPageResult />
               </AdminLayout>
@@ -82,7 +84,7 @@ const Routes = () => {
         {
           path: '/profile',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <AdminLayout>
                 <Profile />
               </AdminLayout>
@@ -93,7 +95,7 @@ const Routes = () => {
         {
           path: '/send-mail/:id/:type',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <AdminLayout>
                 <SendMailContract />
               </AdminLayout>
@@ -103,7 +105,7 @@ const Routes = () => {
         {
           path: '/employee',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <AdminLayout>
                 <Employee />
               </AdminLayout>
@@ -113,7 +115,7 @@ const Routes = () => {
         {
           path: '/old-contract',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <AdminLayout>
                 <OldContract />
               </AdminLayout>
@@ -123,7 +125,7 @@ const Routes = () => {
         {
           path: '/template-contract',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <AdminLayout>
                 <TemplateContract />
               </AdminLayout>
@@ -133,7 +135,7 @@ const Routes = () => {
         {
           path: '/contract',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <AdminLayout>
                 <Contract />
               </AdminLayout>
@@ -143,7 +145,7 @@ const Routes = () => {
         {
           path: '/contract/create',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <AdminLayout>
                 <CreateContract />
               </AdminLayout>
@@ -153,7 +155,7 @@ const Routes = () => {
         {
           path: '/contract/history/:id',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <AdminLayout>
                 <ContractHistory />
               </AdminLayout>
@@ -164,7 +166,7 @@ const Routes = () => {
         {
           path: '/logout',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <AdminLayout>
                 <Logout />
               </AdminLayout>
@@ -190,7 +192,7 @@ const Routes = () => {
         {
           path: '/',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <UserLayout>
                 <AdminOfficer>
                   <SearchPage />
@@ -202,7 +204,7 @@ const Routes = () => {
         {
           path: '/profile',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <UserLayout>
                 <AdminOfficer>
                   <Profile />
@@ -214,7 +216,7 @@ const Routes = () => {
         {
           path: '/search/:fieldSearch/:searchText',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <UserLayout>
                 <AdminOfficer>
                   <SearchPageResult />
@@ -226,7 +228,7 @@ const Routes = () => {
         {
           path: '/send-mail/:id/:type',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <UserLayout>
                 <AdminOfficer>
                   <SendMailContract />
@@ -238,7 +240,7 @@ const Routes = () => {
         {
           path: '/employee',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <UserLayout>
                 <AdminOfficer>
                   <Employee />
@@ -250,7 +252,7 @@ const Routes = () => {
         {
           path: '/old-contract',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <UserLayout>
                 <AdminOfficer>
                   <OldContract />
@@ -262,7 +264,7 @@ const Routes = () => {
         {
           path: '/template-contract',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <UserLayout>
                 <AdminOfficer>
                   <TemplateContract />
@@ -274,7 +276,7 @@ const Routes = () => {
         {
           path: '/contract',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <UserLayout>
                 <AdminOfficer>
                   <Contract />
@@ -286,7 +288,7 @@ const Routes = () => {
         {
           path: '/contract/create',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <UserLayout>
                 <AdminOfficer>
                   <CreateContract />
@@ -298,7 +300,7 @@ const Routes = () => {
         {
           path: '/logout',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <UserLayout>
                 <AdminOfficer>
                   <Logout />
@@ -328,7 +330,7 @@ const Routes = () => {
         {
           path: '/',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <UserLayout>
                 <Sale>
                   <SearchPage />
@@ -340,7 +342,7 @@ const Routes = () => {
         {
           path: '/profile',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <UserLayout>
                 <Sale>
                   <Profile />
@@ -352,7 +354,7 @@ const Routes = () => {
         {
           path: '/search/:fieldSearch/:searchText',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <UserLayout>
                 <Sale>
                   <SearchPageResult />
@@ -364,7 +366,7 @@ const Routes = () => {
         {
           path: '/send-mail/:id/:type',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <UserLayout>
                 <Sale>
                   <SendMailContract />
@@ -373,11 +375,22 @@ const Routes = () => {
             </Suspense>
           )
         },
-
+        {
+          path: '/send/:id/:status',
+          element: (
+            <Suspense fallback={<LoadingPage />}>
+              <UserLayout>
+                <Sale>
+                  <SendMailUpdateStatus />
+                </Sale>
+              </UserLayout>
+            </Suspense>
+          )
+        },
         {
           path: '/old-contract',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <UserLayout>
                 <Sale>
                   <OldContract />
@@ -389,7 +402,7 @@ const Routes = () => {
         {
           path: '/template-contract',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <UserLayout>
                 <Sale>
                   <TemplateContract />
@@ -401,7 +414,7 @@ const Routes = () => {
         {
           path: '/contract',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <UserLayout>
                 <Sale>
                   <Contract />
@@ -413,7 +426,7 @@ const Routes = () => {
         {
           path: '/contract/create',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <UserLayout>
                 <Sale>
                   <CreateContract />
@@ -425,7 +438,7 @@ const Routes = () => {
         {
           path: '/logout',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <UserLayout>
                 <Sale>
                   <Logout />
@@ -455,7 +468,7 @@ const Routes = () => {
         {
           path: '/',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <UserLayout>
                 <StaffOfficer>
                   <HomeUser />
@@ -467,7 +480,7 @@ const Routes = () => {
         {
           path: '/logout',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <UserLayout>
                 <StaffOfficer>
                   <Logout />
@@ -479,7 +492,7 @@ const Routes = () => {
         {
           path: '/profile',
           element: (
-            <Suspense fallback={<Loading />}>
+            <Suspense fallback={<LoadingPage />}>
               <UserLayout>
                 <StaffOfficer>
                   <Profile />
@@ -506,7 +519,7 @@ const Routes = () => {
     {
       path: '/view/:id/sign/:customer',
       element: (
-        <Suspense fallback={<Loading />}>
+        <Suspense fallback={<LoadingPage />}>
           <div className='w-[100vw] h-[100vh]'>
             <ViewSignContract />
           </div>
@@ -516,7 +529,7 @@ const Routes = () => {
     {
       path: '/',
       element: (
-        <Suspense fallback={<Loading />}>
+        <Suspense fallback={<LoadingPage />}>
           <Home />
         </Suspense>
       )
@@ -525,7 +538,7 @@ const Routes = () => {
     {
       path: '/register',
       element: (
-        <Suspense fallback={<Loading />}>
+        <Suspense fallback={<LoadingPage />}>
           <Register />
         </Suspense>
       )
@@ -533,7 +546,7 @@ const Routes = () => {
     {
       path: '/login',
       element: (
-        <Suspense fallback={<Loading />}>
+        <Suspense fallback={<LoadingPage />}>
           <Login />
         </Suspense>
       )

@@ -1,17 +1,11 @@
 import { Dialog, Menu, Transition } from '@headlessui/react'
-import {
-  Cog6ToothIcon,
-  DocumentIcon,
-  EllipsisVerticalIcon,
-  NoSymbolIcon,
-  PlusIcon,
-  XMarkIcon
-} from '@heroicons/react/24/outline'
+import { Cog6ToothIcon, EllipsisVerticalIcon, NoSymbolIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { AxiosError } from 'axios'
 import moment from 'moment'
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { useMutation, useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
+import DocumentIcon from '~/assets/svg/document'
 import EditTemplateContract from '~/components/Admin/TemplateContract/EditTemplateContract'
 import ViewTemplateContract from '~/components/Admin/TemplateContract/ViewTemplateContract'
 import Pagination from '~/components/BaseComponent/Pagination/Pagination'
@@ -30,6 +24,8 @@ const TemplateContract = () => {
   const [selectedContract, setSelectedContract] = useState<any>(null)
   const { successNotification, errorNotification } = useToast()
   const [dataTable, setDataTable] = useState([])
+  const prevPageRef = useRef(page)
+  const prevSizeRef = useRef(size)
   const { data, error, isError, isLoading, refetch, isFetching } = useQuery('template-contract', () =>
     getTemplateContract(page, size)
   )
@@ -63,11 +59,15 @@ const TemplateContract = () => {
       setDataTable(data.object.content)
       setTotalPage(data.object.totalPages)
     }
-  }, [data, isError, error])
+  }, [data, isError, error, errorNotification])
   useEffect(() => {
-    refetch()
-  }, [page, size])
-  if (isLoading || isFetching) return <Loading />
+    if (prevPageRef.current !== page || prevSizeRef.current !== size) {
+      prevPageRef.current = page
+      prevSizeRef.current = size
+      refetch()
+    }
+  }, [page, refetch, size])
+
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex flex-wrap py-4'>
@@ -109,104 +109,106 @@ const TemplateContract = () => {
             </button>
           </div>
           <div className='shadow-md sm:rounded-lg my-3  max-h-[75vh]'>
-            <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
-              <thead className='text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 shadow-md'>
-                <tr>
-                  <th className='px-3 py-3'>STT</th>
-                  <th className='px-3 py-3'>Tên hợp đồng</th>
-                  <th className='px-3 py-3'>Chi tiết</th>
-                  <th className='px-3 py-3'>Ngày tạo</th>
+            <Loading loading={isFetching || isLoading}>
+              <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
+                <thead className='text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 shadow-md'>
+                  <tr>
+                    <th className='px-3 py-3'>STT</th>
+                    <th className='px-3 py-3'>Tên hợp đồng</th>
+                    <th className='px-3 py-3'>Chi tiết</th>
+                    <th className='px-3 py-3'>Ngày tạo</th>
 
-                  <th className='px-3 py-3 w-1'></th>
-                </tr>
-              </thead>
-
-              <tbody className='w-full '>
-                {dataTable?.map((d: any, index: number) => (
-                  <tr
-                    key={d.id}
-                    className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
-                  >
-                    <td className='px-3 py-4'>{page * size + index + 1}</td>
-                    <td className='px-3 py-4'>{d.nameContract}</td>
-                    <td className='px-3 py-4'>
-                      <div
-                        className='cursor-pointer text-blue-500 hover:underline'
-                        onClick={() => {
-                          setSelectedContract(d)
-                          setDetailModal(true)
-                        }}
-                      >
-                        Xem
-                      </div>
-                    </td>
-
-                    <td className='px-3 py-4'>{d.createdDate ? moment(d.createdDate).format('DD/MM/YYYY') : ''}</td>
-
-                    <td className='px-3 py-4 w-[20px] cursor-pointer ho'>
-                      <Menu as='div' className='relative inline-block text-left '>
-                        <Menu.Button className='flex justify-center items-center gap-3 cursor-pointer hover:text-blue-500'>
-                          <EllipsisVerticalIcon className='h-7 w-7' title='Hành động' />
-                        </Menu.Button>
-
-                        <Transition
-                          as={Fragment}
-                          enter='transition ease-out duration-100'
-                          enterFrom='transform opacity-0 scale-95'
-                          enterTo='transform opacity-100 scale-100'
-                          leave='transition ease-in duration-75'
-                          leaveFrom='transform opacity-100 scale-100'
-                          leaveTo='transform opacity-0 scale-95'
-                        >
-                          <Menu.Items className='absolute right-8 top-[-100%] z-50 mt-2 w-24 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
-                            <Menu.Item>
-                              {({ active }) => (
-                                <button
-                                  title='Sửa'
-                                  onClick={() => {
-                                    setOpenModal(true)
-                                    setSelectedContract(d)
-                                  }}
-                                  className={`${
-                                    active ? 'bg-blue-500 text-white' : 'text-gray-900'
-                                  } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
-                                >
-                                  <Cog6ToothIcon className='h-5' /> Sửa
-                                </button>
-                              )}
-                            </Menu.Item>
-                            <Menu.Item>
-                              {({ active }) => (
-                                <button
-                                  title='Xóa'
-                                  onClick={() => {
-                                    setDeleteModal(true)
-                                    setSelectedContract(d)
-                                  }}
-                                  className={`${
-                                    active ? 'bg-blue-500 text-white' : 'text-gray-900'
-                                  } group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm `}
-                                >
-                                  <NoSymbolIcon className='h-5' /> Xóa
-                                </button>
-                              )}
-                            </Menu.Item>
-                          </Menu.Items>
-                        </Transition>
-                      </Menu>
-                    </td>
+                    <th className='px-3 py-3 w-1'></th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-            {(!dataTable || dataTable?.length == 0) && (
-              <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'>
-                <div className='flex flex-col justify-center items-center opacity-60'>
-                  <DocumentIcon />
-                  Chưa có hợp đồng mẫu
+                </thead>
+
+                <tbody className='w-full '>
+                  {dataTable?.map((d: any, index: number) => (
+                    <tr
+                      key={d.id}
+                      className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
+                    >
+                      <td className='px-3 py-4'>{page * size + index + 1}</td>
+                      <td className='px-3 py-4'>{d.nameContract}</td>
+                      <td className='px-3 py-4'>
+                        <div
+                          className='cursor-pointer text-blue-500 hover:underline'
+                          onClick={() => {
+                            setSelectedContract(d)
+                            setDetailModal(true)
+                          }}
+                        >
+                          Xem
+                        </div>
+                      </td>
+
+                      <td className='px-3 py-4'>{d.createdDate ? moment(d.createdDate).format('DD/MM/YYYY') : ''}</td>
+
+                      <td className='px-3 py-4 w-[20px] cursor-pointer ho'>
+                        <Menu as='div' className='relative inline-block text-left '>
+                          <Menu.Button className='flex justify-center items-center gap-3 cursor-pointer hover:text-blue-500'>
+                            <EllipsisVerticalIcon className='h-7 w-7' title='Hành động' />
+                          </Menu.Button>
+
+                          <Transition
+                            as={Fragment}
+                            enter='transition ease-out duration-100'
+                            enterFrom='transform opacity-0 scale-95'
+                            enterTo='transform opacity-100 scale-100'
+                            leave='transition ease-in duration-75'
+                            leaveFrom='transform opacity-100 scale-100'
+                            leaveTo='transform opacity-0 scale-95'
+                          >
+                            <Menu.Items className='absolute right-8 top-[-100%] z-50 mt-2 w-24 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <button
+                                    title='Sửa'
+                                    onClick={() => {
+                                      setOpenModal(true)
+                                      setSelectedContract(d)
+                                    }}
+                                    className={`${
+                                      active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                    } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
+                                  >
+                                    <Cog6ToothIcon className='h-5' /> Sửa
+                                  </button>
+                                )}
+                              </Menu.Item>
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <button
+                                    title='Xóa'
+                                    onClick={() => {
+                                      setDeleteModal(true)
+                                      setSelectedContract(d)
+                                    }}
+                                    className={`${
+                                      active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                    } group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm `}
+                                  >
+                                    <NoSymbolIcon className='h-5' /> Xóa
+                                  </button>
+                                )}
+                              </Menu.Item>
+                            </Menu.Items>
+                          </Transition>
+                        </Menu>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {(!dataTable || dataTable?.length == 0) && (
+                <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'>
+                  <div className='flex flex-col justify-center items-center opacity-60'>
+                    <DocumentIcon />
+                    Chưa có hợp đồng mẫu
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </Loading>
           </div>
           {dataTable && dataTable?.length != 0 && (
             <Pagination

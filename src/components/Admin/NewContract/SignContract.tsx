@@ -12,8 +12,9 @@ interface IProps {
   comment: string
   setModalSign: any
   refetch: any
+  createdBy: string | undefined
 }
-const SignContract = ({ id, customer, comment, setModalSign, refetch }: IProps) => {
+const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy }: IProps) => {
   const [lines, setLines] = React.useState<any>([])
   const isDrawing = React.useRef(false)
   const stageRef = React.useRef<any>(null)
@@ -60,6 +61,7 @@ const SignContract = ({ id, customer, comment, setModalSign, refetch }: IProps) 
       contractId: id as string,
       signImage: uri,
       comment: comment,
+      createdBy: createdBy as string,
       customer: customer == '2'
     }
     signQuery.mutate(dataRequest)

@@ -11,15 +11,15 @@ const Profile = () => {
           <ul className='flex flex-row md:flex-col gap-3 m-3'>
             <li
               onClick={() => setTab(1)}
-              className={`flex gap-4 justify-start px-3 py-1 cursor-pointer ${tab == 1 ? 'bg-main-color text-white' : 'text-black'} hover:bg-main-color hover:text-white rounded-3xl`}
+              className={`flex gap-4 justify-start items-center px-3 py-1 cursor-pointer ${tab == 1 ? 'bg-main-color text-white' : 'text-black'} hover:bg-main-color hover:text-white rounded-3xl`}
             >
-              <UserIcon className='h-7 w-7' /> Thông tin cá nhân
+              <UserIcon className='h-5 w-5' /> Thông tin cá nhân
             </li>
             <li
               onClick={() => setTab(2)}
               className={`flex gap-4 justify-start px-3 py-1 cursor-pointer ${tab == 2 ? 'bg-main-color text-white' : 'text-black'} hover:bg-main-color hover:text-white rounded-3xl`}
             >
-              <DocumentCheckIcon className='h-7 w-7' />
+              <DocumentCheckIcon className='h-5 w-5' />
               Thông tin hợp đồng
             </li>
           </ul>

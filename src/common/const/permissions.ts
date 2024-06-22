@@ -8,7 +8,8 @@ const permissions = [
   {
     id: 1,
     title: 'SALE',
-    tooltip: 'PERMISSION SALE',
+    tooltip:
+      'Nhân viên Sale có các chức năng như tạo mới hợp đồng,\n tải lên hợp đồng cũ, gửi hợp đồng cho khách hàng, gửi lên cho hành chính văn phòng yêu cầu duyệt hợp đồng',
     value: 'SALE'
   },
   {

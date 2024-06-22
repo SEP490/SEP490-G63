@@ -16,7 +16,7 @@ const OldContract = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [data, setData] = useState<any>(null)
   const [page, setPage] = useState(0)
-  const [size, setSize] = useState(10)
+  const [size, setSize] = useState(5)
   const [totalPage, setTotalPage] = useState(1)
   const [deleteModal, setDeleteModal] = useState(false)
   const [selectedContract, setSelectedContract] = useState<any>(null)
@@ -68,7 +68,6 @@ const OldContract = () => {
     }
   }, [page, refetch, size])
 
-  if (isLoading || isFetching) return <Loading />
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex flex-wrap py-4'>
@@ -110,73 +109,75 @@ const OldContract = () => {
             </button>
           </div>
           <div className=' overflow-x-auto shadow-md sm:rounded-sm my-3  max-h-[75vh]'>
-            <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
-              <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 shadow-md'>
-                <tr>
-                  <th className='px-3 py-3'>STT</th>
-                  <th className='px-3 py-3'>Tên hợp đồng</th>
-                  <th className='px-3 py-3'>Ngày kí</th>
-                  <th className='px-3 py-3'>Ngày bắt đầu</th>
-                  <th className='px-3 py-3'>Ngày kết thúc</th>
-                  <th className='px-3 py-3' align='center'>
-                    Xem chi tiết
-                  </th>
-                  <th className='px-3 py-3'></th>
-                </tr>
-              </thead>
-
-              <tbody className='w-full '>
-                {data?.content?.map((d: any, index: number) => (
-                  <tr
-                    key={d.id}
-                    className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
-                  >
-                    <td className='px-3 py-4'>{page * size + index + 1}</td>
-                    <td className='px-3 py-4'>{d.contractName}</td>
-                    <td className='px-3 py-4'>
-                      {d.contractSignDate ? moment(d.contractSignDate).format('DD/MM/YYYY') : ''}
-                    </td>
-                    <td className='px-3 py-4'>
-                      {d.contractStartDate ? moment(d.contractStartDate).format('DD/MM/YYYY') : ''}
-                    </td>
-                    <td className='px-3 py-4'>
-                      {d.contractEndDate ? moment(d.contractEndDate).format('DD/MM/YYYY') : ''}
-                    </td>
-                    <td className='px-3 py-4' align='center'>
-                      <div
-                        className='cursor-pointer text-blue-500 hover:underline'
-                        onClick={() => {
-                          setSelectedContract(d)
-                          setOpenModalContract(true)
-                        }}
-                      >
-                        Xem
-                      </div>
-                    </td>
-
-                    <td className='px-3 py-4 w-[20px] cursor-pointer ho'>
-                      <div
-                        className='flex gap-1 text-red-500'
-                        onClick={() => {
-                          setDeleteModal(true)
-                          setSelectedContract(d)
-                        }}
-                      >
-                        <NoSymbolIcon className='h-5' /> Xóa
-                      </div>
-                    </td>
+            <Loading loading={isFetching || isLoading}>
+              <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
+                <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 shadow-md'>
+                  <tr>
+                    <th className='px-3 py-3'>STT</th>
+                    <th className='px-3 py-3'>Tên hợp đồng</th>
+                    <th className='px-3 py-3'>Ngày kí</th>
+                    <th className='px-3 py-3'>Ngày bắt đầu</th>
+                    <th className='px-3 py-3'>Ngày kết thúc</th>
+                    <th className='px-3 py-3' align='center'>
+                      Xem chi tiết
+                    </th>
+                    <th className='px-3 py-3'></th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-            {(!data || data?.content?.length == 0) && (
-              <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'>
-                <div className='flex flex-col justify-center items-center opacity-60'>
-                  <DocumentIcon />
-                  Bạn chưa tải lên hợp đồng cũ
+                </thead>
+
+                <tbody className='w-full '>
+                  {data?.content?.map((d: any, index: number) => (
+                    <tr
+                      key={d.id}
+                      className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
+                    >
+                      <td className='px-3 py-4'>{page * size + index + 1}</td>
+                      <td className='px-3 py-4'>{d.contractName}</td>
+                      <td className='px-3 py-4'>
+                        {d.contractSignDate ? moment(d.contractSignDate).format('DD/MM/YYYY') : ''}
+                      </td>
+                      <td className='px-3 py-4'>
+                        {d.contractStartDate ? moment(d.contractStartDate).format('DD/MM/YYYY') : ''}
+                      </td>
+                      <td className='px-3 py-4'>
+                        {d.contractEndDate ? moment(d.contractEndDate).format('DD/MM/YYYY') : ''}
+                      </td>
+                      <td className='px-3 py-4' align='center'>
+                        <div
+                          className='cursor-pointer text-blue-500 hover:underline'
+                          onClick={() => {
+                            setSelectedContract(d)
+                            setOpenModalContract(true)
+                          }}
+                        >
+                          Xem
+                        </div>
+                      </td>
+
+                      <td className='px-3 py-4 w-[20px] cursor-pointer ho'>
+                        <div
+                          className='flex gap-1 text-red-500'
+                          onClick={() => {
+                            setDeleteModal(true)
+                            setSelectedContract(d)
+                          }}
+                        >
+                          <NoSymbolIcon className='h-5' /> Xóa
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {(!data || data?.content?.length == 0) && (
+                <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'>
+                  <div className='flex flex-col justify-center items-center opacity-60'>
+                    <DocumentIcon />
+                    Bạn chưa tải lên hợp đồng cũ
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </Loading>
           </div>
           {data && data?.content?.length != 0 && (
             <Pagination
