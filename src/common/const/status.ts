@@ -1,4 +1,4 @@
-export const status = {
+export const statusObject = {
   NEW: {
     title: 'Tạo mới',
     color: 'text-blue-500'

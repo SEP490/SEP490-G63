@@ -3,9 +3,10 @@ import React from 'react'
 import { Stage, Layer, Line } from 'react-konva'
 import { useMutation } from 'react-query'
 import { useNavigate } from 'react-router-dom'
+import { statusRequest } from '~/common/const/status'
 import Loading from '~/components/shared/Loading/Loading'
 import useToast from '~/hooks/useToast'
-import { signContract } from '~/services/contract.service'
+import { sendMail, sendMailPublic, signContract } from '~/services/contract.service'
 interface IProps {
   id: string | undefined
   customer: string | undefined
@@ -13,8 +14,10 @@ interface IProps {
   setModalSign: any
   refetch: any
   createdBy: string | undefined
+  to: string
+  cc: string
 }
-const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy }: IProps) => {
+const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy, to, cc }: IProps) => {
   const [lines, setLines] = React.useState<any>([])
   const isDrawing = React.useRef(false)
   const stageRef = React.useRef<any>(null)
@@ -55,7 +58,7 @@ const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy 
       errorNotification(error.response?.data.message || '')
     }
   })
-  const handleExport = () => {
+  const handleExport = async () => {
     const uri = stageRef.current.toDataURL()
     const dataRequest = {
       contractId: id as string,
@@ -64,7 +67,22 @@ const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy 
       createdBy: createdBy as string,
       customer: customer == '2'
     }
-    signQuery.mutate(dataRequest)
+    //signQuery.mutate(dataRequest)
+    const formData = new FormData()
+
+    formData.append('to', to)
+    if (cc != null) formData.append('cc', cc)
+    formData.append('subject', statusRequest[customer == '2' ? 8 : 5]?.title)
+    formData.append('htmlContent', statusRequest[customer == '2' ? 8 : 5]?.description)
+    formData.append('contractId ', id as string)
+    formData.append('status', statusRequest[customer == '2' ? 8 : 5]?.status)
+    formData.append('createdBy', createdBy as string)
+    formData.append('description', statusRequest[customer == '2' ? 8 : 5]?.description)
+    try {
+      const response = await sendMailPublic(formData)
+    } catch (error) {
+      errorNotification('Gửi yêu cầu thất bại')
+    }
   }
   if (signQuery.isLoading) return <Loading />
   return (
