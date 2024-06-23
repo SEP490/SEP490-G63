@@ -8,7 +8,7 @@ interface DragItem {
   id: string
   type: string
 }
-interface Iprops {
+interface IProps {
   index: number
   id: number
   file: any
@@ -16,7 +16,7 @@ interface Iprops {
   moveCard: (dragIndex: number, hoverIndex: number) => void
   removeCard: any
 }
-const ItemImage = ({ index, id, file, base64, moveCard, removeCard }: Iprops) => {
+const ItemImage = ({ index, id, file, base64, moveCard, removeCard }: IProps) => {
   const ref = useRef<HTMLDivElement>(null)
   const [open, setOpen] = useState(false)
   const [{ handlerId }, drop] = useDrop<DragItem, void, { handlerId: Identifier | null }>({
@@ -103,7 +103,7 @@ const ItemImage = ({ index, id, file, base64, moveCard, removeCard }: Iprops) =>
         />
       </div>
       <Transition appear show={open} as={Fragment}>
-        <Dialog as='div' className='relative z-10 w-[90vw]' onClose={() => setOpen(false)}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={() => setOpen(false)}>
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'

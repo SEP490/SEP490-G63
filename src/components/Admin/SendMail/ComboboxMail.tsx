@@ -2,40 +2,32 @@ import AsyncCreatableSelect from 'react-select/async-creatable'
 import useToast from '~/hooks/useToast'
 import { validateEmail } from '~/utils/checkMail'
 
-const colourOptions: any[] = [
-  { label: 'tu@gmail.com', value: 'tu@gmail.com' },
-  { label: 'ha@gmail.com', value: 'ha@gmail.com' },
-  { label: 'hai@gmail.com', value: 'hai@gmail.com' }
-]
-
-const filterColors = (inputValue: string) => {
-  return colourOptions.filter((i) => i.label.toLowerCase().includes(inputValue.toLowerCase()))
-}
-
-const promiseOptions = (inputValue: string) =>
-  new Promise<any[]>((resolve) => {
-    setTimeout(() => {
-      resolve(filterColors(inputValue))
-    }, 500)
-  })
-
-const AsyncCreatableSelectComponent = ({ selected, setSelected }: any) => {
+const AsyncCreatableSelectComponent = ({ selected, setSelected, option }: any) => {
   const { errorNotification } = useToast()
 
-  const createOption = async (inputValue: string) => {
-    const isValidEmail = await validateEmail(inputValue)
-
-    if (isValidEmail) {
-      return {
-        label: inputValue,
-        value: inputValue.toLowerCase().replace(/\s+/g, '_')
-      }
-    } else {
-      errorNotification('Email không tồn tại hoặc không hợp lệ!')
-      return null
-    }
+  const filterColors = (inputValue: string) => {
+    return option?.filter((i: any) => i.label.toLowerCase().includes(inputValue.toLowerCase()))
   }
 
+  const promiseOptions = (inputValue: string) =>
+    new Promise<any[]>((resolve) => {
+      setTimeout(() => {
+        resolve(filterColors(inputValue))
+      }, 300)
+    })
+  const createOption = async (inputValue: string) => {
+    // const isValidEmail = await validateEmail(inputValue)
+
+    // if (isValidEmail) {
+    return {
+      label: inputValue,
+      value: inputValue.toLowerCase().replace(/\s+/g, '_')
+    }
+    // } else {
+    //   errorNotification('Email không tồn tại hoặc không hợp lệ!')
+    //   return null
+    // }
+  }
   const handleCreate = async (inputValue: string) => {
     const newOption = await createOption(inputValue)
     if (newOption) {

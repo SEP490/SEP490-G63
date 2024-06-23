@@ -1,4 +1,11 @@
 import axiosInstant, { axiosInstanceFormData } from '../config/axiosConfig.ts'
+type SignRequest = {
+  contractId: string
+  signImage: string
+  comment: string
+  createdBy: string
+  customer: boolean
+}
 export const createOldContract = async (formData: any) => {
   const response = await axiosInstanceFormData.post(`old-contract`, formData)
   return response.data
@@ -12,8 +19,8 @@ export const deleteOldContract = async (id: string) => {
   return response.data
 }
 
-export const sendMail = async (formdata: any) => {
-  const response = await axiosInstanceFormData.post(`contract/send-mail`, formdata)
+export const sendMail = async (formData: any) => {
+  const response = await axiosInstanceFormData.post(`contract/send-mail`, formData)
   return response.data
 }
 
@@ -25,8 +32,14 @@ export const getNewContract = async (page: number, size: number) => {
   const response = await axiosInstant.get(`contract/${page}/${size}`)
   return response.data
 }
-export const getNewContractById = async (id: string) => {
+export const getNewContractById = async (id: any) => {
   const response = await axiosInstant.get(`contract/${id}`)
+  return response.data
+}
+export const getNewContractByIdNotToken = async (id: any) => {
+  const response = await axiosInstant.get(`contract/public/sign-contract/${id}`)
+  console.log(response)
+
   return response.data
 }
 
@@ -50,5 +63,9 @@ export const getDataByTaxNumber = async (id: string) => {
 }
 export const getSearchContract = async ({ fieldSearch, data }: any) => {
   const response = await axiosInstant.post(`${fieldSearch}/search`, data)
+  return response.data
+}
+export const signContract = async (data: SignRequest) => {
+  const response = await axiosInstant.post(`contract/public/sign-contract`, data)
   return response.data
 }

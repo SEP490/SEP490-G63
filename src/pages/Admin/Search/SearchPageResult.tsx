@@ -9,6 +9,7 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import ItemNewContract from '~/components/Admin/SearchResult/ItemNewContract'
 import ItemOldContract from '~/components/Admin/SearchResult/ItemOldContract'
 import Pagination from '~/components/BaseComponent/Pagination/Pagination'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 type FormData = {
   searchText: string
   fieldSearch: string
@@ -42,9 +43,9 @@ const SearchPageResult = () => {
   }
   if (searchQuery.isLoading || searchQuery.isIdle) return <Loading />
   return (
-    <div className='bg-white h-full'>
-      <div className='flex items-center justify-start gap-5 shadow-lg bg-white h-[100px]'>
-        <div className='flex justify-center items-center select-none p-6'>
+    <div className=' h-full'>
+      <div className='flex items-center justify-start gap-5 shadow-lg bg-[url(https://i.ibb.co/QMrFzkS/wallpaperflare-com-wallpaper-13.jpg)] bg-cover h-[100px]'>
+        <div className='flex justify-center items-center select-none p-6 '>
           <img src={logo} alt='logo' className='w-[20px] md:w-[50px]' />
           <div
             className=' bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-blue-900 text-[14px] md:text-[24px] cursor-pointer'
@@ -54,27 +55,7 @@ const SearchPageResult = () => {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit(debounce(onSubmit, 100))} className='flex flex-col items-center my-2'>
-          <div className='pl-6 my-1 flex gap-5 select-none w-full text-[14px]'>
-            <div
-              className={`${fieldSearch == 'contract' ? 'text-blue-600 underline' : ''} hover:underline hover:text-blue-600 cursor-pointer`}
-              onClick={() => {
-                setValue('fieldSearch', 'contract')
-                refForm.current.click()
-              }}
-            >
-              Hợp đồng mới
-            </div>
-            <div
-              className={`${fieldSearch == 'old-contract' ? 'text-blue-600 underline' : ''}  hover:underline hover:text-blue-600 cursor-pointer`}
-              onClick={() => {
-                setValue('fieldSearch', 'old-contract')
-                refForm.current.click()
-              }}
-            >
-              Hợp đồng cũ
-            </div>
-          </div>
+        <form onSubmit={handleSubmit(debounce(onSubmit, 100))} className=' my-2'>
           <div className='w-full flex justify-center'>
             <div className='relative '>
               <div className='absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none'>
@@ -95,20 +76,41 @@ const SearchPageResult = () => {
             </div>
             <input
               {...register('searchText', { required: true })}
-              className='border rounded-3xl px-10 py-2 w-[70vw] md:w-[50vw]'
+              className='border rounded-3xl px-10 py-2 w-[70vw] md:w-[50vw] shadow-sm'
               placeholder='Tìm kiếm'
             />
+            {/* <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => console.log('clear')} /> */}
+          </div>
+          <div className='pl-6 my-1 flex gap-5 select-none w-full text-[14px]'>
+            <div
+              className={`font-mono font-semibold ${fieldSearch == 'contract' ? 'text-blue-600 border-b-4 border-blue-500' : ''} border-blue-400 hover:text-blue-600 cursor-pointer`}
+              onClick={() => {
+                setValue('fieldSearch', 'contract')
+                refForm.current.click()
+              }}
+            >
+              Hợp đồng mới
+            </div>
+            <div
+              className={`font-mono font-semibold ${fieldSearch == 'old-contract' ? 'text-blue-600 border-b-4 border-blue-500' : ''} border-blue-400 hover:text-blue-600 cursor-pointer`}
+              onClick={() => {
+                setValue('fieldSearch', 'old-contract')
+                refForm.current.click()
+              }}
+            >
+              Hợp đồng cũ
+            </div>
           </div>
           <button type='submit' className='hidden' ref={refForm}></button>
         </form>
       </div>
 
       <div className='h-[calc(100%-100px)] overflow-auto'>
-        <div className='pl-5'>
-          Hiển thị {data?.totalElements} kết quả cho "{getValues('searchText')}" của
+        <div className='pl-5 text-black mt-2 bg-slate-300 rounded-3xl py-1'>
+          👉 Hiển thị {data?.totalElements} kết quả cho "{getValues('searchText')}" của
           {fieldSearch == 'contract' ? ' Hợp đồng mới' : ' Hợp đồng cũ'}
         </div>
-        <div className='flex flex-wrap gap-6 px-6 mt-4'>
+        <div className='flex flex-wrap gap-5 px-6 lg:px-52 mt-4'>
           {data?.content?.map((d: any) =>
             fieldSearch == 'contract' ? <ItemNewContract data={d} /> : <ItemOldContract data={d} />
           )}

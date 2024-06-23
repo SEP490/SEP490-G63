@@ -48,3 +48,12 @@ export const registerUser = async ({ company, taxCode, presenter, email, phone }
     console.log(error)
   }
 }
+type UserList = {
+  label: string
+  value: string
+}
+export const getUserByPermission = async (permission: string): Promise<UserList[]> => {
+  const response = await axiosInstant.get(`user/searchByPermission?permission=${permission}`)
+  const result = response.data?.object?.content.map((d: any) => ({ label: d.email, value: d.email }))
+  return result as UserList[]
+}
