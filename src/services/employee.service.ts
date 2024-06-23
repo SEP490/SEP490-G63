@@ -36,6 +36,10 @@ export const getListEmployee = async ({ size, page, name }: QueryDataGet) => {
 
   return response.data
 }
+export const deleteEmployee = async (id: string | undefined) => {
+  const response = await axiosInstant.delete(`user/${id}`)
+  return response.data
+}
 
 export const registerUser = async ({ company, taxCode, presenter, email, phone }: RegisterData) => {
   const response = await adminInstance.post('public/auth/register', {

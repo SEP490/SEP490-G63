@@ -6,7 +6,7 @@ const AsyncCreatableSelectComponent = ({ selected, setSelected, option }: any) =
   const { errorNotification } = useToast()
 
   const filterColors = (inputValue: string) => {
-    return option.filter((i: any) => i.label.toLowerCase().includes(inputValue.toLowerCase()))
+    return option?.filter((i: any) => i.label.toLowerCase().includes(inputValue.toLowerCase()))
   }
 
   const promiseOptions = (inputValue: string) =>
