@@ -7,8 +7,8 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 60000, // Data stays fresh for 60 seconds
-      cacheTime: 300000, // Data is cached for 5 minutes
+      staleTime: 0, // Data stays fresh for 60 seconds
+      cacheTime: 0, // Data is cached for 5 minutes
       refetchOnWindowFocus: false, // Don't automatically refresh when the window regains focus
       retry: 0
     },

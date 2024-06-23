@@ -15,6 +15,7 @@ import Loading from '~/components/shared/Loading/Loading'
 interface FormType {
   name: string
   number: string
+  urgent: boolean
 }
 interface CompanyInfo {
   name: string
@@ -92,7 +93,6 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
 
   const updateContract = useMutation(updateNewContract, {
     onSuccess: () => {
-      console.log('Done API')
       successNotification('Cập nhật hợp đồng thành công')
       queryClient.invalidateQueries('new-contract')
       queryClient.invalidateQueries('contract-history')
@@ -607,6 +607,15 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
               imageUploadSizeLimit: 5 * 1024 * 1024
             }}
           />
+        </div>
+        <div className='w-full mt-5 relative'>
+          <input
+            className={`text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400  sm:text-sm sm:leading-6 mr-3`}
+            placeholder='Nhập tên hợp đồng'
+            type='checkbox'
+            {...register('urgent')}
+          />
+          <label className='font-light '>Tạo hợp đồng với trạng thái khẩn cấp</label>
         </div>
         <div className='w-full flex justify-end'>
           <button

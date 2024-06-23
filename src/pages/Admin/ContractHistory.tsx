@@ -40,7 +40,7 @@ export default function ContractHistory({ selectedContract }: any) {
   return (
     <div className='shadow-md sm:rounded-lg my-3'>
       {/* <h1 className='text-2xl font-semibold mb-4'>Lịch sử hợp đồng</h1> */}
-      <div className='overflow-y-auto'>
+      <div className='overflow-y-auto rounded-xl'>
         <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400'>
           <thead className='text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
             <tr className='bg-gray-100'>

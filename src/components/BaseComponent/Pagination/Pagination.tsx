@@ -77,7 +77,7 @@ const Pagination = ({ totalPages, currentPage, onPageChange, size, setSize, setP
               leaveFrom='opacity-100'
               leaveTo='opacity-0'
             >
-              <Listbox.Options className='absolute bottom-8 left-0 max-h-60 w-[100px] overflow-auto rounded-sm bg-white py-1 px-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm'>
+              <Listbox.Options className='absolute z-20 bottom-8 left-0 max-h-60 w-[100px] overflow-auto rounded-sm bg-white py-1 px-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm'>
                 {sizeData.map((s, index) => (
                   <Listbox.Option
                     key={index}

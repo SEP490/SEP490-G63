@@ -1,4 +1,8 @@
 const HomeUser = () => {
-  return <>HOME for user</>
+  return (
+    <div>
+      <h1>Home User</h1>
+    </div>
+  )
 }
 export default HomeUser

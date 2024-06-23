@@ -20,7 +20,7 @@ const Contact = () => {
                 href='#'
                 className='rounded inline-block font-semibold py-2 px-6 bg-white text-teal-500 hover:bg-cyan-500 hover:text-white duration-200 tracking-widest uppercase '
               >
-                Let's try
+                Đăng ký ngay
               </a>
             </div>
           </div>
