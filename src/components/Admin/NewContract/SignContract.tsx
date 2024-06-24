@@ -67,7 +67,7 @@ const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy,
       createdBy: createdBy as string,
       customer: customer == '2'
     }
-    //signQuery.mutate(dataRequest)
+    signQuery.mutate(dataRequest)
     const formData = new FormData()
 
     formData.append('to', to)
