@@ -1,6 +1,6 @@
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { REGEX_EMAIL, REGEX_PASSWORD } from '~/common/const/regexForm'
-import '../css/login.css'
+import '../styles/login.css'
 import { registerUser } from '~/services/user.service'
 import useToast from '~/hooks/useToast'
 import logo from '../assets/svg/Tdocman.svg'

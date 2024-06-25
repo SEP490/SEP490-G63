@@ -12,7 +12,7 @@ import { getNewContractByIdNotToken } from '~/services/contract.service'
 import logo from '../../assets/svg/Tdocman.svg'
 import { useForm } from 'react-hook-form'
 import useToast from '~/hooks/useToast'
-import { useAuth } from '~/provider/authProvider'
+import { useAuth } from '~/context/authProvider'
 import { ADMIN } from '~/common/const/role'
 import Loading from '~/components/shared/Loading/Loading'
 type FormType = {

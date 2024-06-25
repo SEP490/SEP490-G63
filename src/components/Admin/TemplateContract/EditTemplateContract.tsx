@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form'
 import SunEditor from 'suneditor-react'
-import '../../../css/suneditor.css'
+import '../../../styles/suneditor.css'
 import { createNewContract } from '~/services/contract.service'
 import useToast from '~/hooks/useToast'
 import { useNavigate } from 'react-router-dom'

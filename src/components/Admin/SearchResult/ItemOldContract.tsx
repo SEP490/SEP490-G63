@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { formatDate } from '~/utils/formatDate'
+import { formatDate } from '~/common/utils/formatDate'
 
 const ItemOldContract = ({ data }: any) => {
   const navigate = useNavigate()

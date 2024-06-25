@@ -4,7 +4,7 @@ import { Bars3Icon, UserIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/
 import avatar from '../../../assets/images/avatar1.png'
 import useViewport from '~/hooks/useViewport'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '~/provider/authProvider'
+import { useAuth } from '~/context/authProvider'
 import useToast from '~/hooks/useToast'
 import { routerAdmin } from '~/common/const/router'
 const NavBar = () => {

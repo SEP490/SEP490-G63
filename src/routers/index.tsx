@@ -1,5 +1,5 @@
 import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom'
-import { useAuth } from '../provider/authProvider'
+import { useAuth } from '../context/authProvider.tsx'
 import { ProtectedRoute } from './ProtectedRouter.tsx'
 import { lazy, Suspense } from 'react'
 import Error from '~/components/shared/Error/Error.tsx'
