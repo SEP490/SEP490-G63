@@ -5,14 +5,17 @@ import Routes from './routers/index.tsx'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import 'suneditor/dist/css/suneditor.min.css'
+import NotifyProvider from './context/notiProvider.tsx'
 
 function App() {
   return (
     <Provider store={store}>
       <AuthProvider>
-        <DndProvider backend={HTML5Backend}>
-          <Routes />
-        </DndProvider>
+        <NotifyProvider>
+          <DndProvider backend={HTML5Backend}>
+            <Routes />
+          </DndProvider>
+        </NotifyProvider>
       </AuthProvider>
     </Provider>
   )

@@ -39,7 +39,11 @@ export const statusObject = {
   }
 }
 export const statusRequest: any = {
-  1: { status: 'WAIT_APPROVE', title: 'Xin duyệt hợp đồng', description: 'Yêu cầu xin trình duyệt hợp đồng' },
+  1: {
+    status: 'WAIT_APPROVE',
+    title: 'Xin duyệt hợp đồng',
+    description: <div>'Yêu cầu xin trình duyệt hợp đồng'</div>
+  },
   2: { status: 'APPROVED', title: 'Xác nhận duyệt hợp đồng', description: 'Xác nhận duyệt hợp đồng' },
   3: { status: 'APPROVE_FAIL', title: 'Từ chối duyệt hợp đồng', description: 'Từ chối duyệt hợp đồng' },
   4: { status: 'WAIT_SIGN_A', title: 'Xác nhận xin ký hợp đồng', description: 'Yêu cầu xin trình kí hợp đồng' },
