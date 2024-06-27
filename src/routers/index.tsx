@@ -18,9 +18,9 @@ import StaffOfficer from '~/middleware/StaffOfficer/index.tsx'
 import Dashboard from '~/pages/Admin/Dashboard.tsx'
 import SendMailUpdateStatus from '~/components/Admin/NewContract/SendMailUpdateSatatus.tsx'
 import LoadingPage from '~/components/shared/LoadingPage/LoadingPage.tsx'
+import TypeContract from '~/pages/Admin/TypeContract.tsx'
 const Login = lazy(() => import('~/components/Login.tsx'))
 const Logout = lazy(() => import('~/components/Logout.tsx'))
-const Example = lazy(() => import('~/pages/Example.tsx'))
 const Employee = lazy(() => import('~/pages/Admin/Employee.tsx'))
 const Register = lazy(() => import('~/components/Register.tsx'))
 const Home = lazy(() => import('~/pages/landing_page/Home.tsx'))
@@ -128,6 +128,16 @@ const Routes = () => {
             <Suspense fallback={<LoadingPage />}>
               <AdminLayout>
                 <TemplateContract />
+              </AdminLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/type-contract',
+          element: (
+            <Suspense fallback={<LoadingPage />}>
+              <AdminLayout>
+                <TypeContract />
               </AdminLayout>
             </Suspense>
           )
