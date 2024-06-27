@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from 'react-query'
-import { useAuth } from '~/provider/authProvider'
+import { useAuth } from '~/context/authProvider'
 import { banContract, getContract, getContractAdmin } from '~/services/admin.contract.service'
 import Loading from '../shared/Loading/Loading'
 import { Fragment, useState } from 'react'

@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie'
-import { UserInformation } from '~/provider/authProvider'
+import { UserInformation } from '~/context/authProvider'
 export const getUserW = () => {
   if (Cookies.get('user')) return JSON.parse(Cookies.get('user') as string)
   return null

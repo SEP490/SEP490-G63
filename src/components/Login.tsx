@@ -1,12 +1,12 @@
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { REGEX_EMAIL, REGEX_PASSWORD } from '~/common/const/regexForm'
-import '../css/login.css'
+import '../styles/login.css'
 import { login } from '~/services/user.service'
 import { getAccessToken, setAccessToken } from '~/config/accessToken'
 import useToast from '~/hooks/useToast'
 import logo from '../assets/svg/Tdocman.svg'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '~/provider/authProvider'
+import { useAuth } from '~/context/authProvider'
 type FromType = {
   email: string
   password: string

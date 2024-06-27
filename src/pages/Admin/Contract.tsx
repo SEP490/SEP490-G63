@@ -24,7 +24,7 @@ import useToast from '~/hooks/useToast'
 import EditNewContract from '~/components/Admin/NewContract/EditNewContract'
 import ContractHistory from './ContractHistory'
 import { statusObject, statusRequest } from '~/common/const/status'
-import { useAuth } from '~/provider/authProvider'
+import { useAuth } from '~/context/authProvider'
 import { permissionObject } from '~/common/const/permissions'
 import { ADMIN } from '~/common/const/role'
 import UrgentIcon from '~/assets/svg/urgentIcon'
@@ -67,8 +67,6 @@ const Contract = () => {
     else if (user?.permissions.includes(permissionObject.SALE)) return 'SALE'
     else return 'OFFICE_STAFF'
   }, [user])
-  console.log(permissionUser)
-
   const closeModal = () => {
     setOpenModal(false)
   }
@@ -139,7 +137,7 @@ const Contract = () => {
         </>
       ),
       status: 'UPDATE',
-      disable: (d: any) => false,
+      disable: (d: any) => !d.canUpdate,
       callback: (d: any) => {
         setEditModal(true)
         setSelectedContract(d)
@@ -153,7 +151,7 @@ const Contract = () => {
         </>
       ),
       status: '',
-      disable: (d: any) => false,
+      disable: (d: any) => !d.canDelete,
       callback: (d: any) => {
         setDeleteModal(true)
         setSelectedContract(d)
@@ -244,7 +242,7 @@ const Contract = () => {
         </>
       ),
       status: 'UPDATE',
-      disable: (d: any) => false,
+      disable: (d: any) => !d.canUpdate,
       callback: (d: any) => {
         setEditModal(true)
         setSelectedContract(d)
@@ -258,7 +256,7 @@ const Contract = () => {
         </>
       ),
       status: '',
-      disable: (d: any) => false,
+      disable: (d: any) => !d.canDelete,
       callback: (d: any) => {
         setDeleteModal(true)
         setSelectedContract(d)
@@ -421,7 +419,7 @@ const Contract = () => {
                               leaveFrom='transform opacity-100 scale-100'
                               leaveTo='transform opacity-0 scale-95'
                             >
-                              <Menu.Items className='absolute right-4 top-3 z-50 mt-2 w-48 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
+                              <Menu.Items className='absolute right-4 -top-4 z-50 mt-2 w-48 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
                                 {actionTable[permissionUser]?.map((action: ActionType) => (
                                   <Menu.Item key={action.id} disabled={action.disable(d)}>
                                     {({ active, disabled }) => (

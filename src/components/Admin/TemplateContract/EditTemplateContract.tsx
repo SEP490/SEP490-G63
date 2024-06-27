@@ -1,15 +1,14 @@
 import { useForm } from 'react-hook-form'
 import SunEditor from 'suneditor-react'
-import '../../../css/suneditor.css'
-import { createNewContract } from '~/services/contract.service'
+import '../../../styles/suneditor.css'
 import useToast from '~/hooks/useToast'
 import { useNavigate } from 'react-router-dom'
 import { SetStateAction, useEffect, useState } from 'react'
 import { useMutation } from 'react-query'
 import { updateTemplateContract } from '~/services/template-contract.service'
 import { AxiosError } from 'axios'
-import Loading from '~/components/shared/Loading/Loading'
 import { VietQR } from 'vietqr'
+import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
 interface FormType {
   nameContract: string
   numberContract: string
@@ -74,7 +73,8 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
     }
     updateTemplate.mutate({ id: selectedContract.id, data: bodyData })
   }
-  if (updateTemplate.isLoading) return <Loading />
+  if (updateTemplate.isLoading) return <LoadingPage />
+
   return (
     <div className=' full flex justify-center overflow-auto h-[90%] mb-6'>
       <form
@@ -142,6 +142,8 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             className={`${errors.taxNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
             placeholder='Nhập mã số thuế'
+            disabled
+            hidden
             {...register('taxNumber', {
               required: 'Mã số thuế không được để trống'
             })}
@@ -158,6 +160,8 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             className={`${errors.name ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
             placeholder='Nhập tên công ty'
+            disabled
+            hidden
             {...register('name', {
               required: 'Tên công ty không được để trống'
             })}
@@ -174,6 +178,8 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             className={`${errors.email ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
             placeholder='Nhập email công ty'
+            disabled
+            hidden
             {...register('email', {
               required: 'Email công ty không được để trống'
             })}
@@ -190,6 +196,8 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             className={`${errors.address ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
             placeholder='Nhập địa chỉ công ty'
+            disabled
+            hidden
             {...register('address', {
               required: 'Mã số thuế không được để trống'
             })}
@@ -207,6 +215,8 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             className={`${errors.presenter ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
             placeholder='Nhập tên người đại diện'
+            disabled
+            hidden
             {...register('presenter', {
               required: 'Người đại diện không được để trống'
             })}
@@ -223,6 +233,8 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             className={`${errors.position ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
             placeholder='Nhập vị trí làm việc'
+            disabled
+            hidden
             {...register('position', {
               required: 'Vị trí làm việc không được để trống'
             })}
@@ -239,6 +251,8 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             className={`${errors.businessNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
             placeholder='Nhập thông tin'
+            disabled
+            hidden
             {...register('businessNumber', {
               required: 'Giấy phép ĐKKD không được để trống'
             })}
@@ -255,6 +269,8 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             className={`${errors.bankId ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
             placeholder='Nhập STK'
+            disabled
+            hidden
             {...register('bankId', {
               required: 'STK không được để trống'
             })}
@@ -269,6 +285,8 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
           </label>
           <select
             {...register('bankName')}
+            disabled
+            hidden
             className='block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
           >
             {banks.map((bank: { id: number; code: string; shortName: string; logo: string; bin: string }) => (
@@ -288,6 +306,8 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
           <input
             className={`${errors.bankAccOwer ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled
+            hidden
             placeholder='Nhập tên tài khoản ngân hàng'
             {...register('bankAccOwer', {
               required: 'Tên tài khoản không được để trống'

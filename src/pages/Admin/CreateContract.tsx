@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form'
 import SunEditor from 'suneditor-react'
-import '../../css/suneditor.css'
+import '../../styles/suneditor.css'
 import { createNewContract, getDataByTaxNumber } from '~/services/contract.service'
 import useToast from '~/hooks/useToast'
 import { useNavigate } from 'react-router-dom'
@@ -8,12 +8,13 @@ import { Dialog, Listbox, Transition } from '@headlessui/react'
 
 import { useState, Fragment, useEffect, SetStateAction, useRef } from 'react'
 import { createTemplateContract, getTemplateContract } from '~/services/template-contract.service'
-import { handleSubmitBank, validateEmailDebounced } from '~/utils/checkMail'
+import { handleSubmitBank, validateEmailDebounced } from '~/common/utils/checkMail'
 import { VietQR } from 'vietqr'
 import Loading from '~/components/shared/Loading/Loading'
 import { useQuery } from 'react-query'
 import { debounce } from 'lodash'
 import LoadingSvgV2 from '~/assets/svg/loadingsvg'
+import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
 interface FormType {
   name: string
   number: string
@@ -177,7 +178,7 @@ const CreateContract = () => {
     setSelectedTemplate(s)
     successNotification('Sử dụng hợp đồng mẫu thành công')
   }
-  if (loading || isLoading) return <Loading />
+  if (loading || isLoading) return <LoadingPage />
   return (
     <div className='bg-[#e8eaed] h-fit min-h-full flex justify-center py-6'>
       <form

@@ -1,3 +1,4 @@
+import { NotificationData } from '~/context/notiProvider.tsx'
 import axiosInstant, { adminInstance, axiosInstanceFormData } from '../config/axiosConfig.ts'
 interface LoginData {
   email: string
@@ -56,4 +57,8 @@ export const getUserByPermission = async (permission: string): Promise<UserList[
   const response = await axiosInstant.get(`user/searchByPermission?permission=${permission}`)
   const result = response.data?.object?.content.map((d: any) => ({ label: d.email, value: d.email }))
   return result as UserList[]
+}
+export const getNotification = async (): Promise<NotificationData[]> => {
+  const response = await axiosInstant.get('notification')
+  return response?.data?.content
 }

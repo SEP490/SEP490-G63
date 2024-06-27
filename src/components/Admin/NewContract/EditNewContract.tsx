@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form'
 import SunEditor from 'suneditor-react'
-import '../../../css/suneditor.css'
+import '../../../styles/suneditor.css'
 import { createNewContract, getNewContractById, updateNewContract } from '~/services/contract.service'
 import useToast from '~/hooks/useToast'
 import { useNavigate } from 'react-router-dom'
@@ -8,9 +8,10 @@ import { SetStateAction, useEffect, useMemo, useState } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
 import { updateTemplateContract } from '~/services/template-contract.service'
 import { AxiosError } from 'axios'
-import { validateEmailDebounced } from '~/utils/checkMail'
+import { validateEmailDebounced } from '~/common/utils/checkMail'
 import { VietQR } from 'vietqr'
 import Loading from '~/components/shared/Loading/Loading'
+import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
 
 interface FormType {
   name: string
@@ -72,6 +73,8 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
       try {
         if (selectedContract?.id) {
           const response = await getNewContractById(selectedContract.id)
+          console.log(response)
+
           if (response.object) {
             setDetailContract(response.object)
             reset(response.object)
@@ -135,7 +138,7 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
     // }
   }
 
-  if (updateContract.isLoading || loading) return <Loading />
+  if (updateContract.isLoading || loading) return <LoadingPage />
 
   return (
     <div className='full flex justify-center overflow-auto h-[90%] mb-6'>
