@@ -14,6 +14,7 @@ import Loading from '~/components/shared/Loading/Loading'
 import { useQuery } from 'react-query'
 import { debounce } from 'lodash'
 import LoadingSvgV2 from '~/assets/svg/loadingsvg'
+import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
 interface FormType {
   name: string
   number: string
@@ -177,7 +178,7 @@ const CreateContract = () => {
     setSelectedTemplate(s)
     successNotification('Sử dụng hợp đồng mẫu thành công')
   }
-  if (loading || isLoading) return <Loading />
+  if (loading || isLoading) return <LoadingPage />
   return (
     <div className='bg-[#e8eaed] h-fit min-h-full flex justify-center py-6'>
       <form

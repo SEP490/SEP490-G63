@@ -18,8 +18,6 @@ const NavBar = () => {
   const { removeToken, user } = useAuth()
   const { successNotification } = useToast()
   const { notifications } = useNotification()
-  console.log(notifications)
-
   return (
     <div>
       <div className='relative visible'>
@@ -198,7 +196,7 @@ const NavBar = () => {
               <li
                 key={r.id}
                 onClick={() => navigate(r.slug)}
-                className={`${r.slug == location.pathname ? 'bg-hover-main' : ''} cursor-pointer rounded-md hover:bg-hover-main px-2 flex items-center gap-2 justify-center text-[12px]`}
+                className={`${r.slug == location.pathname ? 'bg-hover-main' : ''} cursor-pointer rounded-md hover:bg-hover-main px-2 flex items-center gap-2 justify-center w-[130px] text-[12px]`}
               >
                 {r.icon} {r.title}
               </li>

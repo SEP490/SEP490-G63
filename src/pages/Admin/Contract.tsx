@@ -67,8 +67,6 @@ const Contract = () => {
     else if (user?.permissions.includes(permissionObject.SALE)) return 'SALE'
     else return 'OFFICE_STAFF'
   }, [user])
-  console.log(permissionUser)
-
   const closeModal = () => {
     setOpenModal(false)
   }
@@ -139,7 +137,7 @@ const Contract = () => {
         </>
       ),
       status: 'UPDATE',
-      disable: (d: any) => false,
+      disable: (d: any) => !d.canUpdate,
       callback: (d: any) => {
         setEditModal(true)
         setSelectedContract(d)
@@ -153,7 +151,7 @@ const Contract = () => {
         </>
       ),
       status: '',
-      disable: (d: any) => false,
+      disable: (d: any) => !d.canDelete,
       callback: (d: any) => {
         setDeleteModal(true)
         setSelectedContract(d)
@@ -244,7 +242,7 @@ const Contract = () => {
         </>
       ),
       status: 'UPDATE',
-      disable: (d: any) => false,
+      disable: (d: any) => !d.canUpdate,
       callback: (d: any) => {
         setEditModal(true)
         setSelectedContract(d)
@@ -258,7 +256,7 @@ const Contract = () => {
         </>
       ),
       status: '',
-      disable: (d: any) => false,
+      disable: (d: any) => !d.canDelete,
       callback: (d: any) => {
         setDeleteModal(true)
         setSelectedContract(d)

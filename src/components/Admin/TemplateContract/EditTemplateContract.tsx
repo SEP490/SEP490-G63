@@ -1,15 +1,14 @@
 import { useForm } from 'react-hook-form'
 import SunEditor from 'suneditor-react'
 import '../../../styles/suneditor.css'
-import { createNewContract } from '~/services/contract.service'
 import useToast from '~/hooks/useToast'
 import { useNavigate } from 'react-router-dom'
 import { SetStateAction, useEffect, useState } from 'react'
 import { useMutation } from 'react-query'
 import { updateTemplateContract } from '~/services/template-contract.service'
 import { AxiosError } from 'axios'
-import Loading from '~/components/shared/Loading/Loading'
 import { VietQR } from 'vietqr'
+import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
 interface FormType {
   nameContract: string
   numberContract: string
@@ -74,7 +73,8 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
     }
     updateTemplate.mutate({ id: selectedContract.id, data: bodyData })
   }
-  if (updateTemplate.isLoading) return <Loading />
+  if (updateTemplate.isLoading) return <LoadingPage />
+
   return (
     <div className=' full flex justify-center overflow-auto h-[90%] mb-6'>
       <form
