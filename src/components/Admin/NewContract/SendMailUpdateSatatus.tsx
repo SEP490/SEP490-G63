@@ -25,6 +25,7 @@ const SendMailUpdateStatus = ({ id, status, closeModal }: IProps) => {
   const [editorData, setEditorData] = useState<string>(statusRequest[status]?.description)
   const { successNotification, errorNotification } = useToast()
   const [open, setOpen] = useState(false)
+  const [loadingSubmit, setLoadingSubmit] = useState(false)
   const contractFile = useRef<any>()
   const { isLoading: loadingSALE, data: dataSale } = useQuery('getUserByRoleSale', () => getUserByPermission('SALE'))
   const { isLoading: loadingAdmin, data: dataAdmin } = useQuery('getUserByRoleAdmin', () =>
@@ -90,6 +91,7 @@ const SendMailUpdateStatus = ({ id, status, closeModal }: IProps) => {
       errorNotification('Trường "Nội dung" không được để trống!')
       return
     }
+    setLoadingSubmit(true)
     const formData = new FormData()
     selectedTo.forEach((email) => {
       formData.append('to', email.value)
@@ -99,7 +101,10 @@ const SendMailUpdateStatus = ({ id, status, closeModal }: IProps) => {
     })
     formData.append('subject', subject)
     const htmlContent = editorData
-    formData.append('htmlContent', htmlContent)
+    formData.append(
+      'htmlContent',
+      htmlContent + (status == 7 ? `<a href="http://localhost:3000/view/${id}/sign/2">Ký ngay</a>` : '')
+    )
     formData.append('contractId ', id as string)
     formData.append('attachments', contractFile.current, `${dataContract?.object?.name}.pdf`)
     selectedFiles.forEach((file) => {
@@ -117,9 +122,11 @@ const SendMailUpdateStatus = ({ id, status, closeModal }: IProps) => {
       }
     } catch (error) {
       errorNotification('Gửi yêu cầu thất bại')
+    } finally {
+      setLoadingSubmit(false)
     }
   }
-  if (loading || loadingSALE || loadingAO || loadingAdmin) return <LoadingPage />
+  if (loading || loadingSALE || loadingAO || loadingAdmin || loadingSubmit) return <LoadingPage />
   return (
     <div className='h-full overflow-auto pb-5'>
       <div className='w-full flex flex-col md:flex-row justify-between border-b-2'>

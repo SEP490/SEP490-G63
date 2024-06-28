@@ -17,7 +17,7 @@ const NavBar = () => {
   const navigate = useNavigate()
   const { removeToken, user } = useAuth()
   const { successNotification } = useToast()
-  const { notifications } = useNotification()
+  const { notifications, totalNotRead } = useNotification()
   return (
     <div>
       <div className='relative visible'>

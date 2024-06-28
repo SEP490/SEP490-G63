@@ -42,7 +42,7 @@ export const statusRequest: any = {
   1: {
     status: 'WAIT_APPROVE',
     title: 'Xin duyệt hợp đồng',
-    description: <div>'Yêu cầu xin trình duyệt hợp đồng'</div>
+    description: 'Yêu cầu xin trình duyệt hợp đồng'
   },
   2: { status: 'APPROVED', title: 'Xác nhận duyệt hợp đồng', description: 'Xác nhận duyệt hợp đồng' },
   3: { status: 'APPROVE_FAIL', title: 'Từ chối duyệt hợp đồng', description: 'Từ chối duyệt hợp đồng' },
@@ -55,5 +55,6 @@ export const statusRequest: any = {
     description: 'Yêu cầu xác nhận trao đổi và xin ký hợp đồng'
   },
   8: { status: 'SIGN_B_OK', title: 'Xác nhận ký hợp đồng', description: 'Xác nhận ký hợp đồng' },
-  9: { status: 'SIGN_B_FAIL', title: 'Từ chối ký hợp đồng', description: 'Từ chối ký hợp đồng' }
+  9: { status: 'SIGN_B_FAIL', title: 'Từ chối ký hợp đồng', description: 'Từ chối ký hợp đồng' },
+  10: { status: 'NEW', title: 'Tạo mới hợp đồng', description: 'Bạn đã tạo mới hợp đồng thành công' }
 }

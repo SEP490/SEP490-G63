@@ -65,7 +65,7 @@ const SendMailContract = () => {
       formData.append('cc', email.value)
     })
     formData.append('subject', subject)
-    const htmlContent = editorData + `<a href="${BASE_URL_FE}view/${id}/sign/2">Ký ngay</a>`
+    const htmlContent = editorData
     formData.append('htmlContent', htmlContent)
     formData.append('contractId ', id as string)
     formData.append('attachments', contractFile.current, 'Hợp_Đồng.pdf')

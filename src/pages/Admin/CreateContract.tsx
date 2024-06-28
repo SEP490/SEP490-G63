@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import SunEditor from 'suneditor-react'
 import '../../styles/suneditor.css'
-import { createNewContract, getDataByTaxNumber } from '~/services/contract.service'
+import { createNewContract, getDataByTaxNumber, sendMailPublic } from '~/services/contract.service'
 import useToast from '~/hooks/useToast'
 import { useNavigate } from 'react-router-dom'
 import { Dialog, Listbox, Transition } from '@headlessui/react'
@@ -15,6 +15,8 @@ import { useQuery } from 'react-query'
 import { debounce } from 'lodash'
 import LoadingSvgV2 from '~/assets/svg/loadingsvg'
 import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
+import { statusRequest } from '~/common/const/status'
+import { useAuth } from '~/context/authProvider'
 interface FormType {
   name: string
   number: string
@@ -48,6 +50,7 @@ const CreateContract = () => {
   const [loading, setLoading] = useState<boolean>(false)
   const [selectedTeplate, setSelectedTemplate] = useState<any>(null)
   const [banks, setBanks] = useState([])
+  const { user } = useAuth()
   const clientID = '258d5960-4516-48c5-9316-bb95b978424f'
   const apiKey = '5fe49afb-2e07-4079-baf6-ca58356deadd'
   const [selectedBankA, setSelectedBankA] = useState('')
@@ -92,13 +95,25 @@ const CreateContract = () => {
       //   return
       // }
       const response = await createNewContract(bodyData)
-      console.log(response)
 
       if (response?.code == '00' && response.object && response.success) {
         successNotification('Tạo hợp đồng thành công')
-        setTimeout(() => {
-          navigate('/contract')
-        }, 500)
+        const formData = new FormData()
+        formData.append('to', response?.object?.createdBy)
+        formData.append('subject', statusRequest[10]?.title)
+        formData.append('htmlContent', statusRequest[10]?.description)
+        formData.append('contractId ', response?.object?.id as string)
+        formData.append('status', statusRequest[10]?.status)
+        formData.append('createdBy', response?.object?.createdBy as string)
+        formData.append('description', statusRequest[10]?.description)
+        try {
+          const ok = await sendMailPublic(formData)
+          setTimeout(() => {
+            navigate('/contract')
+          }, 500)
+        } catch (error) {
+          errorNotification('Gửi yêu cầu thất bại')
+        }
       } else errorNotification('Tạo hợp đồng thất bại')
     } catch (error) {
       errorNotification('Tạo hợp đồng thất bại')
@@ -166,6 +181,7 @@ const CreateContract = () => {
       const response = await createTemplateContract(dataTemplate)
       if (response.success && response.code == '00') {
         successNotification('Tạo mẫu hợp đồng thành công')
+
         setOpen(false)
       } else errorNotification('Tạo mới mẫu hợp đồng thất bại')
     } catch (e) {

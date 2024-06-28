@@ -53,7 +53,11 @@ const Contract = () => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [changeStatus, setChangeStatus] = useState(false)
   const [historyModal, setHistoryModal] = useState(false)
-  const [statusContract, setStatusContract] = useState<any>('NEW')
+  const [statusContract, setStatusContract] = useState<any>({
+    id: 1,
+    title: 'Hợp đồng mới',
+    status: 'NEW'
+  })
   const [status, setStatus] = useState<number>(0)
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(5)
@@ -88,11 +92,11 @@ const Contract = () => {
   }
 
   const { data, isLoading, refetch, isFetching } = useQuery(
-    ['new-contract', user?.id],
-    () => getNewContract(page, size),
+    ['new-contract', user?.id, statusContract],
+    () => getNewContract(page, size, statusContract.status),
     {
       onSuccess: (response) => {
-        setTotalPage(response?.object?.totalPages)
+        setTotalPage(response?.length % size)
       },
       onError: (error: AxiosError<{ message: string }>) => {
         errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
@@ -263,6 +267,48 @@ const Contract = () => {
       }
     }
   ]
+  const saleContract = [
+    {
+      id: 1,
+      title: 'Hợp đồng mới',
+      status: 'NEW'
+    },
+    {
+      id: 2,
+      title: 'Đang đợi duyệt',
+      status: 'WAIT_APPROVE'
+    },
+    {
+      id: 3,
+      title: 'Đã được duyệt',
+      status: 'APPROVED'
+    },
+    {
+      id: 4,
+      title: 'Duyệt thất bại',
+      status: 'APPROVE_FAIL'
+    },
+    {
+      id: 5,
+      title: 'Đang đợi ký',
+      status: 'WAIT_SIGN_A'
+    },
+    {
+      id: 6,
+      title: 'Bên A ký thành công',
+      status: 'SIGN_A_OK'
+    },
+    {
+      id: 7,
+      title: 'Chờ khách hàng ký',
+      status: 'WAIT_SIGN_B'
+    },
+    {
+      id: 8,
+      title: 'Hoàn thành hợp đồng',
+      status: 'SUCCESS'
+    }
+  ]
   const actionTable = {
     ADMIN: actionAdmin,
     SALE: actionSale,
@@ -291,8 +337,6 @@ const Contract = () => {
       refetch()
     }
   }, [page, refetch, size])
-  console.log(data)
-
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex gap-3 justify-between w-full py-3 h-[60px] px-5'>
@@ -332,24 +376,15 @@ const Contract = () => {
       </div>
       <div className='flex h-[calc(100%-70px)] flex-wrap justify-start'>
         <div className='flex gap-2 md:flex-col w-full md:h-full md:w-[16%] bg-white shadow-md mx-2 p-2 mb-2'>
-          <div
-            className={`cursor-pointer rounded-md px-3 py-1 ${statusContract == 'NEW' ? 'bg-main-color text-white' : 'text-black'} hover:bg-hover-main hover:text-white`}
-            onClick={() => setStatusContract('NEW')}
-          >
-            Hợp đồng mới
-          </div>
-          <div
-            className={`cursor-pointer rounded-md px-3 py-1 ${statusContract == 'SUCCESS' ? 'bg-main-color text-white' : 'text-black'} hover:bg-hover-main hover:text-white`}
-            onClick={() => setStatusContract('SUCCESS')}
-          >
-            Hợp đồng hoàn thành
-          </div>
-          <div
-            className={`cursor-pointer rounded-md px-3 py-1 ${statusContract == 'PROCESSING' ? 'bg-main-color text-white' : 'text-black'} hover:bg-hover-main hover:text-white`}
-            onClick={() => setStatusContract('PROCESSING')}
-          >
-            Hợp đồng chờ ký
-          </div>
+          {saleContract.map((t: any) => (
+            <div
+              key={t.id}
+              className={`cursor-pointer rounded-md px-3 py-1 ${statusContract?.id == t.id ? 'bg-main-color text-white' : 'text-black'} hover:bg-hover-main hover:text-white`}
+              onClick={() => setStatusContract(t)}
+            >
+              {t.title}
+            </div>
+          ))}
         </div>
         <div className='w-full md:w-[80%] overflow-auto mx-2'>
           <div className='shadow-md sm:rounded-lg '>
