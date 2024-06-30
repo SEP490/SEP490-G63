@@ -5,6 +5,7 @@ import { useMutation } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import { statusRequest } from '~/common/const/status'
 import Loading from '~/components/shared/Loading/Loading'
+import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
 import useToast from '~/hooks/useToast'
 import { sendMail, sendMailPublic, signContract } from '~/services/contract.service'
 interface IProps {
@@ -80,11 +81,12 @@ const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy,
     formData.append('description', statusRequest[customer == '2' ? 8 : 5]?.description)
     try {
       const response = await sendMailPublic(formData)
+      console.log(response)
     } catch (error) {
       errorNotification('Gửi yêu cầu thất bại')
     }
   }
-  if (signQuery.isLoading) return <Loading />
+  if (signQuery.isLoading) return <LoadingPage />
   return (
     <>
       <div className='shadow-lg' style={{ width: 300, border: '1px solid black', margin: 1 }}>

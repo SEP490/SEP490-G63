@@ -32,8 +32,8 @@ export const createNewContract = async (data: any) => {
   const response = await axiosInstant.post(`contract`, data)
   return response.data
 }
-export const getNewContract = async (page: number, size: number) => {
-  const response = await axiosInstant.get(`contract/${page}/${size}`)
+export const getNewContract = async (page: number, size: number, statusContract: string) => {
+  const response = await axiosInstant.get(`contract/${page}/${size}?status=${statusContract}`)
   return response.data
 }
 export const getNewContractById = async (id: any) => {
