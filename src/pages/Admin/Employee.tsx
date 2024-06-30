@@ -59,7 +59,7 @@ const Employee = () => {
     setSearchData(e.target.value)
   }
   const { data, isLoading, refetch, isFetching } = useQuery(
-    'employee-list',
+    ['employee-list', searchData],
     () => getListEmployee({ size: size, page: page, name: searchData }),
     {
       onSuccess: (result) => {
@@ -77,6 +77,8 @@ const Employee = () => {
       refetch()
     }
   }, [page, refetch, size])
+  console.log(data)
+
   const handleDeleteEmployee = async () => {
     try {
       if (selectedUser) {
@@ -277,7 +279,7 @@ const Employee = () => {
                   <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
                     Thêm mới nhân viên
                   </Dialog.Title>
-                  <AddNewEmployee closeModal={closeModal} />
+                  <AddNewEmployee closeModal={closeModal} refetch={refetch} />
                 </Dialog.Panel>
               </Transition.Child>
             </div>

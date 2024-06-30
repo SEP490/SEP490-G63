@@ -65,6 +65,7 @@ const InformationUser = () => {
       errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
     }
   })
+  console.log(data)
 
   useEffect(() => {
     if (data?.object) {
