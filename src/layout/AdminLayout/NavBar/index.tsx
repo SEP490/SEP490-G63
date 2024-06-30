@@ -17,7 +17,19 @@ const NavBar = () => {
   const navigate = useNavigate()
   const { removeToken, user } = useAuth()
   const { successNotification } = useToast()
-  const { notifications, totalNotRead } = useNotification()
+  const { notifications, totalNotRead, isReadNotify, setNotifications, setTotalNotRead } = useNotification()
+  const handleReadNotify = (id: any, markRead: boolean) => {
+    if (!markRead) {
+      setTotalNotRead((totalNotRead: any) => totalNotRead - 1)
+      setNotifications(
+        notifications.map((n) => {
+          if (n.id == id) return { ...n, markRead: true }
+          else return n
+        })
+      )
+      isReadNotify(id)
+    }
+  }
   return (
     <div>
       <div className='relative visible'>
@@ -118,9 +130,11 @@ const NavBar = () => {
                 >
                   <div className='relative'>
                     <BellAlertIcon className='w-7 h-7 cursor-pointer text-blue-700' />
-                    <div className='text-white cursor-default absolute top-[-4px] right-[-4px] bg-red-500 text-[8px] rounded-[50%] w-4 h-4 flex justify-center items-center font-bold'>
-                      12
-                    </div>
+                    {totalNotRead != 0 && (
+                      <div className='text-white cursor-default absolute top-[-4px] right-[-4px] bg-red-500 text-[8px] rounded-[50%] w-4 h-4 flex justify-center items-center font-bold'>
+                        {totalNotRead}
+                      </div>
+                    )}
                   </div>
                 </Popover.Button>
                 <Transition
@@ -136,11 +150,27 @@ const NavBar = () => {
                     className={`absolute left-1/2 z-10  w-64  ${isMobile ? '-translate-x-[100%] ' : 'md:-translate-x-1/2 md:w-96'} transform px-4 sm:px-0 `}
                   >
                     <div className='overflow-hidden rounded-lg w-full shadow-lg ring-1 ring-black/5'>
-                      <div className='relative gap-8 w-full bg-[#e8eaed] p-7 flex justify-center'>
+                      <div className='relative gap-8 w-full bg-white flex p-1  overflow-auto justify-center'>
                         {notifications?.length == 0 ? (
-                          <div className=''>Không có thông báo </div>
+                          <div className='min-h-[100px] flex items-center'>Không có thông báo </div>
                         ) : (
-                          notifications.map((n: NotificationData) => <div>ITEM</div>)
+                          <div className='flex flex-col justify-center overflow-y-auto overflow-x-hidden px-1 w-full '>
+                            {notifications.map((n: NotificationData) => (
+                              <div
+                                key={n.id}
+                                onClick={() => handleReadNotify(n.id, n.markRead)}
+                                className={`bg-white rounded-md m-[1px] cursor-pointer hover:bg-gray-200 px-3 py-1 w-full flex items-center relative`}
+                              >
+                                <div className=' flex flex-col'>
+                                  <div className='font-bold text-[16px]'>{n.title}</div>
+                                  <div className='text-[12px]'>{n.message}</div>
+                                </div>
+                                {!n.markRead && (
+                                  <div className='w-3 h-3 rounded-[50%] absolute right-10 bg-blue-600'></div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
                         )}
                       </div>
                     </div>

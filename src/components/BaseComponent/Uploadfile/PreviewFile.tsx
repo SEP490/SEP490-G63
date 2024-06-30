@@ -85,7 +85,7 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
     )
   }, [])
   const handleOcrFile = async (data: any) => {
-    if (listUrl.length > 0) {
+    if (listUrl?.length > 0) {
       try {
         setIsSubmit(true)
 

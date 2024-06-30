@@ -25,8 +25,9 @@ interface CheckBoxValue {
 }
 interface IProp {
   closeModal: () => void
+  refetch: void
 }
-const AddNewEmployee = ({ closeModal }: IProp) => {
+const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
   const {
     register,
     handleSubmit,
@@ -56,6 +57,7 @@ const AddNewEmployee = ({ closeModal }: IProp) => {
         if (response.code == '00') {
           successNotification('Tạo nhân viên mới thành công')
           closeModal()
+          refetch()
         } else {
           errorNotification('Số điện thoại hoặc email đã được sử dụng')
         }

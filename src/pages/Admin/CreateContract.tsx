@@ -17,10 +17,12 @@ import LoadingSvgV2 from '~/assets/svg/loadingsvg'
 import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
 import { statusRequest } from '~/common/const/status'
 import { useAuth } from '~/context/authProvider'
+import { getContractType } from '~/services/type-contract.service'
 interface FormType {
   name: string
   number: string
   urgent: boolean
+  contractTypeId: string
 }
 interface CompanyInfo {
   name: string
@@ -60,6 +62,10 @@ const CreateContract = () => {
   const [loadingA, setLoadingA] = useState(false)
   const [loadingB, setLoadingB] = useState(false)
   const { data, isLoading } = useQuery('template-contract', () => getTemplateContract(0, 100))
+  const { data: typeContract, isLoading: loadingTypeContract } = useQuery('type-contract', () =>
+    getContractType({ page: 0, size: 100 })
+  )
+
   useEffect(() => {
     const vietQR = new VietQR({
       clientID,
@@ -95,6 +101,7 @@ const CreateContract = () => {
       //   return
       // }
       const response = await createNewContract(bodyData)
+      console.log(response)
 
       if (response?.code == '00' && response.object && response.success) {
         successNotification('Tạo hợp đồng thành công')
@@ -188,13 +195,17 @@ const CreateContract = () => {
       errorNotification('Không thể tạo mới mẫu hợp đồng')
     }
   }
-  const handleFillData = (s: any) => {
+  const handleFillData = async (s: any) => {
     reset({ name: s.nameContract, number: s.numberContract })
-    formInfoPartA.reset(s)
+    const response = await getDataByTaxNumber(s?.taxNumber as string)
+    if (response.success && response.object) {
+      formInfoPartA.reset(response.object)
+    }
     setSelectedTemplate(s)
+
     successNotification('Sử dụng hợp đồng mẫu thành công')
   }
-  if (loading || isLoading) return <LoadingPage />
+  if (loading || isLoading || loadingTypeContract) return <LoadingPage />
   return (
     <div className='bg-[#e8eaed] h-fit min-h-full flex justify-center py-6'>
       <form
@@ -235,6 +246,12 @@ const CreateContract = () => {
               </div>
             </div>
           </Listbox>
+          <select
+            {...register('contractTypeId')}
+            className={` block w-fit rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+          >
+            {typeContract?.content.map((d: any) => <option value={d.id}>{d.title}</option>)}
+          </select>
         </div>
         <div className='w-full mt-5 relative'>
           <label className='font-light '>
@@ -345,7 +362,7 @@ const CreateContract = () => {
             Email<sup className='text-red-500'>*</sup>
           </label>
           <input
-            onInput={(event) => validateEmailDebounced((event.target as HTMLInputElement).value)}
+            // onInput={(event) => validateEmailDebounced((event.target as HTMLInputElement).value)}
             className={`${formInfoPartA.formState.errors.email ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
             placeholder='Nhập email công ty'
@@ -557,7 +574,7 @@ const CreateContract = () => {
             Email<sup className='text-red-500'>*</sup>
           </label>
           <input
-            onInput={(event) => validateEmailDebounced((event.target as HTMLInputElement).value)}
+            // onInput={(event) => validateEmailDebounced((event.target as HTMLInputElement).value)}
             className={`${formInfoPartB.formState.errors.email ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
             placeholder='Nhập email công ty'
