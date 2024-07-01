@@ -93,6 +93,8 @@ const CreateContract = () => {
       partyA: formInfoPartA.getValues(),
       partyB: formInfoPartB.getValues()
     }
+    console.log(bodyData)
+
     try {
       // const resultA = await handleSubmitBank(selectedBankA, accountNumberA)
       // const resultB = await handleSubmitBank(selectedBankB, accountNumberB)

@@ -11,6 +11,7 @@ import UploadFile from '~/components/BaseComponent/Uploadfile/UploadFile'
 import Loading from '~/components/shared/Loading/Loading'
 import useToast from '~/hooks/useToast'
 import { deleteOldContract, getOldContract } from '~/services/contract.service'
+import { getContractType } from '~/services/type-contract.service'
 
 const OldContract = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -48,6 +49,9 @@ const OldContract = () => {
     }
   }
 
+  const { data: typeContract, isLoading: loadingTypeContract } = useQuery('type-contract', () =>
+    getContractType({ page: 0, size: 100 })
+  )
   const { isLoading, refetch, isFetching } = useQuery(
     ['old-contract-list', page, size],
     () => getOldContract(page, size),
@@ -127,7 +131,9 @@ const OldContract = () => {
               </thead>
 
               <tbody className='w-full '>
-                {(!isLoading || !isFetching) &&
+                {!isLoading &&
+                  !isFetching &&
+                  !loadingTypeContract &&
                   data?.content?.map((d: any, index: number) => (
                     <tr
                       key={d.id}
@@ -135,7 +141,9 @@ const OldContract = () => {
                     >
                       <td className='px-3 py-4'>{page * size + index + 1}</td>
                       <td className='px-3 py-4'>{d.contractName}</td>
-                      <td className='px-3 py-4'>{d.contractName}</td>
+                      <td className='px-3 py-4'>
+                        {typeContract?.content?.find((t: any) => t.id == d.contractTypeId)?.title}
+                      </td>
                       <td className='px-3 py-4'>
                         {d.contractSignDate ? moment(d.contractSignDate).format('DD/MM/YYYY') : ''}
                       </td>
@@ -172,12 +180,12 @@ const OldContract = () => {
                   ))}
               </tbody>
             </table>
-            {(isLoading || isFetching) && (
+            {(isLoading || isFetching || loadingTypeContract) && (
               <Loading loading={isLoading || isFetching}>
                 <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'></div>
               </Loading>
             )}
-            {!isLoading && !isFetching && (!data || data?.content?.length == 0) && (
+            {!isLoading && !isFetching && !loadingTypeContract && (!data || data?.content?.length == 0) && (
               <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'>
                 <div className='flex flex-col justify-center items-center opacity-60'>
                   <DocumentIcon />
@@ -186,7 +194,7 @@ const OldContract = () => {
               </div>
             )}
           </div>
-          {!isLoading && !isFetching && data && data?.content?.length != 0 && (
+          {!isLoading && !isFetching && !loadingTypeContract && data && data?.content?.length != 0 && (
             <Pagination
               totalPages={totalPage}
               currentPage={page + 1}
@@ -227,7 +235,7 @@ const OldContract = () => {
                   <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
                     Tải lên
                   </Dialog.Title>
-                  <UploadFile handleCloseModal={handleCloseModal} />
+                  <UploadFile handleCloseModal={handleCloseModal} refetch={refetch} />
                 </Dialog.Panel>
               </Transition.Child>
             </div>
