@@ -24,8 +24,9 @@ interface CheckBoxValue {
 interface IProp {
   data: DataEmployee | undefined
   closeModal: () => void
+  refetch: any
 }
-const EditEmployee = ({ data, closeModal }: IProp) => {
+const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
   const {
     register,
     handleSubmit,
@@ -61,6 +62,7 @@ const EditEmployee = ({ data, closeModal }: IProp) => {
         if (response.code == '00' && response.object) {
           successNotification('Chỉnh sửa thông tin người dùng thành công')
           closeModal()
+          refetch()
         } else errorNotification('Chỉnh sửa thông tin người dùng thất bại')
       } else errorNotification('Quyền nhân viên không được để trống')
     } catch (error) {

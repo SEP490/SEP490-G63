@@ -133,7 +133,7 @@ const Employee = () => {
             </button>
           </div>
           <div className='shadow-md sm:rounded-lg my-3  max-h-[73vh] '>
-            <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
+            <table className='w-full text-sm text-left rtl:text-right text-black dark:text-gray-400 '>
               <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
                 <tr>
                   <th className='px-3 py-3 w-[200px]'>Tên nhân viên</th>
@@ -240,7 +240,7 @@ const Employee = () => {
               </div>
             )}
           </div>
-          {data && data?.object?.content?.length != 0 && (
+          {!isLoading && !isFetching && data && data?.object?.content?.length != 0 && (
             <Pagination
               totalPages={totalPage}
               currentPage={page + 1}
@@ -353,7 +353,7 @@ const Employee = () => {
                   <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
                     Chỉnh sửa thông tin
                   </Dialog.Title>
-                  <EditEmployee data={selectedUser} closeModal={closeAllModal} />
+                  <EditEmployee data={selectedUser} closeModal={closeAllModal} refetch={refetch} />
                 </Dialog.Panel>
               </Transition.Child>
             </div>

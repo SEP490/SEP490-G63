@@ -18,6 +18,8 @@ import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
 import { statusRequest } from '~/common/const/status'
 import { useAuth } from '~/context/authProvider'
 import { getContractType } from '~/services/type-contract.service'
+import { EyeIcon } from '@heroicons/react/24/outline'
+import ViewTemplateContract from '~/components/Admin/TemplateContract/ViewTemplateContract'
 interface FormType {
   name: string
   number: string
@@ -50,7 +52,9 @@ const CreateContract = () => {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState<boolean>(false)
-  const [selectedTeplate, setSelectedTemplate] = useState<any>(null)
+  const [selectedTemplate, setSelectedTemplate] = useState<any>(null)
+  const [selectedView, setSelectedView] = useState<any>(null)
+  const [openModal, setOpenModal] = useState<boolean>(false)
   const [banks, setBanks] = useState([])
   const { user } = useAuth()
   const clientID = '258d5960-4516-48c5-9316-bb95b978424f'
@@ -103,8 +107,6 @@ const CreateContract = () => {
       //   return
       // }
       const response = await createNewContract(bodyData)
-      console.log(response)
-
       if (response?.code == '00' && response.object && response.success) {
         successNotification('Tạo hợp đồng thành công')
         const formData = new FormData()
@@ -207,6 +209,11 @@ const CreateContract = () => {
 
     successNotification('Sử dụng hợp đồng mẫu thành công')
   }
+  const handleShowDetailTemplate = (e: any, s: any) => {
+    e.preventDefault()
+    setSelectedView(s)
+    setOpenModal(true)
+  }
   if (loading || isLoading || loadingTypeContract) return <LoadingPage />
   return (
     <div className='bg-[#e8eaed] h-fit min-h-full flex justify-center py-6'>
@@ -214,46 +221,55 @@ const CreateContract = () => {
         className='justify-center sm:justify-between w-[90%] md:w-[90%] rounded-md border flex flex-wrap px-4 h-fit bg-white py-4'
         autoComplete='on'
       >
-        <div className='w-full mt-5 flex gap-6 items-center'>
+        <div className='w-full mt-5 flex gap-6 items-center justify-between'>
           <div className='font-bold'>Thông tin cơ bản</div>
-          <Listbox
-            // value={size}
-            onChange={(s) => {
-              handleFillData(s)
-            }}
-          >
-            <div className='flex flex-col'>
-              <Listbox.Button className='none center mr-4 rounded-md bg-blue-500 py-2 px-4 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#7565b52f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'>
-                Sử dụng hợp đồng mẫu
-              </Listbox.Button>
-              <div className='relative'>
-                <Transition
-                  as={Fragment}
-                  leave='transition ease-in duration-100'
-                  leaveFrom='opacity-100'
-                  leaveTo='opacity-0'
-                >
-                  <Listbox.Options className='absolute z-30 w-[80%] none center rounded-md bg-white py-2 px-2 font-sans text-xs text-black shadow-md border shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#7565b52f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'>
-                    {data?.object?.content.map((s: any) => (
-                      <Listbox.Option
-                        key={s.id}
-                        className={`cursor-pointer hover:bg-blue-200 rounded-md select-none px-2 py-1 text-gray-900`}
-                        value={s}
-                      >
-                        {s.nameContract}
-                      </Listbox.Option>
-                    ))}
-                  </Listbox.Options>
-                </Transition>
+          <div className='flex items-center gap-6'>
+            <Listbox
+              // value={size}
+              onChange={(s) => {
+                handleFillData(s)
+              }}
+            >
+              <div className='flex flex-col'>
+                <Listbox.Button className='none center mr-4 rounded-md bg-blue-500 py-2 px-4 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#7565b52f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'>
+                  Sử dụng hợp đồng mẫu
+                </Listbox.Button>
+                <div className='relative'>
+                  <Transition
+                    as={Fragment}
+                    leave='transition ease-in duration-100'
+                    leaveFrom='opacity-100'
+                    leaveTo='opacity-0'
+                  >
+                    <Listbox.Options className='absolute z-30 w-[90%] max-h-[60vh] none center rounded-md bg-white py-2 px-2 font-sans text-xs text-black shadow-md border shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#7565b52f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'>
+                      {data?.object?.content.map((s: any) => (
+                        <Listbox.Option
+                          key={s.id}
+                          className={`cursor-pointer hover:bg-blue-200 rounded-md select-none px-2 py-1 w-full text-gray-900`}
+                          value={s}
+                        >
+                          <div className='flex items-center justify-between'>
+                            <div className='w-[80%] truncate ...'>{s.nameContract}</div>
+                            <EyeIcon className='w-6 h-6 z-40' onClick={(e: any) => handleShowDetailTemplate(e, s)} />
+                          </div>
+                        </Listbox.Option>
+                      ))}
+                    </Listbox.Options>
+                  </Transition>
+                </div>
               </div>
-            </div>
-          </Listbox>
-          <select
-            {...register('contractTypeId')}
-            className={` block w-fit rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-          >
-            {typeContract?.content.map((d: any) => <option value={d.id}>{d.title}</option>)}
-          </select>
+            </Listbox>
+            <select
+              {...register('contractTypeId')}
+              className={` block w-fit rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            >
+              {typeContract?.content.map((d: any) => (
+                <option value={d.id} className='w-[300px] truncate ...'>
+                  {d.title}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
         <div className='w-full mt-5 relative'>
           <label className='font-light '>
@@ -292,7 +308,7 @@ const CreateContract = () => {
             name='rule'
             placeholder='Căn cứ vào điều luật...'
             height='60vh'
-            setContents={selectedTeplate?.ruleContract}
+            setContents={selectedTemplate?.ruleContract}
             setOptions={{
               buttonList: [
                 ['undo', 'redo'],
@@ -737,7 +753,7 @@ const CreateContract = () => {
             name='term'
             placeholder='Điều khoản'
             height='60vh'
-            setContents={selectedTeplate?.termContract}
+            setContents={selectedTemplate?.termContract}
             setOptions={{
               buttonList: [
                 ['undo', 'redo'],
@@ -826,7 +842,7 @@ const CreateContract = () => {
                 leaveFrom='opacity-100 scale-100'
                 leaveTo='opacity-0 scale-95'
               >
-                <Dialog.Panel className='w-[100vw] md:w-[40vw] md:h-fittransform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all'>
+                <Dialog.Panel className='w-[100vw] md:w-[40vw] md:h-fit transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all'>
                   <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
                     Thông báo
                   </Dialog.Title>
@@ -843,6 +859,42 @@ const CreateContract = () => {
                       </button>
                     </div>
                   </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+      <Transition appear show={openModal} as={Fragment}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={() => setOpenModal(false)}>
+          <Transition.Child
+            as={Fragment}
+            enter='ease-out duration-300'
+            enterFrom='opacity-0'
+            enterTo='opacity-100'
+            leave='ease-in duration-200'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0'
+          >
+            <div className='fixed inset-0 bg-black/25' />
+          </Transition.Child>
+
+          <div className='fixed inset-0 overflow-y-auto'>
+            <div className='flex min-h-full  items-center justify-center p-4 text-center'>
+              <Transition.Child
+                as={Fragment}
+                enter='ease-out duration-300'
+                enterFrom='opacity-0 scale-95'
+                enterTo='opacity-100 scale-100'
+                leave='ease-in duration-200'
+                leaveFrom='opacity-100 scale-100'
+                leaveTo='opacity-0 scale-95'
+              >
+                <Dialog.Panel className='w-[100vw] md:w-[80vw] md:h-fit transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all'>
+                  <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
+                    Chi tiết hợp đồng mẫu
+                  </Dialog.Title>
+                  <ViewTemplateContract selectedContract={selectedView} handleCloseModal={() => setOpenModal(false)} />
                 </Dialog.Panel>
               </Transition.Child>
             </div>
