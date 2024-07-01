@@ -2,8 +2,9 @@ import { useRef, useState } from 'react'
 import PreviewFile from './PreviewFile'
 type IProps = {
   handleCloseModal: () => void
+  refetch: any
 }
-const UploadFile = ({ handleCloseModal }: IProps) => {
+const UploadFile = ({ handleCloseModal, refetch }: IProps) => {
   const inputFileRef = useRef<any>(null)
   const inputPdfRef = useRef<any>(null)
   const [files, setFiles] = useState<any>([])
@@ -34,6 +35,7 @@ const UploadFile = ({ handleCloseModal }: IProps) => {
       <input type='file' ref={inputPdfRef} accept='.pdf' onChange={handUploadPdf} className='hidden' />
       <PreviewFile
         files={files}
+        refetch={refetch}
         setFiles={setFiles}
         handleCloseModal={handleCloseModal}
         inputFileRef={inputFileRef}

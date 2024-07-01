@@ -22,7 +22,7 @@ import {
 
 const TypeContract = () => {
   const [page, setPage] = useState(0)
-  const [size, setSize] = useState(5)
+  const [size, setSize] = useState(10)
   const [totalPage, setTotalPage] = useState(1)
   const [deleteModal, setDeleteModal] = useState(false)
   const [openModal, setOpenModal] = useState(false)

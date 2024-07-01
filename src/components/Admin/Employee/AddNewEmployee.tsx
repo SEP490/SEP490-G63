@@ -25,7 +25,7 @@ interface CheckBoxValue {
 }
 interface IProp {
   closeModal: () => void
-  refetch: void
+  refetch: any
 }
 const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
   const {

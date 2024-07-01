@@ -1,7 +1,7 @@
 import { useState, Fragment } from 'react'
 import './Pagination.css' // Import CSS file
 import { Listbox, Transition } from '@headlessui/react'
-const sizeData = [5, 10, 20]
+const sizeData = [10, 15, 20]
 const Pagination = ({ totalPages, currentPage, onPageChange, size, setSize, setPage }: any) => {
   const [page, setPage_] = useState(currentPage)
 

@@ -32,7 +32,7 @@ const Employee = () => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [totalPage, setTotalPage] = useState(1)
   const [page, setPage] = useState(0)
-  const [size, setSize] = useState(5)
+  const [size, setSize] = useState(10)
   const { errorNotification, successNotification } = useToast()
   const prevPageRef = useRef(page)
   const prevSizeRef = useRef(size)
@@ -77,7 +77,6 @@ const Employee = () => {
       refetch()
     }
   }, [page, refetch, size])
-  console.log(data)
 
   const handleDeleteEmployee = async () => {
     try {
@@ -134,22 +133,22 @@ const Employee = () => {
             </button>
           </div>
           <div className='shadow-md sm:rounded-lg my-3  max-h-[73vh] '>
-            <Loading loading={isLoading || isFetching}>
-              <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
-                <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
-                  <tr>
-                    <th className='px-3 py-3 w-[200px]'>Tên nhân viên</th>
-                    <th className='px-3 py-3 w-[250px]'>Email</th>
-                    <th className='px-3 py-3 '>Số điện thoại</th>
-                    <th className='px-3 py-3 '>Phòng ban</th>
-                    <th className='px-6 py-3 '>Vị trí</th>
-                    <th className='px-3 py-3 w-[300px]'>Địa chỉ</th>
-                    <th className='px-3 py-3'></th>
-                  </tr>
-                </thead>
+            <table className='w-full text-sm text-left rtl:text-right text-black dark:text-gray-400 '>
+              <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
+                <tr>
+                  <th className='px-3 py-3 w-[200px]'>Tên nhân viên</th>
+                  <th className='px-3 py-3 w-[250px]'>Email</th>
+                  <th className='px-3 py-3 '>Số điện thoại</th>
+                  <th className='px-3 py-3 '>Phòng ban</th>
+                  <th className='px-6 py-3 '>Vị trí</th>
+                  <th className='px-3 py-3 w-[300px]'>Địa chỉ</th>
+                  <th className='px-3 py-3'></th>
+                </tr>
+              </thead>
 
-                <tbody className='w-full '>
-                  {data?.object?.content?.map((d: DataEmployee) => (
+              <tbody className='w-full '>
+                {(!isLoading || !isFetching) &&
+                  data?.object?.content?.map((d: DataEmployee) => (
                     <tr
                       key={d.id}
                       className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
@@ -225,20 +224,23 @@ const Employee = () => {
                       </td>
                     </tr>
                   ))}
-                </tbody>
-              </table>
-
-              {(!data || data.length == 0) && (
-                <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'>
-                  <div className='flex flex-col justify-center items-center opacity-60'>
-                    <UserIcon width={50} height={50} />
-                    Chưa có nhân viên
-                  </div>
+              </tbody>
+            </table>
+            {(isLoading || isFetching) && (
+              <Loading loading={isLoading || isFetching}>
+                <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'></div>
+              </Loading>
+            )}
+            {!isLoading && !isFetching && (data == null || data?.object?.content?.length == 0) && (
+              <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'>
+                <div className='flex flex-col justify-center items-center opacity-60'>
+                  <UserIcon width={50} height={50} />
+                  Chưa có nhân viên
                 </div>
-              )}
-            </Loading>
+              </div>
+            )}
           </div>
-          {data && data?.object?.content?.length != 0 && (
+          {!isLoading && !isFetching && data && data?.object?.content?.length != 0 && (
             <Pagination
               totalPages={totalPage}
               currentPage={page + 1}
@@ -351,7 +353,7 @@ const Employee = () => {
                   <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
                     Chỉnh sửa thông tin
                   </Dialog.Title>
-                  <EditEmployee data={selectedUser} closeModal={closeAllModal} />
+                  <EditEmployee data={selectedUser} closeModal={closeAllModal} refetch={refetch} />
                 </Dialog.Panel>
               </Transition.Child>
             </div>
