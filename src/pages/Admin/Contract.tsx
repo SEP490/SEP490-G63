@@ -60,7 +60,7 @@ const Contract = () => {
   })
   const [status, setStatus] = useState<number>(0)
   const [page, setPage] = useState(0)
-  const [size, setSize] = useState(5)
+  const [size, setSize] = useState(10)
   const [totalPage, setTotalPage] = useState(1)
   const prevPageRef = useRef(page)
   const prevSizeRef = useRef(size)
@@ -96,7 +96,7 @@ const Contract = () => {
     () => getNewContract(page, size, statusContract.status),
     {
       onSuccess: (response) => {
-        setTotalPage(response?.length % size)
+        setTotalPage(response?.object?.totalPages)
       },
       onError: (error: AxiosError<{ message: string }>) => {
         errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
