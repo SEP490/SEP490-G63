@@ -305,6 +305,60 @@ const Contract = () => {
     },
     {
       id: 8,
+      title: 'Đã Hoàn thành',
+      status: 'SUCCESS'
+    }
+  ]
+  const adminOfficeContract = [
+    {
+      id: 1,
+      title: 'Hợp đồng mới',
+      status: 'NEW'
+    },
+    {
+      id: 2,
+      title: 'Cần duyệt',
+      status: 'WAIT_APPROVE'
+    },
+    {
+      id: 3,
+      title: 'Đã duyệt',
+      status: 'APPROVED'
+    },
+    {
+      id: 4,
+      title: 'Chờ ký',
+      status: 'WAIT_SIGN_A'
+    },
+    {
+      id: 5,
+      title: 'Đã ký',
+      status: 'SIGN_A_OK'
+    },
+    {
+      id: 6,
+      title: 'Hoàn thành hợp đồng',
+      status: 'SUCCESS'
+    }
+  ]
+  const adminContract = [
+    {
+      id: 1,
+      title: 'Hợp đồng mới',
+      status: 'NEW'
+    },
+    {
+      id: 2,
+      title: 'Cần ký',
+      status: 'WAIT_SIGN_A'
+    },
+    {
+      id: 3,
+      title: 'Đã ký',
+      status: 'SIGN_A_OK'
+    },
+    {
+      id: 4,
       title: 'Hoàn thành hợp đồng',
       status: 'SUCCESS'
     }
@@ -315,7 +369,12 @@ const Contract = () => {
     OFFICE_ADMIN: actionOfficeAdmin,
     OFFICE_STAFF: []
   }
-
+  const menuContract = {
+    ADMIN: adminContract,
+    SALE: saleContract,
+    OFFICE_ADMIN: adminOfficeContract,
+    OFFICE_STAFF: []
+  }
   const deleteTemplate = useMutation(deleteNewContract, {
     onSuccess: () => {
       successNotification('Xóa thành công!')
@@ -376,7 +435,7 @@ const Contract = () => {
       </div>
       <div className='flex h-[calc(100%-70px)] flex-wrap justify-start'>
         <div className='flex gap-2 md:flex-col w-full md:h-full md:w-[16%] bg-white shadow-md mx-2 p-2 mb-2'>
-          {saleContract.map((t: any) => (
+          {menuContract[permissionUser]?.map((t: any) => (
             <div
               key={t.id}
               className={`cursor-pointer rounded-md px-3 py-1 ${statusContract?.id == t.id ? 'bg-main-color text-white' : 'text-black'} hover:bg-hover-main hover:text-white`}
