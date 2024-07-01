@@ -1,75 +1,98 @@
 import { Dialog, Menu, Transition } from '@headlessui/react'
+import { Cog6ToothIcon, EllipsisVerticalIcon, NoSymbolIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { AxiosError } from 'axios'
+import moment from 'moment'
 import { Fragment, useEffect, useRef, useState } from 'react'
-import AddNewEmployee from '~/components/Admin/Employee/AddNewEmployee'
-import { Cog6ToothIcon, EllipsisVerticalIcon, NoSymbolIcon, PlusIcon, UserIcon } from '@heroicons/react/24/outline'
-import ViewEmployee from '~/components/Admin/Employee/ViewEmployee'
-import { deleteEmployee, getListEmployee } from '~/services/employee.service'
-import EditEmployee from '~/components/Admin/Employee/EditEmployee'
+import { useMutation, useQuery } from 'react-query'
+import { useNavigate } from 'react-router-dom'
 import DocumentIcon from '~/assets/svg/document'
+import EditTemplateContract from '~/components/Admin/TemplateContract/EditTemplateContract'
+import ViewTemplateContract from '~/components/Admin/TemplateContract/ViewTemplateContract'
+import AddNewTypeContract from '~/components/Admin/TypeContract/AddNewTypeContract'
+import EditTypeContract from '~/components/Admin/TypeContract/EditTypeContract'
 import Pagination from '~/components/BaseComponent/Pagination/Pagination'
 import Loading from '~/components/shared/Loading/Loading'
-import { useQuery } from 'react-query'
-import { AxiosError } from 'axios'
 import useToast from '~/hooks/useToast'
+import {
+  createTypeContract,
+  deleteTypeContract,
+  getContractType,
+  updateTypeContract
+} from '~/services/type-contract.service'
 
-export interface DataEmployee {
-  id?: string
-  name?: string
-  email?: string
-  password?: string
-  phone?: string
-  position?: string
-  status?: string
-  identificationNumber?: string
-  department?: string
-  permissions?: string
-  address?: string
-}
-const Employee = () => {
-  const [isOpen, setIsOpen] = useState(false)
-  const [viewDetail, setViewDetail] = useState(false)
-  const [editModal, setEditModal] = useState(false)
-  const [deleteModal, setDeleteModal] = useState(false)
-  const [totalPage, setTotalPage] = useState(1)
+const TypeContract = () => {
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(10)
-  const { errorNotification, successNotification } = useToast()
+  const [totalPage, setTotalPage] = useState(1)
+  const [deleteModal, setDeleteModal] = useState(false)
+  const [openModal, setOpenModal] = useState(false)
+  const [addModal, setAddModal] = useState(false)
+  const navigate = useNavigate()
+  const [selectedContract, setSelectedContract] = useState<any>(null)
+  const { successNotification, errorNotification } = useToast()
+  const [dataTable, setDataTable] = useState([])
   const prevPageRef = useRef(page)
   const prevSizeRef = useRef(size)
-
-  const [selectedUser, setSelectedUser] = useState<DataEmployee | undefined>(undefined)
-  const [searchData, setSearchData] = useState('')
-  function closeAllModal() {
-    setDeleteModal(false)
-    setEditModal(false)
-    setViewDetail(false)
-    setSelectedUser(undefined)
-  }
+  const { data, error, isError, isLoading, refetch, isFetching } = useQuery('type-contract', () =>
+    getContractType({ page: page, size: size })
+  )
   const handlePageChange = (page: any) => {
     setPage(page - 1)
   }
-  function closeModal() {
-    setIsOpen(false)
+  const handleCloseModal = () => {
+    setDeleteModal(false)
+    setOpenModal(false)
+    setAddModal(false)
+    setSelectedContract(null)
   }
-
-  function openModal() {
-    setIsOpen(true)
-  }
-  const handChangeInputSearch = (e: any) => {
-    setSearchData(e.target.value)
-  }
-  const { data, isLoading, refetch, isFetching } = useQuery(
-    ['employee-list', searchData],
-    () => getListEmployee({ size: size, page: page, name: searchData }),
-    {
-      onSuccess: (result) => {
-        setTotalPage(result?.object?.totalPages)
-      },
-      onError: (error: AxiosError<{ message: string }>) => {
-        errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
-      }
+  const deleteType = useMutation(deleteTypeContract, {
+    onSuccess: () => {
+      successNotification('Xóa thành công')
+      handleCloseModal()
+      setTimeout(() => refetch(), 500)
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      errorNotification(error.response?.data.message || '')
     }
-  )
+  })
+  const handleDelete = () => {
+    if (selectedContract) deleteType.mutate(selectedContract.id)
+  }
+  const handleEditType = async (data: any) => {
+    try {
+      const result = await updateTypeContract({ id: selectedContract.id, data: data })
+      if (result?.data) {
+        successNotification('Chỉnh sửa thông tin thành công')
+        handleCloseModal()
+        refetch()
+      }
+    } catch (e) {
+      console.log(e)
+      errorNotification('Chỉnh sửa thất bại thất bại')
+    }
+  }
+  const handleAddTypeContract = async (data: any) => {
+    try {
+      const result = await createTypeContract(data)
+      if (result?.data) {
+        successNotification('Tạo mới thành công')
+        handleCloseModal()
+        refetch()
+      }
+    } catch (e) {
+      console.log(e)
+      errorNotification('Tạo mới thất bại')
+    }
+  }
+  useEffect(() => {
+    if (isError) {
+      errorNotification((error as AxiosError)?.message || '')
+    }
+    if (data) {
+      setDataTable(data?.content)
+      setTotalPage(data?.totalPages)
+    }
+  }, [data, isError, error, errorNotification])
   useEffect(() => {
     if (prevPageRef.current !== page || prevSizeRef.current !== size) {
       prevPageRef.current = page
@@ -78,24 +101,10 @@ const Employee = () => {
     }
   }, [page, refetch, size])
 
-  const handleDeleteEmployee = async () => {
-    try {
-      if (selectedUser) {
-        const data = await deleteEmployee(selectedUser?.id)
-        if (data?.code == '00') {
-          successNotification('Xóa người dùng thành công!!!')
-          refetch()
-          closeAllModal()
-        } else errorNotification('Xóa người dùng thất bại')
-      } else errorNotification('Xóa người dùng thất bại')
-    } catch (e) {
-      errorNotification('Xóa người dùng thất bại')
-    }
-  }
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex flex-wrap py-4'>
-        <div className='w-full px-5'>
+        <div className=' w-full px-5'>
           <div className='flex gap-3 justify-between w-full'>
             <div className='flex w-[50%]'>
               <div className='relative'>
@@ -119,58 +128,42 @@ const Employee = () => {
                 type='text'
                 id='table-search'
                 className='block p-2 ps-10 w-full text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                placeholder='Tìm kiếm nhân viên'
-                onChange={handChangeInputSearch}
+                placeholder='Tìm kiếm mẫu hợp đồng'
+                // onChange={handChangeInputSearch}
               />
             </div>
 
             <button
               type='button'
-              onClick={openModal}
+              onClick={() => setAddModal(true)}
               className='rounded-md flex gap-1 bg-main-color px-4 py-2 text-sm font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
             >
-              <PlusIcon className='h-5 w-5' /> Thêm mới nhân viên
+              <PlusIcon className='h-5 w-5' /> Tạo mới
             </button>
           </div>
-          <div className='shadow-md sm:rounded-lg my-3  max-h-[73vh] '>
-            <table className='w-full text-sm text-left rtl:text-right text-black dark:text-gray-400 '>
-              <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
+          <div className='shadow-md sm:rounded-lg my-3  max-h-[75vh]'>
+            <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
+              <thead className='text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 shadow-md'>
                 <tr>
-                  <th className='px-3 py-3 w-[200px]'>Tên nhân viên</th>
-                  <th className='px-3 py-3 w-[250px]'>Email</th>
-                  <th className='px-3 py-3 '>Số điện thoại</th>
-                  <th className='px-3 py-3 '>Phòng ban</th>
-                  <th className='px-6 py-3 '>Vị trí</th>
-                  <th className='px-3 py-3 w-[300px]'>Địa chỉ</th>
-                  <th className='px-3 py-3'></th>
+                  <th className='px-3 py-3'>STT</th>
+                  <th className='px-3 py-3'>Loại hợp đồng</th>
+                  <th className='px-3 py-3'>Mô tả</th>
+                  <th className='px-3 py-3 w-1'></th>
                 </tr>
               </thead>
 
               <tbody className='w-full '>
-                {(!isLoading || !isFetching) &&
-                  data?.object?.content?.map((d: DataEmployee) => (
+                {!isLoading && !isFetching ? (
+                  dataTable?.map((d: any, index: number) => (
                     <tr
                       key={d.id}
                       className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
                     >
-                      <th
-                        className='px-3 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white hover:underline cursor-pointer hover:text-blue-500'
-                        onClick={() => {
-                          setViewDetail(true)
-                          setSelectedUser(d)
-                        }}
-                      >
-                        <div className='w-[150px] truncate ...'>{d.name}</div>
-                      </th>
-                      <td className='px-3 py-4 w-[250px]'>{d.email}</td>
-                      <td className='px-3 py-4'>{d.phone}</td>
-                      <td className='px-3 py-4'>{d.department}</td>
-                      <td className='px-3 py-4'>{d.position}</td>
-                      <td className='px-3 py-4'>
-                        <div className='w-[300px] truncate ...'>{d.address}</div>
-                      </td>
+                      <td className='px-3 py-4'>{page * size + index + 1}</td>
+                      <td className='px-3 py-4'>{d.title}</td>
+                      <td className='px-3 py-4'>{d.description}</td>
 
-                      <td className='px-3 py-4 text-right'>
+                      <td className='px-3 py-4 w-[20px] cursor-pointer ho'>
                         <Menu as='div' className='relative inline-block text-left '>
                           <Menu.Button className='flex justify-center items-center gap-3 cursor-pointer hover:text-blue-500'>
                             <EllipsisVerticalIcon className='h-7 w-7' title='Hành động' />
@@ -191,8 +184,8 @@ const Employee = () => {
                                   <button
                                     title='Sửa'
                                     onClick={() => {
-                                      setEditModal(true)
-                                      setSelectedUser(d)
+                                      setOpenModal(true)
+                                      setSelectedContract(d)
                                     }}
                                     className={`${
                                       active ? 'bg-blue-500 text-white' : 'text-gray-900'
@@ -208,7 +201,7 @@ const Employee = () => {
                                     title='Xóa'
                                     onClick={() => {
                                       setDeleteModal(true)
-                                      setSelectedUser(d)
+                                      setSelectedContract(d)
                                     }}
                                     className={`${
                                       active ? 'bg-blue-500 text-white' : 'text-gray-900'
@@ -223,7 +216,10 @@ const Employee = () => {
                         </Menu>
                       </td>
                     </tr>
-                  ))}
+                  ))
+                ) : (
+                  <></>
+                )}
               </tbody>
             </table>
             {(isLoading || isFetching) && (
@@ -231,16 +227,16 @@ const Employee = () => {
                 <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'></div>
               </Loading>
             )}
-            {!isLoading && !isFetching && (data == null || data?.object?.content?.length == 0) && (
+            {!isLoading && !isFetching && (data == null || data?.content?.length == 0) && (
               <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'>
                 <div className='flex flex-col justify-center items-center opacity-60'>
-                  <UserIcon width={50} height={50} />
-                  Chưa có nhân viên
+                  <DocumentIcon />
+                  Chưa có loại hợp đồng
                 </div>
               </div>
             )}
           </div>
-          {!isLoading && !isFetching && data && data?.object?.content?.length != 0 && (
+          {!isLoading && !isFetching && dataTable && dataTable?.length != 0 && (
             <Pagination
               totalPages={totalPage}
               currentPage={page + 1}
@@ -252,116 +248,9 @@ const Employee = () => {
           )}
         </div>
       </div>
-      <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeModal}>
-          <Transition.Child
-            as={Fragment}
-            enter='ease-out duration-300'
-            enterFrom='opacity-0'
-            enterTo='opacity-100'
-            leave='ease-in duration-200'
-            leaveFrom='opacity-100'
-            leaveTo='opacity-0'
-          >
-            <div className='fixed inset-0 bg-black/25' />
-          </Transition.Child>
-
-          <div className='fixed inset-0 overflow-y-auto'>
-            <div className='flex min-h-full  items-center justify-center p-4 text-center'>
-              <Transition.Child
-                as={Fragment}
-                enter='ease-out duration-300'
-                enterFrom='opacity-0 scale-95'
-                enterTo='opacity-100 scale-100'
-                leave='ease-in duration-200'
-                leaveFrom='opacity-100 scale-100'
-                leaveTo='opacity-0 scale-95'
-              >
-                <Dialog.Panel className='w-[100vw] md:w-[80vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
-                  <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
-                    Thêm mới nhân viên
-                  </Dialog.Title>
-                  <AddNewEmployee closeModal={closeModal} refetch={refetch} />
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
-      <Transition appear show={viewDetail} as={Fragment}>
-        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeAllModal}>
-          <Transition.Child
-            as={Fragment}
-            enter='ease-out duration-300'
-            enterFrom='opacity-0'
-            enterTo='opacity-100'
-            leave='ease-in duration-200'
-            leaveFrom='opacity-100'
-            leaveTo='opacity-0'
-          >
-            <div className='fixed inset-0 bg-black/25' />
-          </Transition.Child>
-
-          <div className='fixed inset-0 overflow-y-auto'>
-            <div className='flex min-h-full  items-center justify-center p-4 text-center'>
-              <Transition.Child
-                as={Fragment}
-                enter='ease-out duration-300'
-                enterFrom='opacity-0 scale-95'
-                enterTo='opacity-100 scale-100'
-                leave='ease-in duration-200'
-                leaveFrom='opacity-100 scale-100'
-                leaveTo='opacity-0 scale-95'
-              >
-                <Dialog.Panel className='w-[100vw] md:w-[80vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
-                  <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
-                    Thông tin chi tiết
-                  </Dialog.Title>
-                  <ViewEmployee data={selectedUser} onClose={closeAllModal} />
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
-      <Transition appear show={editModal} as={Fragment}>
-        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeAllModal}>
-          <Transition.Child
-            as={Fragment}
-            enter='ease-out duration-300'
-            enterFrom='opacity-0'
-            enterTo='opacity-100'
-            leave='ease-in duration-200'
-            leaveFrom='opacity-100'
-            leaveTo='opacity-0'
-          >
-            <div className='fixed inset-0 bg-black/25' />
-          </Transition.Child>
-
-          <div className='fixed inset-0 overflow-y-auto'>
-            <div className='flex min-h-full  items-center justify-center p-4 text-center'>
-              <Transition.Child
-                as={Fragment}
-                enter='ease-out duration-300'
-                enterFrom='opacity-0 scale-95'
-                enterTo='opacity-100 scale-100'
-                leave='ease-in duration-200'
-                leaveFrom='opacity-100 scale-100'
-                leaveTo='opacity-0 scale-95'
-              >
-                <Dialog.Panel className='w-[100vw] md:w-[80vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
-                  <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
-                    Chỉnh sửa thông tin
-                  </Dialog.Title>
-                  <EditEmployee data={selectedUser} closeModal={closeAllModal} refetch={refetch} />
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
+      {/* Modal xóa loại hợp đồng */}
       <Transition appear show={deleteModal} as={Fragment}>
-        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeAllModal}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={handleCloseModal}>
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'
@@ -373,7 +262,6 @@ const Employee = () => {
           >
             <div className='fixed inset-0 bg-black/25' />
           </Transition.Child>
-
           <div className='fixed inset-0 overflow-y-auto'>
             <div className='flex min-h-full  items-center justify-center p-4 text-center'>
               <Transition.Child
@@ -387,18 +275,18 @@ const Employee = () => {
               >
                 <Dialog.Panel className='w-[100vw] md:w-[40vw] md:h-fit transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
                   <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
-                    Thông báo
+                    Xóa loại hợp đồng
                   </Dialog.Title>
                   <div>
-                    <div>Nhân viên sẽ được xóa khỏi hệ thống. Bạn có chắc chắn với quyết định của mình?</div>
+                    <div>Bạn có chắc chắn với quyết định của mình?</div>
                     <div className='w-full flex justify-end mt-6'>
                       <button
                         type='button'
                         className='middle  none center mr-4 rounded-lg bg-red-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#ff00002f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
                         data-ripple-light='true'
-                        onClick={handleDeleteEmployee}
+                        onClick={() => handleDelete()}
                       >
-                        Xóa
+                        Đồng ý
                       </button>
                     </div>
                   </div>
@@ -408,7 +296,82 @@ const Employee = () => {
           </div>
         </Dialog>
       </Transition>
+      <Transition appear show={openModal} as={Fragment}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={handleCloseModal}>
+          <Transition.Child
+            as={Fragment}
+            enter='ease-out duration-300'
+            enterFrom='opacity-0'
+            enterTo='opacity-100'
+            leave='ease-in duration-200'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0'
+          >
+            <div className='fixed inset-0 bg-black/25' />
+          </Transition.Child>
+
+          <div className='fixed inset-0 overflow-y-auto'>
+            <div className='flex min-h-full items-center justify-center p-4 text-center'>
+              <Transition.Child
+                as={Fragment}
+                enter='ease-out duration-300'
+                enterFrom='opacity-0 scale-95'
+                enterTo='opacity-100 scale-100'
+                leave='ease-in duration-200'
+                leaveFrom='opacity-100 scale-100'
+                leaveTo='opacity-0 scale-95'
+              >
+                <Dialog.Panel className='w-[100vw] md:w-[60vw] md:min-h-[84vh] transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all'>
+                  <div className='flex justify-between'>
+                    <div className='font-semibold'>Chỉnh sửa</div>
+                    <XMarkIcon className='h-5 w-5 mr-3 mb-3 cursor-pointer' onClick={handleCloseModal} />
+                  </div>
+                  <EditTypeContract selectedContract={selectedContract} onSubmit={handleEditType} />
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+      {/* Modal add new type contract */}
+      <Transition appear show={addModal} as={Fragment}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={handleCloseModal}>
+          <Transition.Child
+            as={Fragment}
+            enter='ease-out duration-300'
+            enterFrom='opacity-0'
+            enterTo='opacity-100'
+            leave='ease-in duration-200'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0'
+          >
+            <div className='fixed inset-0 bg-black/25' />
+          </Transition.Child>
+
+          <div className='fixed inset-0 overflow-y-auto'>
+            <div className='flex min-h-full items-center justify-center p-4 text-center'>
+              <Transition.Child
+                as={Fragment}
+                enter='ease-out duration-300'
+                enterFrom='opacity-0 scale-95'
+                enterTo='opacity-100 scale-100'
+                leave='ease-in duration-200'
+                leaveFrom='opacity-100 scale-100'
+                leaveTo='opacity-0 scale-95'
+              >
+                <Dialog.Panel className='w-[100vw] md:w-[60vw] md:min-h-[84vh] transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all'>
+                  <div className='flex justify-between'>
+                    <div className='font-semibold'>Tạo mới</div>
+                    <XMarkIcon className='h-5 w-5 mr-3 mb-3 cursor-pointer' onClick={handleCloseModal} />
+                  </div>
+                  <AddNewTypeContract onSubmit={handleAddTypeContract} />
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
     </div>
   )
 }
-export default Employee
+export default TypeContract

@@ -1,6 +1,6 @@
 import { permissionObject } from '~/common/const/permissions'
 import Error from '~/components/shared/Error/Error'
-import { useAuth } from '~/provider/authProvider'
+import { useAuth } from '~/context/authProvider'
 
 const AdminOfficer = ({ children }: any) => {
   const { user } = useAuth()

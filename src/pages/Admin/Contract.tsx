@@ -23,8 +23,8 @@ import { AxiosError } from 'axios'
 import useToast from '~/hooks/useToast'
 import EditNewContract from '~/components/Admin/NewContract/EditNewContract'
 import ContractHistory from './ContractHistory'
-import { status, statusRequest } from '~/common/const/status'
-import { useAuth } from '~/provider/authProvider'
+import { statusObject, statusRequest } from '~/common/const/status'
+import { useAuth } from '~/context/authProvider'
 import { permissionObject } from '~/common/const/permissions'
 import { ADMIN } from '~/common/const/role'
 import UrgentIcon from '~/assets/svg/urgentIcon'
@@ -53,10 +53,14 @@ const Contract = () => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [changeStatus, setChangeStatus] = useState(false)
   const [historyModal, setHistoryModal] = useState(false)
-  const [statusContract, setStatusContract] = useState<any>('NEW')
+  const [statusContract, setStatusContract] = useState<any>({
+    id: 1,
+    title: 'Hợp đồng mới',
+    status: 'NEW'
+  })
   const [status, setStatus] = useState<number>(0)
   const [page, setPage] = useState(0)
-  const [size, setSize] = useState(5)
+  const [size, setSize] = useState(10)
   const [totalPage, setTotalPage] = useState(1)
   const prevPageRef = useRef(page)
   const prevSizeRef = useRef(size)
@@ -67,7 +71,6 @@ const Contract = () => {
     else if (user?.permissions.includes(permissionObject.SALE)) return 'SALE'
     else return 'OFFICE_STAFF'
   }, [user])
-
   const closeModal = () => {
     setOpenModal(false)
   }
@@ -89,8 +92,8 @@ const Contract = () => {
   }
 
   const { data, isLoading, refetch, isFetching } = useQuery(
-    ['new-contract', user?.id],
-    () => getNewContract(page, size),
+    ['new-contract', user?.id, statusContract],
+    () => getNewContract(page, size, statusContract.status),
     {
       onSuccess: (response) => {
         setTotalPage(response?.object?.totalPages)
@@ -108,7 +111,7 @@ const Contract = () => {
           <ArrowUpOnSquareIcon className='h-5' /> Trình duyệt
         </>
       ),
-      disable: (d: any) => true,
+      disable: (d: any) => !d?.canSend,
       callback: (d: any) => {
         setSelectedContract(d)
         setStatus(1)
@@ -123,8 +126,11 @@ const Contract = () => {
         </>
       ),
       status: 'WAIT_SIGN_B',
+      disable: (d: any) => false,
       callback: (d: any) => {
-        navigate(`/send-mail/${d.id}/2`)
+        setSelectedContract(d)
+        setStatus(7)
+        setChangeStatus(true)
       }
     },
     {
@@ -135,6 +141,7 @@ const Contract = () => {
         </>
       ),
       status: 'UPDATE',
+      disable: (d: any) => !d.canUpdate,
       callback: (d: any) => {
         setEditModal(true)
         setSelectedContract(d)
@@ -148,6 +155,7 @@ const Contract = () => {
         </>
       ),
       status: '',
+      disable: (d: any) => !d.canDelete,
       callback: (d: any) => {
         setDeleteModal(true)
         setSelectedContract(d)
@@ -163,56 +171,41 @@ const Contract = () => {
         </>
       ),
       status: 'WAIT_SIGN_A',
+      disable: (d: any) => !d?.canSendForMng,
       callback: (d: any) => {
-        navigate(`/send-mail/${d.id}/1`)
+        setSelectedContract(d)
+        setStatus(4)
+        setChangeStatus(true)
       }
     },
     {
       id: 2,
       title: (
         <>
-          <ArrowUturnLeftIcon className='h-5' /> Từ chối duyệt
+          <ArrowUturnLeftIcon className='h-5' /> Xác nhận duyệt
         </>
       ),
       status: 'APPROVE_FAIL',
-      callback: (d: any) => {}
+      disable: (d: any) => false,
+      callback: (d: any) => {
+        setSelectedContract(d)
+        setStatus(2)
+        setChangeStatus(true)
+      }
     },
     {
       id: 3,
       title: (
         <>
-          <PaperAirplaneIcon className='h-5' /> Gửi khách hàng
+          <ArrowUturnLeftIcon className='h-5' /> Từ chối duyệt
         </>
       ),
-      status: 'WAIT_SIGN_B',
+      status: 'APPROVE_FAIL',
+      disable: (d: any) => false,
       callback: (d: any) => {
-        navigate(`/send-mail/${d.id}/2`)
-      }
-    },
-    {
-      id: 4,
-      title: (
-        <>
-          <Cog6ToothIcon className='h-5' /> Sửa
-        </>
-      ),
-      status: 'UPDATE',
-      callback: (d: any) => {
-        setEditModal(true)
         setSelectedContract(d)
-      }
-    },
-    {
-      id: 5,
-      title: (
-        <>
-          <NoSymbolIcon className='h-5' /> Xóa
-        </>
-      ),
-      status: '',
-      callback: (d: any) => {
-        setDeleteModal(true)
-        setSelectedContract(d)
+        setStatus(3)
+        setChangeStatus(true)
       }
     }
   ]
@@ -225,8 +218,9 @@ const Contract = () => {
         </>
       ),
       status: 'SUCCESS',
+      disable: (d: any) => false,
       callback: (d: any) => {
-        navigate(`/send-mail/${d.id}/1`)
+        navigate(`/view/${d?.id}/sign/1`)
       }
     },
     {
@@ -237,7 +231,12 @@ const Contract = () => {
         </>
       ),
       status: 'SIGN_A_FAIL',
-      callback: (d: any) => {}
+      disable: (d: any) => false,
+      callback: (d: any) => {
+        setSelectedContract(d)
+        setStatus(6)
+        setChangeStatus(true)
+      }
     },
     {
       id: 3,
@@ -247,6 +246,7 @@ const Contract = () => {
         </>
       ),
       status: 'UPDATE',
+      disable: (d: any) => !d.canUpdate,
       callback: (d: any) => {
         setEditModal(true)
         setSelectedContract(d)
@@ -260,10 +260,53 @@ const Contract = () => {
         </>
       ),
       status: '',
+      disable: (d: any) => !d.canDelete,
       callback: (d: any) => {
         setDeleteModal(true)
         setSelectedContract(d)
       }
+    }
+  ]
+  const saleContract = [
+    {
+      id: 1,
+      title: 'Hợp đồng mới',
+      status: 'NEW'
+    },
+    {
+      id: 2,
+      title: 'Đang đợi duyệt',
+      status: 'WAIT_APPROVE'
+    },
+    {
+      id: 3,
+      title: 'Đã được duyệt',
+      status: 'APPROVED'
+    },
+    {
+      id: 4,
+      title: 'Duyệt thất bại',
+      status: 'APPROVE_FAIL'
+    },
+    {
+      id: 5,
+      title: 'Đang đợi ký',
+      status: 'WAIT_SIGN_A'
+    },
+    {
+      id: 6,
+      title: 'Bên A ký thành công',
+      status: 'SIGN_A_OK'
+    },
+    {
+      id: 7,
+      title: 'Chờ khách hàng ký',
+      status: 'WAIT_SIGN_B'
+    },
+    {
+      id: 8,
+      title: 'Hoàn thành hợp đồng',
+      status: 'SUCCESS'
     }
   ]
   const actionTable = {
@@ -294,7 +337,6 @@ const Contract = () => {
       refetch()
     }
   }, [page, refetch, size])
-
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex gap-3 justify-between w-full py-3 h-[60px] px-5'>
@@ -334,49 +376,40 @@ const Contract = () => {
       </div>
       <div className='flex h-[calc(100%-70px)] flex-wrap justify-start'>
         <div className='flex gap-2 md:flex-col w-full md:h-full md:w-[16%] bg-white shadow-md mx-2 p-2 mb-2'>
-          <div
-            className={`cursor-pointer rounded-md px-3 py-1 ${statusContract == 'NEW' ? 'bg-main-color text-white' : 'text-black'} hover:bg-hover-main hover:text-white`}
-            onClick={() => setStatusContract('NEW')}
-          >
-            Hợp đồng mới
-          </div>
-          <div
-            className={`cursor-pointer rounded-md px-3 py-1 ${statusContract == 'SUCCESS' ? 'bg-main-color text-white' : 'text-black'} hover:bg-hover-main hover:text-white`}
-            onClick={() => setStatusContract('SUCCESS')}
-          >
-            Hợp đồng hoàn thành
-          </div>
-          <div
-            className={`cursor-pointer rounded-md px-3 py-1 ${statusContract == 'PROCESSING' ? 'bg-main-color text-white' : 'text-black'} hover:bg-hover-main hover:text-white`}
-            onClick={() => setStatusContract('PROCESSING')}
-          >
-            Hợp đồng chờ ký
-          </div>
+          {saleContract.map((t: any) => (
+            <div
+              key={t.id}
+              className={`cursor-pointer rounded-md px-3 py-1 ${statusContract?.id == t.id ? 'bg-main-color text-white' : 'text-black'} hover:bg-hover-main hover:text-white`}
+              onClick={() => setStatusContract(t)}
+            >
+              {t.title}
+            </div>
+          ))}
         </div>
         <div className='w-full md:w-[80%] overflow-auto mx-2'>
           <div className='shadow-md sm:rounded-lg '>
-            <Loading loading={isLoading || isFetching}>
-              <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
-                <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
-                  <tr>
-                    <th className='px-3 py-3 w-[5%]'>STT</th>
-                    <th className='px-3 py-3 w-[40%]'>Tên hợp đồng</th>
-                    <th className='px-3 py-3 w-[20%]'>Người tạo</th>
-                    <th scope='col' className='px-3 py-3'>
-                      Ngày tạo
-                    </th>
-                    <th scope='col' className='px-3 py-3' align='center'>
-                      Trạng thái
-                    </th>
-                    <th className='px-3 py-3 ' align='center'>
-                      Chi tiết
-                    </th>
+            <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
+              <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
+                <tr>
+                  <th className='px-3 py-3 w-[5%]'>STT</th>
+                  <th className='px-3 py-3 w-[40%]'>Tên hợp đồng</th>
+                  <th className='px-3 py-3 w-[20%]'>Người tạo</th>
+                  <th scope='col' className='px-3 py-3'>
+                    Ngày tạo
+                  </th>
+                  <th scope='col' className='px-3 py-3' align='center'>
+                    Trạng thái
+                  </th>
+                  <th className='px-3 py-3 ' align='center'>
+                    Chi tiết
+                  </th>
 
-                    <th className='px-3 py-3 w-[30px]'></th>
-                  </tr>
-                </thead>
-                <tbody className='w-full '>
-                  {data?.object?.content?.map((d: any, index: number) => (
+                  <th className='px-3 py-3 w-[30px]'></th>
+                </tr>
+              </thead>
+              <tbody className='w-full '>
+                {!isLoading && !isFetching ? (
+                  data?.object?.content?.map((d: any, index: number) => (
                     <tr
                       key={d.id}
                       className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
@@ -391,8 +424,8 @@ const Contract = () => {
                       <td className='px-3 py-4'>
                         {d?.createdDate ? moment(d?.createdDate).format('DD/MM/YYYY') : d?.createdDate}
                       </td>
-                      <td className={`px-3 py-4 font-semibold ${status[d.status]?.color}`} align='center'>
-                        {status[d.status]?.title}
+                      <td className={`px-3 py-4 font-semibold ${statusObject[d.statusCurrent]?.color}`} align='center'>
+                        {d.statusCurrent ? statusObject[d.statusCurrent]?.title : statusObject[d.status]?.title}
                       </td>
                       <td className='px-3 py-4' align='center'>
                         <div
@@ -406,7 +439,7 @@ const Contract = () => {
                         </div>
                       </td>
                       <td className='px-3 py-4'>
-                        <div className={`${d.status == 'SUCCESS' ? 'invisible' : 'visible'}`}>
+                        <div className={`${d?.statusCurrent == 'SUCCESS' ? 'invisible' : 'visible'}`}>
                           <Menu as='div' className='relative inline-block text-left '>
                             <Menu.Button className='flex justify-center items-center gap-3 cursor-pointer hover:text-blue-500'>
                               <EllipsisVerticalIcon className='h-7 w-7' title='Hành động' />
@@ -421,15 +454,15 @@ const Contract = () => {
                               leaveFrom='transform opacity-100 scale-100'
                               leaveTo='transform opacity-0 scale-95'
                             >
-                              <Menu.Items className='absolute right-4 top-3 z-50 mt-2 w-48 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
+                              <Menu.Items className='absolute right-4 -top-4 z-50 mt-2 w-48 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
                                 {actionTable[permissionUser]?.map((action: ActionType) => (
-                                  <Menu.Item key={action.id}>
-                                    {({ active }) => (
+                                  <Menu.Item key={action.id} disabled={action.disable(d)}>
+                                    {({ active, disabled }) => (
                                       <button
                                         onClick={() => action.callback(d)}
                                         className={`${
-                                          active ? 'bg-blue-500 text-white' : 'text-gray-900'
-                                        } group flex w-full items-center disabled:text-gray-500  disabled:bg-white gap-3 rounded-md px-2 py-2 text-sm `}
+                                          active ? 'bg-blue-500 text-white' : ''
+                                        } group flex w-full items-center ${action.disable(d) ? 'text-gray-300' : 'text-gray-900'} gap-3 rounded-md px-2 py-2 text-sm `}
                                       >
                                         {action.title}
                                       </button>
@@ -442,21 +475,28 @@ const Contract = () => {
                         </div>
                       </td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  ))
+                ) : (
+                  <></>
+                )}
+              </tbody>
+            </table>
+            {(isLoading || isFetching) && (
+              <Loading loading={isLoading || isFetching}>
+                <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'></div>
+              </Loading>
+            )}
 
-              {(data == null || data?.object?.content?.length == 0) && (
-                <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'>
-                  <div className='flex flex-col justify-center items-center opacity-60'>
-                    <DocumentIcon />
-                    Chưa có hợp đồng
-                  </div>
+            {!isLoading && !isFetching && (data == null || data?.object?.content?.length == 0) && (
+              <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'>
+                <div className='flex flex-col justify-center items-center opacity-60'>
+                  <DocumentIcon />
+                  Chưa có hợp đồng
                 </div>
-              )}
-            </Loading>
+              </div>
+            )}
           </div>
-          {data && data?.object?.content?.length != 0 && (
+          {!isLoading && !isFetching && data && data?.object?.content?.length != 0 && (
             <Pagination
               totalPages={totalPage}
               currentPage={page + 1}

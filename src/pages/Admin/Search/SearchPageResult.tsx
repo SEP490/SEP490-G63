@@ -20,7 +20,7 @@ const SearchPageResult = () => {
   const refForm = useRef<any>()
   const [totalPage, setTotalPage] = useState(1)
   const [page, setPage] = useState(0)
-  const [size, setSize] = useState(5)
+  const [size, setSize] = useState(10)
   const [data, setData] = useState<any>()
   const { register, handleSubmit, getValues, setValue } = useForm<FormData>({
     defaultValues: { fieldSearch, searchText }

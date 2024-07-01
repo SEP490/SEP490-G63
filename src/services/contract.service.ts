@@ -23,13 +23,17 @@ export const sendMail = async (formData: any) => {
   const response = await axiosInstanceFormData.post(`contract/send-mail`, formData)
   return response.data
 }
+export const sendMailPublic = async (formData: any) => {
+  const response = await axiosInstanceFormData.post(`contract/public/send-mail`, formData)
+  return response.data
+}
 
 export const createNewContract = async (data: any) => {
   const response = await axiosInstant.post(`contract`, data)
   return response.data
 }
-export const getNewContract = async (page: number, size: number) => {
-  const response = await axiosInstant.get(`contract/${page}/${size}`)
+export const getNewContract = async (page: number, size: number, statusContract: string) => {
+  const response = await axiosInstant.get(`contract/${page}/${size}?status=${statusContract}`)
   return response.data
 }
 export const getNewContractById = async (id: any) => {
@@ -38,8 +42,6 @@ export const getNewContractById = async (id: any) => {
 }
 export const getNewContractByIdNotToken = async (id: any) => {
   const response = await axiosInstant.get(`contract/public/sign-contract/${id}`)
-  console.log(response)
-
   return response.data
 }
 

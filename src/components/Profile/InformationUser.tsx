@@ -2,7 +2,7 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import avatar from '../../assets/images/avatar1.png'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { getUserDetail, updateProfile } from '~/services/user.service'
-import { useAuth } from '~/provider/authProvider'
+import { useAuth } from '~/context/authProvider'
 import useToast from '~/hooks/useToast'
 import Loading from '~/components/shared/Loading/Loading'
 import moment from 'moment'
@@ -65,6 +65,7 @@ const InformationUser = () => {
       errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
     }
   })
+  console.log(data)
 
   useEffect(() => {
     if (data?.object) {

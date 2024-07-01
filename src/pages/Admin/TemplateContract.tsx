@@ -15,7 +15,7 @@ import { deleteTemplateContract, getTemplateContract } from '~/services/template
 
 const TemplateContract = () => {
   const [page, setPage] = useState(0)
-  const [size, setSize] = useState(5)
+  const [size, setSize] = useState(10)
   const [totalPage, setTotalPage] = useState(1)
   const [deleteModal, setDeleteModal] = useState(false)
   const [openModal, setOpenModal] = useState(false)
@@ -109,21 +109,21 @@ const TemplateContract = () => {
             </button>
           </div>
           <div className='shadow-md sm:rounded-lg my-3  max-h-[75vh]'>
-            <Loading loading={isFetching || isLoading}>
-              <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
-                <thead className='text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 shadow-md'>
-                  <tr>
-                    <th className='px-3 py-3'>STT</th>
-                    <th className='px-3 py-3'>Tên hợp đồng</th>
-                    <th className='px-3 py-3'>Chi tiết</th>
-                    <th className='px-3 py-3'>Ngày tạo</th>
+            <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
+              <thead className='text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 shadow-md'>
+                <tr>
+                  <th className='px-3 py-3'>STT</th>
+                  <th className='px-3 py-3'>Tên hợp đồng</th>
+                  <th className='px-3 py-3'>Chi tiết</th>
+                  <th className='px-3 py-3'>Ngày tạo</th>
+                  <th className='px-3 py-3 w-1'></th>
+                </tr>
+              </thead>
 
-                    <th className='px-3 py-3 w-1'></th>
-                  </tr>
-                </thead>
-
-                <tbody className='w-full '>
-                  {dataTable?.map((d: any, index: number) => (
+              <tbody className='w-full '>
+                {!isFetching &&
+                  !isLoading &&
+                  dataTable?.map((d: any, index: number) => (
                     <tr
                       key={d.id}
                       className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
@@ -198,19 +198,23 @@ const TemplateContract = () => {
                       </td>
                     </tr>
                   ))}
-                </tbody>
-              </table>
-              {(!dataTable || dataTable?.length == 0) && (
-                <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'>
-                  <div className='flex flex-col justify-center items-center opacity-60'>
-                    <DocumentIcon />
-                    Chưa có hợp đồng mẫu
-                  </div>
+              </tbody>
+            </table>
+            {(isLoading || isFetching) && (
+              <Loading loading={isLoading || isFetching}>
+                <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'></div>
+              </Loading>
+            )}
+            {!isLoading && !isFetching && (!dataTable || dataTable?.length == 0) && (
+              <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'>
+                <div className='flex flex-col justify-center items-center opacity-60'>
+                  <DocumentIcon />
+                  Chưa có hợp đồng mẫu
                 </div>
-              )}
-            </Loading>
+              </div>
+            )}
           </div>
-          {dataTable && dataTable?.length != 0 && (
+          {!isLoading && !isFetching && dataTable && dataTable?.length != 0 && (
             <Pagination
               totalPages={totalPage}
               currentPage={page + 1}
@@ -270,6 +274,7 @@ const TemplateContract = () => {
           </div>
         </Dialog>
       </Transition>
+
       <Transition appear show={openModal} as={Fragment}>
         <Dialog as='div' className='relative z-50 w-[90vw]' onClose={handleCloseModal}>
           <Transition.Child
@@ -311,6 +316,7 @@ const TemplateContract = () => {
           </div>
         </Dialog>
       </Transition>
+
       <Transition appear show={detailModal} as={Fragment}>
         <Dialog as='div' className='relative z-50 w-[90vw]' onClose={handleCloseModal}>
           <Transition.Child
