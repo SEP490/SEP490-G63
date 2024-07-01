@@ -5,18 +5,20 @@ import { createNewContract, getNewContractById, updateNewContract } from '~/serv
 import useToast from '~/hooks/useToast'
 import { useNavigate } from 'react-router-dom'
 import { SetStateAction, useEffect, useMemo, useState } from 'react'
-import { useMutation, useQueryClient } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { updateTemplateContract } from '~/services/template-contract.service'
 import { AxiosError } from 'axios'
 import { validateEmailDebounced } from '~/common/utils/checkMail'
 import { VietQR } from 'vietqr'
 import Loading from '~/components/shared/Loading/Loading'
 import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
+import { getContractType } from '~/services/type-contract.service'
 
 interface FormType {
   name: string
   number: string
   urgent: boolean
+  contractTypeId: string
 }
 interface CompanyInfo {
   name: string
@@ -40,7 +42,9 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
   const [loading, setLoading] = useState(true)
   const [detailContract, setDetailContract] = useState<any>()
   const queryClient = useQueryClient()
-
+  const { data: typeContract, isLoading: loadingTypeContract } = useQuery('type-contract', () =>
+    getContractType({ page: 0, size: 100 })
+  )
   const {
     register,
     getValues,
@@ -73,8 +77,6 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
       try {
         if (selectedContract?.id) {
           const response = await getNewContractById(selectedContract.id)
-          console.log(response)
-
           if (response.object) {
             setDetailContract(response.object)
             reset(response.object)
@@ -138,7 +140,7 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
     // }
   }
 
-  if (updateContract.isLoading || loading) return <LoadingPage />
+  if (updateContract.isLoading || loading || loadingTypeContract) return <LoadingPage />
 
   return (
     <div className='full flex justify-center overflow-auto h-[90%] mb-6'>
@@ -146,7 +148,15 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
         className='justify-center sm:justify-between w-full rounded-md flex flex-wrap  h-full bg-white my=5'
         autoComplete='on'
       >
-        <div className='w-full mt-3 font-bold'>Thông tin cơ bản</div>
+        <div className='w-full mt-5 flex gap-6 items-center'>
+          <div className='font-bold'>Thông tin cơ bản</div>
+          <select
+            {...register('contractTypeId')}
+            className={` block w-fit rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+          >
+            {typeContract?.content.map((d: any) => <option value={d.id}>{d.title}</option>)}
+          </select>
+        </div>
         <div className='w-full mt-5 relative'>
           <label className='font-light '>
             Tên hợp đồng<sup className='text-red-500'>*</sup>
