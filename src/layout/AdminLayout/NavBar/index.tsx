@@ -204,7 +204,9 @@ const NavBar = () => {
                   }}
                   title={user?.name}
                 />
-                <label className='font-bold cursor-pointer flex items-center gap-1'>{user?.name}</label>
+                <label className='font-bold cursor-pointer flex items-center gap-1 max-w-[120px] truncate ...'>
+                  {user?.name}
+                </label>
               </div>
               <ArrowRightStartOnRectangleIcon
                 className='h-5 w-5 cursor-pointer'
