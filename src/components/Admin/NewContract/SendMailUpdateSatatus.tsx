@@ -15,8 +15,8 @@ import { useQuery } from 'react-query'
 import { getUserByPermission } from '~/services/user.service'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
-type IProps = { id: string | undefined; status: number; closeModal: any }
-const SendMailUpdateStatus = ({ id, status, closeModal }: IProps) => {
+type IProps = { id: string | undefined; status: number; closeModal: any; refetch: any }
+const SendMailUpdateStatus = ({ id, status, closeModal, refetch }: IProps) => {
   const [selectedFiles, setSelectedFiles] = useState<any[]>([])
   const [previewUrls, setPreviewUrls] = useState<string[]>([])
   const [selectedTo, setSelectedTo] = useState<any[]>([])
@@ -32,15 +32,23 @@ const SendMailUpdateStatus = ({ id, status, closeModal }: IProps) => {
     getUserByPermission('MANAGER')
   )
   const { isLoading: loadingAO, data: dataAO } = useQuery('getUserByRoleAdminOfficer', () =>
-    getUserByPermission('OFFICER_ADMIN')
+    getUserByPermission('OFFICE_ADMIN')
   )
   const { isLoading: loading, data: dataContract } = useQuery('getContractDetail', () => getNewContractById(id), {
     onSuccess: async (response) => {
-      // if (type == '1') {
-      //   setSelectedTo([{ label: response.object.partyA.email, value: response.object.partyA.email }])
-      // } else if (type == '2') {
-      //   setSelectedTo([{ label: response.object.partyB.email, value: response.object.partyB.email }])
-      // }
+      if (status == 2 || status == 3) {
+        setSelectedTo([{ label: response.object.createdBy, value: response.object.createdBy }])
+      } else if (status == 4) {
+        setSelectedCc([{ label: response.object.createdBy, value: response.object.createdBy }])
+      } else if (status == 6) {
+        setSelectedTo([{ label: response.object.createdBy, value: response.object.createdBy }])
+        setSelectedCc([{ label: response.object.approvedBy, value: response.object.approvedBy }])
+      } else if (status == 7) {
+        setSelectedCc([{ label: response.object.approvedBy, value: response.object.approvedBy }])
+      } else if (status == 9) {
+        setSelectedTo([{ label: response.object.createdBy, value: response.object.createdBy }])
+        setSelectedCc([{ label: response.object.approvedBy, value: response.object.approvedBy }])
+      }
       const fileUrl = response.object.file
       const fileData = await fetch(fileUrl)
       const blob = await fileData.blob()
@@ -117,6 +125,7 @@ const SendMailUpdateStatus = ({ id, status, closeModal }: IProps) => {
       if (response) {
         successNotification('Gửi yêu cầu thành công!')
         closeModal()
+        refetch()
       } else {
         errorNotification('Gửi yêu cầu thất bại')
       }
