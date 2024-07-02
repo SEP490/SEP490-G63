@@ -90,7 +90,7 @@ const NavBar = () => {
           className={`absolute z-30 h-[100vh] overflow-hidden bg-white w-[220px] left-0 transition-all duration-100 delay-100 ease-in ${openNav ? 'visible' : 'invisible'}`}
         >
           <ul className={`flex flex-col gap-1 font-bold`}>
-            {routerAdmin.map((r) => (
+            {navigateUser.map((r) => (
               <li
                 key={r.id}
                 onClick={() => {
@@ -208,7 +208,7 @@ const NavBar = () => {
                   }}
                   title={user?.name}
                 />
-                <label className='font-bold cursor-pointer flex items-center gap-1'>{user?.name}</label>
+                <label className='font-bold cursor-pointer gap-1  max-w-[120px] truncate ...'>{user?.name}</label>
               </div>
               <ArrowRightStartOnRectangleIcon
                 className='h-5 w-5 cursor-pointer'
