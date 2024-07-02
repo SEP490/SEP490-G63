@@ -29,20 +29,46 @@ import { permissionObject } from '~/common/const/permissions'
 import { ADMIN } from '~/common/const/role'
 import UrgentIcon from '~/assets/svg/urgentIcon'
 import SendMailUpdateStatus from '~/components/Admin/NewContract/SendMailUpdateSatatus'
+import { Tooltip } from 'flowbite-react'
+import { AiOutlineFileDone } from 'react-icons/ai'
+import { FaClock, FaUserCheck, FaUserClock, FaUserTimes } from 'react-icons/fa'
+import { MdEditDocument, MdOutlineDownloadDone } from 'react-icons/md'
+import { HiMiniDocumentCheck } from 'react-icons/hi2'
 export interface DataContract {
   id: string
-  name: string
-  createdBy: string
   file: string
+  name: string
+  status: string
+  urgent: boolean
+  statusCurrent:
+    | 'NEW'
+    | 'WAIT_APPROVE'
+    | 'APPROVED'
+    | 'APPROVE_FAIL'
+    | 'WAIT_SIGN_A'
+    | 'SIGN_A_OK'
+    | 'SIGN_A_FAIL'
+    | 'WAIT_SIGN_B'
+    | 'SIGN_B_OK'
+    | 'SIGN_B_FAIL'
+    | 'SUCCESS'
+  createdBy: string
+  approvedBy: string | null
+  canDelete: boolean
+  canSend: boolean
+  canSendFotMng: boolean
+  canUpdate: boolean
+  approved: boolean
   createdDate: string
 }
 type ActionType = {
   id: number
   title: string | ReactNode
-  status?: string
+  color?: string
   disable?: any
   callback: any
 }
+
 type STATUS = 'ADMIN' | 'OFFICE_ADMIN' | 'SALE' | 'OFFICE_STAFF'
 const Contract = () => {
   const navigate = useNavigate()
@@ -92,8 +118,8 @@ const Contract = () => {
   }
 
   const { data, isLoading, refetch, isFetching } = useQuery(
-    ['new-contract', user?.id, statusContract],
-    () => getNewContract(page, size, statusContract.status),
+    ['new-contract', user?.id, statusContract?.status],
+    () => getNewContract(page, size, statusContract?.status as string),
     {
       onSuccess: (response) => {
         setTotalPage(response?.object?.totalPages)
@@ -103,6 +129,8 @@ const Contract = () => {
       }
     }
   )
+  console.log(data)
+
   const actionSale: ActionType[] = [
     {
       id: 1,
@@ -111,6 +139,7 @@ const Contract = () => {
           <ArrowUpOnSquareIcon className='h-5' /> Trình duyệt
         </>
       ),
+      color: 'text-blue-700',
       disable: (d: any) => !d?.canSend,
       callback: (d: any) => {
         setSelectedContract(d)
@@ -125,7 +154,7 @@ const Contract = () => {
           <PaperAirplaneIcon className='h-5' /> Gửi khách hàng
         </>
       ),
-      status: 'WAIT_SIGN_B',
+      color: 'text-teal-700',
       disable: (d: any) => false,
       callback: (d: any) => {
         setSelectedContract(d)
@@ -140,7 +169,7 @@ const Contract = () => {
           <Cog6ToothIcon className='h-5' /> Sửa
         </>
       ),
-      status: 'UPDATE',
+      color: 'text-violet-700',
       disable: (d: any) => !d.canUpdate,
       callback: (d: any) => {
         setEditModal(true)
@@ -154,7 +183,7 @@ const Contract = () => {
           <NoSymbolIcon className='h-5' /> Xóa
         </>
       ),
-      status: '',
+      color: 'text-red-700',
       disable: (d: any) => !d.canDelete,
       callback: (d: any) => {
         setDeleteModal(true)
@@ -170,7 +199,7 @@ const Contract = () => {
           <ArrowUpOnSquareIcon className='h-5' /> Trình ký
         </>
       ),
-      status: 'WAIT_SIGN_A',
+      color: 'text-blue-950',
       disable: (d: any) => !d?.canSendForMng,
       callback: (d: any) => {
         setSelectedContract(d)
@@ -185,7 +214,7 @@ const Contract = () => {
           <ArrowUturnLeftIcon className='h-5' /> Xác nhận duyệt
         </>
       ),
-      status: 'APPROVE_FAIL',
+      color: 'text-green-700',
       disable: (d: any) => false,
       callback: (d: any) => {
         setSelectedContract(d)
@@ -200,7 +229,7 @@ const Contract = () => {
           <ArrowUturnLeftIcon className='h-5' /> Từ chối duyệt
         </>
       ),
-      status: 'APPROVE_FAIL',
+      color: 'text-orange-700',
       disable: (d: any) => false,
       callback: (d: any) => {
         setSelectedContract(d)
@@ -217,7 +246,7 @@ const Contract = () => {
           <PencilIcon className='h-5' /> Ký hợp đồng
         </>
       ),
-      status: 'SUCCESS',
+      color: 'text-green-700',
       disable: (d: any) => false,
       callback: (d: any) => {
         navigate(`/view/${d?.id}/sign/1`)
@@ -230,7 +259,7 @@ const Contract = () => {
           <ArrowUturnLeftIcon className='h-5' /> Từ chối ký
         </>
       ),
-      status: 'SIGN_A_FAIL',
+      color: 'text-orange-700',
       disable: (d: any) => false,
       callback: (d: any) => {
         setSelectedContract(d)
@@ -245,7 +274,7 @@ const Contract = () => {
           <Cog6ToothIcon className='h-5' /> Sửa
         </>
       ),
-      status: 'UPDATE',
+      color: 'text-violet-700',
       disable: (d: any) => !d.canUpdate,
       callback: (d: any) => {
         setEditModal(true)
@@ -259,7 +288,7 @@ const Contract = () => {
           <NoSymbolIcon className='h-5' /> Xóa
         </>
       ),
-      status: '',
+      color: 'text-red-700',
       disable: (d: any) => !d.canDelete,
       callback: (d: any) => {
         setDeleteModal(true)
@@ -270,96 +299,176 @@ const Contract = () => {
   const saleContract = [
     {
       id: 1,
-      title: 'Hợp đồng mới',
+      title: (
+        <div className='flex items-center justify-start gap-2 '>
+          <MdEditDocument />
+          <div className='w-[90%] truncate ...'>Quản lí hợp đồng</div>
+        </div>
+      ),
       status: 'NEW'
     },
     {
       id: 2,
-      title: 'Đang đợi duyệt',
+      title: (
+        <div className='flex items-center gap-2'>
+          <FaClock />
+          <div className='w-[90%] truncate ...'> Đợi duyệt</div>
+        </div>
+      ),
       status: 'WAIT_APPROVE'
     },
     {
       id: 3,
-      title: 'Đã được duyệt',
+      title: (
+        <div className='flex items-center gap-2'>
+          <MdOutlineDownloadDone />
+          <div className='w-[90%] truncate ...'> Đã được duyệt</div>
+        </div>
+      ),
       status: 'APPROVED'
     },
     {
       id: 4,
-      title: 'Duyệt thất bại',
-      status: 'APPROVE_FAIL'
-    },
-    {
-      id: 5,
-      title: 'Đang đợi ký',
+      title: (
+        <div className='flex items-center gap-2'>
+          <FaUserClock />
+          <div className='w-[90%] truncate ...'> Chờ sếp ký</div>
+        </div>
+      ),
       status: 'WAIT_SIGN_A'
     },
     {
-      id: 6,
-      title: 'Bên A ký thành công',
+      id: 5,
+      title: (
+        <div className='flex items-center gap-2'>
+          <FaUserCheck />
+          <div className='w-[90%] truncate ...'> Sếp ký thành công</div>
+        </div>
+      ),
       status: 'SIGN_A_OK'
     },
     {
-      id: 7,
-      title: 'Chờ khách hàng ký',
+      id: 6,
+      title: (
+        <div className='flex items-center gap-2'>
+          <FaUserClock />
+          <div className='w-[90%] truncate ...'> Chờ khách hàng ký</div>
+        </div>
+      ),
       status: 'WAIT_SIGN_B'
     },
     {
-      id: 8,
-      title: 'Đã Hoàn thành',
+      id: 7,
+      title: (
+        <div className='flex items-center gap-2'>
+          <AiOutlineFileDone />
+          <div className='w-[90%] truncate ...'> Đã Hoàn thành</div>
+        </div>
+      ),
       status: 'SUCCESS'
     }
   ]
   const adminOfficeContract = [
     {
       id: 1,
-      title: 'Hợp đồng mới',
+      title: (
+        <div className='flex items-center justify-start gap-2 '>
+          <MdEditDocument />
+          <div className='w-[90%] truncate ...'>Quản lí hợp đồng</div>
+        </div>
+      ),
       status: 'NEW'
     },
     {
       id: 2,
-      title: 'Cần duyệt',
+      title: (
+        <div className='flex items-center gap-2'>
+          <FaClock />
+          <div className='w-[90%] truncate ...'> Cần duyệt</div>
+        </div>
+      ),
       status: 'WAIT_APPROVE'
     },
     {
       id: 3,
-      title: 'Đã duyệt',
+      title: (
+        <div className='flex items-center gap-2'>
+          <MdOutlineDownloadDone />
+          <div className='w-[90%] truncate ...'> Đã duyệt</div>
+        </div>
+      ),
       status: 'APPROVED'
     },
     {
       id: 4,
-      title: 'Chờ ký',
+      title: (
+        <div className='flex items-center gap-2'>
+          <FaUserClock />
+          <div className='w-[90%] truncate ...'> Chờ sếp ký</div>
+        </div>
+      ),
       status: 'WAIT_SIGN_A'
     },
     {
       id: 5,
-      title: 'Đã ký',
+      title: (
+        <div className='flex items-center gap-2'>
+          <HiMiniDocumentCheck />
+          <div className='w-[90%] truncate ...'> Đã ký</div>
+        </div>
+      ),
       status: 'SIGN_A_OK'
     },
     {
       id: 6,
-      title: 'Hoàn thành hợp đồng',
+      title: (
+        <div className='flex items-center gap-2'>
+          <AiOutlineFileDone />
+          <div className='w-[90%] truncate ...'> Đã Hoàn thành</div>
+        </div>
+      ),
       status: 'SUCCESS'
     }
   ]
   const adminContract = [
     {
       id: 1,
-      title: 'Hợp đồng mới',
+      title: (
+        <div className='flex items-center justify-start gap-2 '>
+          <MdEditDocument />
+          <div className='w-[90%] truncate ...'>Quản lí hợp đồng</div>
+        </div>
+      ),
       status: 'NEW'
     },
     {
       id: 2,
-      title: 'Cần ký',
+      title: (
+        <div className='flex items-center gap-2'>
+          <FaUserClock />
+          <div className='w-[90%] truncate ...'> Chờ ký</div>
+        </div>
+      ),
       status: 'WAIT_SIGN_A'
     },
     {
       id: 3,
-      title: 'Đã ký',
+      title: (
+        <div className='flex items-center gap-2'>
+          <FaUserCheck />
+          <div className='w-[90%] truncate ...'> Đã ký</div>
+        </div>
+      ),
       status: 'SIGN_A_OK'
     },
     {
       id: 4,
-      title: 'Hoàn thành hợp đồng',
+      title: (
+        <div className='flex items-center gap-2'>
+          <AiOutlineFileDone />
+          <div className='w-[90%] truncate ...'> Đã Hoàn thành</div>
+        </div>
+      ),
       status: 'SUCCESS'
     }
   ]
@@ -441,14 +550,14 @@ const Contract = () => {
               className={`cursor-pointer rounded-md px-3 py-1 ${statusContract?.id == t.id ? 'bg-main-color text-white' : 'text-black'} hover:bg-hover-main hover:text-white`}
               onClick={() => setStatusContract(t)}
             >
-              {t.title}
+              {t?.title}
             </div>
           ))}
         </div>
         <div className='w-full md:w-[80%] overflow-auto mx-2'>
           <div className='shadow-md sm:rounded-lg '>
-            <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
-              <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
+            <table className='w-full text-sm text-left rtl:text-right text-black dark:text-gray-400 '>
+              <thead className=' text-xs text-black bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
                 <tr>
                   <th className='px-3 py-3 w-[5%]'>STT</th>
                   <th className='px-3 py-3 w-[40%]'>Tên hợp đồng</th>
@@ -468,23 +577,30 @@ const Contract = () => {
               </thead>
               <tbody className='w-full '>
                 {!isLoading && !isFetching ? (
-                  data?.object?.content?.map((d: any, index: number) => (
+                  data?.object?.content?.map((d: DataContract, index: number) => (
                     <tr
                       key={d.id}
-                      className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
+                      className='w-full  bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
                     >
                       <td className='px-3 py-4'>{size * page + index + 1}</td>
                       <td
-                        className={`px-3 py-4 flex gap-4 items-center ${d.status != 'SUCCESS' && d.urgent ? 'text-red-700' : ''}`}
+                        className={`px-3 py-4 ${d.status != 'SUCCESS' && d.urgent ? 'text-red-700 font-semibold' : ''}`}
                       >
-                        {d.name} {d.status != 'SUCCESS' && d.urgent && <UrgentIcon className='w-6 h-6' />}
+                        <div className='flex items-center gap-4'>
+                          {d.name}
+                          {d.status != 'SUCCESS' && d.urgent && (
+                            <Tooltip content='Cấp bách'>
+                              <UrgentIcon className='w-6 h-6' />
+                            </Tooltip>
+                          )}
+                        </div>
                       </td>
                       <td className='px-3 py-4'>{d.createdBy}</td>
                       <td className='px-3 py-4'>
                         {d?.createdDate ? moment(d?.createdDate).format('DD/MM/YYYY') : d?.createdDate}
                       </td>
                       <td className={`px-3 py-4 font-semibold ${statusObject[d.statusCurrent]?.color}`} align='center'>
-                        {d.statusCurrent ? statusObject[d.statusCurrent]?.title : statusObject[d.status]?.title}
+                        {d.statusCurrent ? statusObject[d.statusCurrent]?.title : ''}
                       </td>
                       <td className='px-3 py-4' align='center'>
                         <div
@@ -516,12 +632,10 @@ const Contract = () => {
                               <Menu.Items className='absolute right-4 -top-4 z-50 mt-2 w-48 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
                                 {actionTable[permissionUser]?.map((action: ActionType) => (
                                   <Menu.Item key={action.id} disabled={action.disable(d)}>
-                                    {({ active, disabled }) => (
+                                    {({ active }) => (
                                       <button
                                         onClick={() => action.callback(d)}
-                                        className={`${
-                                          active ? 'bg-blue-500 text-white' : ''
-                                        } group flex w-full items-center ${action.disable(d) ? 'text-gray-300' : 'text-gray-900'} gap-3 rounded-md px-2 py-2 text-sm `}
+                                        className={`group flex w-full items-center ${action.disable(d) ? 'text-gray-300' : active ? 'bg-blue-500 text-white' : action?.color} gap-3 rounded-md px-2 py-2 text-sm `}
                                       >
                                         {action.title}
                                       </button>
@@ -601,7 +715,12 @@ const Contract = () => {
                     </div>
                   </div>
 
-                  <SendMailUpdateStatus id={selectedContract?.id} status={status} closeModal={handleCloseModal} />
+                  <SendMailUpdateStatus
+                    id={selectedContract?.id}
+                    status={status}
+                    closeModal={handleCloseModal}
+                    refetch={refetch}
+                  />
                 </Dialog.Panel>
               </Transition.Child>
             </div>
