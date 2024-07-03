@@ -80,7 +80,7 @@ const Navbar = () => {
                 </li>
                 <li className='group relative cursor-pointer'>
                   <a href='/#home' className='flex h-[72px] items-center gap-[2px]'>
-                    Tiện ích{' '}
+                    Tiện ích
                     <span>
                       <FaCaretDown className='transition-all duration-200 group-hover:rotate-180' />
                     </span>
