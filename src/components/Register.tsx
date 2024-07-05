@@ -1,10 +1,14 @@
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { REGEX_EMAIL, REGEX_PASSWORD } from '~/common/const/regexForm'
+import { REGEX_EMAIL, REGEX_NAME, REGEX_PASSWORD, REGEX_PHONE, REGEX_TAX_NUMBER } from '~/common/const/regexForm'
 import '../styles/login.css'
 import { registerUser } from '~/services/user.service'
 import useToast from '~/hooks/useToast'
 import logo from '../assets/svg/Tdocman.svg'
 import { useNavigate } from 'react-router-dom'
+import { useQuery } from 'react-query'
+import { getPrice } from '~/services/admin.contract.service'
+import { useState } from 'react'
+import LoadingPage from './shared/LoadingPage/LoadingPage'
 type FromType = {
   company: string
   taxCode: string
@@ -15,6 +19,8 @@ type FromType = {
 }
 const Register = () => {
   const navigate = useNavigate()
+  const [selectedPrice, setSelectedPrice] = useState<any>(null)
+  const [loading, setLoading] = useState<boolean>(false)
   const { successNotification, errorNotification } = useToast()
   const {
     register,
@@ -25,15 +31,26 @@ const Register = () => {
 
   const onSubmit: SubmitHandler<FromType> = async (data) => {
     try {
+      setLoading(true)
       const response = await registerUser(data)
       if (response) {
         successNotification('Đăng ký sử dụng dịch vụ Tdocman thành công')
       } else errorNotification('Đăng ký thất bại')
     } catch (error) {
       errorNotification('Lỗi hệ thống')
+    } finally {
+      setLoading(false)
     }
   }
-
+  const { data: dataPrice, isLoading } = useQuery('data-price', getPrice, {
+    onSuccess: (d) => {
+      setSelectedPrice(d?.[0])
+    }
+  })
+  const handleChangeOption = (e: any) => {
+    setSelectedPrice(dataPrice?.find((d: any) => d.id == e.target.value))
+  }
+  if (isLoading || loading) return <LoadingPage />
   return (
     <div className='flex justify-center relative h-[100vh]  items-center bg-login-img bg-cover'>
       <div className='absolute inset-0 bg-black opacity-70 z-40'></div>
@@ -71,7 +88,11 @@ const Register = () => {
               type='text'
               placeholder='Nhập mã số thuế'
               {...register('taxCode', {
-                required: 'Mã số thuế không được để trống'
+                required: 'Mã số thuế không được để trống',
+                pattern: {
+                  value: REGEX_TAX_NUMBER,
+                  message: 'Mã số thuế không hợp lệ'
+                }
               })}
             />
             <div className={`text-red-500 absolute text-[12px] ${errors.taxCode ? 'visible' : 'invisible'}`}>
@@ -87,7 +108,11 @@ const Register = () => {
               type='text'
               placeholder='Tên người đại diện'
               {...register('presenter', {
-                required: 'Tên người đại diện không được trống'
+                required: 'Tên người đại diện không được bỏ trống',
+                pattern: {
+                  value: REGEX_NAME,
+                  message: 'Tên người đại diện không hợp lệ'
+                }
               })}
             />
             <div className={`text-red-500 absolute text-[12px] ${errors.presenter ? 'visible' : 'invisible'}`}>
@@ -103,10 +128,10 @@ const Register = () => {
               type='text'
               placeholder='email@gmail.com'
               {...register('email', {
-                required: 'Email không được để trống',
+                required: 'Email không được bỏ trống',
                 pattern: {
                   value: REGEX_EMAIL,
-                  message: 'Email không đúng định dạng'
+                  message: 'Email không hợp lệ'
                 }
               })}
             />
@@ -123,7 +148,11 @@ const Register = () => {
               type='text'
               placeholder='Nhập số điện thoại'
               {...register('phone', {
-                required: 'Số điện thoại không được trống'
+                required: 'Số điện thoại không được bỏ trống',
+                pattern: {
+                  value: REGEX_PHONE,
+                  message: 'Số điện thoại không hợp lệ'
+                }
               })}
             />
             <div className={`text-red-500 absolute text-[12px] ${errors.phone ? 'visible' : 'invisible'}`}>
@@ -139,15 +168,32 @@ const Register = () => {
               {...register('planpriceId', {
                 required: 'Loại dịch vụ không được để trống'
               })}
+              onChange={handleChangeOption}
             >
-              <option value='1'>Dịch vụ 1</option>
-              <option value='2'>Dịch vụ 2</option>
-              <option value='3'>Dịch vụ 3</option>
+              {dataPrice?.map((d: any) => <option value={d.id}>{d.name}</option>)}
             </select>
 
             <div className={`text-red-500 absolute text-[12px] ${errors.planpriceId ? 'visible' : 'invisible'}`}>
               {errors.planpriceId?.message}
             </div>
+          </div>
+          <div className='w-full md:w-[48%] mt-5 relative'>
+            <label className='font-bold '>Năm sử dụng</label>
+            <input
+              className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+              disabled
+              value={selectedPrice?.timeWithYear}
+              hidden
+            />
+          </div>
+          <div className='w-full md:w-[48%] mt-5 relative'>
+            <label className='font-bold '>Giá tiền</label>
+            <input
+              className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+              disabled
+              value={selectedPrice?.price}
+              hidden
+            />
           </div>
         </div>
 
