@@ -72,7 +72,6 @@ const OldContract = () => {
       refetch()
     }
   }, [page, refetch, size])
-
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex flex-wrap py-4'>

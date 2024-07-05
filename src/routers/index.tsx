@@ -34,6 +34,7 @@ const SendMailContract = lazy(() => import('~/components/Admin/NewContract/SendM
 const ViewSignContract = lazy(() => import('~/pages/BasePage/ViewSignContract.tsx'))
 const SearchPage = lazy(() => import('~/pages/Admin/Search/SearchPage.tsx'))
 const SearchPageResult = lazy(() => import('~/pages/Admin/Search/SearchPageResult.tsx'))
+const DashboardSale = lazy(() => import('~/components/Dashboard/DashboardSale.tsx'))
 const Routes = () => {
   const { token, user } = useAuth()
   let routes: Array<any>
@@ -248,6 +249,18 @@ const Routes = () => {
           )
         },
         {
+          path: '/type-contract',
+          element: (
+            <Suspense fallback={<LoadingPage />}>
+              <UserLayout>
+                <AdminOfficer>
+                  <TypeContract />
+                </AdminOfficer>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
           path: '/employee',
           element: (
             <Suspense fallback={<LoadingPage />}>
@@ -343,7 +356,7 @@ const Routes = () => {
             <Suspense fallback={<LoadingPage />}>
               <UserLayout>
                 <Sale>
-                  <SearchPage />
+                  <DashboardSale />
                 </Sale>
               </UserLayout>
             </Suspense>
@@ -386,12 +399,12 @@ const Routes = () => {
           )
         },
         {
-          path: '/send/:id/:status',
+          path: '/type-contract',
           element: (
             <Suspense fallback={<LoadingPage />}>
               <UserLayout>
                 <Sale>
-                  <SendMailUpdateStatus />
+                  <TypeContract />
                 </Sale>
               </UserLayout>
             </Suspense>

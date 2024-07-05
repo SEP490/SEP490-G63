@@ -10,6 +10,7 @@ interface RegisterData {
   presenter: string
   email: string
   phone: string
+  planpriceId: string
 }
 export const login = async ({ email, password }: LoginData) => {
   try {
@@ -35,14 +36,15 @@ export const getUserDetail = async (id: string) => {
     console.log(error)
   }
 }
-export const registerUser = async ({ company, taxCode, presenter, email, phone }: RegisterData) => {
+export const registerUser = async ({ company, taxCode, presenter, email, phone, planpriceId }: RegisterData) => {
   try {
     const response = await adminInstance.post('public/auth/register', {
       companyName: company,
       taxCode,
       presenter,
       email,
-      phone
+      phone,
+      planpriceId
     })
     return response
   } catch (error) {
