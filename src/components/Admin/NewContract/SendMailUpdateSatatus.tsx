@@ -22,7 +22,7 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch }: IProps) => {
   const [selectedTo, setSelectedTo] = useState<any[]>([])
   const [selectedCc, setSelectedCc] = useState<any[]>([])
   const [subject, setSubject] = useState<string>(statusRequest[status]?.title)
-  const [editorData, setEditorData] = useState<string>(statusRequest[status]?.description)
+  const [editorData, setEditorData] = useState<any>(statusRequest[status]?.description)
   const { successNotification, errorNotification } = useToast()
   const [open, setOpen] = useState(false)
   const [loadingSubmit, setLoadingSubmit] = useState(false)
@@ -135,6 +135,8 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch }: IProps) => {
       setLoadingSubmit(false)
     }
   }
+  console.log(editorData)
+
   if (loading || loadingSALE || loadingAO || loadingAdmin || loadingSubmit) return <LoadingPage />
   return (
     <div className='h-full overflow-auto pb-5'>

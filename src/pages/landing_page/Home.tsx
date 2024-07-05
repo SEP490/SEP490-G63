@@ -41,7 +41,7 @@ const Home = () => {
         <Banner />
         <Banner1 />
         {/* <Banner2 /> */}
-        <ServicesBoxx />
+        {/* <ServicesBoxx /> */}
         {/* <Testimonial /> */}
       </div>
       <Footer />
