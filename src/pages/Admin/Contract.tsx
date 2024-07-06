@@ -129,8 +129,6 @@ const Contract = () => {
       }
     }
   )
-  console.log(data)
-
   const actionSale: ActionType[] = [
     {
       id: 1,
@@ -215,7 +213,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-green-700',
-      disable: (d: any) => false,
+      disable: (d: any) => !d.canApprove,
       callback: (d: any) => {
         setSelectedContract(d)
         setStatus(2)
@@ -230,11 +228,39 @@ const Contract = () => {
         </>
       ),
       color: 'text-orange-700',
-      disable: (d: any) => false,
+      disable: (d: any) => !d.canApprove,
       callback: (d: any) => {
         setSelectedContract(d)
         setStatus(3)
         setChangeStatus(true)
+      }
+    },
+    {
+      id: 4,
+      title: (
+        <>
+          <Cog6ToothIcon className='h-5' /> Sửa
+        </>
+      ),
+      color: 'text-violet-700',
+      disable: (d: any) => false,
+      callback: (d: any) => {
+        setEditModal(true)
+        setSelectedContract(d)
+      }
+    },
+    {
+      id: 5,
+      title: (
+        <>
+          <NoSymbolIcon className='h-5' /> Xóa
+        </>
+      ),
+      color: 'text-red-700',
+      disable: (d: any) => false,
+      callback: (d: any) => {
+        setDeleteModal(true)
+        setSelectedContract(d)
       }
     }
   ]
@@ -247,7 +273,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-green-700',
-      disable: (d: any) => false,
+      disable: (d: any) => !d?.canSign,
       callback: (d: any) => {
         navigate(`/view/${d?.id}/sign/1`)
       }
@@ -260,7 +286,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-orange-700',
-      disable: (d: any) => false,
+      disable: (d: any) => !d?.canSign,
       callback: (d: any) => {
         setSelectedContract(d)
         setStatus(6)
@@ -275,7 +301,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-violet-700',
-      disable: (d: any) => !d.canUpdate,
+      disable: (d: any) => false,
       callback: (d: any) => {
         setEditModal(true)
         setSelectedContract(d)
@@ -289,7 +315,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-red-700',
-      disable: (d: any) => !d.canDelete,
+      disable: (d: any) => false,
       callback: (d: any) => {
         setDeleteModal(true)
         setSelectedContract(d)
