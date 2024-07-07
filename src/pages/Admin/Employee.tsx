@@ -147,7 +147,8 @@ const Employee = () => {
               </thead>
 
               <tbody className='w-full '>
-                {(!isLoading || !isFetching) &&
+                {!isLoading &&
+                  !isFetching &&
                   data?.object?.content?.map((d: DataEmployee) => (
                     <tr
                       key={d.id}

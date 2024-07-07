@@ -261,6 +261,18 @@ const Routes = () => {
           )
         },
         {
+          path: '/view/:id/sign/:customer',
+          element: (
+            <Suspense fallback={<LoadingPage />}>
+              <UserLayout>
+                <AdminOfficer>
+                  <ViewSignContract />
+                </AdminOfficer>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
           path: '/employee',
           element: (
             <Suspense fallback={<LoadingPage />}>
@@ -369,6 +381,18 @@ const Routes = () => {
               <UserLayout>
                 <Sale>
                   <Profile />
+                </Sale>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/view/:id/sign/:customer',
+          element: (
+            <Suspense fallback={<LoadingPage />}>
+              <UserLayout>
+                <Sale>
+                  <ViewSignContract />
                 </Sale>
               </UserLayout>
             </Suspense>
