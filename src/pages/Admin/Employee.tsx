@@ -1,11 +1,17 @@
 import { Dialog, Menu, Transition } from '@headlessui/react'
 import { Fragment, useEffect, useRef, useState } from 'react'
 import AddNewEmployee from '~/components/Admin/Employee/AddNewEmployee'
-import { Cog6ToothIcon, EllipsisVerticalIcon, NoSymbolIcon, PlusIcon, UserIcon } from '@heroicons/react/24/outline'
+import {
+  Cog6ToothIcon,
+  EllipsisVerticalIcon,
+  NoSymbolIcon,
+  PlusIcon,
+  UserIcon,
+  XMarkIcon
+} from '@heroicons/react/24/outline'
 import ViewEmployee from '~/components/Admin/Employee/ViewEmployee'
 import { deleteEmployee, getListEmployee } from '~/services/employee.service'
 import EditEmployee from '~/components/Admin/Employee/EditEmployee'
-import DocumentIcon from '~/assets/svg/document'
 import Pagination from '~/components/BaseComponent/Pagination/Pagination'
 import Loading from '~/components/shared/Loading/Loading'
 import { useQuery } from 'react-query'
@@ -77,7 +83,6 @@ const Employee = () => {
       refetch()
     }
   }, [page, refetch, size])
-
   const handleDeleteEmployee = async () => {
     try {
       if (selectedUser) {
@@ -132,10 +137,11 @@ const Employee = () => {
               <PlusIcon className='h-5 w-5' /> Thêm mới nhân viên
             </button>
           </div>
-          <div className='shadow-md sm:rounded-lg my-3  max-h-[73vh] '>
+          <div className='shadow-md sm:rounded-lg my-3  max-h-[73vh] overflow-auto'>
             <table className='w-full text-sm text-left rtl:text-right text-black dark:text-gray-400 '>
               <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
                 <tr>
+                  <th className='px-3 py-3 w-[30px]'>STT</th>
                   <th className='px-3 py-3 w-[200px]'>Tên nhân viên</th>
                   <th className='px-3 py-3 w-[250px]'>Email</th>
                   <th className='px-3 py-3 '>Số điện thoại</th>
@@ -149,11 +155,13 @@ const Employee = () => {
               <tbody className='w-full '>
                 {!isLoading &&
                   !isFetching &&
-                  data?.object?.content?.map((d: DataEmployee) => (
+                  data?.object?.content?.map((d: DataEmployee, index: number) => (
                     <tr
                       key={d.id}
                       className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
                     >
+                      <th className='px-3 py-3 w-[30px]'>{page * size + index + 1}</th>
+
                       <th
                         className='px-3 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white hover:underline cursor-pointer hover:text-blue-500'
                         onClick={() => {
@@ -279,9 +287,12 @@ const Employee = () => {
                 leaveTo='opacity-0 scale-95'
               >
                 <Dialog.Panel className='w-[100vw] md:w-[80vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
-                  <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
-                    Thêm mới nhân viên
-                  </Dialog.Title>
+                  <div className='flex justify-between mb-2'>
+                    <div className='font-semibold'>Thêm mới nhân viên</div>
+                    <div className='flex gap-3 items-center'>
+                      <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeModal()} />
+                    </div>
+                  </div>
                   <AddNewEmployee closeModal={closeModal} refetch={refetch} />
                 </Dialog.Panel>
               </Transition.Child>
@@ -315,9 +326,12 @@ const Employee = () => {
                 leaveTo='opacity-0 scale-95'
               >
                 <Dialog.Panel className='w-[100vw] md:w-[80vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
-                  <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
-                    Thông tin chi tiết
-                  </Dialog.Title>
+                  <div className='flex justify-between mb-2'>
+                    <div className='font-semibold'>Thông tin chi tiết</div>
+                    <div className='flex gap-3 items-center'>
+                      <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeAllModal()} />
+                    </div>
+                  </div>
                   <ViewEmployee data={selectedUser} onClose={closeAllModal} />
                 </Dialog.Panel>
               </Transition.Child>
@@ -351,9 +365,13 @@ const Employee = () => {
                 leaveTo='opacity-0 scale-95'
               >
                 <Dialog.Panel className='w-[100vw] md:w-[80vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
-                  <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
-                    Chỉnh sửa thông tin
-                  </Dialog.Title>
+                  <div className='flex justify-between mb-2'>
+                    <div className='font-semibold'>Chỉnh sửa thông tin</div>
+                    <div className='flex gap-3 items-center'>
+                      <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeAllModal()} />
+                    </div>
+                  </div>
+
                   <EditEmployee data={selectedUser} closeModal={closeAllModal} refetch={refetch} />
                 </Dialog.Panel>
               </Transition.Child>
@@ -387,9 +405,12 @@ const Employee = () => {
                 leaveTo='opacity-0 scale-95'
               >
                 <Dialog.Panel className='w-[100vw] md:w-[40vw] md:h-fit transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
-                  <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
-                    Thông báo
-                  </Dialog.Title>
+                  <div className='flex justify-between mb-2'>
+                    <div className='font-semibold'>Thông báo</div>
+                    <div className='flex gap-3 items-center'>
+                      <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeAllModal()} />
+                    </div>
+                  </div>
                   <div>
                     <div>Nhân viên sẽ được xóa khỏi hệ thống. Bạn có chắc chắn với quyết định của mình?</div>
                     <div className='w-full flex justify-end mt-6'>

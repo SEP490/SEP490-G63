@@ -13,7 +13,7 @@ type FromType = {
   dob: string
   email: string
   gender: number
-  identification_number: string
+  identificationNumber: string
   name: string
   phone: string
   position: string
@@ -139,12 +139,12 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
         <label className='font-bold '>CCCD/CMT</label>
         <input
-          className={`${errors.identification_number ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-          {...register('identification_number')}
+          className={`${errors.identificationNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+          {...register('identificationNumber')}
           placeholder='Nhập CCCD/CMT nhân viên'
         />
-        <div className={`text-red-500 absolute text-[12px] ${errors.identification_number ? 'visible' : 'invisible'}`}>
-          {errors.identification_number?.message}
+        <div className={`text-red-500 absolute text-[12px] ${errors.identificationNumber ? 'visible' : 'invisible'}`}>
+          {errors.identificationNumber?.message}
         </div>
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
