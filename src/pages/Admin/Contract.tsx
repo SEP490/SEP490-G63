@@ -301,7 +301,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-violet-700',
-      disable: (d: any) => false,
+      disable: (d: any) => !d.canUpdate,
       callback: (d: any) => {
         setEditModal(true)
         setSelectedContract(d)
@@ -315,7 +315,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-red-700',
-      disable: (d: any) => false,
+      disable: (d: any) => !d.canDelete,
       callback: (d: any) => {
         setDeleteModal(true)
         setSelectedContract(d)
