@@ -10,6 +10,8 @@ import { useAuth } from '~/context/authProvider'
 import { useMutation } from 'react-query'
 import { AxiosError } from 'axios'
 import LoadingIcon from '~/assets/LoadingIcon'
+import { useState } from 'react'
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
 type FromType = {
   email: string
   password: string
@@ -17,6 +19,7 @@ type FromType = {
 const Login = () => {
   const navigate = useNavigate()
   const { setToken, setUser } = useAuth()
+  const [typePassword, setTypePassword] = useState('password')
   const {
     register,
     handleSubmit,
@@ -84,15 +87,29 @@ const Login = () => {
           <label className='font-bold '>
             Mật khẩu<sup className='text-red-500'>*</sup>
           </label>
-          <input
-            className={`${errors.password ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-            type='password'
-            disabled={loginQuery.isLoading}
-            placeholder='Nhập mật khẩu'
-            {...register('password', {
-              required: 'Mật khẩu không được để trống'
-            })}
-          />
+          <div className='relative flex items-center'>
+            <input
+              className={`${errors.password ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+              type={typePassword}
+              disabled={loginQuery.isLoading}
+              placeholder='Nhập mật khẩu'
+              {...register('password', {
+                required: 'Mật khẩu không được để trống'
+              })}
+            />
+            {typePassword == 'password' ? (
+              <EyeIcon
+                className='w-5 h-5 absolute z-30 right-3 cursor-pointer'
+                onClick={() => setTypePassword('text')}
+              />
+            ) : (
+              <EyeSlashIcon
+                className='w-5 h-5 absolute z-30 right-3 cursor-pointer'
+                onClick={() => setTypePassword('password')}
+              />
+            )}
+          </div>
+
           <div className={`text-red-500 absolute text-[12px] ${errors.password ? 'visible' : 'invisible'}`}>
             {errors.password?.message}
           </div>
