@@ -17,10 +17,9 @@ type FromType = {
   name: string
   phone: string
   position: string
+  permissions: string
 }
-interface CheckBoxValue {
-  [value: string]: boolean
-}
+
 interface IProp {
   data: DataEmployee | undefined
   closeModal: () => void
@@ -31,42 +30,19 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
     register,
     handleSubmit,
     formState: { errors }
-  } = useForm<FromType>({ defaultValues: data })
+  } = useForm<FromType>({ defaultValues: { ...data, permissions: data?.permissions?.slice(1, -1) } })
   const { successNotification, errorNotification } = useToast()
-  const [permissions, setPermissions] = useState(
-    permissionsList.reduce((acc: CheckBoxValue, permission) => {
-      acc[permission.value] =
-        data?.permissions
-          ?.slice(1, -1)
-          .split(',')
-          .find((d) => d == permission.value) != undefined
-      return acc
-    }, {})
-  )
-  const handleCheckboxChange = (event: any) => {
-    const { name, checked } = event.target
-    setPermissions((prevPermissions) => ({
-      ...prevPermissions,
-      [name]: checked
-    }))
-  }
-  const getCheckedPermissions = useMemo(() => {
-    return Object.keys(permissions).filter((permission) => permissions[permission])
-  }, [permissions])
   const onSubmit: SubmitHandler<FromType> = async (dataForm) => {
     try {
-      if (getCheckedPermissions.length != 0 && data != undefined) {
-        const response = await updateProfile(data.id, { ...dataForm, permissions: getCheckedPermissions })
-        console.log(response)
-
-        if (response.code == '00' && response.object) {
-          successNotification('Chỉnh sửa thông tin người dùng thành công')
-          closeModal()
-          refetch()
-        } else errorNotification('Chỉnh sửa thông tin người dùng thất bại')
-      } else errorNotification('Quyền nhân viên không được để trống')
+      const response = await updateProfile(data?.id as string, { ...dataForm, permissions: [dataForm.permissions] })
+      if (response.code == '00' && response.object) {
+        successNotification('Chỉnh sửa thông tin người dùng thành công')
+        closeModal()
+        refetch()
+      } else errorNotification('Chỉnh sửa thông tin người dùng thất bại')
     } catch (error) {
       console.log(error)
+      errorNotification('Lỗi hệ thống')
     }
   }
 
@@ -121,21 +97,7 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
           {errors.email?.message}
         </div>
       </div>
-      {/* <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
-          Mật khẩu <sup className='text-red-500'>*</sup>
-        </label>
-        <input
-          className={`${errors.password ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-          {...register('password', {
-            required: 'Mật khẩu không được bỏ trống'
-          })}
-          placeholder='Nhập mật khẩu'
-        />
-        <div className={`text-red-500 absolute text-[12px] ${errors.password ? 'visible' : 'invisible'}`}>
-          {errors.password?.message}
-        </div>
-      </div> */}
+
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
         <label className='font-bold '>CCCD/CMT</label>
         <input
@@ -193,23 +155,22 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
         <label className='font-bold '>
           Quyền<sup className='text-red-500'>*</sup>
         </label>
-        <div className='flex flex-wrap justify-between'>
+        <div className='flex flex-wrap w-[70%] justify-between'>
           {permissionsList?.map((e) => (
             <div className='flex w-[100%] md:w-[48%] gap-4 items-center' key={e.id}>
               <input
-                type='checkbox'
-                name={e.value}
-                className='rounded-sm'
-                checked={permissions[e.value]}
-                onChange={handleCheckboxChange}
+                type='radio'
+                className='rounded-lg'
+                {...register('permissions', {
+                  required: true
+                })}
+                value={e.value}
               />
               <label>{e.title}</label>
             </div>
           ))}
         </div>
-        <div
-          className={`text-red-500 absolute text-[12px] ${getCheckedPermissions.length == 0 ? 'visible' : 'invisible'}`}
-        >
+        <div className={`text-red-500 absolute text-[12px] ${errors.permissions ? 'visible' : 'invisible'}`}>
           Hãy chọn quyền cho nhân viên
         </div>
       </div>
