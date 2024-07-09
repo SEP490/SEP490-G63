@@ -14,9 +14,10 @@ import { deleteEmployee, getListEmployee } from '~/services/employee.service'
 import EditEmployee from '~/components/Admin/Employee/EditEmployee'
 import Pagination from '~/components/BaseComponent/Pagination/Pagination'
 import Loading from '~/components/shared/Loading/Loading'
-import { useQuery } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 import { AxiosError } from 'axios'
 import useToast from '~/hooks/useToast'
+import LoadingIcon from '~/assets/LoadingIcon'
 
 export interface DataEmployee {
   id?: string
@@ -83,19 +84,20 @@ const Employee = () => {
       refetch()
     }
   }, [page, refetch, size])
-  const handleDeleteEmployee = async () => {
-    try {
-      if (selectedUser) {
-        const data = await deleteEmployee(selectedUser?.id)
-        if (data?.code == '00') {
-          successNotification('Xóa người dùng thành công!!!')
-          refetch()
-          closeAllModal()
-        } else errorNotification('Xóa người dùng thất bại')
+  const deleteQuery = useMutation(deleteEmployee, {
+    onSuccess: (data) => {
+      if (data?.code == '00') {
+        successNotification('Xóa người dùng thành công!!!')
+        refetch()
+        closeAllModal()
       } else errorNotification('Xóa người dùng thất bại')
-    } catch (e) {
-      errorNotification('Xóa người dùng thất bại')
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
     }
+  })
+  const handleDeleteEmployee = async () => {
+    deleteQuery.mutate(selectedUser?.id)
   }
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
@@ -137,7 +139,7 @@ const Employee = () => {
               <PlusIcon className='h-5 w-5' /> Thêm mới nhân viên
             </button>
           </div>
-          <div className='shadow-md sm:rounded-lg my-3  max-h-[73vh] overflow-auto'>
+          <div className='shadow-md sm:rounded-lg my-3 h-fit '>
             <table className='w-full text-sm text-left rtl:text-right text-black dark:text-gray-400 '>
               <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
                 <tr>
@@ -332,7 +334,7 @@ const Employee = () => {
                       <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeAllModal()} />
                     </div>
                   </div>
-                  <ViewEmployee data={selectedUser} onClose={closeAllModal} />
+                  <ViewEmployee data={selectedUser} />
                 </Dialog.Panel>
               </Transition.Child>
             </div>
@@ -420,7 +422,7 @@ const Employee = () => {
                         data-ripple-light='true'
                         onClick={handleDeleteEmployee}
                       >
-                        Xóa
+                        {deleteQuery.isLoading ? <LoadingIcon /> : 'Xóa'}
                       </button>
                     </div>
                   </div>

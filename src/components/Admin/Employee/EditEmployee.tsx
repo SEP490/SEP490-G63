@@ -1,9 +1,12 @@
+import { debounce } from 'lodash'
 import { ChangeEventHandler, EventHandler, useMemo, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useMutation } from 'react-query'
 import LoadingIcon from '~/assets/LoadingIcon'
 import permissionsList from '~/common/const/permissions'
+import { REGEX_ADDRESS, REGEX_CCCD, REGEX_EMAIL, REGEX_NAME, REGEX_PHONE, REGEX_TEXT } from '~/common/const/regexForm'
 import { currentDate } from '~/common/utils/formatDate'
+import TooltipComponent from '~/components/BaseComponent/TooltipComponent'
 import useToast from '~/hooks/useToast'
 import { DataEmployee } from '~/pages/Admin/Employee'
 import { updateProfile } from '~/services/user.service'
@@ -30,6 +33,7 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors }
   } = useForm<FromType>({ defaultValues: { ...data, permissions: data?.permissions?.slice(1, -1) } })
   const { successNotification, errorNotification } = useToast()
@@ -48,48 +52,83 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
   const onSubmit: SubmitHandler<FromType> = async (dataForm) => {
     editEmployee.mutate({ id: data?.id as string, formData: { ...dataForm, permissions: [dataForm.permissions] } })
   }
-  console.log(errors)
-
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
-      className='items-center w-full rounded-lg  flex flex-wrap  justify-between h-fit bg-white z-50 '
+      onSubmit={handleSubmit(debounce(onSubmit, 300))}
+      className='items-center w-full rounded-lg  flex flex-wrap  justify-between bg-white z-50 '
     >
-      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
-          Tên nhân viên <sup className='text-red-500'>*</sup>
+      <div className='w-[100%] sm:w-[48%] md:w-[29%] relative'>
+        <label className=' flex items-center'>
+          <div className='font-bold'>
+            Tên nhân viên <sup className='text-red-500'>*</sup>
+          </div>
+          <TooltipComponent
+            content='Chỉ chứa kí tự chữ cái,khoảng trống, tối thiểu 8 và tối đa 30 kí tự'
+            className='w-4 h-4 cursor-pointer'
+            style='dark'
+          />
         </label>
         <input
           className={`${errors.name ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
           placeholder='Nhập tên nhân viên'
           {...register('name', {
-            required: 'Tên không được bỏ trống'
+            required: 'Tên không được bỏ trống',
+            pattern: {
+              value: REGEX_NAME,
+              message: 'Tên nhân viên không hợp lệ'
+            }
           })}
         />
         <div className={`text-red-500 absolute text-[12px] ${errors.name ? 'visible' : 'invisible'}`}>
           {errors.name?.message}
         </div>
       </div>
-      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
-          Phòng ban<sup className='text-red-500'>*</sup>
+      <div className='w-[100%] sm:w-[48%] md:w-[29%] relative'>
+        <label className=' flex items-center'>
+          <div className='font-bold'>
+            Phòng ban<sup className='text-red-500'>*</sup>
+          </div>
+          <TooltipComponent
+            content='Chỉ chứa kí tự chữ cái,khoảng trống, tối thiểu 2 và tối đa 30 kí tự'
+            className='w-4 h-4 cursor-pointer'
+            style='dark'
+          />
         </label>
         <input
-          className={`${errors.department ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-          {...register('department')}
-          placeholder='Phòng ban'
+          className={`${errors.department ? 'ring-red-600' : ''}  block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+          {...register('department', {
+            required: 'Phòng ban không được bỏ trống',
+            pattern: {
+              value: REGEX_TEXT,
+              message: 'Phòng ban không hợp lệ'
+            }
+          })}
+          placeholder='Phòng ban nhân viên'
         />
         <div className={`text-red-500 absolute text-[12px] ${errors.department ? 'visible' : 'invisible'}`}>
           {errors.department?.message}
         </div>
       </div>
-      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
-          Vị trí<sup className='text-red-500'>*</sup>
+      <div className='w-[100%] sm:w-[48%] md:w-[29%] relative'>
+        <label className=' flex items-center'>
+          <div className='font-bold'>
+            Vị trí <sup className='text-red-500'>*</sup>
+          </div>
+          <TooltipComponent
+            content='Chỉ chứa kí tự chữ cái,khoảng trống, tối thiểu 2 và tối đa 30 kí tự'
+            className='w-4 h-4 cursor-pointer'
+            style='dark'
+          />
         </label>
         <input
           className={`${errors.position ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-          {...register('position')}
+          {...register('position', {
+            required: 'Vị trí không được bỏ trống',
+            pattern: {
+              value: REGEX_TEXT,
+              message: 'Vị trí không hợp lệ'
+            }
+          })}
           placeholder='Nhập vị trí nhân viên'
         />
         <div className={`text-red-500 absolute text-[12px] ${errors.position ? 'visible' : 'invisible'}`}>
@@ -103,9 +142,13 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
         <input
           className={`${errors.email ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
           {...register('email', {
-            required: 'Email không được bỏ trống'
+            required: 'Email không được bỏ trống',
+            pattern: {
+              value: REGEX_EMAIL,
+              message: 'Email không hợp lệ'
+            }
           })}
-          placeholder='Nhập email của nhân viên'
+          placeholder='abc@gmail.com'
         />
         <div className={`text-red-500 absolute text-[12px] ${errors.email ? 'visible' : 'invisible'}`}>
           {errors.email?.message}
@@ -113,41 +156,78 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
       </div>
 
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
-          CCCD/CMT<sup className='text-red-500'>*</sup>
+        <label className=' flex items-center'>
+          <div className='font-bold'>
+            CCCD/CMT <sup className='text-red-500'>*</sup>
+          </div>
+          <TooltipComponent
+            content='Chỉ chứa số và có độ dài 12 ký tự'
+            className='w-4 h-4 cursor-pointer'
+            style='dark'
+          />
         </label>
         <input
           className={`${errors.identificationNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-          {...register('identificationNumber')}
-          placeholder='CCCD/CMT'
+          {...register('identificationNumber', {
+            required: 'CCCD/CMT không được bỏ trống',
+            pattern: {
+              value: REGEX_CCCD,
+              message: 'Số CCCD/CMT không hợp lệ'
+            }
+          })}
+          placeholder='Nhập CCCD/CMT nhân viên'
         />
         <div className={`text-red-500 absolute text-[12px] ${errors.identificationNumber ? 'visible' : 'invisible'}`}>
           {errors.identificationNumber?.message}
         </div>
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
-          Số điện thoại <sup className='text-red-500'>*</sup>
+        <label className=' flex items-center'>
+          <div className='font-bold'>
+            Số điện thoại <sup className='text-red-500'>*</sup>
+          </div>
+          <TooltipComponent
+            content='Bắt đầu bằng 03|05|07|08|09 và có 10 kí tự'
+            className='w-4 h-4 cursor-pointer'
+            style='dark'
+          />
         </label>
         <input
           className={`${errors.phone ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
           {...register('phone', {
-            required: 'Số điện thoại không được bỏ trống'
+            required: 'Số điện thoại không được bỏ trống',
+            pattern: {
+              value: REGEX_PHONE,
+              message: 'Số điện thoại không hợp lệ'
+            }
           })}
-          placeholder='Số điện thoại'
+          placeholder='Nhập số điện thoại nhân viên'
         />
         <div className={`text-red-500 absolute text-[12px] ${errors.phone ? 'visible' : 'invisible'}`}>
           {errors.phone?.message}
         </div>
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
-          Địa chỉ<sup className='text-red-500'>*</sup>
+        <label className=' flex items-center'>
+          <div className='font-bold'>
+            Địa chỉ <sup className='text-red-500'>*</sup>
+          </div>
+          <TooltipComponent
+            content='Chứa ký tự chữ,số và có độ dài 2-80 ký tự'
+            className='w-4 h-4 cursor-pointer'
+            style='dark'
+          />
         </label>
         <input
           className={`${errors.address ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-          {...register('address')}
-          placeholder='Địa chỉ'
+          {...register('address', {
+            required: 'Địa chỉ không được bỏ trống',
+            pattern: {
+              value: REGEX_ADDRESS,
+              message: 'Địa chỉ không hợp lệ'
+            }
+          })}
+          placeholder='Nhập địa chỉ nhân viên'
         />
         <div className={`text-red-500 absolute text-[12px] ${errors.address ? 'visible' : 'invisible'}`}>
           {errors.address?.message}
@@ -192,7 +272,13 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
         <div className='flex flex-wrap w-[70%] justify-between'>
           {permissionsList?.map((e) => (
             <div className='flex w-[100%] md:w-[48%] gap-4 items-center' key={e.id}>
-              <input type='radio' className='rounded-lg' {...register('permissions')} value={e.value} />
+              <input
+                type='radio'
+                className='rounded-lg'
+                {...register('permissions')}
+                defaultChecked={e.value == getValues('permissions')}
+                value={e.value}
+              />
               <label>{e.title}</label>
             </div>
           ))}

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import permissionsList from '~/common/const/permissions'
-import { REGEX_ADDRESS, REGEX_CCCD, REGEX_EMAIL, REGEX_NAME, REGEX_PHONE } from '~/common/const/regexForm'
+import { REGEX_ADDRESS, REGEX_CCCD, REGEX_EMAIL, REGEX_NAME, REGEX_PHONE, REGEX_TEXT } from '~/common/const/regexForm'
 import useToast from '~/hooks/useToast'
 import { createEmployee } from '~/services/employee.service'
 import debounce from 'lodash/debounce'
@@ -9,6 +9,9 @@ import { Button, Tooltip } from 'flowbite-react'
 import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline'
 import TooltipComponent from '~/components/BaseComponent/TooltipComponent'
 import { currentDate } from '~/common/utils/formatDate'
+import { useMutation } from 'react-query'
+import { AxiosError } from 'axios'
+import LoadingIcon from '~/assets/LoadingIcon'
 type FromType = {
   password: string
   address: string
@@ -34,10 +37,11 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
     formState: { errors }
   } = useForm<FromType>()
   const { successNotification, errorNotification } = useToast()
-
-  const onSubmit: SubmitHandler<FromType> = async (data) => {
-    try {
-      const response = await createEmployee({ ...data, permissions: [data.permissions] })
+  const addNewEmployeeQuery = useMutation(createEmployee, {
+    onError: (error: AxiosError<{ message: string }>) => {
+      errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
+    },
+    onSuccess: (response) => {
       if (response.code == '00') {
         successNotification('Tạo nhân viên mới thành công')
         closeModal()
@@ -45,10 +49,10 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
       } else {
         errorNotification('Số điện thoại hoặc email đã được sử dụng')
       }
-    } catch (e) {
-      console.log(e)
-      errorNotification('Lỗi hệ thống')
     }
+  })
+  const onSubmit: SubmitHandler<FromType> = async (data) => {
+    addNewEmployeeQuery.mutate({ ...data, permissions: [data.permissions] })
   }
 
   return (
@@ -63,7 +67,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
           </div>
           <TooltipComponent
             content='Chỉ chứa kí tự chữ cái,khoảng trống, tối thiểu 8 và tối đa 30 kí tự'
-            className='w-5 h-5 cursor-pointer'
+            className='w-4 h-4 cursor-pointer'
             style='dark'
           />
         </label>
@@ -83,28 +87,50 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
         </div>
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] relative'>
-        <label className='font-bold '>
-          Phòng ban<sup className='text-red-500'>*</sup>
+        <label className=' flex items-center'>
+          <div className='font-bold'>
+            Phòng ban<sup className='text-red-500'>*</sup>
+          </div>
+          <TooltipComponent
+            content='Chỉ chứa kí tự chữ cái,khoảng trống, tối thiểu 2 và tối đa 30 kí tự'
+            className='w-4 h-4 cursor-pointer'
+            style='dark'
+          />
         </label>
         <input
           className={`${errors.department ? 'ring-red-600' : ''}  block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
           {...register('department', {
-            required: 'Phòng ban không được bỏ trống'
+            required: 'Phòng ban không được bỏ trống',
+            pattern: {
+              value: REGEX_TEXT,
+              message: 'Phòng ban không hợp lệ'
+            }
           })}
-          placeholder='Nhập phòng ban nhân viên'
+          placeholder='Phòng ban nhân viên'
         />
         <div className={`text-red-500 absolute text-[12px] ${errors.department ? 'visible' : 'invisible'}`}>
           {errors.department?.message}
         </div>
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] relative'>
-        <label className='font-bold '>
-          Vị trí<sup className='text-red-500'>*</sup>
+        <label className=' flex items-center'>
+          <div className='font-bold'>
+            Vị trí <sup className='text-red-500'>*</sup>
+          </div>
+          <TooltipComponent
+            content='Chỉ chứa kí tự chữ cái,khoảng trống, tối thiểu 2 và tối đa 30 kí tự'
+            className='w-4 h-4 cursor-pointer'
+            style='dark'
+          />
         </label>
         <input
           className={`${errors.position ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
           {...register('position', {
-            required: 'Vị trí không được bỏ trống'
+            required: 'Vị trí không được bỏ trống',
+            pattern: {
+              value: REGEX_TEXT,
+              message: 'Vị trí không hợp lệ'
+            }
           })}
           placeholder='Nhập vị trí nhân viên'
         />
@@ -125,15 +151,22 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
               message: 'Email không hợp lệ'
             }
           })}
-          placeholder='Nhập email của nhân viên'
+          placeholder='abc@gmail.com'
         />
         <div className={`text-red-500 absolute text-[12px] ${errors.email ? 'visible' : 'invisible'}`}>
           {errors.email?.message}
         </div>
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
-          CCCD/CMT <sup className='text-red-500'>*</sup>
+        <label className=' flex items-center'>
+          <div className='font-bold'>
+            CCCD/CMT <sup className='text-red-500'>*</sup>
+          </div>
+          <TooltipComponent
+            content='Chỉ chứa số và có độ dài 12 ký tự'
+            className='w-4 h-4 cursor-pointer'
+            style='dark'
+          />
         </label>
         <input
           className={`${errors.identificationNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
@@ -151,8 +184,15 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
         </div>
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
-          Số điện thoại <sup className='text-red-500'>*</sup>
+        <label className=' flex items-center'>
+          <div className='font-bold'>
+            Số điện thoại <sup className='text-red-500'>*</sup>
+          </div>
+          <TooltipComponent
+            content='Bắt đầu bằng 03|05|07|08|09 và có 10 kí tự'
+            className='w-4 h-4 cursor-pointer'
+            style='dark'
+          />
         </label>
         <input
           className={`${errors.phone ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
@@ -170,8 +210,15 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
         </div>
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
-          Địa chỉ<sup className='text-red-500'>*</sup>
+        <label className=' flex items-center'>
+          <div className='font-bold'>
+            Địa chỉ <sup className='text-red-500'>*</sup>
+          </div>
+          <TooltipComponent
+            content='Chứa ký tự chữ,số và có độ dài 2-80 ký tự'
+            className='w-4 h-4 cursor-pointer'
+            style='dark'
+          />
         </label>
         <input
           className={`${errors.address ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
@@ -227,11 +274,10 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
             <div className='relative flex w-[100%] md:w-[48%] gap-4 items-center' key={e.id}>
               <input
                 type='radio'
-                {...register('permissions', {
-                  required: true
-                })}
+                {...register('permissions')}
                 className='rounded-lg'
                 value={e.value}
+                defaultChecked={e.value == 'SALE'}
               />
               <label className='flex items-center gap-1'>
                 {e.title}
@@ -240,9 +286,6 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
             </div>
           ))}
         </div>
-        <div className={`text-red-500 absolute text-[12px] ${errors.permissions ? 'visible' : 'invisible'}`}>
-          Hãy chọn quyền cho nhân viên
-        </div>
       </div>
       <div className='w-full flex justify-end'>
         <button
@@ -250,7 +293,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
           className='middle my-3 none center mr-4 rounded-lg bg-[#0070f4] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
           data-ripple-light='true'
         >
-          Thêm
+          {addNewEmployeeQuery.isLoading ? <LoadingIcon /> : 'Thêm'}
         </button>
       </div>
     </form>
