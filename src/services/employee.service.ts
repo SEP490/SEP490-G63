@@ -2,7 +2,6 @@ import axiosInstant, { adminInstance } from '../config/axiosConfig.ts'
 interface EmployeeData {
   name: string
   email: string
-  password: string
   phone: string
   position: string
   department: string
