@@ -44,7 +44,10 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch }: IProps) => {
         setSelectedTo([{ label: response.object.createdBy, value: response.object.createdBy }])
         setSelectedCc([{ label: response.object.approvedBy, value: response.object.approvedBy }])
       } else if (status == 7) {
-        setSelectedCc([{ label: response.object.approvedBy, value: response.object.approvedBy }])
+        setSelectedCc([
+          { label: response.object.createdBy, value: response.object.createdBy },
+          { label: response.object.approvedBy, value: response.object.approvedBy }
+        ])
       } else if (status == 9) {
         setSelectedTo([{ label: response.object.createdBy, value: response.object.createdBy }])
         setSelectedCc([{ label: response.object.approvedBy, value: response.object.approvedBy }])
@@ -135,7 +138,6 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch }: IProps) => {
       setLoadingSubmit(false)
     }
   }
-  console.log(editorData)
 
   if (loading || loadingSALE || loadingAO || loadingAdmin || loadingSubmit) return <LoadingPage />
   return (
