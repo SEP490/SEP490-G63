@@ -8,6 +8,7 @@ import debounce from 'lodash/debounce'
 import { Button, Tooltip } from 'flowbite-react'
 import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline'
 import TooltipComponent from '~/components/BaseComponent/TooltipComponent'
+import { currentDate } from '~/common/utils/formatDate'
 type FromType = {
   password: string
   address: string
@@ -19,10 +20,9 @@ type FromType = {
   name: string
   phone: string
   position: string
+  permissions: string
 }
-interface CheckBoxValue {
-  [value: string]: boolean
-}
+
 interface IProp {
   closeModal: () => void
   refetch: any
@@ -34,36 +34,20 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
     formState: { errors }
   } = useForm<FromType>()
   const { successNotification, errorNotification } = useToast()
-  const [permissions, setPermissions] = useState(
-    permissionsList.reduce((acc: CheckBoxValue, permission) => {
-      acc[permission.value] = false
-      return acc
-    }, {})
-  )
-  const handleCheckboxChange = (event: any) => {
-    const { name, checked } = event.target
-    setPermissions((prevPermissions) => ({
-      ...prevPermissions,
-      [name]: checked
-    }))
-  }
-  const getCheckedPermissions = useMemo(() => {
-    return Object.keys(permissions).filter((permission) => permissions[permission])
-  }, [permissions])
+
   const onSubmit: SubmitHandler<FromType> = async (data) => {
     try {
-      if (getCheckedPermissions.length != 0) {
-        const response = await createEmployee({ ...data, permissions: getCheckedPermissions, password: 'Tdocman123' })
-        if (response.code == '00') {
-          successNotification('Tạo nhân viên mới thành công')
-          closeModal()
-          refetch()
-        } else {
-          errorNotification('Số điện thoại hoặc email đã được sử dụng')
-        }
-      } else errorNotification('Vui lòng chọn quyền cho nhân viên mới')
-    } catch (error) {
-      console.log(error)
+      const response = await createEmployee({ ...data, permissions: [data.permissions] })
+      if (response.code == '00') {
+        successNotification('Tạo nhân viên mới thành công')
+        closeModal()
+        refetch()
+      } else {
+        errorNotification('Số điện thoại hoặc email đã được sử dụng')
+      }
+    } catch (e) {
+      console.log(e)
+      errorNotification('Lỗi hệ thống')
     }
   }
 
@@ -212,7 +196,11 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
           type='date'
           className={`${errors.dob ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
           {...register('dob', {
-            required: 'Ngày sinh không được bỏ trống'
+            required: 'Ngày sinh không được bỏ trống',
+            max: {
+              value: currentDate(),
+              message: 'Ngày sinh không hợp lệ'
+            }
           })}
         />
         <div className={`text-red-500 absolute text-[12px] ${errors.dob ? 'visible' : 'invisible'}`}>
@@ -234,16 +222,16 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
         <label className='font-bold '>
           Quyền<sup className='text-red-500'>*</sup>
         </label>
-        <div className='flex flex-wrap justify-between'>
+        <div className='flex flex-wrap w-[70%] justify-between'>
           {permissionsList?.map((e) => (
             <div className='relative flex w-[100%] md:w-[48%] gap-4 items-center' key={e.id}>
               <input
-                type='checkbox'
-                name={e.value}
-                className='rounded-sm'
-                disabled={getCheckedPermissions.length != 0 && !permissions[e.value]}
-                checked={permissions[e.value]}
-                onChange={handleCheckboxChange}
+                type='radio'
+                {...register('permissions', {
+                  required: true
+                })}
+                className='rounded-lg'
+                value={e.value}
               />
               <label className='flex items-center gap-1'>
                 {e.title}
@@ -252,9 +240,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
             </div>
           ))}
         </div>
-        <div
-          className={`text-red-500 absolute text-[12px] ${getCheckedPermissions.length == 0 ? 'visible' : 'invisible'}`}
-        >
+        <div className={`text-red-500 absolute text-[12px] ${errors.permissions ? 'visible' : 'invisible'}`}>
           Hãy chọn quyền cho nhân viên
         </div>
       </div>
