@@ -1,6 +1,8 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const Contact = () => {
+  const navigate = useNavigate()
   return (
     <>
       <span id='contact'></span>
@@ -17,8 +19,8 @@ const Contact = () => {
             </div>
             <div className='grid place-items-center'>
               <a
-                href='#'
-                className='rounded inline-block font-semibold py-2 px-6 bg-white text-teal-500 hover:bg-cyan-500 hover:text-white duration-200 tracking-widest uppercase '
+                onClick={() => navigate('/register')}
+                className='cursor-pointer rounded inline-block font-semibold py-2 px-6 bg-white text-teal-500 hover:bg-cyan-500 hover:text-white duration-200 tracking-widest uppercase '
               >
                 Đăng ký ngay
               </a>

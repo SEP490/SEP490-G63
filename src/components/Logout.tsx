@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { removeAccessToken } from '~/config/accessToken'
-import { useAuth } from '~/provider/authProvider'
+import { useAuth } from '~/context/authProvider'
 
 const Logout = () => {
   const navigate = useNavigate()

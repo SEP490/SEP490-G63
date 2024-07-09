@@ -33,6 +33,12 @@ export const routerAdmin = [
     title: 'Hợp đồng mẫu',
     slug: '/template-contract',
     icon: <ClipboardDocumentListIcon className='h-4 w-4' />
+  },
+  {
+    id: 6,
+    title: 'Loại hợp đồng',
+    slug: '/type-contract',
+    icon: <ClipboardDocumentListIcon className='h-4 w-4' />
   }
 ]
 export const routerAdminOfficer = [
@@ -65,6 +71,12 @@ export const routerAdminOfficer = [
     title: 'Hợp đồng mẫu',
     slug: '/template-contract',
     icon: <ClipboardDocumentListIcon className='h-4 w-4' />
+  },
+  {
+    id: 6,
+    title: 'Loại hợp đồng',
+    slug: '/type-contract',
+    icon: <ClipboardDocumentListIcon className='h-4 w-4' />
   }
 ]
 export const routerSale = [
@@ -84,6 +96,12 @@ export const routerSale = [
     id: 5,
     title: 'Hợp đồng mẫu',
     slug: '/template-contract',
+    icon: <ClipboardDocumentListIcon className='h-4 w-4' />
+  },
+  {
+    id: 6,
+    title: 'Loại hợp đồng',
+    slug: '/type-contract',
     icon: <ClipboardDocumentListIcon className='h-4 w-4' />
   }
 ]

@@ -10,6 +10,7 @@ import ItemNewContract from '~/components/Admin/SearchResult/ItemNewContract'
 import ItemOldContract from '~/components/Admin/SearchResult/ItemOldContract'
 import Pagination from '~/components/BaseComponent/Pagination/Pagination'
 import { XMarkIcon } from '@heroicons/react/24/outline'
+import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
 type FormData = {
   searchText: string
   fieldSearch: string
@@ -20,7 +21,7 @@ const SearchPageResult = () => {
   const refForm = useRef<any>()
   const [totalPage, setTotalPage] = useState(1)
   const [page, setPage] = useState(0)
-  const [size, setSize] = useState(5)
+  const [size, setSize] = useState(10)
   const [data, setData] = useState<any>()
   const { register, handleSubmit, getValues, setValue } = useForm<FormData>({
     defaultValues: { fieldSearch, searchText }
@@ -41,7 +42,7 @@ const SearchPageResult = () => {
   const handlePageChange = (page: any) => {
     setPage(page - 1)
   }
-  if (searchQuery.isLoading || searchQuery.isIdle) return <Loading />
+  if (searchQuery.isLoading || searchQuery.isIdle) return <LoadingPage />
   return (
     <div className=' h-full'>
       <div className='flex items-center justify-start gap-5 shadow-lg bg-[url(https://i.ibb.co/QMrFzkS/wallpaperflare-com-wallpaper-13.jpg)] bg-cover h-[100px]'>

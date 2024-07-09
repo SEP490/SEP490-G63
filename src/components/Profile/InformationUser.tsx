@@ -2,7 +2,7 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import avatar from '../../assets/images/avatar1.png'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { getUserDetail, updateProfile } from '~/services/user.service'
-import { useAuth } from '~/provider/authProvider'
+import { useAuth } from '~/context/authProvider'
 import useToast from '~/hooks/useToast'
 import Loading from '~/components/shared/Loading/Loading'
 import moment from 'moment'
@@ -65,7 +65,6 @@ const InformationUser = () => {
       errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
     }
   })
-
   useEffect(() => {
     if (data?.object) {
       reset({
@@ -157,7 +156,7 @@ const InformationUser = () => {
                   className={`${errors.name ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
                   placeholder='Nhập tên nhân viên'
                   {...register('name', {
-                    required: 'This field cannot be left blank'
+                    required: 'Tên nhân viên không được để trống'
                   })}
                 />
                 <div className={`text-red-500 absolute text-[12px] ${errors.name ? 'visible' : 'invisible'}`}>
@@ -165,18 +164,34 @@ const InformationUser = () => {
                 </div>
               </div>
               <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-                <label className='font-semibold text-xs'>Phòng ban</label>
+                <label className='font-semibold text-xs'>
+                  Phòng ban<sup className='text-red-500'>*</sup>
+                </label>
                 <input
-                  className={`block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-                  {...register('department')}
+                  className={`${errors.department ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+                  placeholder='Phòng ban'
+                  {...register('department', {
+                    required: 'Phòng ban không được để trống'
+                  })}
                 />
+                <div className={`text-red-500 absolute text-[12px] ${errors.department ? 'visible' : 'invisible'}`}>
+                  {errors.department?.message}
+                </div>
               </div>
               <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-                <label className='font-semibold text-xs'>Vị trí</label>
+                <label className='font-semibold text-xs'>
+                  Vị trí<sup className='text-red-500'>*</sup>
+                </label>
                 <input
-                  className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-                  {...register('position')}
+                  className={`${errors.position ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+                  placeholder='Nhập vị trí của nhân viên'
+                  {...register('position', {
+                    required: 'Vị trí không được để trống'
+                  })}
                 />
+                <div className={`text-red-500 absolute text-[12px] ${errors.position ? 'visible' : 'invisible'}`}>
+                  {errors.position?.message}
+                </div>
               </div>
               <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
                 <label className='font-semibold text-xs'>
@@ -190,39 +205,74 @@ const InformationUser = () => {
                 />
               </div>
               <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-                <label className='font-semibold text-xs'>CCCD/CMT</label>
+                <label className='font-semibold text-xs'>
+                  CCCD/CMT<sup className='text-red-500'>*</sup>
+                </label>
                 <input
-                  className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-                  {...register('identificationNumber')}
+                  className={`${errors.identificationNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+                  placeholder='CCCD/CMT'
+                  {...register('identificationNumber', {
+                    required: 'CCCD/CMT không được để trống'
+                  })}
                 />
+                <div
+                  className={`text-red-500 absolute text-[12px] ${errors.identificationNumber ? 'visible' : 'invisible'}`}
+                >
+                  {errors.identificationNumber?.message}
+                </div>
               </div>
               <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-                <label className='font-semibold text-xs'>Số điện thoại</label>
+                <label className='font-semibold text-xs'>
+                  Số điện thoại<sup className='text-red-500'>*</sup>
+                </label>
                 <input
-                  className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-                  {...register('phone')}
+                  className={`${errors.phone ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+                  placeholder='Số điện thoại'
+                  {...register('phone', {
+                    required: 'SĐT không được để trống'
+                  })}
                 />
+                <div className={`text-red-500 absolute text-[12px] ${errors.phone ? 'visible' : 'invisible'}`}>
+                  {errors.phone?.message}
+                </div>
               </div>
               <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-                <label className='font-semibold text-xs'>Địa chỉ</label>
+                <label className='font-semibold text-xs'>
+                  Địa chỉ<sup className='text-red-500'>*</sup>
+                </label>
                 <input
-                  className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-                  {...register('address')}
+                  className={`${errors.address ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+                  placeholder='Địa chỉ'
+                  {...register('address', {
+                    required: 'Địa chỉ không được để trống'
+                  })}
                 />
+                <div className={`text-red-500 absolute text-[12px] ${errors.address ? 'visible' : 'invisible'}`}>
+                  {errors.address?.message}
+                </div>
               </div>
               <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-                <label className='font-semibold text-xs'>Ngày sinh</label>
+                <label className='font-semibold text-xs'>
+                  Ngày sinh<sup className='text-red-500'>*</sup>
+                </label>
 
                 <input
                   type='date'
-                  className={`text-xs block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-                  {...register('dob')}
+                  className={`${errors.dob ? 'ring-red-600' : ''} text-xs block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+                  {...register('dob', {
+                    required: 'Ngày sinh không được để trống'
+                  })}
                 />
+                <div className={`text-red-500 absolute text-[12px] ${errors.dob ? 'visible' : 'invisible'}`}>
+                  {errors.dob?.message}
+                </div>
               </div>
               <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-                <label className='font-semibold text-xs'>Giới tính</label>
+                <label className='font-semibold text-xs'>
+                  Giới tính<sup className='text-red-500'>*</sup>
+                </label>
                 <select
-                  className={`text-xs block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+                  className={` text-xs block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
                   {...register('gender')}
                 >
                   <option value={'true'}>Nam</option>
@@ -232,7 +282,7 @@ const InformationUser = () => {
               <div className='w-full flex justify-end'>
                 <button
                   type='submit'
-                  className='middle my-3 none center mr-4 text-xs rounded-lg bg-[#0070f4] py-2 px-4 font-sans font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
+                  className='middle my-6 none center mr-4 text-xs rounded-lg bg-[#0070f4] py-2 px-4 font-sans font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
                   data-ripple-light='true'
                 >
                   Lưu

@@ -2,7 +2,6 @@ import axiosInstant, { adminInstance } from '../config/axiosConfig.ts'
 interface EmployeeData {
   name: string
   email: string
-  password: string
   phone: string
   position: string
   department: string
@@ -32,7 +31,7 @@ export const createEmployee = async (data: EmployeeData) => {
 }
 
 export const getListEmployee = async ({ size, page, name }: QueryDataGet) => {
-  const response = await axiosInstant.get(`user/search?page=${page}&size=${size}&name=${name}`)
+  const response = await axiosInstant.get(`user/search?page=${page}&size=${size}&name=${name}&status=ACTIVE`)
 
   return response.data
 }

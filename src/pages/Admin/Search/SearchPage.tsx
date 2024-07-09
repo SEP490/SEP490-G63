@@ -14,12 +14,12 @@ const SearchPage = () => {
   const [fieldSearch, setFieldSearch] = useState('contract')
   const { register, handleSubmit } = useForm<FormData>()
   return (
-    <div className='w-full h-full flex flex-col justify-between pb-6 bg-[url(https://i.ibb.co/TgSZgBs/wallpaperflare-com-wallpaper-3.jpg)] bg-no-repeat bg-cover'>
+    <div className='w-full h-full flex flex-col justify-between pb-6 bg-white'>
       <div className='w-full'>
         <div className='flex flex-col justify-center items-center mt-[20vh] select-none'>
           <img src={logo} alt='logo' className='w-[80px] md:w-[100px]' />
           <div
-            className=' bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-blue-800 text-[32px] md:text-[48px] cursor-pointer'
+            className=' bg-clip-text font-bold text-transparent bg-gradient-to-r from-blue-500 to-blue-800 text-[32px] md:text-[48px] cursor-pointer'
             onClick={() => navigate('/')}
           >
             TDocman

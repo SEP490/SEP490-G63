@@ -1,5 +1,5 @@
 import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom'
-import { useAuth } from '../provider/authProvider'
+import { useAuth } from '../context/authProvider.tsx'
 import { ProtectedRoute } from './ProtectedRouter.tsx'
 import { lazy, Suspense } from 'react'
 import Error from '~/components/shared/Error/Error.tsx'
@@ -18,9 +18,9 @@ import StaffOfficer from '~/middleware/StaffOfficer/index.tsx'
 import Dashboard from '~/pages/Admin/Dashboard.tsx'
 import SendMailUpdateStatus from '~/components/Admin/NewContract/SendMailUpdateSatatus.tsx'
 import LoadingPage from '~/components/shared/LoadingPage/LoadingPage.tsx'
+import TypeContract from '~/pages/Admin/TypeContract.tsx'
 const Login = lazy(() => import('~/components/Login.tsx'))
 const Logout = lazy(() => import('~/components/Logout.tsx'))
-const Example = lazy(() => import('~/pages/Example.tsx'))
 const Employee = lazy(() => import('~/pages/Admin/Employee.tsx'))
 const Register = lazy(() => import('~/components/Register.tsx'))
 const Home = lazy(() => import('~/pages/landing_page/Home.tsx'))
@@ -34,6 +34,7 @@ const SendMailContract = lazy(() => import('~/components/Admin/NewContract/SendM
 const ViewSignContract = lazy(() => import('~/pages/BasePage/ViewSignContract.tsx'))
 const SearchPage = lazy(() => import('~/pages/Admin/Search/SearchPage.tsx'))
 const SearchPageResult = lazy(() => import('~/pages/Admin/Search/SearchPageResult.tsx'))
+const DashboardSale = lazy(() => import('~/components/Dashboard/DashboardSale.tsx'))
 const Routes = () => {
   const { token, user } = useAuth()
   let routes: Array<any>
@@ -128,6 +129,16 @@ const Routes = () => {
             <Suspense fallback={<LoadingPage />}>
               <AdminLayout>
                 <TemplateContract />
+              </AdminLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/type-contract',
+          element: (
+            <Suspense fallback={<LoadingPage />}>
+              <AdminLayout>
+                <TypeContract />
               </AdminLayout>
             </Suspense>
           )
@@ -238,6 +249,30 @@ const Routes = () => {
           )
         },
         {
+          path: '/type-contract',
+          element: (
+            <Suspense fallback={<LoadingPage />}>
+              <UserLayout>
+                <AdminOfficer>
+                  <TypeContract />
+                </AdminOfficer>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/view/:id/sign/:customer',
+          element: (
+            <Suspense fallback={<LoadingPage />}>
+              <UserLayout>
+                <AdminOfficer>
+                  <ViewSignContract />
+                </AdminOfficer>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
           path: '/employee',
           element: (
             <Suspense fallback={<LoadingPage />}>
@@ -333,7 +368,7 @@ const Routes = () => {
             <Suspense fallback={<LoadingPage />}>
               <UserLayout>
                 <Sale>
-                  <SearchPage />
+                  <DashboardSale />
                 </Sale>
               </UserLayout>
             </Suspense>
@@ -346,6 +381,18 @@ const Routes = () => {
               <UserLayout>
                 <Sale>
                   <Profile />
+                </Sale>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/view/:id/sign/:customer',
+          element: (
+            <Suspense fallback={<LoadingPage />}>
+              <UserLayout>
+                <Sale>
+                  <ViewSignContract />
                 </Sale>
               </UserLayout>
             </Suspense>
@@ -376,12 +423,12 @@ const Routes = () => {
           )
         },
         {
-          path: '/send/:id/:status',
+          path: '/type-contract',
           element: (
             <Suspense fallback={<LoadingPage />}>
               <UserLayout>
                 <Sale>
-                  <SendMailUpdateStatus />
+                  <TypeContract />
                 </Sale>
               </UserLayout>
             </Suspense>

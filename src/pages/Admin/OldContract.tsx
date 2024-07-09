@@ -11,12 +11,13 @@ import UploadFile from '~/components/BaseComponent/Uploadfile/UploadFile'
 import Loading from '~/components/shared/Loading/Loading'
 import useToast from '~/hooks/useToast'
 import { deleteOldContract, getOldContract } from '~/services/contract.service'
+import { getContractType } from '~/services/type-contract.service'
 
 const OldContract = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [data, setData] = useState<any>(null)
   const [page, setPage] = useState(0)
-  const [size, setSize] = useState(5)
+  const [size, setSize] = useState(10)
   const [totalPage, setTotalPage] = useState(1)
   const [deleteModal, setDeleteModal] = useState(false)
   const [selectedContract, setSelectedContract] = useState<any>(null)
@@ -43,10 +44,14 @@ const OldContract = () => {
       if (response.code == '00') {
         successNotification('Xóa thành công')
         handleCloseModal()
+        refetch()
       }
     }
   }
 
+  const { data: typeContract, isLoading: loadingTypeContract } = useQuery('type-contract', () =>
+    getContractType({ page: 0, size: 100 })
+  )
   const { isLoading, refetch, isFetching } = useQuery(
     ['old-contract-list', page, size],
     () => getOldContract(page, size),
@@ -67,7 +72,6 @@ const OldContract = () => {
       refetch()
     }
   }, [page, refetch, size])
-
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex flex-wrap py-4'>
@@ -109,30 +113,36 @@ const OldContract = () => {
             </button>
           </div>
           <div className=' overflow-x-auto shadow-md sm:rounded-sm my-3  max-h-[75vh]'>
-            <Loading loading={isFetching || isLoading}>
-              <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
-                <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 shadow-md'>
-                  <tr>
-                    <th className='px-3 py-3'>STT</th>
-                    <th className='px-3 py-3'>Tên hợp đồng</th>
-                    <th className='px-3 py-3'>Ngày kí</th>
-                    <th className='px-3 py-3'>Ngày bắt đầu</th>
-                    <th className='px-3 py-3'>Ngày kết thúc</th>
-                    <th className='px-3 py-3' align='center'>
-                      Xem chi tiết
-                    </th>
-                    <th className='px-3 py-3'></th>
-                  </tr>
-                </thead>
+            <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
+              <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 shadow-md'>
+                <tr>
+                  <th className='px-3 py-3'>STT</th>
+                  <th className='px-3 py-3'>Tên hợp đồng</th>
+                  <th className='px-3 py-3'>Loại hợp đồng</th>
+                  <th className='px-3 py-3'>Ngày kí</th>
+                  <th className='px-3 py-3'>Ngày bắt đầu</th>
+                  <th className='px-3 py-3'>Ngày kết thúc</th>
+                  <th className='px-3 py-3' align='center'>
+                    Xem chi tiết
+                  </th>
+                  <th className='px-3 py-3'></th>
+                </tr>
+              </thead>
 
-                <tbody className='w-full '>
-                  {data?.content?.map((d: any, index: number) => (
+              <tbody className='w-full '>
+                {!isLoading &&
+                  !isFetching &&
+                  !loadingTypeContract &&
+                  data?.content?.map((d: any, index: number) => (
                     <tr
                       key={d.id}
                       className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
                     >
                       <td className='px-3 py-4'>{page * size + index + 1}</td>
                       <td className='px-3 py-4'>{d.contractName}</td>
+                      <td className='px-3 py-4'>
+                        {typeContract?.content?.find((t: any) => t.id == d.contractTypeId)?.title}
+                      </td>
                       <td className='px-3 py-4'>
                         {d.contractSignDate ? moment(d.contractSignDate).format('DD/MM/YYYY') : ''}
                       </td>
@@ -167,19 +177,23 @@ const OldContract = () => {
                       </td>
                     </tr>
                   ))}
-                </tbody>
-              </table>
-              {(!data || data?.content?.length == 0) && (
-                <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'>
-                  <div className='flex flex-col justify-center items-center opacity-60'>
-                    <DocumentIcon />
-                    Bạn chưa tải lên hợp đồng cũ
-                  </div>
+              </tbody>
+            </table>
+            {(isLoading || isFetching || loadingTypeContract) && (
+              <Loading loading={isLoading || isFetching}>
+                <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'></div>
+              </Loading>
+            )}
+            {!isLoading && !isFetching && !loadingTypeContract && (!data || data?.content?.length == 0) && (
+              <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'>
+                <div className='flex flex-col justify-center items-center opacity-60'>
+                  <DocumentIcon />
+                  Bạn chưa tải lên hợp đồng cũ
                 </div>
-              )}
-            </Loading>
+              </div>
+            )}
           </div>
-          {data && data?.content?.length != 0 && (
+          {!isLoading && !isFetching && !loadingTypeContract && data && data?.content?.length != 0 && (
             <Pagination
               totalPages={totalPage}
               currentPage={page + 1}
@@ -220,7 +234,7 @@ const OldContract = () => {
                   <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
                     Tải lên
                   </Dialog.Title>
-                  <UploadFile handleCloseModal={handleCloseModal} />
+                  <UploadFile handleCloseModal={handleCloseModal} refetch={refetch} />
                 </Dialog.Panel>
               </Transition.Child>
             </div>

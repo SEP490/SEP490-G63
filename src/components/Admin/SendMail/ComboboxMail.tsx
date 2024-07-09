@@ -1,6 +1,6 @@
 import AsyncCreatableSelect from 'react-select/async-creatable'
 import useToast from '~/hooks/useToast'
-import { validateEmail } from '~/utils/checkMail'
+import { validateEmail } from '~/common/utils/checkMail'
 
 const AsyncCreatableSelectComponent = ({ selected, setSelected, option }: any) => {
   const { errorNotification } = useToast()

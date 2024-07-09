@@ -12,7 +12,7 @@ import { getNewContractByIdNotToken } from '~/services/contract.service'
 import logo from '../../assets/svg/Tdocman.svg'
 import { useForm } from 'react-hook-form'
 import useToast from '~/hooks/useToast'
-import { useAuth } from '~/provider/authProvider'
+import { useAuth } from '~/context/authProvider'
 import { ADMIN } from '~/common/const/role'
 import Loading from '~/components/shared/Loading/Loading'
 type FormType = {
@@ -50,6 +50,8 @@ const ViewSignContract = () => {
       errorNotification('Lỗi hệ thống!!')
     }
   }
+  console.log(data)
+
   const handleGetOpt = async () => {
     const result = await trigger('email')
     if (result) {
@@ -207,6 +209,8 @@ const ViewSignContract = () => {
                     customer={customer}
                     comment={commentRef.current?.value}
                     refetch={refetch}
+                    to={data?.object?.createdBy}
+                    cc={data?.object?.approvedBy}
                     setModalSign={setModalSign}
                   />
                 </Dialog.Panel>

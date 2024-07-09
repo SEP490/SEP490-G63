@@ -10,6 +10,9 @@ import 'react-datepicker/dist/react-datepicker.css'
 import moment from 'moment'
 import { Controller, useForm } from 'react-hook-form'
 import { Dialog, Transition } from '@headlessui/react'
+import { useQuery } from 'react-query'
+import { getContractType } from '~/services/type-contract.service'
+import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
 interface Iprops {
   files: any[]
   handleCloseModal: () => void
@@ -17,6 +20,7 @@ interface Iprops {
   inputPdfRef: any
   fileType: any
   setFiles: any
+  refetch: any
 }
 export interface Item {
   id: number
@@ -24,12 +28,14 @@ export interface Item {
   base64: string
 }
 
-const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileType, setFiles }: Iprops) => {
+const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileType, setFiles, refetch }: Iprops) => {
   const [listUrl, setListUrl] = useState<any>()
   const [pdfUrl, setPdfUrl] = useState<any>()
   const { successNotification, errorNotification } = useToast()
   const [isSubmit, setIsSubmit] = useState(false)
-
+  const { data: typeContract, isLoading: loadingTypeContract } = useQuery('type-contract', () =>
+    getContractType({ page: 0, size: 100 })
+  )
   const getBase64 = (file: any) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader()
@@ -85,36 +91,48 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
     )
   }, [])
   const handleOcrFile = async (data: any) => {
-    if (listUrl.length > 0) {
+    if (files?.length > 0) {
       try {
         setIsSubmit(true)
-
-        const doOCR = async (images: any) => {
-          const worker = await createWorker('vie', 1)
-          const {
-            data: { text }
-          } = await worker.recognize(images)
-          return text
-        }
-        const dataScrip = await Promise.all(listUrl.map(async (d: any) => doOCR(d.file)))
         const formData = new FormData()
-        formData.append(
-          'content',
-          dataScrip.reduce((re, d) => re + d, '')
-        )
+        if (fileType == 'img') {
+          const doOCR = async (images: any) => {
+            const worker = await createWorker('vie', 1)
+            const {
+              data: { text }
+            } = await worker.recognize(images)
+            return text
+          }
+          const dataScrip = await Promise.all(listUrl.map(async (d: any) => doOCR(d.file)))
+
+          formData.append(
+            'content',
+            dataScrip.reduce((re, d) => re + d, '')
+          )
+        }
+
         formData.append('contractName', data.contractName)
+        formData.append('contractTypeId', data.contractTypeId)
         formData.append('contractStartDate', moment(data.contractStartDate).format('DD/MM/YYYY'))
         formData.append('contractEndDate', moment(data.contractEndDate).format('DD/MM/YYYY'))
         formData.append('contractSignDate', moment(data.contractSignDate).format('DD/MM/YYYY'))
-        listUrl.forEach((e: any) => {
-          formData.append('images', e.file)
-        })
+        if (fileType == 'img')
+          listUrl?.forEach((e: any) => {
+            formData.append('images', e.file)
+          })
+        else {
+          formData.append('images', files[0])
+        }
         const response = await createOldContract(formData)
+        console.log(response)
         if (response.code == '00' && response.object) {
           successNotification('Tải lên hợp đồng cũ thành công')
           handleCloseModal()
+          refetch()
         } else errorNotification('Tải lên thất bại')
       } catch (e) {
+        console.log(e)
+
         errorNotification('Tải lên thất bại')
       } finally {
         setIsSubmit(false)
@@ -127,13 +145,16 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
   const {
     control,
     handleSubmit,
+    register,
     formState: { errors }
   } = useForm()
 
   const onSubmit = (data: any) => {
+    console.log(data)
+
     handleOcrFile(data)
   }
-
+  if (loadingTypeContract) return <LoadingPage />
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -161,6 +182,25 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
             className={`text-red-500 absolute text-[12px] bottom-0 translate-y-full ${errors.contractName ? 'visible' : 'invisible'}`}
           >
             Tên hợp đồng không được để trống
+          </div>
+        </div>
+        <div className='flex flex-col w-full md:w-[48%] relative'>
+          <label>
+            Loại hợp đồng <sup className='text-red-700'>*</sup>
+          </label>
+
+          <select
+            {...register('contractTypeId', { required: true })}
+            disabled={isSubmit}
+            className='w-full py-2 px-3 text-xs text-gray-900 border border-gray-300 rounded-md  bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+          >
+            {typeContract?.content.map((d: any) => <option value={d.id}>{d.title}</option>)}
+          </select>
+
+          <div
+            className={`text-red-500 absolute text-[12px] bottom-0 translate-y-full ${errors.contractName ? 'visible' : 'invisible'}`}
+          >
+            Loại hợp đồng không được để trống
           </div>
         </div>
         <div className='flex flex-col  w-full md:w-[48%] relative'>
