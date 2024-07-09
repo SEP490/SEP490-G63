@@ -14,13 +14,13 @@ const permissions = [
   },
   {
     id: 2,
-    title: 'MANAGER',
+    title: 'ADMIN CLIENT',
     tooltip: 'PERMISSION MANAGER',
     value: 'MANAGER'
   },
   {
     id: 3,
-    title: 'OFFICE ADMIN',
+    title: 'OFFICER ADMIN',
     tooltip: 'PERMISSION OFFICE ADMIN',
     value: 'OFFICE_ADMIN'
   },

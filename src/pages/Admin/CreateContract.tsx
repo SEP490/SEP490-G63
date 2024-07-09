@@ -69,7 +69,6 @@ const CreateContract = () => {
   const { data: typeContract, isLoading: loadingTypeContract } = useQuery('type-contract', () =>
     getContractType({ page: 0, size: 100 })
   )
-
   useEffect(() => {
     const vietQR = new VietQR({
       clientID,
@@ -97,8 +96,6 @@ const CreateContract = () => {
       partyA: formInfoPartA.getValues(),
       partyB: formInfoPartB.getValues()
     }
-    console.log(bodyData)
-
     try {
       // const resultA = await handleSubmitBank(selectedBankA, accountNumberA)
       // const resultB = await handleSubmitBank(selectedBankB, accountNumberB)

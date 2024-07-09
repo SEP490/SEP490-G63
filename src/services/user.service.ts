@@ -20,13 +20,9 @@ export const login = async ({ email, password }: LoginData) => {
     console.log(error)
   }
 }
-export const updateProfile = async (id: any, formData: any) => {
-  try {
-    const response = await axiosInstanceFormData.put(`user/${id}`, formData)
-    return response.data
-  } catch (error) {
-    console.log(error)
-  }
+export const updateProfile = async ({ id, formData }: any) => {
+  const response = await axiosInstanceFormData.put(`user/${id}`, formData)
+  return response.data
 }
 export const getUserDetail = async (id: string) => {
   try {
