@@ -13,6 +13,9 @@ import { Dialog, Transition } from '@headlessui/react'
 import { useQuery } from 'react-query'
 import { getContractType } from '~/services/type-contract.service'
 import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
+import { currentDate } from '~/common/utils/formatDate'
+import { log } from 'console'
+import { REGEX_TEXT } from '~/common/const/regexForm'
 interface Iprops {
   files: any[]
   handleCloseModal: () => void
@@ -107,7 +110,7 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
 
           formData.append(
             'content',
-            dataScrip.reduce((re, d) => re + d, '')
+            dataScrip.reduce((re, d) => re + ' ' + d, '')
           )
         }
 
@@ -146,12 +149,11 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
     control,
     handleSubmit,
     register,
+    getValues,
     formState: { errors }
   } = useForm()
 
   const onSubmit = (data: any) => {
-    console.log(data)
-
     handleOcrFile(data)
   }
   if (loadingTypeContract) return <LoadingPage />
@@ -168,7 +170,13 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
           <Controller
             name='contractName'
             control={control}
-            rules={{ required: true }}
+            rules={{
+              required: 'Tên hợp đồng không được để trống',
+              pattern: {
+                value: REGEX_TEXT,
+                message: 'Tên hợp đồng không hợp lệ'
+              }
+            }}
             render={({ field }) => (
               <input
                 placeholder='Tên hợp đồng'
@@ -181,7 +189,7 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
           <div
             className={`text-red-500 absolute text-[12px] bottom-0 translate-y-full ${errors.contractName ? 'visible' : 'invisible'}`}
           >
-            Tên hợp đồng không được để trống
+            {errors.contractName?.message}
           </div>
         </div>
         <div className='flex flex-col w-full md:w-[48%] relative'>
@@ -198,7 +206,7 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
           </select>
 
           <div
-            className={`text-red-500 absolute text-[12px] bottom-0 translate-y-full ${errors.contractName ? 'visible' : 'invisible'}`}
+            className={`text-red-500 absolute text-[12px] bottom-0 translate-y-full ${errors.contractTypeId ? 'visible' : 'invisible'}`}
           >
             Loại hợp đồng không được để trống
           </div>
@@ -210,10 +218,16 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
           <Controller
             name='contractStartDate'
             control={control}
-            rules={{ required: true }}
+            rules={{
+              required: 'Ngày bắt đầu không được để trống',
+              max: {
+                value: getValues('contractEndDate'),
+                message: 'Ngày bắt đầu phải trước ngày kết thúc'
+              }
+            }}
             render={({ field }) => (
               <DatePicker
-                placeholderText='Ngày bắt đầu'
+                placeholderText='mm/dd/yyyy'
                 className='w-full text-xs text-gray-900 border border-gray-300 rounded-md  bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
                 onChange={(date) => field.onChange(date)}
                 disabled={isSubmit}
@@ -224,7 +238,7 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
           <div
             className={`text-red-500 absolute text-[12px] bottom-0 translate-y-full ${errors.contractStartDate ? 'visible' : 'invisible'}`}
           >
-            Ngày bắt đầu không được để trống
+            {errors.contractEndDate?.message}
           </div>
         </div>
         <div className='flex flex-col w-full md:w-[48%] relative'>
@@ -234,10 +248,16 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
           <Controller
             name='contractEndDate'
             control={control}
-            rules={{ required: true }}
+            rules={{
+              required: ' Ngày kết thúc không được để trống',
+              min: {
+                value: getValues('contractStartDate'),
+                message: 'Ngày kết thúc phải sau ngày bắt đầu'
+              }
+            }}
             render={({ field }) => (
               <DatePicker
-                placeholderText='Ngày kết thúc'
+                placeholderText='mm/dd/yyyy'
                 className='w-full text-xs text-gray-900 border border-gray-300 rounded-md  bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
                 onChange={(date) => field.onChange(date)}
                 disabled={isSubmit}
@@ -248,7 +268,7 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
           <div
             className={`text-red-500 absolute text-[12px] bottom-0 translate-y-full ${errors.contractEndDate ? 'visible' : 'invisible'}`}
           >
-            Ngày kết thúc không được để trống
+            {errors.contractEndDate?.message}
           </div>
         </div>
         <div className='flex flex-col w-full md:w-[48%] relative'>
@@ -258,10 +278,16 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
           <Controller
             name='contractSignDate'
             control={control}
-            rules={{ required: true }}
+            rules={{
+              required: ' Ngày ký không được để trống',
+              max: {
+                value: new Date(),
+                message: 'Ngày ký không được quá ngày hiện tại'
+              }
+            }}
             render={({ field }) => (
               <DatePicker
-                placeholderText='Ngày ký hợp đồng'
+                placeholderText='mm/dd/yyyy'
                 className='w-full text-xs text-gray-900 border border-gray-300 rounded-md  bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
                 onChange={(date) => field.onChange(date)}
                 disabled={isSubmit}
@@ -272,7 +298,7 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
           <div
             className={`text-red-500 absolute text-[12px] bottom-0 translate-y-full ${errors.contractSignDate ? 'visible' : 'invisible'}`}
           >
-            Ngày ký không được để trống
+            {errors.contractSignDate?.message}
           </div>
         </div>
         <div className='w-full my-2 flex gap-5'>
