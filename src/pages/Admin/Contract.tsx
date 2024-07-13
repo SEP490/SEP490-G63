@@ -529,7 +529,7 @@ const Contract = () => {
     onSuccess: () => {
       successNotification('Xóa thành công!')
       handleCloseModal()
-      refetch();
+      refetch()
     },
     onError: (error: AxiosError<{ message: string }>) => {
       errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
@@ -770,7 +770,7 @@ const Contract = () => {
       </Transition>
       {/* Modal xem chi tiết hợp đồng */}
       <Transition appear show={openModal} as={Fragment}>
-        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeModal}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={handleCloseModal}>
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'
@@ -825,7 +825,7 @@ const Contract = () => {
                           </Transition>
                         </div>
                       </Listbox>
-                      <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeModal()} />
+                      <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => handleCloseModal()} />
                     </div>
                   </div>
 
@@ -955,7 +955,7 @@ const Contract = () => {
                         data-ripple-light='true'
                         onClick={() => handleDelete()}
                       >
-                       {deleteTemplate?.isLoading?<LoadingIcon/>:"Xác nhận"}
+                        {deleteTemplate?.isLoading ? <LoadingIcon /> : 'Xác nhận'}
                       </button>
                     </div>
                   </div>
