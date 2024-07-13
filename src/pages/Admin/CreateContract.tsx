@@ -18,7 +18,7 @@ import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
 import { statusRequest } from '~/common/const/status'
 import { useAuth } from '~/context/authProvider'
 import { getContractType } from '~/services/type-contract.service'
-import { EyeIcon } from '@heroicons/react/24/outline'
+import { EyeIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import ViewTemplateContract from '~/components/Admin/TemplateContract/ViewTemplateContract'
 interface FormType {
   name: string
@@ -891,9 +891,12 @@ const CreateContract = () => {
                 leaveTo='opacity-0 scale-95'
               >
                 <Dialog.Panel className='w-[100vw] md:w-[80vw] md:h-fit transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all'>
-                  <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
-                    Chi tiết hợp đồng mẫu
-                  </Dialog.Title>
+                  <div className='flex justify-between'>
+                    <div className='font-semibold'>Chi tiết hợp đồng mẫu</div>
+                    <div className='flex gap-3 items-center'>
+                      <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => setOpenModal(false)} />
+                    </div>
+                  </div>
                   <ViewTemplateContract selectedContract={selectedView} handleCloseModal={() => setOpenModal(false)} />
                 </Dialog.Panel>
               </Transition.Child>
