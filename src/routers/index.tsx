@@ -19,6 +19,8 @@ import Dashboard from '~/pages/Admin/Dashboard.tsx'
 import SendMailUpdateStatus from '~/components/Admin/NewContract/SendMailUpdateSatatus.tsx'
 import LoadingPage from '~/components/shared/LoadingPage/LoadingPage.tsx'
 import TypeContract from '~/pages/Admin/TypeContract.tsx'
+import CreateAppendices from '~/components/Admin/Appendices/CreateAppendices.tsx'
+import AppendicesContract from '~/pages/Admin/Appendices/AppendicesContract.tsx'
 const Login = lazy(() => import('~/components/Login.tsx'))
 const Logout = lazy(() => import('~/components/Logout.tsx'))
 const Employee = lazy(() => import('~/pages/Admin/Employee.tsx'))
@@ -369,6 +371,30 @@ const Routes = () => {
               <UserLayout>
                 <Sale>
                   <DashboardSale />
+                </Sale>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/appendices-create/:id',
+          element: (
+            <Suspense fallback={<LoadingPage />}>
+              <UserLayout>
+                <Sale>
+                  <CreateAppendices />
+                </Sale>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/appendices/:id',
+          element: (
+            <Suspense fallback={<LoadingPage />}>
+              <UserLayout>
+                <Sale>
+                  <AppendicesContract />
                 </Sale>
               </UserLayout>
             </Suspense>
