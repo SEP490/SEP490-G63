@@ -11,14 +11,14 @@ import { createTemplateContract, getTemplateContract } from '~/services/template
 import { handleSubmitBank, validateEmailDebounced } from '~/common/utils/checkMail'
 import { VietQR } from 'vietqr'
 import Loading from '~/components/shared/Loading/Loading'
-import { useQuery } from 'react-query'
+import { useQueries, useQuery } from 'react-query'
 import { debounce } from 'lodash'
 import LoadingSvgV2 from '~/assets/svg/loadingsvg'
 import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
 import { statusRequest } from '~/common/const/status'
 import { useAuth } from '~/context/authProvider'
 import { getContractType } from '~/services/type-contract.service'
-import { EyeIcon } from '@heroicons/react/24/outline'
+import { EyeIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import ViewTemplateContract from '~/components/Admin/TemplateContract/ViewTemplateContract'
 interface FormType {
   name: string
@@ -65,10 +65,11 @@ const CreateContract = () => {
   const [accountNumberB, setAccountNumberB] = useState<any>()
   const [loadingA, setLoadingA] = useState(false)
   const [loadingB, setLoadingB] = useState(false)
-  const { data, isLoading } = useQuery('template-contract', () => getTemplateContract(0, 100))
-  const { data: typeContract, isLoading: loadingTypeContract } = useQuery('type-contract', () =>
-    getContractType({ page: 0, size: 100 })
-  )
+  const resultQuery = useQueries([
+    { queryKey: 'template-contract', queryFn: () => getTemplateContract(0, 100) },
+    { queryKey: 'type-contract', queryFn: () => getContractType({ page: 0, size: 100 }) }
+  ])
+
   useEffect(() => {
     const vietQR = new VietQR({
       clientID,
@@ -211,7 +212,7 @@ const CreateContract = () => {
     setSelectedView(s)
     setOpenModal(true)
   }
-  if (loading || isLoading || loadingTypeContract) return <LoadingPage />
+  if (loading || resultQuery[0]?.isLoading || resultQuery[1]?.isLoading) return <LoadingPage />
   return (
     <div className='bg-[#e8eaed] h-fit min-h-full flex justify-center py-6'>
       <form
@@ -229,7 +230,7 @@ const CreateContract = () => {
             >
               <div className='flex flex-col'>
                 <Listbox.Button
-                  disabled={data?.object?.content?.length == 0}
+                  disabled={resultQuery[0]?.data?.object?.content?.length == 0}
                   className='none center mr-4 rounded-md bg-blue-500 py-2 px-4 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#7565b52f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
                 >
                   Sử dụng hợp đồng mẫu
@@ -242,7 +243,7 @@ const CreateContract = () => {
                     leaveTo='opacity-0'
                   >
                     <Listbox.Options className='absolute z-30 w-[90%] max-h-[60vh] none center rounded-md bg-white py-2 px-2 font-sans text-xs text-black shadow-md border shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#7565b52f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'>
-                      {data?.object?.content.map((s: any) => (
+                      {resultQuery[0]?.data?.object?.content?.map((s: any) => (
                         <Listbox.Option
                           key={s.id}
                           className={`cursor-pointer hover:bg-blue-200 rounded-md select-none px-2 py-1 w-full text-gray-900`}
@@ -263,7 +264,7 @@ const CreateContract = () => {
               {...register('contractTypeId')}
               className={` block w-fit rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             >
-              {typeContract?.content.map((d: any) => (
+              {resultQuery[1]?.data?.content?.map((d: any) => (
                 <option value={d.id} className='w-[300px] truncate ...'>
                   {d.title}
                 </option>
@@ -891,9 +892,12 @@ const CreateContract = () => {
                 leaveTo='opacity-0 scale-95'
               >
                 <Dialog.Panel className='w-[100vw] md:w-[80vw] md:h-fit transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all'>
-                  <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
-                    Chi tiết hợp đồng mẫu
-                  </Dialog.Title>
+                  <div className='flex justify-between'>
+                    <div className='font-semibold'>Chi tiết hợp đồng mẫu</div>
+                    <div className='flex gap-3 items-center'>
+                      <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => setOpenModal(false)} />
+                    </div>
+                  </div>
                   <ViewTemplateContract selectedContract={selectedView} handleCloseModal={() => setOpenModal(false)} />
                 </Dialog.Panel>
               </Transition.Child>

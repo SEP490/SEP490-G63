@@ -63,6 +63,7 @@ const AsyncCreatableSelectComponent = ({ selected, setSelected, option }: any) =
       <AsyncCreatableSelect
         cacheOptions
         loadOptions={promiseOptions}
+        defaultOptions={option}
         isMulti
         value={selected}
         onChange={setSelected}

@@ -231,9 +231,10 @@ const OldContract = () => {
                 leaveTo='opacity-0 scale-95'
               >
                 <Dialog.Panel className='w-[100vw] md:w-[80vw] min-h-[90vh] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
-                  <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
-                    Tải lên
-                  </Dialog.Title>
+                <div className='flex justify-between'>
+                    <div className='font-semibold'>Tải lên hợp đồng</div>
+                    <XMarkIcon className='h-5 w-5 mr-3 mb-3 cursor-pointer' onClick={handleCloseModal} />
+                  </div>
                   <UploadFile handleCloseModal={handleCloseModal} refetch={refetch} />
                 </Dialog.Panel>
               </Transition.Child>

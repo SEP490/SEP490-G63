@@ -18,22 +18,27 @@ import { useMutation, useQuery } from 'react-query'
 import { AxiosError } from 'axios'
 import useToast from '~/hooks/useToast'
 import LoadingIcon from '~/assets/LoadingIcon'
-
-export interface DataEmployee {
+import DocumentIcon from '~/assets/svg/document'
+import { useNavigate, useParams } from 'react-router-dom'
+import { deleteAppendices, deleteNewContract, getAppendicesContactAll } from '~/services/contract.appendices.service'
+import moment from 'moment'
+import ViewContract from '~/components/Admin/NewContract/ViewContract'
+import { getNewContractById } from '~/services/contract.service'
+export interface DataContract {
   id?: string
   name?: string
-  email?: string
-  password?: string
-  phone?: string
-  position?: string
+  number?: string
+  rule?: string
+  term?: string
+  file?: string
+  createdDate?: string
   status?: string
-  identificationNumber?: string
-  department?: string
-  permissions?: string
-  address?: string
-  dob?: string
+  approvedBy?: string
+  signA?: string
+  signB?: string
+  createdBy?: string
 }
-const Employee = () => {
+const AppendicesContract = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [viewDetail, setViewDetail] = useState(false)
   const [editModal, setEditModal] = useState(false)
@@ -44,31 +49,26 @@ const Employee = () => {
   const { errorNotification, successNotification } = useToast()
   const prevPageRef = useRef(page)
   const prevSizeRef = useRef(size)
-
-  const [selectedUser, setSelectedUser] = useState<DataEmployee | undefined>(undefined)
+  const navigate = useNavigate()
+  const { id } = useParams()
+  const [selectedContract, setSelectedContract] = useState<DataContract | null>(null)
+  const [openModal, setOpenModal] = useState(false)
   const [searchData, setSearchData] = useState('')
   function closeAllModal() {
     setDeleteModal(false)
     setEditModal(false)
     setViewDetail(false)
-    setSelectedUser(undefined)
+    setSelectedContract(null)
   }
   const handlePageChange = (page: any) => {
     setPage(page - 1)
   }
-  function closeModal() {
-    setIsOpen(false)
-  }
-
-  function openModal() {
-    setIsOpen(true)
-  }
-  const handChangeInputSearch = (e: any) => {
-    setSearchData(e.target.value)
-  }
+  const { data: dataContract, isLoading: loadingContract } = useQuery('get-contract-detail', () =>
+    getNewContractById(id as string)
+  )
   const { data, isLoading, refetch, isFetching } = useQuery(
-    ['employee-list', searchData],
-    () => getListEmployee({ size: size, page: page, name: searchData }),
+    ['appendices-list'],
+    () => getAppendicesContactAll(id as string, page, size),
     {
       onSuccess: (result) => {
         setTotalPage(result?.object?.totalPages)
@@ -78,6 +78,17 @@ const Employee = () => {
       }
     }
   )
+  const deleteAppendicesQuery = useMutation(deleteAppendices, {
+    onSuccess: (response) => {
+      if (response?.code == '00') {
+        closeAllModal()
+        refetch()
+      }
+    }
+  })
+  const handleDeleteAppendices = () => {
+    deleteAppendicesQuery.mutate(selectedContract?.id as string)
+  }
   useEffect(() => {
     if (prevPageRef.current !== page || prevSizeRef.current !== size) {
       prevPageRef.current = page
@@ -97,47 +108,22 @@ const Employee = () => {
       errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
     }
   })
-  const handleDeleteEmployee = async () => {
-    deleteQuery.mutate(selectedUser?.id)
-  }
+
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex flex-wrap py-4'>
         <div className='w-full px-5'>
-          <div className='flex gap-3 justify-between w-full'>
-            <div className='flex w-[50%]'>
-              <div className='relative'>
-                <div className='absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none'>
-                  <svg
-                    className='w-5 h-5 text-gray-500 dark:text-gray-400'
-                    aria-hidden='true'
-                    fill='currentColor'
-                    viewBox='0 0 20 20'
-                    xmlns='http://www.w3.org/2000/svg'
-                  >
-                    <path
-                      fillRule='evenodd'
-                      d='M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z'
-                      clipRule='evenodd'
-                    ></path>
-                  </svg>
-                </div>
-              </div>
-              <input
-                type='text'
-                id='table-search'
-                className='block p-2 ps-10 w-full text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                placeholder='Tìm kiếm nhân viên'
-                onChange={handChangeInputSearch}
-              />
+          <div className='flex gap-3 justify-between items-center w-full'>
+            <div className='test-[23px]'>
+              Phụ lúc hợp đồng cho hợp đồng: <span className='font-bold'>{dataContract?.object?.name}</span> số:{' '}
+              <span className='font-bold'>{dataContract?.object?.number}</span>
             </div>
-
             <button
               type='button'
-              onClick={openModal}
+              onClick={() => navigate(`/appendices-create/${id}`)}
               className='rounded-md flex gap-1 bg-main-color px-4 py-2 text-sm font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
             >
-              <PlusIcon className='h-5 w-5' /> Thêm mới nhân viên
+              <PlusIcon className='h-5 w-5' /> Thêm mới phụ lục
             </button>
           </div>
           <div className='shadow-md sm:rounded-lg my-3 h-fit '>
@@ -145,12 +131,13 @@ const Employee = () => {
               <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
                 <tr>
                   <th className='px-3 py-3 w-[30px]'>STT</th>
-                  <th className='px-3 py-3 w-[200px]'>Tên nhân viên</th>
-                  <th className='px-3 py-3 w-[250px]'>Email</th>
-                  <th className='px-3 py-3 '>Số điện thoại</th>
-                  <th className='px-3 py-3 '>Phòng ban</th>
-                  <th className='px-6 py-3 '>Vị trí</th>
-                  <th className='px-3 py-3 w-[300px]'>Địa chỉ</th>
+                  <th className='px-3 py-3 w-[200px]'>Tên hợp đồng</th>
+                  <th className='px-3 py-3 w-[250px]'>Số hợp đồng</th>
+                  <th className='px-3 py-3 '>Ngày tạo</th>
+                  <th className='px-3 py-3 '>Trạng thái</th>
+                  <th className='px-3 py-3 ' align='center'>
+                    Chi tiết
+                  </th>
                   <th className='px-3 py-3'></th>
                 </tr>
               </thead>
@@ -158,7 +145,7 @@ const Employee = () => {
               <tbody className='w-full '>
                 {!isLoading &&
                   !isFetching &&
-                  data?.object?.content?.map((d: DataEmployee, index: number) => (
+                  data?.object?.content?.map((d: DataContract, index: number) => (
                     <tr
                       key={d.id}
                       className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
@@ -169,19 +156,27 @@ const Employee = () => {
                         className='px-3 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white hover:underline cursor-pointer hover:text-blue-500'
                         onClick={() => {
                           setViewDetail(true)
-                          setSelectedUser(d)
+                          selectedContract(d)
                         }}
                       >
                         <div className='w-[150px] truncate ...'>{d.name}</div>
                       </th>
-                      <td className='px-3 py-4 w-[250px]'>{d.email}</td>
-                      <td className='px-3 py-4'>{d.phone}</td>
-                      <td className='px-3 py-4'>{d.department}</td>
-                      <td className='px-3 py-4'>{d.position}</td>
+                      <td className='px-3 py-4 w-[250px]'>{d.number}</td>
                       <td className='px-3 py-4'>
-                        <div className='w-[300px] truncate ...'>{d.address}</div>
+                        {d?.createdDate ? moment(d?.createdDate).format('DD/MM/YYYY') : d?.createdDate}
                       </td>
-
+                      <td className='px-3 py-4'>{d.status}</td>
+                      <td className='px-3 py-4' align='center'>
+                        <div
+                          className='cursor-pointer text-blue-500 hover:underline'
+                          onClick={() => {
+                            setSelectedContract(d)
+                            setOpenModal(true)
+                          }}
+                        >
+                          Xem
+                        </div>
+                      </td>
                       <td className='px-3 py-4 text-right'>
                         <Menu as='div' className='relative inline-block text-left '>
                           <Menu.Button className='flex justify-center items-center gap-3 cursor-pointer hover:text-blue-500'>
@@ -204,7 +199,7 @@ const Employee = () => {
                                     title='Sửa'
                                     onClick={() => {
                                       setEditModal(true)
-                                      setSelectedUser(d)
+                                      setSelectedContract(d)
                                     }}
                                     className={`${
                                       active ? 'bg-blue-500 text-white' : 'text-gray-900'
@@ -220,7 +215,7 @@ const Employee = () => {
                                     title='Xóa'
                                     onClick={() => {
                                       setDeleteModal(true)
-                                      setSelectedUser(d)
+                                      setSelectedContract(d)
                                     }}
                                     className={`${
                                       active ? 'bg-blue-500 text-white' : 'text-gray-900'
@@ -246,8 +241,8 @@ const Employee = () => {
             {!isLoading && !isFetching && (data == null || data?.object?.content?.length == 0) && (
               <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'>
                 <div className='flex flex-col justify-center items-center opacity-60'>
-                  <UserIcon width={50} height={50} />
-                  Chưa có nhân viên
+                  <DocumentIcon />
+                  Chưa có phụ lục hợp đồng
                 </div>
               </div>
             )}
@@ -264,8 +259,8 @@ const Employee = () => {
           )}
         </div>
       </div>
-      <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeModal}>
+      <Transition appear show={openModal} as={Fragment}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={() => setOpenModal(false)}>
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'
@@ -279,7 +274,7 @@ const Employee = () => {
           </Transition.Child>
 
           <div className='fixed inset-0 overflow-y-auto'>
-            <div className='flex min-h-full  items-center justify-center p-4 text-center'>
+            <div className='flex min-h-full items-center justify-center p-4 text-center'>
               <Transition.Child
                 as={Fragment}
                 enter='ease-out duration-300'
@@ -289,93 +284,12 @@ const Employee = () => {
                 leaveFrom='opacity-100 scale-100'
                 leaveTo='opacity-0 scale-95'
               >
-                <Dialog.Panel className='w-[100vw] md:w-[80vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+                <Dialog.Panel className='w-[100vw] md:w-[90vw] md:h-[94vh] transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all'>
                   <div className='flex justify-between mb-2'>
-                    <div className='font-semibold'>Thêm mới nhân viên</div>
-                    <div className='flex gap-3 items-center'>
-                      <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeModal()} />
-                    </div>
+                    <div className='font-semibold'>Xem hợp đồng</div>
+                    <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => setOpenModal(false)} />
                   </div>
-                  <AddNewEmployee closeModal={closeModal} refetch={refetch} />
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
-      <Transition appear show={viewDetail} as={Fragment}>
-        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeAllModal}>
-          <Transition.Child
-            as={Fragment}
-            enter='ease-out duration-300'
-            enterFrom='opacity-0'
-            enterTo='opacity-100'
-            leave='ease-in duration-200'
-            leaveFrom='opacity-100'
-            leaveTo='opacity-0'
-          >
-            <div className='fixed inset-0 bg-black/25' />
-          </Transition.Child>
-
-          <div className='fixed inset-0 overflow-y-auto'>
-            <div className='flex min-h-full  items-center justify-center p-4 text-center'>
-              <Transition.Child
-                as={Fragment}
-                enter='ease-out duration-300'
-                enterFrom='opacity-0 scale-95'
-                enterTo='opacity-100 scale-100'
-                leave='ease-in duration-200'
-                leaveFrom='opacity-100 scale-100'
-                leaveTo='opacity-0 scale-95'
-              >
-                <Dialog.Panel className='w-[100vw] md:w-[80vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
-                  <div className='flex justify-between mb-2'>
-                    <div className='font-semibold'>Thông tin chi tiết</div>
-                    <div className='flex gap-3 items-center'>
-                      <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeAllModal()} />
-                    </div>
-                  </div>
-                  <ViewEmployee data={selectedUser} />
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
-      <Transition appear show={editModal} as={Fragment}>
-        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeAllModal}>
-          <Transition.Child
-            as={Fragment}
-            enter='ease-out duration-300'
-            enterFrom='opacity-0'
-            enterTo='opacity-100'
-            leave='ease-in duration-200'
-            leaveFrom='opacity-100'
-            leaveTo='opacity-0'
-          >
-            <div className='fixed inset-0 bg-black/25' />
-          </Transition.Child>
-
-          <div className='fixed inset-0 overflow-y-auto'>
-            <div className='flex min-h-full  items-center justify-center p-4 text-center'>
-              <Transition.Child
-                as={Fragment}
-                enter='ease-out duration-300'
-                enterFrom='opacity-0 scale-95'
-                enterTo='opacity-100 scale-100'
-                leave='ease-in duration-200'
-                leaveFrom='opacity-100 scale-100'
-                leaveTo='opacity-0 scale-95'
-              >
-                <Dialog.Panel className='w-[100vw] md:w-[80vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
-                  <div className='flex justify-between mb-2'>
-                    <div className='font-semibold'>Chỉnh sửa thông tin</div>
-                    <div className='flex gap-3 items-center'>
-                      <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeAllModal()} />
-                    </div>
-                  </div>
-
-                  <EditEmployee data={selectedUser} closeModal={closeAllModal} refetch={refetch} />
+                  <ViewContract src={selectedContract?.file} />
                 </Dialog.Panel>
               </Transition.Child>
             </div>
@@ -383,7 +297,7 @@ const Employee = () => {
         </Dialog>
       </Transition>
       <Transition appear show={deleteModal} as={Fragment}>
-        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeAllModal}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={() => setDeleteModal(false)}>
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'
@@ -397,7 +311,7 @@ const Employee = () => {
           </Transition.Child>
 
           <div className='fixed inset-0 overflow-y-auto'>
-            <div className='flex min-h-full  items-center justify-center p-4 text-center'>
+            <div className='flex min-h-full items-center justify-center p-4 text-center'>
               <Transition.Child
                 as={Fragment}
                 enter='ease-out duration-300'
@@ -407,25 +321,22 @@ const Employee = () => {
                 leaveFrom='opacity-100 scale-100'
                 leaveTo='opacity-0 scale-95'
               >
-                <Dialog.Panel className='w-[100vw] md:w-[40vw] md:h-fit transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+                <Dialog.Panel className='w-[100vw] md:w-[90vw] md:h-[94vh] transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all'>
                   <div className='flex justify-between mb-2'>
-                    <div className='font-semibold'>Thông báo</div>
-                    <div className='flex gap-3 items-center'>
-                      <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeAllModal()} />
-                    </div>
+                    <div className='font-semibold'>Xem hợp đồng</div>
+                    <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => setDeleteModal(false)} />
                   </div>
                   <div>
-                    <div>Nhân viên sẽ được xóa khỏi hệ thống. Bạn có chắc chắn với quyết định của mình?</div>
-                    <div className='w-full flex justify-end mt-6'>
-                      <button
-                        type='button'
-                        className='middle  none center mr-4 rounded-lg bg-red-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#ff00002f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
-                        data-ripple-light='true'
-                        onClick={handleDeleteEmployee}
-                      >
-                        {deleteQuery.isLoading ? <LoadingIcon /> : 'Xóa'}
-                      </button>
-                    </div>
+                    Bạn có chắc chắn muốn xóa hợp đồng?
+                    <button
+                      type='button'
+                      disabled={deleteAppendicesQuery?.isLoading}
+                      onClick={handleDeleteAppendices}
+                      className='middle my-3 none center mr-4 rounded-lg bg-[#0070f4] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
+                      data-ripple-light='true'
+                    >
+                      {deleteAppendicesQuery?.isLoading ? <LoadingIcon /> : 'Xóa'}
+                    </button>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
@@ -436,4 +347,4 @@ const Employee = () => {
     </div>
   )
 }
-export default Employee
+export default AppendicesContract
