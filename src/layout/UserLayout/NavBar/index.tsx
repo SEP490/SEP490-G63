@@ -25,15 +25,17 @@ const NavBar = () => {
       ? routerSale
       : routerAdmin
 
-  const handleReadNotify = (id: any) => {
-    setTotalNotRead((totalNotRead: any) => totalNotRead - 1)
-    setNotifications(
-      notifications.map((n) => {
-        if (n.id == id) return { ...n, markRead: true }
-        else return n
-      })
-    )
-    isReadNotify(id)
+  const handleReadNotify = (id: any, markRead: boolean) => {
+    if (!markRead) {
+      setTotalNotRead((totalNotRead: any) => totalNotRead - 1)
+      setNotifications(
+        notifications.map((n) => {
+          if (n.id == id) return { ...n, markRead: true }
+          else return n
+        })
+      )
+      isReadNotify(id)
+    }
   }
   return (
     <div>
@@ -162,7 +164,7 @@ const NavBar = () => {
                             {notifications.map((n: NotificationData) => (
                               <div
                                 key={n.id}
-                                onClick={() => handleReadNotify(n.id)}
+                                onClick={() => handleReadNotify(n.id, n.markRead)}
                                 className={`bg-white rounded-md m-[1px] cursor-pointer hover:bg-gray-200 px-3 py-1 w-full flex items-center relative`}
                               >
                                 <div className=' flex flex-col'>

@@ -37,20 +37,28 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch }: IProps) => {
   const { isLoading: loading, data: dataContract } = useQuery('getContractDetail', () => getNewContractById(id), {
     onSuccess: async (response) => {
       if (status == 2 || status == 3) {
-        setSelectedTo([{ label: response.object.createdBy, value: response.object.createdBy }])
+        response.object.createdBy != null &&
+          setSelectedTo([{ label: response.object.createdBy, value: response.object.createdBy }])
       } else if (status == 4) {
-        setSelectedCc([{ label: response.object.createdBy, value: response.object.createdBy }])
+        response.object.createdBy != null &&
+          setSelectedCc([{ label: response.object.createdBy, value: response.object.createdBy }])
       } else if (status == 6) {
-        setSelectedTo([{ label: response.object.createdBy, value: response.object.createdBy }])
-        setSelectedCc([{ label: response.object.approvedBy, value: response.object.approvedBy }])
+        response.object.createdBy != null &&
+          setSelectedTo([{ label: response.object.createdBy, value: response.object.createdBy }])
+        response.object.approvedBy != null &&
+          setSelectedCc([{ label: response.object.approvedBy, value: response.object.approvedBy }])
       } else if (status == 7) {
-        setSelectedCc([
-          { label: response.object.createdBy, value: response.object.createdBy },
-          { label: response.object.approvedBy, value: response.object.approvedBy }
-        ])
+        const mailCC = []
+        response.object.createdBy != null &&
+          mailCC.push({ label: response.object.createdBy, value: response.object.createdBy })
+        response.object.approvedBy != null &&
+          mailCC.push({ label: response.object.approvedBy, value: response.object.approvedBy })
+        setSelectedCc(mailCC)
       } else if (status == 9) {
-        setSelectedTo([{ label: response.object.createdBy, value: response.object.createdBy }])
-        setSelectedCc([{ label: response.object.approvedBy, value: response.object.approvedBy }])
+        response.object.createdBy != null &&
+          setSelectedTo([{ label: response.object.createdBy, value: response.object.createdBy }])
+        response.object.approvedBy != null &&
+          setSelectedCc([{ label: response.object.approvedBy, value: response.object.approvedBy }])
       }
       const fileUrl = response.object.file
       const fileData = await fetch(fileUrl)
@@ -143,17 +151,17 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch }: IProps) => {
   return (
     <div className='h-full overflow-auto pb-5'>
       <div className='w-full flex flex-col md:flex-row justify-between border-b-2'>
-        <div className='w-full md:w-[46%] py-2   flex items-center'>
+        <div className='w-full md:w-[46%] py-2 flex items-center z-50'>
           <span className='w-20 font-bold'>Đến</span>
           <ComboboxMail selected={selectedTo} setSelected={setSelectedTo} option={optionTo} />
         </div>
-        <div className='w-full md:w-[46%] py-2  flex items-center'>
+        <div className='w-full md:w-[46%] py-2  flex items-center z-50'>
           <span className='w-20 font-bold'>CC</span>
           <ComboboxMail selected={selectedCc} setSelected={setSelectedCc} option={optionCC} />
         </div>
       </div>
 
-      <div className='py-2 border-b-2 border-slate-200 flex items-center'>
+      <div className='py-2 border-b-2 border-slate-200 flex items-center z-10'>
         <span className='w-20 font-bold'>Tiêu đề</span>
         <input
           type='text'

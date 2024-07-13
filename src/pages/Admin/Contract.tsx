@@ -10,7 +10,8 @@ import {
   XMarkIcon,
   ArrowUturnLeftIcon,
   ArrowUpOnSquareIcon,
-  PencilIcon
+  PencilIcon,
+  DocumentPlusIcon
 } from '@heroicons/react/24/outline'
 import { useNavigate } from 'react-router-dom'
 import { deleteNewContract, getNewContract } from '~/services/contract.service'
@@ -34,6 +35,7 @@ import { AiOutlineFileDone } from 'react-icons/ai'
 import { FaClock, FaUserCheck, FaUserClock, FaUserTimes } from 'react-icons/fa'
 import { MdEditDocument, MdOutlineDownloadDone } from 'react-icons/md'
 import { HiMiniDocumentCheck } from 'react-icons/hi2'
+import LoadingIcon from '~/assets/LoadingIcon'
 export interface DataContract {
   id: string
   file: string
@@ -81,8 +83,8 @@ const Contract = () => {
   const [historyModal, setHistoryModal] = useState(false)
   const [statusContract, setStatusContract] = useState<any>({
     id: 1,
-    title: 'Hợp đồng mới',
-    status: 'NEW'
+    title: 'Quản lí hợp đồng',
+    status: 'MANAGER_CONTRACT'
   })
   const [status, setStatus] = useState<number>(0)
   const [page, setPage] = useState(0)
@@ -164,6 +166,19 @@ const Contract = () => {
       id: 3,
       title: (
         <>
+          <DocumentPlusIcon className='h-5' /> Phụ lục hợp đồng
+        </>
+      ),
+      color: 'text-blue-700',
+      disable: (d: any) => false,
+      callback: (d: any) => {
+        navigate(`/appendices/${d.id}`)
+      }
+    },
+    {
+      id: 4,
+      title: (
+        <>
           <Cog6ToothIcon className='h-5' /> Sửa
         </>
       ),
@@ -175,7 +190,7 @@ const Contract = () => {
       }
     },
     {
-      id: 4,
+      id: 5,
       title: (
         <>
           <NoSymbolIcon className='h-5' /> Xóa
@@ -331,7 +346,7 @@ const Contract = () => {
           <div className='w-[90%] truncate ...'>Quản lí hợp đồng</div>
         </div>
       ),
-      status: 'NEW'
+      status: 'MANAGER_CONTRACT'
     },
     {
       id: 2,
@@ -403,7 +418,7 @@ const Contract = () => {
           <div className='w-[90%] truncate ...'>Quản lí hợp đồng</div>
         </div>
       ),
-      status: 'NEW'
+      status: 'MANAGER_CONTRACT'
     },
     {
       id: 2,
@@ -465,7 +480,7 @@ const Contract = () => {
           <div className='w-[90%] truncate ...'>Quản lí hợp đồng</div>
         </div>
       ),
-      status: 'NEW'
+      status: 'MANAGER_CONTRACT'
     },
     {
       id: 2,
@@ -514,7 +529,7 @@ const Contract = () => {
     onSuccess: () => {
       successNotification('Xóa thành công!')
       handleCloseModal()
-      setTimeout(() => refetch(), 500)
+      refetch()
     },
     onError: (error: AxiosError<{ message: string }>) => {
       errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
@@ -568,7 +583,7 @@ const Contract = () => {
           <PlusIcon className='h-5 w-5' /> Tạo mới
         </button>
       </div>
-      <div className='flex h-[calc(100%-70px)] flex-wrap justify-start'>
+      <div className='flex h-[calc(100%-70px)] flex-wrap justify-start mx-3'>
         <div className='flex gap-2 md:flex-col w-full md:h-full md:w-[16%] bg-white shadow-md mx-2 p-2 mb-2'>
           {menuContract[permissionUser]?.map((t: any) => (
             <div
@@ -580,7 +595,7 @@ const Contract = () => {
             </div>
           ))}
         </div>
-        <div className='w-full md:w-[80%] overflow-auto mx-2'>
+        <div className='w-full md:w-[80%] overflow-auto  '>
           <div className='shadow-md sm:rounded-lg '>
             <table className='w-full text-sm text-left rtl:text-right text-black dark:text-gray-400 '>
               <thead className=' text-xs text-black bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
@@ -755,7 +770,7 @@ const Contract = () => {
       </Transition>
       {/* Modal xem chi tiết hợp đồng */}
       <Transition appear show={openModal} as={Fragment}>
-        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeModal}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={handleCloseModal}>
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'
@@ -810,7 +825,7 @@ const Contract = () => {
                           </Transition>
                         </div>
                       </Listbox>
-                      <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeModal()} />
+                      <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => handleCloseModal()} />
                     </div>
                   </div>
 
@@ -935,11 +950,12 @@ const Contract = () => {
                     <div className='w-full flex justify-end mt-6'>
                       <button
                         type='button'
+                        disabled={deleteTemplate?.isLoading}
                         className='middle  none center mr-4 rounded-lg bg-red-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#ff00002f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
                         data-ripple-light='true'
                         onClick={() => handleDelete()}
                       >
-                        Đồng ý
+                        {deleteTemplate?.isLoading ? <LoadingIcon /> : 'Xác nhận'}
                       </button>
                     </div>
                   </div>
