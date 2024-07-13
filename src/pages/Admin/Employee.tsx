@@ -31,6 +31,7 @@ export interface DataEmployee {
   department?: string
   permissions?: string
   address?: string
+  dob?: string
 }
 const Employee = () => {
   const [isOpen, setIsOpen] = useState(false)
