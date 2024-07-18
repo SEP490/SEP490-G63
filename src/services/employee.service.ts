@@ -1,4 +1,4 @@
-import axiosInstant, { adminInstance } from '../config/axiosConfig.ts'
+import axiosInstance, { adminInstance } from '../config/axiosConfig.ts'
 interface EmployeeData {
   name: string
   email: string
@@ -26,17 +26,17 @@ interface QueryDataGet {
   size?: number
 }
 export const createEmployee = async (data: EmployeeData) => {
-  const response = await axiosInstant.post('user/register-for-user', { ...data, role: 'USER' })
+  const response = await axiosInstance.post('user/register-for-user', { ...data, role: 'USER' })
   return response.data
 }
 
 export const getListEmployee = async ({ size, page, name }: QueryDataGet) => {
-  const response = await axiosInstant.get(`user/search?page=${page}&size=${size}&name=${name}&status=ACTIVE`)
+  const response = await axiosInstance.get(`user/search?page=${page}&size=${size}&name=${name}&status=ACTIVE`)
 
   return response.data
 }
 export const deleteEmployee = async (id: string | undefined) => {
-  const response = await axiosInstant.delete(`user/${id}`)
+  const response = await axiosInstance.delete(`user/${id}`)
   return response.data
 }
 

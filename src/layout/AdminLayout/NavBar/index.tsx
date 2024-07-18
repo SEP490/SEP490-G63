@@ -147,15 +147,15 @@ const NavBar = () => {
                   leaveTo='opacity-0 translate-y-1'
                 >
                   <Popover.Panel
-                    className={`absolute left-1/2 z-10  w-64  ${isMobile ? '-translate-x-[100%]' : 'md:-translate-x-[100%] md:w-96'} transform px-4 sm:px-0 `}
+                    className={`absolute left-1/2 z-10  w-80  ${isMobile ? '-translate-x-[80%]' : 'md:-translate-x-[100%] md:w-96'} transform px-4 sm:px-0 `}
                   >
                     <div className='overflow-hidden rounded-lg w-full shadow-lg ring-1 ring-black/5'>
                       <div className='relative gap-8 w-full bg-white flex p-1  overflow-auto justify-center'>
-                        {notifications?.length == 0 ? (
+                        {notifications?.length == 0 || !notifications ? (
                           <div className='min-h-[100px] flex items-center'>Không có thông báo </div>
                         ) : (
                           <div className='flex flex-col justify-center overflow-y-auto overflow-x-hidden px-1 w-full '>
-                            {notifications.map((n: NotificationData) => (
+                            {notifications?.map((n: NotificationData) => (
                               <div
                                 key={n.id}
                                 onClick={() => handleReadNotify(n.id, n.markRead)}

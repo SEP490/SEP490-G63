@@ -58,3 +58,13 @@ export const statusRequest: any = {
   9: { status: 'SIGN_B_FAIL', title: 'Từ chối ký hợp đồng', description: 'Từ chối ký hợp đồng' },
   10: { status: 'NEW', title: 'Tạo mới hợp đồng', description: 'Bạn đã tạo mới hợp đồng thành công' }
 }
+export const statusContract: any = [
+  {
+    status: 'NEW',
+    title: 'Tạo mới'
+  },
+  { status: 'WAIT_APPROVE', title: 'Chờ duyệt' },
+  { status: 'WAIT_SIGN_A', title: 'Chờ ký' },
+  { status: 'WAIT_SIGN_B', title: 'Gửi khách hàng' },
+  { sttaus: 'SUCCESS', title: 'Hoàn thành' }
+]

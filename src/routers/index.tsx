@@ -1,31 +1,20 @@
-import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { useAuth } from '../context/authProvider.tsx'
 import { ProtectedRoute } from './ProtectedRouter.tsx'
 import { lazy, Suspense } from 'react'
-import Error from '~/components/shared/Error/Error.tsx'
-import AdminLayout from '~/layout/AdminLayout/index.tsx'
-import Loading from '~/components/shared/Loading/Loading.tsx'
-
-import About from '~/pages/landing_page/About.tsx'
-import Blogs from '~/pages/landing_page/Blogs.tsx'
-import { ADMIN, USER } from '~/common/const/role.ts'
-import ContractHistory from '~/pages/Admin/ContractHistory.tsx'
-import AdminOfficer from '~/middleware/AdminOfficer/index.tsx'
-import UserLayout from '~/layout/UserLayout/index.tsx'
 import { permissionObject } from '~/common/const/permissions.ts'
-import Sale from '~/middleware/Sale/index.tsx'
-import StaffOfficer from '~/middleware/StaffOfficer/index.tsx'
-import Dashboard from '~/pages/Admin/Dashboard.tsx'
-import SendMailUpdateStatus from '~/components/Admin/NewContract/SendMailUpdateSatatus.tsx'
-import LoadingPage from '~/components/shared/LoadingPage/LoadingPage.tsx'
-import TypeContract from '~/pages/Admin/TypeContract.tsx'
-import CreateAppendices from '~/components/Admin/Appendices/CreateAppendices.tsx'
-import AppendicesContract from '~/pages/Admin/Appendices/AppendicesContract.tsx'
+import { ADMIN, USER } from '~/common/const/role.ts'
+
+const ContractHistory = lazy(() => import('~/pages/Admin/ContractHistory.tsx'))
+const AdminOfficer = lazy(() => import('~/middleware/AdminOfficer/index.tsx'))
+const UserLayout = lazy(() => import('~/layout/UserLayout/index.tsx'))
+const Error = lazy(() => import('~/components/shared/Error/Error.tsx'))
+const AdminLayout = lazy(() => import('~/layout/AdminLayout/index.tsx'))
+const StaffOfficer = lazy(() => import('~/middleware/StaffOfficer/index.tsx'))
+const Sale = lazy(() => import('~/middleware/Sale/index.tsx'))
 const Login = lazy(() => import('~/components/Login.tsx'))
 const Logout = lazy(() => import('~/components/Logout.tsx'))
 const Employee = lazy(() => import('~/pages/Admin/Employee.tsx'))
-const Register = lazy(() => import('~/components/Register.tsx'))
-const Home = lazy(() => import('~/pages/landing_page/Home.tsx'))
 const HomeUser = lazy(() => import('~/pages/User/HomeUser.tsx'))
 const Profile = lazy(() => import('~/pages/Profile.tsx'))
 const OldContract = lazy(() => import('~/pages/Admin/OldContract.tsx'))
@@ -37,6 +26,11 @@ const ViewSignContract = lazy(() => import('~/pages/BasePage/ViewSignContract.ts
 const SearchPage = lazy(() => import('~/pages/Admin/Search/SearchPage.tsx'))
 const SearchPageResult = lazy(() => import('~/pages/Admin/Search/SearchPageResult.tsx'))
 const DashboardSale = lazy(() => import('~/components/Dashboard/DashboardSale.tsx'))
+const AppendicesContract = lazy(() => import('~/pages/Admin/Appendices/AppendicesContract.tsx'))
+const CreateAppendices = lazy(() => import('~/components/Admin/Appendices/CreateAppendices.tsx'))
+const TypeContract = lazy(() => import('~/pages/Admin/TypeContract.tsx'))
+const LoadingPage = lazy(() => import('~/components/shared/LoadingPage/LoadingPage.tsx'))
+const Dashboard = lazy(() => import('~/pages/Admin/Dashboard.tsx'))
 const Routes = () => {
   const { token, user } = useAuth()
   let routes: Array<any>
@@ -600,45 +594,12 @@ const Routes = () => {
       )
     },
     {
-      path: '/',
-      element: (
-        <Suspense fallback={<LoadingPage />}>
-          <Home />
-        </Suspense>
-      )
-    },
-
-    {
-      path: '/register',
-      element: (
-        <Suspense fallback={<LoadingPage />}>
-          <Register />
-        </Suspense>
-      )
-    },
-    {
       path: '/login',
       element: (
         <Suspense fallback={<LoadingPage />}>
           <Login />
         </Suspense>
       )
-    },
-    {
-      path: '/landing',
-      element: <Home />
-    },
-    {
-      path: '/blogs',
-      element: <Blogs />
-    },
-    {
-      path: '/about',
-      element: <About />
-    },
-    {
-      path: '*',
-      element: <Error />
     }
   ]
 
