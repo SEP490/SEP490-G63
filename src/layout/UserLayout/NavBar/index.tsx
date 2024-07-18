@@ -82,7 +82,7 @@ const NavBar = () => {
             onClick={() => {
               removeToken()
               successNotification('Đăng xuất thành công')
-              navigate('/login')
+              navigate('/')
             }}
           >
             Đăng xuất
@@ -218,7 +218,7 @@ const NavBar = () => {
                 onClick={() => {
                   removeToken()
                   successNotification('Đăng xuất thành công')
-                  navigate('/login')
+                  navigate('/')
                 }}
               />
             </div>

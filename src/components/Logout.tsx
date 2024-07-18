@@ -8,7 +8,7 @@ const Logout = () => {
   const { removeToken } = useAuth()
   useEffect(() => {
     removeToken()
-    navigate('/login')
+    navigate('/')
   }, [])
   return <div>Logout page</div>
 }
