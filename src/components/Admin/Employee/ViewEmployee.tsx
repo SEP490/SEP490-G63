@@ -1,3 +1,4 @@
+import moment from 'moment'
 import { ChangeEventHandler, EventHandler, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import permissionsList from '~/common/const/permissions'
@@ -22,7 +23,13 @@ const ViewEmployee = ({ data }: IProp) => {
   const {
     register,
     formState: { errors }
-  } = useForm<FromType>({ defaultValues: { ...data, permissions: data?.permissions?.slice(1, -1) } })
+  } = useForm<FromType>({
+    defaultValues: {
+      ...data,
+      permissions: data?.permissions?.slice(1, -1),
+      dob: data?.dob != null ? moment(data?.dob).format('YYYY-MM-DD') : data?.dob
+    }
+  })
 
   return (
     <form className='items-center w-full rounded-lg  flex flex-wrap justify-between h-fit bg-white z-50 '>
