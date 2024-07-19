@@ -1,5 +1,5 @@
 import { NotificationData } from '~/context/notiProvider.tsx'
-import axiosInstant, { adminInstance, axiosInstanceFormData } from '../config/axiosConfig.ts'
+import axiosInstance, { adminInstance, axiosInstanceFormData } from '../config/axiosConfig.ts'
 interface LoginData {
   email: string
   password: string
@@ -14,7 +14,7 @@ interface RegisterData {
 }
 export const login = async ({ email, password }: LoginData) => {
   try {
-    const response = await axiosInstant.post('public/auth/login', { email, password })
+    const response = await axiosInstance.post('public/auth/login', { email, password })
     return response.data
   } catch (error) {
     console.log(error)
@@ -26,7 +26,7 @@ export const updateProfile = async ({ id, formData }: any) => {
 }
 export const getUserDetail = async (id: string) => {
   try {
-    const response = await axiosInstant.get(`user/${id}`)
+    const response = await axiosInstance.get(`user/${id}`)
     return response.data
   } catch (error) {
     console.log(error)
@@ -52,11 +52,11 @@ type UserList = {
   value: string
 }
 export const getUserByPermission = async (permission: string): Promise<UserList[]> => {
-  const response = await axiosInstant.get(`user/searchByPermission?permission=${permission}`)
+  const response = await axiosInstance.get(`user/searchByPermission?permission=${permission}`)
   const result = response.data?.object?.content.map((d: any) => ({ label: d.email, value: d.email }))
   return result as UserList[]
 }
 export const getNotification = async (): Promise<NotificationData[]> => {
-  const response = await axiosInstant.get('notification')
+  const response = await axiosInstance.get('notification')
   return response?.data?.content
 }

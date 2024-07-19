@@ -206,7 +206,7 @@ const Register = () => {
         </button>
         <div>
           Bạn đã có tài khoản?
-          <span className='cursor-pointer text-blue-600 ' onClick={() => navigate('/login')}>
+          <span className='cursor-pointer text-blue-600 ' onClick={() => navigate('/')}>
             Đăng nhập ngay
           </span>
         </div>

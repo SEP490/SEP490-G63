@@ -51,7 +51,7 @@ axiosInstance.interceptors.response.use(
     switch (error?.response?.status) {
       case UNAUTHORIZED:
         removeAccessToken()
-        window.location.href = '/login'
+        window.location.href = '/'
         break
 
       case NOT_FOUND:
@@ -85,7 +85,7 @@ axiosInstanceFormData.interceptors.response.use(
     switch (error?.response?.status) {
       case UNAUTHORIZED:
         removeAccessToken()
-        window.location.href = '/login'
+        window.location.href = '/'
         break
 
       case NOT_FOUND:

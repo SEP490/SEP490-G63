@@ -103,7 +103,7 @@ const Navbar = () => {
               <button
                 className='bg-gradient-to-r from-red-500 to-red-500 hover:bg-bg-gradient-to-r hover:from-red hover:bg-red-500 transition-all duration-600 text-white px-3 py-1 rounded-full'
                 onClick={() => {
-                  navigate('/login')
+                  navigate('/')
                 }}
               >
                 Đăng nhập
