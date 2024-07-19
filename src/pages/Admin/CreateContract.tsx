@@ -10,16 +10,17 @@ import { useState, Fragment, useEffect, SetStateAction, useRef } from 'react'
 import { createTemplateContract, getTemplateContract } from '~/services/template-contract.service'
 import { handleSubmitBank, validateEmailDebounced } from '~/common/utils/checkMail'
 import { VietQR } from 'vietqr'
-import Loading from '~/components/shared/Loading/Loading'
-import { useQueries, useQuery } from 'react-query'
+import { useMutation, useQueries, useQuery } from 'react-query'
 import { debounce } from 'lodash'
 import LoadingSvgV2 from '~/assets/svg/loadingsvg'
-import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
 import { statusRequest } from '~/common/const/status'
 import { useAuth } from '~/context/authProvider'
 import { getContractType } from '~/services/type-contract.service'
 import { EyeIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import ViewTemplateContract from '~/components/Admin/TemplateContract/ViewTemplateContract'
+import { AxiosError } from 'axios'
+import LoadingIcon from '~/assets/LoadingIcon'
+import { REGEX_TEXT } from '~/common/const/regexForm'
 interface FormType {
   name: string
   number: string
@@ -51,7 +52,6 @@ const CreateContract = () => {
   const { successNotification, errorNotification } = useToast()
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
-  const [loading, setLoading] = useState<boolean>(false)
   const [selectedTemplate, setSelectedTemplate] = useState<any>(null)
   const [selectedView, setSelectedView] = useState<any>(null)
   const [openModal, setOpenModal] = useState<boolean>(false)
@@ -85,27 +85,13 @@ const CreateContract = () => {
         console.error('Error fetching banks:', err)
       })
   }, [])
-
-  const onSubmit = async () => {
-    setLoading(true)
-    const rule: any = document.getElementsByName('rule')[0]
-    const term: any = document.getElementsByName('term')[0]
-    const bodyData = {
-      ...getValues(),
-      rule: rule.value,
-      term: term.value,
-      partyA: formInfoPartA.getValues(),
-      partyB: formInfoPartB.getValues()
-    }
-    try {
-      // const resultA = await handleSubmitBank(selectedBankA, accountNumberA)
-      // const resultB = await handleSubmitBank(selectedBankB, accountNumberB)
-      // if (resultA === false || resultB === false) {
-      //   errorNotification('Số tài khoản không hợp lệ, Vui lòng kiểm tra lại!')
-      //   return
-      // }
-      const response = await createNewContract(bodyData)
-      if (response?.code == '00' && response.object && response.success) {
+  const sendMailQuery = useMutation(sendMailPublic)
+  const createContractQuery = useMutation(createNewContract, {
+    onError: (error: AxiosError<{ message: string }>) => {
+      errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
+    },
+    onSuccess: (response) => {
+      if (response?.code == '00' && response?.object) {
         successNotification('Tạo hợp đồng thành công')
         const formData = new FormData()
         formData.append('to', response?.object?.createdBy)
@@ -115,20 +101,39 @@ const CreateContract = () => {
         formData.append('status', statusRequest[10]?.status)
         formData.append('createdBy', response?.object?.createdBy as string)
         formData.append('description', statusRequest[10]?.description)
-        try {
-          const ok = await sendMailPublic(formData)
-          setTimeout(() => {
-            navigate('/contract')
-          }, 500)
-        } catch (error) {
-          errorNotification('Gửi yêu cầu thất bại')
-        }
+        sendMailQuery.mutate(formData)
+        navigate('/contract')
       } else errorNotification('Tạo hợp đồng thất bại')
-    } catch (error) {
-      errorNotification('Tạo hợp đồng thất bại')
-    } finally {
-      setLoading(false)
     }
+  })
+  const createTemplateContractQuery = useMutation(createTemplateContract, {
+    onError: (error: AxiosError<{ message: string }>) => {
+      errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
+    },
+    onSuccess: (response) => {
+      if (response.success && response.code == '00') {
+        successNotification('Tạo mẫu hợp đồng thành công')
+        setOpen(false)
+      } else errorNotification('Tạo mới mẫu hợp đồng thất bại')
+    }
+  })
+  const onSubmit = async () => {
+    const rule: any = document.getElementsByName('rule')[0]
+    const term: any = document.getElementsByName('term')[0]
+    const bodyData = {
+      ...getValues(),
+      rule: rule.value,
+      term: term.value,
+      partyA: formInfoPartA.getValues(),
+      partyB: formInfoPartB.getValues()
+    }
+    // const resultA = await handleSubmitBank(selectedBankA, accountNumberA)
+    // const resultB = await handleSubmitBank(selectedBankB, accountNumberB)
+    // if (resultA === false || resultB === false) {
+    //   errorNotification('Số tài khoản không hợp lệ, Vui lòng kiểm tra lại!')
+    //   return
+    // }
+    createContractQuery.mutate(bodyData)
   }
 
   const handleAutoFillPartyA = async () => {
@@ -177,25 +182,16 @@ const CreateContract = () => {
     }
   }
   const handleCreateContractTemplate = async () => {
-    try {
-      const rule: any = document.getElementsByName('rule')[0]
-      const term: any = document.getElementsByName('term')[0]
-      const dataTemplate = {
-        nameContract: getValues().name,
-        numberContract: getValues().number,
-        ruleContract: rule.value,
-        termContract: term.value,
-        ...formInfoPartA.getValues()
-      }
-      const response = await createTemplateContract(dataTemplate)
-      if (response.success && response.code == '00') {
-        successNotification('Tạo mẫu hợp đồng thành công')
-
-        setOpen(false)
-      } else errorNotification('Tạo mới mẫu hợp đồng thất bại')
-    } catch (e) {
-      errorNotification('Không thể tạo mới mẫu hợp đồng')
+    const rule: any = document.getElementsByName('rule')[0]
+    const term: any = document.getElementsByName('term')[0]
+    const dataTemplate = {
+      nameContract: getValues().name,
+      numberContract: getValues().number,
+      ruleContract: rule.value,
+      termContract: term.value,
+      ...formInfoPartA.getValues()
     }
+    createTemplateContractQuery.mutate(dataTemplate)
   }
   const handleFillData = async (s: any) => {
     reset({ name: s.nameContract, number: s.numberContract })
@@ -212,64 +208,72 @@ const CreateContract = () => {
     setSelectedView(s)
     setOpenModal(true)
   }
-  if (loading || resultQuery[0]?.isLoading || resultQuery[1]?.isLoading) return <LoadingPage />
   return (
     <div className='bg-[#e8eaed] h-fit min-h-full flex justify-center py-6'>
       <form
         className='justify-center sm:justify-between w-[90%] md:w-[90%] rounded-md border flex flex-wrap px-4 h-fit bg-white py-4'
         autoComplete='on'
       >
-        <div className='w-full mt-5 flex gap-6 items-center justify-between'>
-          <div className='font-bold'>Thông tin cơ bản</div>
-          <div className='flex items-center gap-6'>
-            <Listbox
-              // value={size}
-              onChange={(s) => {
-                handleFillData(s)
-              }}
-            >
-              <div className='flex flex-col'>
-                <Listbox.Button
-                  disabled={resultQuery[0]?.data?.object?.content?.length == 0}
-                  className='none center mr-4 rounded-md bg-blue-500 py-2 px-4 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#7565b52f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
-                >
-                  Sử dụng hợp đồng mẫu
-                </Listbox.Button>
-                <div className='relative'>
-                  <Transition
-                    as={Fragment}
-                    leave='transition ease-in duration-100'
-                    leaveFrom='opacity-100'
-                    leaveTo='opacity-0'
+        <div className='w-full mt-5 flex flex-col md:flex-row gap-6 items-center justify-between'>
+          <div className='font-bold'>Tạo mới hợp đồng</div>
+          <div className='flex flex-col md:flex-row items-center gap-6'>
+            {resultQuery[1].isLoading ? (
+              <LoadingSvgV2 />
+            ) : (
+              <Listbox
+                // value={size}
+                onChange={(s) => {
+                  handleFillData(s)
+                }}
+              >
+                <div className='flex flex-col'>
+                  <Listbox.Button
+                    disabled={resultQuery[0]?.data?.object?.content?.length == 0}
+                    className='none center mr-4 rounded-md bg-blue-500 py-2 px-4 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#7565b52f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
                   >
-                    <Listbox.Options className='absolute z-30 w-[90%] max-h-[60vh] none center rounded-md bg-white py-2 px-2 font-sans text-xs text-black shadow-md border shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#7565b52f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'>
-                      {resultQuery[0]?.data?.object?.content?.map((s: any) => (
-                        <Listbox.Option
-                          key={s.id}
-                          className={`cursor-pointer hover:bg-blue-200 rounded-md select-none px-2 py-1 w-full text-gray-900`}
-                          value={s}
-                        >
-                          <div className='flex items-center justify-between'>
-                            <div className='w-[80%] truncate ...'>{s.nameContract}</div>
-                            <EyeIcon className='w-6 h-6 z-40' onClick={(e: any) => handleShowDetailTemplate(e, s)} />
-                          </div>
-                        </Listbox.Option>
-                      ))}
-                    </Listbox.Options>
-                  </Transition>
+                    Sử dụng hợp đồng mẫu
+                  </Listbox.Button>
+                  <div className='relative'>
+                    <Transition
+                      as={Fragment}
+                      leave='transition ease-in duration-100'
+                      leaveFrom='opacity-100'
+                      leaveTo='opacity-0'
+                    >
+                      <Listbox.Options className='absolute z-30 w-[90%] max-h-[60vh] overflow-auto none center rounded-md bg-white py-2 px-2 font-sans text-xs text-black shadow-md border shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#7565b52f] focus:shadow-none  active:shadow-none disabled:pointer-events-none  disabled:shadow-none'>
+                        {resultQuery[0]?.data?.object?.content?.map((s: any) => (
+                          <Listbox.Option
+                            key={s.id}
+                            className={`cursor-pointer hover:bg-blue-200 rounded-md select-none px-2 py-1 w-full text-gray-900`}
+                            value={s}
+                          >
+                            <div className='flex items-center justify-between'>
+                              <div className='w-[80%] truncate ...'>{s.nameContract}</div>
+                              <EyeIcon className='w-6 h-6 z-40' onClick={(e: any) => handleShowDetailTemplate(e, s)} />
+                            </div>
+                          </Listbox.Option>
+                        ))}
+                      </Listbox.Options>
+                    </Transition>
+                  </div>
                 </div>
-              </div>
-            </Listbox>
-            <select
-              {...register('contractTypeId')}
-              className={` block w-fit rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-            >
-              {resultQuery[1]?.data?.content?.map((d: any) => (
-                <option value={d.id} className='w-[300px] truncate ...'>
-                  {d.title}
-                </option>
-              ))}
-            </select>
+              </Listbox>
+            )}
+            {resultQuery[1].isLoading ? (
+              <LoadingSvgV2 />
+            ) : (
+              <select
+                {...register('contractTypeId')}
+                disabled={createContractQuery?.isLoading}
+                className={` block w-fit rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+              >
+                {resultQuery[1]?.data?.content?.map((d: any) => (
+                  <option value={d.id} className='w-[300px] truncate ...'>
+                    {d.title}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
         </div>
         <div className='w-full mt-5 relative'>
@@ -279,8 +283,13 @@ const CreateContract = () => {
           <input
             className={`${errors.name ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             placeholder='Nhập tên hợp đồng'
+            disabled={createContractQuery?.isLoading}
             {...register('name', {
-              required: 'Tên hợp đồng không được để trống'
+              required: 'Tên hợp đồng không được để trống',
+              pattern: {
+                value: REGEX_TEXT,
+                message: 'Tên hợp đồng không hợp lệ'
+              }
             })}
           />
           <div className={`text-red-500 absolute text-[12px]  ${errors.name ? 'visible' : 'invisible'}`}>
@@ -294,6 +303,7 @@ const CreateContract = () => {
           <input
             className={`${errors.number ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled={createContractQuery?.isLoading}
             placeholder='Nhập số hợp đồng'
             {...register('number', {
               required: 'Số hợp đồng không được để trống'
@@ -309,6 +319,8 @@ const CreateContract = () => {
             name='rule'
             placeholder='Căn cứ vào điều luật...'
             height='60vh'
+            disableToolbar={createContractQuery?.isLoading}
+            disable={createContractQuery?.isLoading}
             setContents={selectedTemplate?.ruleContract}
             setOptions={{
               buttonList: [
@@ -343,6 +355,7 @@ const CreateContract = () => {
             <input
               className={`${formInfoPartA.formState.errors.taxNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
               type='text'
+              disabled={createContractQuery?.isLoading}
               onInput={debounce(handleAutoFillPartyA, 500)}
               placeholder='Nhập mã số thuế'
               {...formInfoPartA.register('taxNumber', {
@@ -365,6 +378,7 @@ const CreateContract = () => {
           <input
             className={`${formInfoPartA.formState.errors.name ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled={createContractQuery?.isLoading}
             placeholder='Nhập tên công ty'
             {...formInfoPartA.register('name', {
               required: 'Tên công ty không được để trống'
@@ -384,6 +398,7 @@ const CreateContract = () => {
             // onInput={(event) => validateEmailDebounced((event.target as HTMLInputElement).value)}
             className={`${formInfoPartA.formState.errors.email ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled={createContractQuery?.isLoading}
             placeholder='Nhập email công ty'
             {...formInfoPartA.register('email', {
               required: 'Email công ty không được để trống'
@@ -402,6 +417,7 @@ const CreateContract = () => {
           <input
             className={`${formInfoPartA.formState.errors.address ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled={createContractQuery?.isLoading}
             placeholder='Nhập địa chỉ công ty'
             {...formInfoPartA.register('address', {
               required: 'Mã số thuế không được để trống'
@@ -421,6 +437,7 @@ const CreateContract = () => {
           <input
             className={`${formInfoPartA.formState.errors.presenter ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled={createContractQuery?.isLoading}
             placeholder='Nhập tên người đại diện'
             {...formInfoPartA.register('presenter', {
               required: 'Người đại diện không được để trống'
@@ -439,6 +456,7 @@ const CreateContract = () => {
           <input
             className={`${formInfoPartA.formState.errors.position ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled={createContractQuery?.isLoading}
             placeholder='Nhập vị trí làm việc'
             {...formInfoPartA.register('position', {
               required: 'Vị trí làm việc không được để trống'
@@ -457,6 +475,7 @@ const CreateContract = () => {
           <input
             className={`${formInfoPartA.formState.errors.businessNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled={createContractQuery?.isLoading}
             placeholder='Nhập thông tin'
             {...formInfoPartA.register('businessNumber', {
               required: 'Giấy phép ĐKKD không được để trống'
@@ -476,6 +495,7 @@ const CreateContract = () => {
             onInput={(e: any) => setAccountNumberA(e.target.value)}
             className={`${formInfoPartA.formState.errors.bankId ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled={createContractQuery?.isLoading}
             placeholder='Nhập STK'
             {...formInfoPartA.register('bankId', {
               required: 'STK không được để trống'
@@ -501,6 +521,7 @@ const CreateContract = () => {
           /> */}
           <select
             {...formInfoPartA.register('bankName')}
+            disabled={createContractQuery?.isLoading}
             className='block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
           >
             <option key={null} value={'Tên ngân hàng'}>
@@ -525,6 +546,7 @@ const CreateContract = () => {
           <input
             className={`${formInfoPartA.formState.errors.bankAccOwer ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled={createContractQuery?.isLoading}
             placeholder='Nhập tên tài khoản ngân hàng'
             {...formInfoPartA.register('bankAccOwer', {
               required: 'Tên tài khoản không được để trống'
@@ -556,6 +578,7 @@ const CreateContract = () => {
             <input
               className={`${formInfoPartB.formState.errors.taxNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
               type='text'
+              disabled={createContractQuery?.isLoading}
               onInput={debounce(handleAutoFillPartyB, 500)}
               placeholder='Nhập mã số thuế'
               {...formInfoPartB.register('taxNumber', {
@@ -577,6 +600,7 @@ const CreateContract = () => {
           <input
             className={`${formInfoPartB.formState.errors.name ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled={createContractQuery?.isLoading}
             placeholder='Nhập tên công ty'
             {...formInfoPartB.register('name', {
               required: 'Tên công ty không được để trống'
@@ -596,6 +620,7 @@ const CreateContract = () => {
             // onInput={(event) => validateEmailDebounced((event.target as HTMLInputElement).value)}
             className={`${formInfoPartB.formState.errors.email ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled={createContractQuery?.isLoading}
             placeholder='Nhập email công ty'
             {...formInfoPartB.register('email', {
               required: 'Email công ty không được để trống'
@@ -614,6 +639,7 @@ const CreateContract = () => {
           <input
             className={`${formInfoPartB.formState.errors.address ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled={createContractQuery?.isLoading}
             placeholder='Nhập địa chỉ công ty'
             {...formInfoPartB.register('address', {
               required: 'Mã số thuế không được để trống'
@@ -633,6 +659,7 @@ const CreateContract = () => {
           <input
             className={`${formInfoPartB.formState.errors.presenter ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled={createContractQuery?.isLoading}
             placeholder='Nhập tên người đại diện'
             {...formInfoPartB.register('presenter', {
               required: 'Người đại diện không được để trống'
@@ -651,6 +678,7 @@ const CreateContract = () => {
           <input
             className={`${formInfoPartB.formState.errors.position ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled={createContractQuery?.isLoading}
             placeholder='Nhập vị trí làm việc'
             {...formInfoPartB.register('position', {
               required: 'Vị trí làm việc không được để trống'
@@ -669,6 +697,7 @@ const CreateContract = () => {
           <input
             className={`${formInfoPartB.formState.errors.businessNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled={createContractQuery?.isLoading}
             placeholder='Nhập thông tin'
             {...formInfoPartB.register('businessNumber', {
               required: 'Giấy phép ĐKKD không được để trống'
@@ -688,6 +717,7 @@ const CreateContract = () => {
             onInput={(e: any) => setAccountNumberB(e.target.value)}
             className={`${formInfoPartB.formState.errors.bankId ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled={createContractQuery?.isLoading}
             placeholder='Nhập STK'
             {...formInfoPartB.register('bankId', {
               required: 'STK không được để trống'
@@ -712,6 +742,7 @@ const CreateContract = () => {
             })}
           /> */}
           <select
+            disabled={createContractQuery?.isLoading}
             {...formInfoPartB.register('bankName')}
             className='block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
           >
@@ -737,6 +768,7 @@ const CreateContract = () => {
           <input
             className={`${formInfoPartB.formState.errors.bankAccOwer ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled={createContractQuery?.isLoading}
             placeholder='Nhập tên tài khoản ngân hàng'
             {...formInfoPartB.register('bankAccOwer', {
               required: 'Tên tài khoản không được để trống'
@@ -754,6 +786,8 @@ const CreateContract = () => {
             name='term'
             placeholder='Điều khoản'
             height='60vh'
+            disableToolbar={createContractQuery?.isLoading}
+            disable={createContractQuery?.isLoading}
             setContents={selectedTemplate?.termContract}
             setOptions={{
               buttonList: [
@@ -779,6 +813,7 @@ const CreateContract = () => {
             className={`text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400  sm:text-sm sm:leading-6 mr-3`}
             placeholder='Nhập tên hợp đồng'
             type='checkbox'
+            disabled={createContractQuery?.isLoading}
             {...register('urgent')}
           />
           <label className='font-light '>Tạo hợp đồng với trạng thái khẩn cấp</label>
@@ -814,7 +849,7 @@ const CreateContract = () => {
             className='middle my-3 none center mr-4 rounded-lg bg-[#0070f4] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
             data-ripple-light='true'
           >
-            Tạo
+            {createContractQuery?.isLoading ? <LoadingIcon /> : 'Tạo'}
           </button>
         </div>
       </form>
@@ -856,7 +891,7 @@ const CreateContract = () => {
                         className='middle  none center mr-4 rounded-lg bg-red-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#ff00002f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
                         data-ripple-light='true'
                       >
-                        Xác nhận
+                        {createTemplateContractQuery?.isLoading ? <LoadingIcon /> : 'Xác nhận'}
                       </button>
                     </div>
                   </div>

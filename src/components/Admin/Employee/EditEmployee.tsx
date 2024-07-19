@@ -1,4 +1,5 @@
 import { debounce } from 'lodash'
+import moment from 'moment'
 import { ChangeEventHandler, EventHandler, useMemo, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useMutation } from 'react-query'
@@ -35,7 +36,13 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
     handleSubmit,
     getValues,
     formState: { errors }
-  } = useForm<FromType>({ defaultValues: { ...data, permissions: data?.permissions?.slice(1, -1) } })
+  } = useForm<FromType>({
+    defaultValues: {
+      ...data,
+      permissions: data?.permissions?.slice(1, -1),
+      dob: data?.dob != null ? moment(data?.dob).format('YYYY-MM-DD') : data?.dob
+    }
+  })
   const { successNotification, errorNotification } = useToast()
   const editEmployee = useMutation(updateProfile, {
     onSuccess: (response) => {
@@ -59,7 +66,7 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
     >
       <div className='w-[100%] sm:w-[48%] md:w-[29%] relative'>
         <label className=' flex items-center'>
-          <div className='font-bold'>
+          <div>
             Tên nhân viên <sup className='text-red-500'>*</sup>
           </div>
           <TooltipComponent
@@ -85,7 +92,7 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] relative'>
         <label className=' flex items-center'>
-          <div className='font-bold'>
+          <div>
             Phòng ban<sup className='text-red-500'>*</sup>
           </div>
           <TooltipComponent
@@ -111,7 +118,7 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] relative'>
         <label className=' flex items-center'>
-          <div className='font-bold'>
+          <div>
             Vị trí <sup className='text-red-500'>*</sup>
           </div>
           <TooltipComponent
@@ -136,7 +143,7 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
         </div>
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
+        <label>
           Email<sup className='text-red-500'>*</sup>
         </label>
         <input
@@ -157,7 +164,7 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
 
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
         <label className=' flex items-center'>
-          <div className='font-bold'>
+          <div>
             CCCD/CMT <sup className='text-red-500'>*</sup>
           </div>
           <TooltipComponent
@@ -183,7 +190,7 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
         <label className=' flex items-center'>
-          <div className='font-bold'>
+          <div>
             Số điện thoại <sup className='text-red-500'>*</sup>
           </div>
           <TooltipComponent
@@ -209,7 +216,7 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
         <label className=' flex items-center'>
-          <div className='font-bold'>
+          <div>
             Địa chỉ <sup className='text-red-500'>*</sup>
           </div>
           <TooltipComponent
@@ -234,7 +241,7 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
         </div>
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
+        <label>
           Ngày sinh<sup className='text-red-500'>*</sup>
         </label>
         <input
@@ -254,7 +261,7 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
       </div>
 
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
+        <label>
           Giới tính<sup className='text-red-500'>*</sup>
         </label>
         <select
@@ -266,7 +273,7 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
         </select>
       </div>
       <div className='w-[100%] mt-5 relative'>
-        <label className='font-bold '>
+        <label>
           Quyền<sup className='text-red-500'>*</sup>
         </label>
         <div className='flex flex-wrap w-[70%] justify-between'>
