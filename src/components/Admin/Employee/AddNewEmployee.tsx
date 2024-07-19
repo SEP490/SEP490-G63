@@ -62,7 +62,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
     >
       <div className='w-[100%] sm:w-[48%] md:w-[29%] relative'>
         <label className=' flex items-center'>
-          <div className='font-bold'>
+          <div>
             Tên nhân viên <sup className='text-red-500'>*</sup>
           </div>
           <TooltipComponent
@@ -88,7 +88,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] relative'>
         <label className=' flex items-center'>
-          <div className='font-bold'>
+          <div>
             Phòng ban<sup className='text-red-500'>*</sup>
           </div>
           <TooltipComponent
@@ -114,7 +114,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] relative'>
         <label className=' flex items-center'>
-          <div className='font-bold'>
+          <div>
             Vị trí <sup className='text-red-500'>*</sup>
           </div>
           <TooltipComponent
@@ -139,7 +139,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
         </div>
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
+        <label>
           Email<sup className='text-red-500'>*</sup>
         </label>
         <input
@@ -159,7 +159,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
         <label className=' flex items-center'>
-          <div className='font-bold'>
+          <div>
             CCCD/CMT <sup className='text-red-500'>*</sup>
           </div>
           <TooltipComponent
@@ -185,7 +185,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
         <label className=' flex items-center'>
-          <div className='font-bold'>
+          <div>
             Số điện thoại <sup className='text-red-500'>*</sup>
           </div>
           <TooltipComponent
@@ -211,7 +211,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
         <label className=' flex items-center'>
-          <div className='font-bold'>
+          <div>
             Địa chỉ <sup className='text-red-500'>*</sup>
           </div>
           <TooltipComponent
@@ -236,7 +236,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
         </div>
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
+        <label>
           Ngày sinh<sup className='text-red-500'>*</sup>
         </label>
         <input
@@ -256,7 +256,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
       </div>
 
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>Giới tính</label>
+        <label>Giới tính</label>
         <select
           className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
           {...register('gender')}
@@ -266,7 +266,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
         </select>
       </div>
       <div className='w-[100%] mt-5 relative'>
-        <label className='font-bold '>
+        <label>
           Quyền<sup className='text-red-500'>*</sup>
         </label>
         <div className='flex flex-wrap w-[70%] justify-between'>
