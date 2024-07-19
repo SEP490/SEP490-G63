@@ -548,7 +548,7 @@ const Contract = () => {
   }, [page, refetch, size])
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
-      <div className='flex gap-3 justify-between w-full py-3 h-[60px] px-5'>
+      <div className='flex gap-3 justify-between w-full py-3 h-[60px] px-1 md:px-3'>
         <div className='flex w-[50%]'>
           <div className='relative'>
             <div className='absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none'>
@@ -583,8 +583,8 @@ const Contract = () => {
           <PlusIcon className='h-5 w-5' /> Tạo mới
         </button>
       </div>
-      <div className='flex h-[calc(100%-70px)] flex-wrap justify-start mx-3'>
-        <div className='flex gap-2 md:flex-col w-full md:h-full md:w-[16%] bg-white shadow-md mx-2 p-2 mb-2'>
+      <div className='flex h-[calc(100%-70px)] flex-col md:flex-row justify-start md:justify-between mx-1 md:mx-3'>
+        <div className='flex gap-2 md:flex-col w-full h-fit md:h-full md:w-[15%] bg-white shadow-md p-2 mb-2 overflow-auto'>
           {menuContract[permissionUser]?.map((t: any) => (
             <div
               key={t.id}
@@ -595,7 +595,7 @@ const Contract = () => {
             </div>
           ))}
         </div>
-        <div className='w-full md:w-[80%] overflow-auto  '>
+        <div className='w-full md:w-[84%] overflow-auto'>
           <div className='shadow-md sm:rounded-lg '>
             <table className='w-full text-sm text-left rtl:text-right text-black dark:text-gray-400 '>
               <thead className=' text-xs text-black bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
@@ -755,7 +755,6 @@ const Contract = () => {
                       <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => handleCloseModal()} />
                     </div>
                   </div>
-
                   <SendMailUpdateStatus
                     id={selectedContract?.id}
                     status={status}
