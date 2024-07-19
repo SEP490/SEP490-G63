@@ -9,7 +9,9 @@ const StepProgressBar = ({ status }: IProps) => {
   return (
     <div className='stepper-wrapper'>
       {status?.map((s) => (
-        <NodeStep key={s.status} status={s.status} userEmail={user?.email as string} title={s.title} />
+        <div className='stepper-item completed' key={s.status}>
+          <NodeStep status={s.status} userEmail={user?.email as string} title={s.title} />
+        </div>
       ))}
     </div>
   )
