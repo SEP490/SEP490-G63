@@ -332,7 +332,7 @@ const Employee = () => {
               >
                 <Dialog.Panel className='w-[100vw] md:w-[80vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
                   <div className='flex justify-between mb-2'>
-                    <div className='font-semibold'>Thông tin chi tiết</div>
+                    <div className='font-bold'>Thông tin chi tiết</div>
                     <div className='flex gap-3 items-center'>
                       <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeAllModal()} />
                     </div>
