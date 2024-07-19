@@ -33,8 +33,8 @@ const ViewEmployee = ({ data }: IProp) => {
 
   return (
     <form className='items-center w-full rounded-lg  flex flex-wrap justify-between h-fit bg-white z-50 '>
-      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
+      <div className='w-[100%] sm:w-[48%] md:w-[29%] relative'>
+        <label>
           Tên nhân viên <sup className='text-red-500'>*</sup>
         </label>
         <input
@@ -50,8 +50,8 @@ const ViewEmployee = ({ data }: IProp) => {
           {errors.name?.message}
         </div>
       </div>
-      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
+      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 sm:mt-0 relative'>
+        <label>
           Phòng ban<sup className='text-red-500'>*</sup>
         </label>
         <input
@@ -62,8 +62,8 @@ const ViewEmployee = ({ data }: IProp) => {
           hidden
         />
       </div>
-      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
+      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 md:mt-0 relative'>
+        <label>
           Vị trí<sup className='text-red-500'>*</sup>
         </label>
         <input
@@ -75,7 +75,7 @@ const ViewEmployee = ({ data }: IProp) => {
         />
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
+        <label>
           Email<sup className='text-red-500'>*</sup>
         </label>
         <input
@@ -93,7 +93,7 @@ const ViewEmployee = ({ data }: IProp) => {
       </div>
 
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
+        <label>
           CCCD/CMT <sup className='text-red-500'>*</sup>
         </label>
         <input
@@ -110,7 +110,7 @@ const ViewEmployee = ({ data }: IProp) => {
         </div>
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
+        <label>
           Số điện thoại <sup className='text-red-500'>*</sup>
         </label>
         <input
@@ -127,7 +127,7 @@ const ViewEmployee = ({ data }: IProp) => {
         </div>
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
+        <label>
           Địa chỉ<sup className='text-red-500'>*</sup>
         </label>
         <input
@@ -139,7 +139,7 @@ const ViewEmployee = ({ data }: IProp) => {
         />
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
+        <label>
           Ngày sinh<sup className='text-red-500'>*</sup>
         </label>
         <input
@@ -152,7 +152,7 @@ const ViewEmployee = ({ data }: IProp) => {
       </div>
 
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
+        <label>
           Giới tính<sup className='text-red-500'>*</sup>
         </label>
         <select
@@ -166,7 +166,7 @@ const ViewEmployee = ({ data }: IProp) => {
         </select>
       </div>
       <div className='w-[100%] mt-5 relative'>
-        <label className='font-bold '>
+        <label>
           Quyền<sup className='text-red-500'>*</sup>
         </label>
         <div className='flex flex-wrap justify-between'>

@@ -293,7 +293,7 @@ const Employee = () => {
               >
                 <Dialog.Panel className='w-[100vw] md:w-[80vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
                   <div className='flex justify-between mb-2'>
-                    <div className='font-semibold'>Thêm mới nhân viên</div>
+                    <div className='font-bold'>Thêm mới nhân viên</div>
                     <div className='flex gap-3 items-center'>
                       <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeModal()} />
                     </div>
@@ -332,7 +332,7 @@ const Employee = () => {
               >
                 <Dialog.Panel className='w-[100vw] md:w-[80vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
                   <div className='flex justify-between mb-2'>
-                    <div className='font-semibold'>Thông tin chi tiết</div>
+                    <div className='font-bold'>Thông tin chi tiết</div>
                     <div className='flex gap-3 items-center'>
                       <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeAllModal()} />
                     </div>
@@ -371,7 +371,7 @@ const Employee = () => {
               >
                 <Dialog.Panel className='w-[100vw] md:w-[80vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
                   <div className='flex justify-between mb-2'>
-                    <div className='font-semibold'>Chỉnh sửa thông tin</div>
+                    <div className='font-bold'>Chỉnh sửa thông tin</div>
                     <div className='flex gap-3 items-center'>
                       <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeAllModal()} />
                     </div>
@@ -411,7 +411,7 @@ const Employee = () => {
               >
                 <Dialog.Panel className='w-[100vw] md:w-[40vw] md:h-fit transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
                   <div className='flex justify-between mb-2'>
-                    <div className='font-semibold'>Thông báo</div>
+                    <div className='font-bold'>Thông báo</div>
                     <div className='flex gap-3 items-center'>
                       <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeAllModal()} />
                     </div>
