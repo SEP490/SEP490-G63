@@ -60,7 +60,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
       onSubmit={handleSubmit(debounce(onSubmit, 300))}
       className='items-center w-full rounded-lg mt-2  flex flex-wrap justify-between h-fit bg-white z-50 '
     >
-      <div className='w-[100%] sm:w-[48%] md:w-[29%] relative'>
+      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-0 relative'>
         <label className=' flex items-center'>
           <div>
             Tên nhân viên <sup className='text-red-500'>*</sup>
@@ -86,7 +86,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
           {errors.name?.message}
         </div>
       </div>
-      <div className='w-[100%] sm:w-[48%] md:w-[29%] relative'>
+      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 sm:mt-0 relative'>
         <label className=' flex items-center'>
           <div>
             Phòng ban<sup className='text-red-500'>*</sup>
@@ -112,7 +112,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
           {errors.department?.message}
         </div>
       </div>
-      <div className='w-[100%] sm:w-[48%] md:w-[29%] relative'>
+      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 md:mt-0     relative'>
         <label className=' flex items-center'>
           <div>
             Vị trí <sup className='text-red-500'>*</sup>
