@@ -61,7 +61,7 @@ const NotifyProvider: React.FC<Props> = ({ children }) => {
       }
     }
 
-    fetchAPI()
+      fetchAPI()
     const stompClient = Stomp.over(socket)
     stompClient.connect({}, (frame: any) => {
       console.log('Connected: ' + frame)
@@ -82,7 +82,7 @@ const NotifyProvider: React.FC<Props> = ({ children }) => {
     () => ({ notifications, totalNotRead, isReadNotify, setTotalNotRead, setNotifications }),
     [notifications, totalNotRead]
   )
-
+  
   return (
     <>
       <NotifyContext.Provider value={contextValue}>{children}</NotifyContext.Provider>

@@ -10,12 +10,12 @@ type IProps = {
 const NodeStep = ({ status, userEmail, title }: IProps) => {
   const queryData = useQuery(['query-data-status', status], () => getNumberOfStatus(userEmail, status))
   return (
-    <div className='stepper-item completed'>
+    <>
       <div className='step-counter'>
         {queryData.isLoading ? <LoadingIcon /> : queryData?.data?.object == null ? 0 : queryData?.data?.object}
       </div>
       <div className='step-name'>{title}</div>
-    </div>
+    </>
   )
 }
 export default NodeStep

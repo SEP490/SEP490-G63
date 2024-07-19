@@ -594,10 +594,18 @@ const Routes = () => {
       )
     },
     {
-      path: '/login',
+      path: '/',
       element: (
         <Suspense fallback={<LoadingPage />}>
           <Login />
+        </Suspense>
+      )
+    },
+    {
+      path: '*',
+      element: (
+        <Suspense fallback={<LoadingPage />}>
+          <Error />
         </Suspense>
       )
     }
