@@ -59,9 +59,6 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
       setPdfUrl(url)
     }
   }
-  console.log('URL:', listUrl)
-  console.log('files:', files)
-
   useEffect(() => {
     fileType?.current == 'img' && submitImages()
     fileType?.current == 'pdf' && getUrlPdf()
