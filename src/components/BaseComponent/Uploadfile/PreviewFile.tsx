@@ -167,7 +167,7 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
   if (loadingTypeContract) return <LoadingPage />
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='w-full flex flex-col justify-between overflow-auto'>
-      <div className='flex gap-4 justify-between'>
+      <div className='flex gap-4 justify-between flex-col md:flex-row'>
         <div className='flex flex-wrap gap-4 w-full md:w-[40%]'>
           <div className='flex flex-col w-full relative'>
             <label className='flex items-center'>
@@ -380,7 +380,7 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
             </button>
           </div>
         </div>
-        <div className='w-[60%] h-fit pl-5'>
+        <div className='w-full md:w-[60%] h-fit pl-5'>
           <div>
             Tài liệu<sup className='text-red-700'>*</sup>
           </div>
