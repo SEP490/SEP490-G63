@@ -139,17 +139,17 @@ const OldContract = () => {
       </div>
       <div className='overflow-auto'>
         <div className='shadow-md sm:rounded-lg my-3 h-fit'>
-          <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
+          <table className='w-full text-sm text-left rtl:text-right'>
             <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 shadow-md'>
               <tr>
-                <th className='px-3 py-3'>STT</th>
+                <th className='px-3 py-3 w-[30px]' align='center'>STT</th>
                 <th className='px-3 py-3'>Tên hợp đồng</th>
                 <th className='px-3 py-3'>Loại hợp đồng</th>
-                <th className='px-3 py-3'>Ngày kí</th>
-                <th className='px-3 py-3'>Ngày bắt đầu</th>
-                <th className='px-3 py-3'>Ngày kết thúc</th>
+                <th className='px-3 py-3' align='center'>Ngày kí</th>
+                <th className='px-3 py-3' align='center'>Ngày bắt đầu</th>
+                <th className='px-3 py-3' align='center'>Ngày kết thúc</th>
                 <th className='px-3 py-3' align='center'>
-                  Xem chi tiết
+                  Chi tiết
                 </th>
                 <th className='px-3 py-3'></th>
               </tr>
@@ -164,18 +164,18 @@ const OldContract = () => {
                     key={d.id}
                     className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
                   >
-                    <td className='px-3 py-4'>{page * size + index + 1}</td>
+                    <td className='px-3 py-4' align='center'>{page * size + index + 1}</td>
                     <td className='px-3 py-4'>{d.contractName}</td>
                     <td className='px-3 py-4'>
                       {typeContract?.content?.find((t: any) => t.id == d.contractTypeId)?.title}
                     </td>
-                    <td className='px-3 py-4'>
+                    <td className='px-3 py-4' align='center'>
                       {d.contractSignDate ? moment(d.contractSignDate).format('DD/MM/YYYY') : ''}
                     </td>
-                    <td className='px-3 py-4'>
+                    <td className='px-3 py-4' align='center'>
                       {d.contractStartDate ? moment(d.contractStartDate).format('DD/MM/YYYY') : ''}
                     </td>
-                    <td className='px-3 py-4'>
+                    <td className='px-3 py-4' align='center'>
                       {d.contractEndDate ? moment(d.contractEndDate).format('DD/MM/YYYY') : ''}
                     </td>
                     <td className='px-3 py-4' align='center'>
@@ -257,7 +257,7 @@ const OldContract = () => {
                 leaveFrom='opacity-100 scale-100'
                 leaveTo='opacity-0 scale-95'
               >
-                <Dialog.Panel className='w-[100vw] md:w-[50vw] min-h-[90vh] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+                <Dialog.Panel className='w-[100vw] md:w-[800px] h-fit transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
                   <div className='flex justify-between'>
                     <div className='font-semibold'>Tải lên hợp đồng</div>
                     <XMarkIcon className='h-5 w-5 mr-3 mb-3 cursor-pointer' onClick={handleCloseModal} />
