@@ -56,7 +56,7 @@ export const getUserByPermission = async (permission: string): Promise<UserList[
   const result = response.data?.object?.content.map((d: any) => ({ label: d.email, value: d.email }))
   return result as UserList[]
 }
-export const getNotification = async (): Promise<NotificationData[]> => {
-  const response = await axiosInstance.get('notification')
-  return response?.data?.content
+export const getNotification = async (page: number) => {
+  const response = await axiosInstance.get(`notification?page=${page}&size=10`)
+  return response?.data
 }

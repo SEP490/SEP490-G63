@@ -36,6 +36,7 @@ import { FaClock, FaUserCheck, FaUserClock, FaUserTimes } from 'react-icons/fa'
 import { MdEditDocument, MdOutlineDownloadDone } from 'react-icons/md'
 import { HiMiniDocumentCheck } from 'react-icons/hi2'
 import LoadingIcon from '~/assets/LoadingIcon'
+import { SubmitHandler, useForm } from 'react-hook-form'
 export interface DataContract {
   id: string
   file: string
@@ -70,7 +71,9 @@ type ActionType = {
   disable?: any
   callback: any
 }
-
+type FormSearch = {
+  searchText: string
+}
 type STATUS = 'ADMIN' | 'OFFICE_ADMIN' | 'SALE' | 'OFFICE_STAFF'
 const Contract = () => {
   const navigate = useNavigate()
@@ -99,9 +102,7 @@ const Contract = () => {
     else if (user?.permissions.includes(permissionObject.SALE)) return 'SALE'
     else return 'OFFICE_STAFF'
   }, [user])
-  const closeModal = () => {
-    setOpenModal(false)
-  }
+
   const handleCloseModal = () => {
     setDeleteModal(false)
     setOpenModal(false)
@@ -204,6 +205,8 @@ const Contract = () => {
       }
     }
   ]
+  console.log(user);
+  
   const actionOfficeAdmin: ActionType[] = [
     {
       id: 1,
@@ -239,6 +242,19 @@ const Contract = () => {
       id: 3,
       title: (
         <>
+          <DocumentPlusIcon className='h-5' /> Phụ lục hợp đồng
+        </>
+      ),
+      color: 'text-blue-700',
+      disable: (d: any) => false,
+      callback: (d: any) => {
+        navigate(`/appendices/${d.id}`)
+      }
+    },
+    {
+      id: 4,
+      title: (
+        <>
           <ArrowUturnLeftIcon className='h-5' /> Từ chối duyệt
         </>
       ),
@@ -251,7 +267,7 @@ const Contract = () => {
       }
     },
     {
-      id: 4,
+      id: 5,
       title: (
         <>
           <Cog6ToothIcon className='h-5' /> Sửa
@@ -265,7 +281,7 @@ const Contract = () => {
       }
     },
     {
-      id: 5,
+      id: 6,
       title: (
         <>
           <NoSymbolIcon className='h-5' /> Xóa
@@ -288,7 +304,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-green-700',
-      disable: (d: any) => !d?.canSign,
+      disable: (d: any) => !d?.canSign && user?.email != d.createdBy,
       callback: (d: any) => {
         navigate(`/view/${d?.id}/sign/1`)
       }
@@ -312,6 +328,19 @@ const Contract = () => {
       id: 3,
       title: (
         <>
+          <DocumentPlusIcon className='h-5' /> Phụ lục hợp đồng
+        </>
+      ),
+      color: 'text-blue-700',
+      disable: (d: any) => false,
+      callback: (d: any) => {
+        navigate(`/appendices/${d.id}`)
+      }
+    },
+    {
+      id: 4,
+      title: (
+        <>
           <Cog6ToothIcon className='h-5' /> Sửa
         </>
       ),
@@ -323,7 +352,7 @@ const Contract = () => {
       }
     },
     {
-      id: 4,
+      id: 5,
       title: (
         <>
           <NoSymbolIcon className='h-5' /> Xóa
@@ -538,6 +567,10 @@ const Contract = () => {
   const handleDelete = () => {
     if (selectedContract) deleteTemplate.mutate(selectedContract.id)
   }
+  const { handleSubmit, register } = useForm<FormSearch>()
+  const onSubmit: SubmitHandler<FormSearch> = async (data) => {
+    navigate(`/search/contract/${data.searchText}`)
+  }
 
   useEffect(() => {
     if (prevPageRef.current !== page || prevSizeRef.current !== size) {
@@ -548,8 +581,8 @@ const Contract = () => {
   }, [page, refetch, size])
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
-      <div className='flex gap-3 justify-between w-full py-3 h-[60px] px-1 md:px-3'>
-        <div className='flex w-[50%]'>
+      <div className='flex gap-3 justify-between w-full py-3 h-[60px] px-3'>
+        <div className='flex md:w-[50%] w-[70%]'>
           <div className='relative'>
             <div className='absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none'>
               <svg
@@ -567,149 +600,165 @@ const Contract = () => {
               </svg>
             </div>
           </div>
-          <input
-            type='text'
-            id='table-search'
-            className='block p-2 ps-10 w-full shadow-md text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-            placeholder='Tìm kiếm hợp đồng'
-            // onChange={handChangeInputSearch}
-          />
+          <form onSubmit={handleSubmit(onSubmit)} className='flex w-full gap-2'>
+            <input
+              type='text'
+              id='table-search'
+              {...register('searchText')}
+              className='block p-2 ps-10 w-[80%] shadow-md text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+              placeholder='Thông tin hợp đồng'
+            />
+            <button
+              type='submit'
+              className='rounded-md shadow-md w-fit bg-main-color px-2 py-1 text-xs sm:text-sm font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
+            >
+              Tìm kiếm
+            </button>
+          </form>
         </div>
         <button
           type='button'
           onClick={() => navigate('create')}
-          className='rounded-md shadow-md flex gap-1 bg-main-color px-4 py-2 text-sm font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
+          className='rounded-md shadow-md flex gap-1 items-center bg-main-color px-4 py-2 text-xs sm:text-sm font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
         >
           <PlusIcon className='h-5 w-5' /> Tạo mới
         </button>
       </div>
-      <div className='flex h-[calc(100%-70px)] flex-col md:flex-row justify-start md:justify-between mx-1 md:mx-3'>
-        <div className='flex gap-2 md:flex-col w-full h-fit md:h-full md:w-[15%] bg-white shadow-md p-2 mb-2 overflow-auto'>
+      <div className='flex h-[calc(100%-70px)] flex-col md:flex-row justify-start md:justify-between px-3'>
+        <div className='flex gap-2 md:flex-col w-full h-fit md:h-full md:w-[15%] bg-white shadow-md my-2 py-1 overflow-auto'>
           {menuContract[permissionUser]?.map((t: any) => (
             <div
               key={t.id}
-              className={`cursor-pointer rounded-md px-3 py-1 ${statusContract?.id == t.id ? 'bg-main-color text-white' : 'text-black'} hover:bg-hover-main hover:text-white`}
+              className={`cursor-pointer rounded-md md:h-fit h-[30px] px-3 py-1 ${statusContract?.id == t.id ? 'bg-main-color text-white' : 'text-black'} hover:bg-hover-main hover:text-white`}
               onClick={() => setStatusContract(t)}
             >
               {t?.title}
             </div>
           ))}
         </div>
-        <div className='w-full md:w-[84%] overflow-auto'>
-          <div className='shadow-md sm:rounded-lg '>
-            <table className='w-full text-sm text-left rtl:text-right text-black dark:text-gray-400 '>
-              <thead className=' text-xs text-black bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
-                <tr>
-                  <th className='px-3 py-3 w-[5%]'>STT</th>
-                  <th className='px-3 py-3 w-[40%]'>Tên hợp đồng</th>
-                  <th className='px-3 py-3 w-[20%]'>Người tạo</th>
-                  <th scope='col' className='px-3 py-3'>
-                    Ngày tạo
-                  </th>
-                  <th scope='col' className='px-3 py-3' align='center'>
-                    Trạng thái
-                  </th>
-                  <th className='px-3 py-3 ' align='center'>
-                    Chi tiết
-                  </th>
+        <div className='w-full md:w-[84%] h-[calc(100%-70px)]'>
+          <div
+            className={`${data != null && data?.object?.content?.length != 0 && !isLoading && !isFetching ? 'overflow-auto' : 'overflow-hidden'}`}
+          >
+            <div className='shadow-md sm:rounded-lg my-3 h-fit'>
+              <table className='w-full text-sm text-left rtl:text-right text-black dark:text-gray-400 '>
+                <thead className=' text-xs text-black bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
+                  <tr>
+                    <th className='px-3 py-3 w-[5%]'>STT</th>
+                    <th className='px-3 py-3 w-[40%]'>Tên hợp đồng</th>
+                    <th className='px-3 py-3 w-[20%]'>Người tạo</th>
+                    <th scope='col' className='px-3 py-3'>
+                      Ngày tạo
+                    </th>
+                    <th scope='col' className='px-3 py-3' align='center'>
+                      Trạng thái
+                    </th>
+                    <th className='px-3 py-3 ' align='center'>
+                      Chi tiết
+                    </th>
 
-                  <th className='px-3 py-3 w-[30px]'></th>
-                </tr>
-              </thead>
-              <tbody className='w-full '>
-                {!isLoading && !isFetching ? (
-                  data?.object?.content?.map((d: DataContract, index: number) => (
-                    <tr
-                      key={d.id}
-                      className='w-full  bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
-                    >
-                      <td className='px-3 py-4'>{size * page + index + 1}</td>
-                      <td
-                        className={`px-3 py-4 ${d.status != 'SUCCESS' && d.urgent ? 'text-red-700 font-semibold' : ''}`}
+                    <th className='px-3 py-3 w-[30px]'></th>
+                  </tr>
+                </thead>
+                <tbody className='w-full '>
+                  {!isLoading && !isFetching ? (
+                    data?.object?.content?.map((d: DataContract, index: number) => (
+                      <tr
+                        key={d.id}
+                        className='w-full  bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
                       >
-                        <div className='flex items-center gap-4'>
-                          {d.name}
-                          {d.status != 'SUCCESS' && d.urgent && (
-                            <Tooltip content='Cấp bách'>
-                              <UrgentIcon className='w-6 h-6' />
-                            </Tooltip>
-                          )}
-                        </div>
-                      </td>
-                      <td className='px-3 py-4'>{d.createdBy}</td>
-                      <td className='px-3 py-4'>
-                        {d?.createdDate ? moment(d?.createdDate).format('DD/MM/YYYY') : d?.createdDate}
-                      </td>
-                      <td className={`px-3 py-4 font-semibold ${statusObject[d.statusCurrent]?.color}`} align='center'>
-                        {d.statusCurrent ? statusObject[d.statusCurrent]?.title : ''}
-                      </td>
-                      <td className='px-3 py-4' align='center'>
-                        <div
-                          className='cursor-pointer text-blue-500 hover:underline'
-                          onClick={() => {
-                            setSelectedContract(d)
-                            setOpenModal(true)
-                          }}
+                        <td className='px-3 py-4'>{size * page + index + 1}</td>
+                        <td
+                          className={`px-3 py-4 ${d.status != 'SUCCESS' && d.urgent ? 'text-red-700 font-semibold' : ''}`}
                         >
-                          Xem
-                        </div>
-                      </td>
-                      <td className='px-3 py-4'>
-                        <div className={`${d?.statusCurrent == 'SUCCESS' ? 'invisible' : 'visible'}`}>
-                          <Menu as='div' className='relative inline-block text-left '>
-                            <Menu.Button className='flex justify-center items-center gap-3 cursor-pointer hover:text-blue-500'>
-                              <EllipsisVerticalIcon className='h-7 w-7' title='Hành động' />
-                            </Menu.Button>
+                          <div className='flex items-center gap-4'>
+                            {d.name}
+                            {d.status != 'SUCCESS' && d.urgent && (
+                              <Tooltip content='Cấp bách'>
+                                <UrgentIcon className='w-6 h-6' />
+                              </Tooltip>
+                            )}
+                          </div>
+                        </td>
+                        <td className='px-3 py-4'>{d.createdBy}</td>
+                        <td className='px-3 py-4'>
+                          {d?.createdDate ? moment(d?.createdDate).format('DD/MM/YYYY') : d?.createdDate}
+                        </td>
+                        <td
+                          className={`px-3 py-4 font-semibold ${statusObject[d.statusCurrent]?.color}`}
+                          align='center'
+                        >
+                          {d.statusCurrent ? statusObject[d.statusCurrent]?.title : ''}
+                        </td>
+                        <td className='px-3 py-4' align='center'>
+                          <div
+                            className='cursor-pointer text-blue-500 hover:underline'
+                            onClick={() => {
+                              setSelectedContract(d)
+                              setOpenModal(true)
+                            }}
+                          >
+                            Xem
+                          </div>
+                        </td>
+                        <td className='px-3 py-4'>
+                          <div className={`${d?.statusCurrent == 'SUCCESS' ? 'invisible' : 'visible'}`}>
+                            <Menu as='div' className='relative inline-block text-left '>
+                              <Menu.Button className='flex justify-center items-center gap-3 cursor-pointer hover:text-blue-500'>
+                                <EllipsisVerticalIcon className='h-7 w-7' title='Hành động' />
+                              </Menu.Button>
 
-                            <Transition
-                              as={Fragment}
-                              enter='transition ease-out duration-100'
-                              enterFrom='transform opacity-0 scale-95'
-                              enterTo='transform opacity-100 scale-100'
-                              leave='transition ease-in duration-75'
-                              leaveFrom='transform opacity-100 scale-100'
-                              leaveTo='transform opacity-0 scale-95'
-                            >
-                              <Menu.Items className='absolute right-4 -top-4 z-50 mt-2 w-48 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
-                                {actionTable[permissionUser]?.map((action: ActionType) => (
-                                  <Menu.Item key={action.id} disabled={action.disable(d)}>
-                                    {({ active }) => (
-                                      <button
-                                        onClick={() => action.callback(d)}
-                                        className={`group flex w-full items-center ${action.disable(d) ? 'text-gray-300' : active ? 'bg-blue-500 text-white' : action?.color} gap-3 rounded-md px-2 py-2 text-sm `}
-                                      >
-                                        {action.title}
-                                      </button>
-                                    )}
-                                  </Menu.Item>
-                                ))}
-                              </Menu.Items>
-                            </Transition>
-                          </Menu>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <></>
-                )}
-              </tbody>
-            </table>
-            {(isLoading || isFetching) && (
-              <Loading loading={isLoading || isFetching}>
-                <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'></div>
-              </Loading>
-            )}
+                              <Transition
+                                as={Fragment}
+                                enter='transition ease-out duration-100'
+                                enterFrom='transform opacity-0 scale-95'
+                                enterTo='transform opacity-100 scale-100'
+                                leave='transition ease-in duration-75'
+                                leaveFrom='transform opacity-100 scale-100'
+                                leaveTo='transform opacity-0 scale-95'
+                              >
+                                <Menu.Items className='absolute right-4 -top-4 z-50 mt-2 w-48 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
+                                  {actionTable[permissionUser]?.map((action: ActionType) => (
+                                    <Menu.Item key={action.id} disabled={action.disable(d)}>
+                                      {({ active }) => (
+                                        <button
+                                          onClick={() => action.callback(d)}
+                                          className={`group flex w-full items-center ${action.disable(d) ? 'text-gray-300' : active ? 'bg-blue-500 text-white' : action?.color} gap-3 rounded-md px-2 py-2 text-sm `}
+                                        >
+                                          {action.title}
+                                        </button>
+                                      )}
+                                    </Menu.Item>
+                                  ))}
+                                </Menu.Items>
+                              </Transition>
+                            </Menu>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <></>
+                  )}
+                </tbody>
+              </table>
+              {(isLoading || isFetching) && (
+                <Loading loading={isLoading || isFetching}>
+                  <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'></div>
+                </Loading>
+              )}
 
-            {!isLoading && !isFetching && (data == null || data?.object?.content?.length == 0) && (
-              <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'>
-                <div className='flex flex-col justify-center items-center opacity-60'>
-                  <DocumentIcon />
-                  Chưa có hợp đồng
+              {!isLoading && !isFetching && (data == null || data?.object?.content?.length == 0) && (
+                <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'>
+                  <div className='flex flex-col justify-center items-center opacity-60'>
+                    <DocumentIcon />
+                    Chưa có hợp đồng
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
+
           {!isLoading && !isFetching && data && data?.object?.content?.length != 0 && (
             <Pagination
               totalPages={totalPage}

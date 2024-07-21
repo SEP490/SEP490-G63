@@ -12,6 +12,7 @@ import { currentDate } from '~/common/utils/formatDate'
 import { useMutation } from 'react-query'
 import { AxiosError } from 'axios'
 import LoadingIcon from '~/assets/LoadingIcon'
+import moment from 'moment'
 type FromType = {
   password: string
   address: string
@@ -52,7 +53,11 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
     }
   })
   const onSubmit: SubmitHandler<FromType> = async (data) => {
-    addNewEmployeeQuery.mutate({ ...data, permissions: [data.permissions] })
+    addNewEmployeeQuery.mutate({
+      ...data,
+      dob: data.dob ? moment(data.dob).format('DD/MM/YYYY') : data.dob,
+      permissions: [data.permissions]
+    })
   }
 
   return (
@@ -60,9 +65,9 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
       onSubmit={handleSubmit(debounce(onSubmit, 300))}
       className='items-center w-full rounded-lg mt-2  flex flex-wrap justify-between h-fit bg-white z-50 '
     >
-      <div className='w-[100%] sm:w-[48%] md:w-[29%] relative'>
+      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-0 relative'>
         <label className=' flex items-center'>
-          <div className='font-bold'>
+          <div>
             Tên nhân viên <sup className='text-red-500'>*</sup>
           </div>
           <TooltipComponent
@@ -86,9 +91,9 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
           {errors.name?.message}
         </div>
       </div>
-      <div className='w-[100%] sm:w-[48%] md:w-[29%] relative'>
+      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 sm:mt-0 relative'>
         <label className=' flex items-center'>
-          <div className='font-bold'>
+          <div>
             Phòng ban<sup className='text-red-500'>*</sup>
           </div>
           <TooltipComponent
@@ -112,9 +117,9 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
           {errors.department?.message}
         </div>
       </div>
-      <div className='w-[100%] sm:w-[48%] md:w-[29%] relative'>
+      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 md:mt-0     relative'>
         <label className=' flex items-center'>
-          <div className='font-bold'>
+          <div>
             Vị trí <sup className='text-red-500'>*</sup>
           </div>
           <TooltipComponent
@@ -139,7 +144,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
         </div>
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
+        <label>
           Email<sup className='text-red-500'>*</sup>
         </label>
         <input
@@ -159,7 +164,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
         <label className=' flex items-center'>
-          <div className='font-bold'>
+          <div>
             CCCD/CMT <sup className='text-red-500'>*</sup>
           </div>
           <TooltipComponent
@@ -185,7 +190,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
         <label className=' flex items-center'>
-          <div className='font-bold'>
+          <div>
             Số điện thoại <sup className='text-red-500'>*</sup>
           </div>
           <TooltipComponent
@@ -211,7 +216,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
         <label className=' flex items-center'>
-          <div className='font-bold'>
+          <div>
             Địa chỉ <sup className='text-red-500'>*</sup>
           </div>
           <TooltipComponent
@@ -236,7 +241,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
         </div>
       </div>
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>
+        <label>
           Ngày sinh<sup className='text-red-500'>*</sup>
         </label>
         <input
@@ -256,7 +261,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
       </div>
 
       <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-        <label className='font-bold '>Giới tính</label>
+        <label>Giới tính</label>
         <select
           className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
           {...register('gender')}
@@ -266,7 +271,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
         </select>
       </div>
       <div className='w-[100%] mt-5 relative'>
-        <label className='font-bold '>
+        <label>
           Quyền<sup className='text-red-500'>*</sup>
         </label>
         <div className='flex flex-wrap w-[70%] justify-between'>
