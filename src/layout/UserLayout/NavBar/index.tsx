@@ -1,6 +1,13 @@
 import { Fragment, useState } from 'react'
 import logo from '../../../assets/svg/Tdocman.svg'
-import { Bars3Icon, UserIcon, ArrowRightStartOnRectangleIcon, BellAlertIcon } from '@heroicons/react/24/outline'
+import {
+  Bars3Icon,
+  UserIcon,
+  ArrowRightStartOnRectangleIcon,
+  BellAlertIcon,
+  EllipsisVerticalIcon,
+  XMarkIcon
+} from '@heroicons/react/24/outline'
 import avatar from '../../../assets/images/avatar1.png'
 import useViewport from '~/hooks/useViewport'
 import { useNavigate } from 'react-router-dom'
@@ -10,6 +17,7 @@ import { routerAdmin, routerAdminOfficer, routerSale } from '~/common/const/rout
 import { permissionObject } from '~/common/const/permissions'
 import { Popover, Transition } from '@headlessui/react'
 import { NotificationData, useNotification } from '~/context/notiProvider'
+import LoadingIcon from '~/assets/LoadingIcon'
 const NavBar = () => {
   const [openNav, setOpenNav] = useState(false)
   const [openProfile, setOpenProfile] = useState(false)
@@ -18,7 +26,18 @@ const NavBar = () => {
   const navigate = useNavigate()
   const { removeToken, user } = useAuth()
   const { successNotification } = useToast()
-  const { notifications, totalNotRead, isReadNotify, setNotifications, setTotalNotRead } = useNotification()
+  const {
+    notifications,
+    totalNotRead,
+    isReadNotify,
+    isDeleteNotify,
+    viewMoreNotify,
+    setNotifications,
+    setTotalNotRead,
+    loading,
+    page,
+    totalPages
+  } = useNotification()
   const navigateUser = user?.permissions.includes(permissionObject.OFFICE_ADMIN)
     ? routerAdminOfficer
     : user?.permissions.includes(permissionObject.SALE)
@@ -36,6 +55,9 @@ const NavBar = () => {
       )
       isReadNotify(id)
     }
+  }
+  const handleDeleteNotify = (id: any) => {
+    isDeleteNotify(id)
   }
   return (
     <div>
@@ -136,7 +158,7 @@ const NavBar = () => {
                 >
                   <div className='relative'>
                     <BellAlertIcon className='w-7 h-7 cursor-pointer text-blue-700' />
-                    {totalNotRead != 0 && (
+                    {totalNotRead != 0 && !loading && (
                       <div className='text-white cursor-default absolute top-[-4px] right-[-4px] bg-red-500 text-[8px] rounded-[50%] w-4 h-4 flex justify-center items-center font-bold'>
                         {totalNotRead}
                       </div>
@@ -155,27 +177,50 @@ const NavBar = () => {
                   <Popover.Panel
                     className={`absolute left-1/2 z-10  w-80  ${isMobile ? '-translate-x-[80%] ' : 'md:-translate-x-[100%] md:w-96'} transform px-4 sm:px-0 `}
                   >
-                    <div className='overflow-hidden rounded-lg w-full shadow-lg ring-1 ring-black/5'>
-                      <div className='relative gap-8 w-full bg-white flex p-1  overflow-auto justify-center'>
-                        {notifications?.length == 0 || !notifications ? (
-                          <div className='min-h-[100px] flex items-center'>Không có thông báo </div>
+                    <div className='overflow-hidden rounded-lg bg-white w-full shadow-lg ring-1 ring-black/5'>
+                      <div className='font-bold text-[20px] border-b-2 pl-4 my-2'>Thông báo</div>
+                      <div className='relative w-full max-h-[60vh] overflow-auto'>
+                        {loading && notifications?.length == 0 ? (
+                          <div className='min-h-[200px] flex items-center'>
+                            <LoadingIcon className='w-6 h-6' />
+                          </div>
+                        ) : notifications?.length == 0 || !notifications ? (
+                          <div className='min-h-[200px] flex items-center'>Không có thông báo </div>
                         ) : (
                           <div className='flex flex-col justify-center overflow-y-auto overflow-x-hidden px-1 w-full '>
                             {notifications?.map((n: NotificationData) => (
                               <div
                                 key={n.id}
-                                onClick={() => handleReadNotify(n.id, n.markRead)}
-                                className={`bg-white rounded-md m-[1px] cursor-pointer hover:bg-gray-200 px-3 py-1 w-full flex items-center relative`}
+                                className={`bg-white m-[1px] cursor-pointer w-full flex items-center group relative`}
                               >
-                                <div className=' flex flex-col'>
-                                  <div className='font-bold text-[16px]'>{n.title}</div>
+                                <div
+                                  className=' flex flex-col hover:bg-gray-200 w-full px-3 py-1 rounded-md transition-colors delay-[200]'
+                                  onClick={() => handleReadNotify(n.id, n.markRead)}
+                                >
+                                  <div className='font-semibold text-[16px]'>{n.title}</div>
                                   <div className='text-[12px]'>{n.message}</div>
                                 </div>
                                 {!n.markRead && (
                                   <div className='w-3 h-3 rounded-[50%] absolute right-10 bg-blue-600'></div>
                                 )}
+                                <div
+                                  className='w-5 h-5 rounded-[50%] absolute right-3 z-50 cursor-pointer border hover:text-red-500 group-hover:visible invisible'
+                                  onClick={() => handleDeleteNotify(n.id)}
+                                >
+                                  <XMarkIcon />
+                                </div>
                               </div>
                             ))}
+                            {page.current + 1 != totalPages.current && (
+                              <div
+                                className='flex justify-center text-blue-400 hover:underline border-t-2 cursor-pointer'
+                                onClick={() => {
+                                  viewMoreNotify()
+                                }}
+                              >
+                                Xem thêm
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
