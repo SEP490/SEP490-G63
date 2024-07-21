@@ -74,12 +74,9 @@ const NotifyProvider: React.FC<Props> = ({ children }) => {
     [readNotifyQuery]
   )
 
-  const isDeleteNotify = useCallback(
-    async (id: string) => {
-      deleteNotifyQuery.mutate(id)
-    },
-    [deleteNotifyQuery]
-  )
+  const isDeleteNotify = async (id: string) => {
+    deleteNotifyQuery.mutate(id)
+  }
   const getNotify = async (page: number) => {
     try {
       const notificationData = await getNotification(page)
@@ -91,10 +88,10 @@ const NotifyProvider: React.FC<Props> = ({ children }) => {
       console.log(e)
     }
   }
-  const viewMoreNotify = useCallback(async () => {
+  const viewMoreNotify = async () => {
     page.current = page.current + 1
     getNotifyDataQuery.mutate(page.current)
-  }, [getNotifyDataQuery])
+  }
   const getNotifyQuery = useMutation(getNotify)
   const loading = useMemo(() => {
     return getNotifyQuery.isLoading
@@ -117,7 +114,7 @@ const NotifyProvider: React.FC<Props> = ({ children }) => {
         stompClient.disconnect()
       }
     }
-  }, [user, getNotifyQuery])
+  }, [user])
 
   const contextValue = useMemo(
     () => ({
@@ -132,7 +129,7 @@ const NotifyProvider: React.FC<Props> = ({ children }) => {
       page,
       totalPages
     }),
-    [notifications, isReadNotify, isDeleteNotify, viewMoreNotify, totalNotRead, loading, page, totalPages]
+    [notifications, totalNotRead, loading, page, totalPages]
   )
 
   return (
