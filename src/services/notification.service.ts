@@ -7,3 +7,7 @@ export const readNotify = async (id: string) => {
   const response = await axiosInstant.put(`notification/${id}/true`)
   return response.data
 }
+export const deleteNotify = async (id: string) => {
+  const response = await axiosInstant.delete(`notification/${id}`)
+  return response.data
+}
