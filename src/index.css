@@ -27,3 +27,6 @@ input:focus {
   background: #aaa;
   border-radius: 10px;
 }
+html {
+  overflow: hidden;
+}

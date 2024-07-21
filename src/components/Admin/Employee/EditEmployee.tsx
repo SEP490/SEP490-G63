@@ -57,7 +57,14 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
     }
   })
   const onSubmit: SubmitHandler<FromType> = async (dataForm) => {
-    editEmployee.mutate({ id: data?.id as string, formData: { ...dataForm, permissions: [dataForm.permissions] } })
+    editEmployee.mutate({
+      id: data?.id as string,
+      formData: {
+        ...dataForm,
+        dob: dataForm.dob ? moment(dataForm.dob).format('DD/MM/YYYY') : dataForm.dob,
+        permissions: [dataForm.permissions]
+      }
+    })
   }
   return (
     <form

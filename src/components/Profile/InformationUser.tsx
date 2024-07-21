@@ -95,7 +95,7 @@ const InformationUser = () => {
       // console.log('file: ', inputRef.current.files[0])
 
       if (user?.id) {
-        const response = await updateProfile(user?.id, formData)
+        const response = await updateProfile({ id: user?.id, formData: formData })
         if (response.code == '00' && response.object) {
           setUser(response.object)
           successNotification('Chỉnh sửa thông tin người dùng thành công')

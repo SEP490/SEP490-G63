@@ -5,6 +5,7 @@ interface EmployeeData {
   phone: string
   position: string
   department: string
+  dob: string
   permissions: string[]
 }
 interface RegisterData {

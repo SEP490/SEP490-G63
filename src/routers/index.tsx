@@ -51,6 +51,26 @@ const Routes = () => {
           )
         },
         {
+          path: '/appendices-create/:id',
+          element: (
+            <Suspense fallback={<LoadingPage />}>
+              <AdminLayout>
+                <CreateAppendices />
+              </AdminLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/appendices/:id',
+          element: (
+            <Suspense fallback={<LoadingPage />}>
+              <AdminLayout>
+                <AppendicesContract />
+              </AdminLayout>
+            </Suspense>
+          )
+        },
+        {
           path: '/dashboard',
           element: (
             <Suspense fallback={<LoadingPage />}>
@@ -203,6 +223,30 @@ const Routes = () => {
               <UserLayout>
                 <AdminOfficer>
                   <SearchPage />
+                </AdminOfficer>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/appendices-create/:id',
+          element: (
+            <Suspense fallback={<LoadingPage />}>
+              <UserLayout>
+                <AdminOfficer>
+                  <CreateAppendices />
+                </AdminOfficer>
+              </UserLayout>
+            </Suspense>
+          )
+        },
+        {
+          path: '/appendices/:id',
+          element: (
+            <Suspense fallback={<LoadingPage />}>
+              <UserLayout>
+                <AdminOfficer>
+                  <AppendicesContract />
                 </AdminOfficer>
               </UserLayout>
             </Suspense>
