@@ -36,6 +36,7 @@ import { FaClock, FaUserCheck, FaUserClock, FaUserTimes } from 'react-icons/fa'
 import { MdEditDocument, MdOutlineDownloadDone } from 'react-icons/md'
 import { HiMiniDocumentCheck } from 'react-icons/hi2'
 import LoadingIcon from '~/assets/LoadingIcon'
+import { SubmitHandler, useForm } from 'react-hook-form'
 export interface DataContract {
   id: string
   file: string
@@ -70,7 +71,9 @@ type ActionType = {
   disable?: any
   callback: any
 }
-
+type FormSearch = {
+  searchText: string
+}
 type STATUS = 'ADMIN' | 'OFFICE_ADMIN' | 'SALE' | 'OFFICE_STAFF'
 const Contract = () => {
   const navigate = useNavigate()
@@ -99,9 +102,7 @@ const Contract = () => {
     else if (user?.permissions.includes(permissionObject.SALE)) return 'SALE'
     else return 'OFFICE_STAFF'
   }, [user])
-  const closeModal = () => {
-    setOpenModal(false)
-  }
+
   const handleCloseModal = () => {
     setDeleteModal(false)
     setOpenModal(false)
@@ -204,6 +205,8 @@ const Contract = () => {
       }
     }
   ]
+  console.log(user);
+  
   const actionOfficeAdmin: ActionType[] = [
     {
       id: 1,
@@ -239,6 +242,19 @@ const Contract = () => {
       id: 3,
       title: (
         <>
+          <DocumentPlusIcon className='h-5' /> Phụ lục hợp đồng
+        </>
+      ),
+      color: 'text-blue-700',
+      disable: (d: any) => false,
+      callback: (d: any) => {
+        navigate(`/appendices/${d.id}`)
+      }
+    },
+    {
+      id: 4,
+      title: (
+        <>
           <ArrowUturnLeftIcon className='h-5' /> Từ chối duyệt
         </>
       ),
@@ -251,7 +267,7 @@ const Contract = () => {
       }
     },
     {
-      id: 4,
+      id: 5,
       title: (
         <>
           <Cog6ToothIcon className='h-5' /> Sửa
@@ -265,7 +281,7 @@ const Contract = () => {
       }
     },
     {
-      id: 5,
+      id: 6,
       title: (
         <>
           <NoSymbolIcon className='h-5' /> Xóa
@@ -288,7 +304,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-green-700',
-      disable: (d: any) => !d?.canSign,
+      disable: (d: any) => !d?.canSign && user?.email != d.createdBy,
       callback: (d: any) => {
         navigate(`/view/${d?.id}/sign/1`)
       }
@@ -312,6 +328,19 @@ const Contract = () => {
       id: 3,
       title: (
         <>
+          <DocumentPlusIcon className='h-5' /> Phụ lục hợp đồng
+        </>
+      ),
+      color: 'text-blue-700',
+      disable: (d: any) => false,
+      callback: (d: any) => {
+        navigate(`/appendices/${d.id}`)
+      }
+    },
+    {
+      id: 4,
+      title: (
+        <>
           <Cog6ToothIcon className='h-5' /> Sửa
         </>
       ),
@@ -323,7 +352,7 @@ const Contract = () => {
       }
     },
     {
-      id: 4,
+      id: 5,
       title: (
         <>
           <NoSymbolIcon className='h-5' /> Xóa
@@ -538,6 +567,10 @@ const Contract = () => {
   const handleDelete = () => {
     if (selectedContract) deleteTemplate.mutate(selectedContract.id)
   }
+  const { handleSubmit, register } = useForm<FormSearch>()
+  const onSubmit: SubmitHandler<FormSearch> = async (data) => {
+    navigate(`/search/contract/${data.searchText}`)
+  }
 
   useEffect(() => {
     if (prevPageRef.current !== page || prevSizeRef.current !== size) {
@@ -567,13 +600,13 @@ const Contract = () => {
               </svg>
             </div>
           </div>
-          <form className='flex w-full gap-2'>
+          <form onSubmit={handleSubmit(onSubmit)} className='flex w-full gap-2'>
             <input
               type='text'
               id='table-search'
+              {...register('searchText')}
               className='block p-2 ps-10 w-[80%] shadow-md text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
               placeholder='Thông tin hợp đồng'
-              // onChange={handChangeInputSearch}
             />
             <button
               type='submit'
@@ -605,7 +638,7 @@ const Contract = () => {
         </div>
         <div className='w-full md:w-[84%] h-[calc(100%-70px)]'>
           <div
-            className={`${data != null && data?.object?.content?.length != 0 && !isLoading && !isFetching  ? 'overflow-auto' : 'overflow-hidden'}`}
+            className={`${data != null && data?.object?.content?.length != 0 && !isLoading && !isFetching ? 'overflow-auto' : 'overflow-hidden'}`}
           >
             <div className='shadow-md sm:rounded-lg my-3 h-fit'>
               <table className='w-full text-sm text-left rtl:text-right text-black dark:text-gray-400 '>

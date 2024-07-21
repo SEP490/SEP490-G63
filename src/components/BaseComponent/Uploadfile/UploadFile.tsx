@@ -23,7 +23,7 @@ const UploadFile = ({ handleCloseModal, refetch }: IProps) => {
   }
 
   return (
-    <div className='w-full'>
+    <div className='w-full h-fit'>
       <input
         type='file'
         ref={inputFileRef}

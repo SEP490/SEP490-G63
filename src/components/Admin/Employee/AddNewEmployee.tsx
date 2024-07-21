@@ -12,6 +12,7 @@ import { currentDate } from '~/common/utils/formatDate'
 import { useMutation } from 'react-query'
 import { AxiosError } from 'axios'
 import LoadingIcon from '~/assets/LoadingIcon'
+import moment from 'moment'
 type FromType = {
   password: string
   address: string
@@ -52,7 +53,11 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
     }
   })
   const onSubmit: SubmitHandler<FromType> = async (data) => {
-    addNewEmployeeQuery.mutate({ ...data, permissions: [data.permissions] })
+    addNewEmployeeQuery.mutate({
+      ...data,
+      dob: data.dob ? moment(data.dob).format('DD/MM/YYYY') : data.dob,
+      permissions: [data.permissions]
+    })
   }
 
   return (
