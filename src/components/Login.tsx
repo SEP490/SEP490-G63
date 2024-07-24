@@ -123,12 +123,12 @@ const Login = () => {
         >
           {loginQuery.isLoading ? <LoadingIcon /> : 'Đăng nhập'}
         </button>
-        <div>
+        {/* <div>
           Bạn chưa đăng ký ?
           <span className='cursor-pointer text-blue-600 ' onClick={() => navigate('/register')}>
             Đăng ký ngay
           </span>
-        </div>
+        </div> */}
       </form>
     </div>
   )
