@@ -1,5 +1,4 @@
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { REGEX_EMAIL, REGEX_PASSWORD } from '~/common/const/regexForm'
 import '../styles/login.css'
 import { login } from '~/services/user.service'
 import { getAccessToken, setAccessToken } from '~/config/accessToken'
@@ -12,6 +11,7 @@ import { AxiosError } from 'axios'
 import LoadingIcon from '~/assets/LoadingIcon'
 import { useState } from 'react'
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
+import data from "../regex.json"
 type FromType = {
   email: string
   password: string
@@ -46,6 +46,7 @@ const Login = () => {
       } else errorNotification('Đăng nhập thất bại')
     }
   })
+
   const onSubmit: SubmitHandler<FromType> = async (data) => {
     loginQuery.mutate(data)
   }
@@ -74,7 +75,7 @@ const Login = () => {
             {...register('email', {
               required: 'Email không được để trống',
               pattern: {
-                value: REGEX_EMAIL,
+                value: new RegExp(data.REGEX_EMAIL, 'i'),
                 message: 'Nhập đúng định dạng email.'
               }
             })}
@@ -122,12 +123,12 @@ const Login = () => {
         >
           {loginQuery.isLoading ? <LoadingIcon /> : 'Đăng nhập'}
         </button>
-        <div>
+        {/* <div>
           Bạn chưa đăng ký ?
           <span className='cursor-pointer text-blue-600 ' onClick={() => navigate('/register')}>
             Đăng ký ngay
           </span>
-        </div>
+        </div> */}
       </form>
     </div>
   )

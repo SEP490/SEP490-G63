@@ -181,11 +181,11 @@ const NavBar = () => {
                       <div className='font-bold text-[20px] border-b-2 pl-4 my-2'>Thông báo</div>
                       <div className='relative w-full max-h-[60vh] overflow-auto'>
                         {loading && notifications?.length == 0 ? (
-                          <div className='min-h-[200px] flex items-center'>
+                          <div className='min-h-[200px] flex items-center justify-center'>
                             <LoadingIcon className='w-6 h-6' />
                           </div>
                         ) : notifications?.length == 0 || !notifications ? (
-                          <div className='min-h-[200px] flex items-center'>Không có thông báo </div>
+                          <div className='min-h-[200px] flex items-center justify-center'>Không có thông báo </div>
                         ) : (
                           <div className='flex flex-col justify-center overflow-y-auto overflow-x-hidden px-1 w-full '>
                             {notifications?.map((n: NotificationData) => (

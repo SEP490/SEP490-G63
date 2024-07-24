@@ -20,7 +20,7 @@ import { EyeIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import ViewTemplateContract from '~/components/Admin/TemplateContract/ViewTemplateContract'
 import { AxiosError } from 'axios'
 import LoadingIcon from '~/assets/LoadingIcon'
-import { REGEX_TEXT } from '~/common/const/regexForm'
+import dataRegex from '../../regex.json'
 interface FormType {
   name: string
   number: string
@@ -287,7 +287,7 @@ const CreateContract = () => {
             {...register('name', {
               required: 'Tên hợp đồng không được để trống',
               pattern: {
-                value: REGEX_TEXT,
+                value: new RegExp(dataRegex.REGEX_TEXT),
                 message: 'Tên hợp đồng không hợp lệ'
               }
             })}

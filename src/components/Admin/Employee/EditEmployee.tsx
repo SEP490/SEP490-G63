@@ -1,16 +1,15 @@
 import { debounce } from 'lodash'
 import moment from 'moment'
-import { ChangeEventHandler, EventHandler, useMemo, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useMutation } from 'react-query'
 import LoadingIcon from '~/assets/LoadingIcon'
 import permissionsList from '~/common/const/permissions'
-import { REGEX_ADDRESS, REGEX_CCCD, REGEX_EMAIL, REGEX_NAME, REGEX_PHONE, REGEX_TEXT } from '~/common/const/regexForm'
 import { currentDate } from '~/common/utils/formatDate'
 import TooltipComponent from '~/components/BaseComponent/TooltipComponent'
 import useToast from '~/hooks/useToast'
 import { DataEmployee } from '~/pages/Admin/Employee'
 import { updateProfile } from '~/services/user.service'
+import dataRegex from '../../../regex.json'
 type FromType = {
   password: string
   address: string
@@ -88,7 +87,7 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
           {...register('name', {
             required: 'Tên không được bỏ trống',
             pattern: {
-              value: REGEX_NAME,
+              value: new RegExp(dataRegex.REGEX_NAME),
               message: 'Tên nhân viên không hợp lệ'
             }
           })}
@@ -113,7 +112,7 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
           {...register('department', {
             required: 'Phòng ban không được bỏ trống',
             pattern: {
-              value: REGEX_TEXT,
+              value: new RegExp(dataRegex.REGEX_TEXT),
               message: 'Phòng ban không hợp lệ'
             }
           })}
@@ -139,7 +138,7 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
           {...register('position', {
             required: 'Vị trí không được bỏ trống',
             pattern: {
-              value: REGEX_TEXT,
+              value: new RegExp(dataRegex.REGEX_TEXT),
               message: 'Vị trí không hợp lệ'
             }
           })}
@@ -158,7 +157,7 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
           {...register('email', {
             required: 'Email không được bỏ trống',
             pattern: {
-              value: REGEX_EMAIL,
+              value: new RegExp(dataRegex.REGEX_EMAIL, 'i'),
               message: 'Email không hợp lệ'
             }
           })}
@@ -185,7 +184,7 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
           {...register('identificationNumber', {
             required: 'CCCD/CMT không được bỏ trống',
             pattern: {
-              value: REGEX_CCCD,
+              value: new RegExp(dataRegex.REGEX_CCCD),
               message: 'Số CCCD/CMT không hợp lệ'
             }
           })}
@@ -211,7 +210,7 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
           {...register('phone', {
             required: 'Số điện thoại không được bỏ trống',
             pattern: {
-              value: REGEX_PHONE,
+              value: new RegExp(dataRegex.REGEX_PHONE),
               message: 'Số điện thoại không hợp lệ'
             }
           })}
@@ -237,7 +236,7 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
           {...register('address', {
             required: 'Địa chỉ không được bỏ trống',
             pattern: {
-              value: REGEX_ADDRESS,
+              value: new RegExp(dataRegex.REGEX_ADDRESS),
               message: 'Địa chỉ không hợp lệ'
             }
           })}
