@@ -1,5 +1,4 @@
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { REGEX_EMAIL, REGEX_NAME, REGEX_PASSWORD, REGEX_PHONE, REGEX_TAX_NUMBER } from '~/common/const/regexForm'
 import '../styles/login.css'
 import { registerUser } from '~/services/user.service'
 import useToast from '~/hooks/useToast'
@@ -9,6 +8,7 @@ import { useQuery } from 'react-query'
 import { getPrice } from '~/services/admin.contract.service'
 import { useState } from 'react'
 import LoadingPage from './shared/LoadingPage/LoadingPage'
+import data from '../regex.json'
 type FromType = {
   company: string
   taxCode: string
@@ -72,7 +72,11 @@ const Register = () => {
               className={`${errors.company ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
               placeholder='Công ty CP...'
               {...register('company', {
-                required: 'Tên công ty không được để trống'
+                required: 'Tên công ty không được để trống',
+                pattern: {
+                  value: new RegExp(data.REGEX_NAME),
+                  message: 'Tên Công ty không hợp lệ'
+                }
               })}
             />
             <div className={`text-red-500 absolute text-[12px] ${errors.company ? 'visible' : 'invisible'}`}>
@@ -90,7 +94,7 @@ const Register = () => {
               {...register('taxCode', {
                 required: 'Mã số thuế không được để trống',
                 pattern: {
-                  value: REGEX_TAX_NUMBER,
+                  value: new RegExp(data.REGEX_TAX_NUMBER),
                   message: 'Mã số thuế không hợp lệ'
                 }
               })}
@@ -110,7 +114,7 @@ const Register = () => {
               {...register('presenter', {
                 required: 'Tên người đại diện không được bỏ trống',
                 pattern: {
-                  value: REGEX_NAME,
+                  value: new RegExp(data.REGEX_NAME),
                   message: 'Tên người đại diện không hợp lệ'
                 }
               })}
@@ -130,7 +134,7 @@ const Register = () => {
               {...register('email', {
                 required: 'Email không được bỏ trống',
                 pattern: {
-                  value: REGEX_EMAIL,
+                  value: new RegExp(data.REGEX_EMAIL, 'i'),
                   message: 'Email không hợp lệ'
                 }
               })}
@@ -150,7 +154,7 @@ const Register = () => {
               {...register('phone', {
                 required: 'Số điện thoại không được bỏ trống',
                 pattern: {
-                  value: REGEX_PHONE,
+                  value: new RegExp(data.REGEX_PHONE),
                   message: 'Số điện thoại không hợp lệ'
                 }
               })}
