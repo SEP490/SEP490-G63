@@ -18,6 +18,7 @@ import { useMutation, useQuery } from 'react-query'
 import { AxiosError } from 'axios'
 import useToast from '~/hooks/useToast'
 import LoadingIcon from '~/assets/LoadingIcon'
+import { debounce } from 'lodash'
 
 export interface DataEmployee {
   id?: string
@@ -128,7 +129,7 @@ const Employee = () => {
                 id='table-search'
                 className='shadow-md block p-2 ps-10 w-full text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
                 placeholder='Tìm kiếm'
-                onChange={handChangeInputSearch}
+                onChange={debounce(handChangeInputSearch, 300)}
               />
             </div>
             <button
@@ -217,7 +218,7 @@ const Employee = () => {
                                       }}
                                       className={`${
                                         active ? 'bg-blue-500 text-white' : 'text-gray-900'
-                                      } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
+                                      } group flex w-full items-center  gap-3 rounded-md px-2 py-1 text-sm `}
                                     >
                                       <Cog6ToothIcon className='h-5' /> Sửa
                                     </button>
@@ -233,7 +234,7 @@ const Employee = () => {
                                       }}
                                       className={`${
                                         active ? 'bg-blue-500 text-white' : 'text-gray-900'
-                                      } group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm `}
+                                      } group flex w-full items-center gap-3 rounded-md px-2 py-1 text-sm `}
                                     >
                                       <NoSymbolIcon className='h-5' /> Xóa
                                     </button>
