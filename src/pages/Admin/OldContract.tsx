@@ -64,7 +64,7 @@ const OldContract = () => {
   }
 
   const { data: typeContract, isLoading: loadingTypeContract } = useQuery('type-contract', () =>
-    getContractType({ page: 0, size: 100 })
+    getContractType({ page: 0, size: 100, title: '' })
   )
   const { isLoading, refetch, isFetching } = useQuery(
     ['old-contract-list', page, size],
@@ -116,7 +116,10 @@ const OldContract = () => {
             <input
               type='text'
               id='table-search'
-              {...register('searchText')}
+              {...(register('searchText'),
+              {
+                required: true
+              })}
               className='block p-2 ps-10 w-[80%] shadow-md text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
               placeholder='Thông tin hợp đồng'
             />
@@ -138,16 +141,24 @@ const OldContract = () => {
         </button>
       </div>
       <div className='overflow-auto'>
-        <div className='shadow-md sm:rounded-lg my-3 h-fit'>
+        <div className='shadow-md sm:rounded-lg h-fit'>
           <table className='w-full text-sm text-left rtl:text-right'>
             <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 shadow-md'>
               <tr>
-                <th className='px-3 py-3 w-[30px]' align='center'>STT</th>
+                <th className='px-3 py-3 w-[30px]' align='center'>
+                  STT
+                </th>
                 <th className='px-3 py-3'>Tên hợp đồng</th>
                 <th className='px-3 py-3'>Loại hợp đồng</th>
-                <th className='px-3 py-3' align='center'>Ngày kí</th>
-                <th className='px-3 py-3' align='center'>Ngày bắt đầu</th>
-                <th className='px-3 py-3' align='center'>Ngày kết thúc</th>
+                <th className='px-3 py-3' align='center'>
+                  Ngày kí
+                </th>
+                <th className='px-3 py-3' align='center'>
+                  Ngày bắt đầu
+                </th>
+                <th className='px-3 py-3' align='center'>
+                  Ngày kết thúc
+                </th>
                 <th className='px-3 py-3' align='center'>
                   Chi tiết
                 </th>
@@ -164,7 +175,9 @@ const OldContract = () => {
                     key={d.id}
                     className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
                   >
-                    <td className='px-3 py-4' align='center'>{page * size + index + 1}</td>
+                    <td className='px-3 py-4' align='center'>
+                      {page * size + index + 1 < 10 ? `0${page * size + index + 1}` : page * size + index + 1}
+                    </td>
                     <td className='px-3 py-4'>{d.contractName}</td>
                     <td className='px-3 py-4'>
                       {typeContract?.content?.find((t: any) => t.id == d.contractTypeId)?.title}
