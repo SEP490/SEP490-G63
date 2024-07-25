@@ -149,8 +149,8 @@ const TypeContract = () => {
                     <th className='px-3 py-3 w-[30px]' align='center'>
                       STT
                     </th>
-                    <th className='px-3 py-3 w-[200px]'>Loại hợp đồng</th>
-                    <th className='px-3 py-3'>Mô tả</th>
+                    <th className='px-3 py-3 w-[16%]'>Loại hợp đồng</th>
+                    <th className='px-3 py-3 w-[80%]'>Mô tả</th>
                     <th className='px-3 py-3 w-1'></th>
                   </tr>
                 </thead>
@@ -166,10 +166,11 @@ const TypeContract = () => {
                         <td className='px-3 py-4 w-[30px]' align='center'>
                           {page * size + index + 1 < 10 ? `0${page * size + index + 1}` : page * size + index + 1}
                         </td>
-                        <td className='px-3 py-4'>
-                        <div className='w-[150px] truncate ...'>{d.title}</div></td>
-                        <td className='px-3 py-4'>
-                          <div className='w-[800px] truncate ...'>{d.description}</div>
+                        <td className='px-3 py-4 w-[16%]'>
+                          <div className='w-[100%] truncate ...'>{d.title}</div>
+                        </td>
+                        <td className='px-3 py-4 w-[80%]'>
+                          <div className='w-[100%] truncate ...'>{d.description}</div>
                         </td>
 
                         <td className='px-3 py-4 w-[20px] cursor-pointer ho'>
