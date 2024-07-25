@@ -1,10 +1,12 @@
 import { Dialog, Menu, Transition } from '@headlessui/react'
 import { Cog6ToothIcon, EllipsisVerticalIcon, NoSymbolIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { AxiosError } from 'axios'
+import { debounce } from 'lodash'
 import moment from 'moment'
 import { Fragment, useEffect, useRef, useState } from 'react'
 import { useMutation, useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
+import LoadingIcon from '~/assets/LoadingIcon'
 import DocumentIcon from '~/assets/svg/document'
 import EditTemplateContract from '~/components/Admin/TemplateContract/EditTemplateContract'
 import ViewTemplateContract from '~/components/Admin/TemplateContract/ViewTemplateContract'
@@ -21,13 +23,14 @@ const TemplateContract = () => {
   const [openModal, setOpenModal] = useState(false)
   const [detailModal, setDetailModal] = useState(false)
   const navigate = useNavigate()
+  const [searchData, setSearchData] = useState('')
   const [selectedContract, setSelectedContract] = useState<any>(null)
   const { successNotification, errorNotification } = useToast()
   const [dataTable, setDataTable] = useState([])
   const prevPageRef = useRef(page)
   const prevSizeRef = useRef(size)
-  const { data, error, isError, isLoading, refetch, isFetching } = useQuery('template-contract', () =>
-    getTemplateContract(page, size)
+  const { data, error, isError, isLoading, refetch, isFetching } = useQuery(['template-contract', searchData], () =>
+    getTemplateContract(page, size, searchData)
   )
   const handlePageChange = (page: any) => {
     setPage(page - 1)
@@ -50,6 +53,9 @@ const TemplateContract = () => {
   })
   const handleDelete = () => {
     if (selectedContract) deleteTemplate.mutate(selectedContract.id)
+  }
+  const handChangeInputSearch = (e: any) => {
+    setSearchData(e.target.value)
   }
   useEffect(() => {
     if (isError) {
@@ -96,7 +102,7 @@ const TemplateContract = () => {
                 id='table-search'
                 className='shadow-md block p-2 ps-10 w-full text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
                 placeholder='Tìm kiếm'
-                // onChange={handChangeInputSearch}
+                onChange={debounce(handChangeInputSearch, 300)}
               />
             </div>
             <button
@@ -117,7 +123,9 @@ const TemplateContract = () => {
                       STT
                     </th>
                     <th className='px-3 py-3'>Tên hợp đồng</th>
-                    <th className='px-3 py-3' align='center'>Số hợp đồng</th>
+                    <th className='px-3 py-3' align='center'>
+                      Số hợp đồng
+                    </th>
                     <th className='px-3 py-3'>Chi tiết</th>
                     <th className='px-3 py-3' align='center'>
                       Ngày tạo
@@ -138,7 +146,9 @@ const TemplateContract = () => {
                           {page * size + index + 1 < 10 ? `0${page * size + index + 1}` : page * size + index + 1}
                         </td>
                         <td className='px-3 py-4'>{d.nameContract}</td>
-                        <td className='px-3 py-4' align='center'>{d.numberContract}</td>
+                        <td className='px-3 py-4' align='center'>
+                          {d.numberContract}
+                        </td>
                         <td className='px-3 py-4'>
                           <div
                             className='cursor-pointer text-blue-500 hover:underline'
@@ -151,7 +161,9 @@ const TemplateContract = () => {
                           </div>
                         </td>
 
-                        <td className='px-3 py-4' align='center'>{d.createdDate ? moment(d.createdDate).format('DD/MM/YYYY') : ''}</td>
+                        <td className='px-3 py-4' align='center'>
+                          {d.createdDate ? moment(d.createdDate).format('DD/MM/YYYY') : ''}
+                        </td>
 
                         <td className='px-3 py-4 text-right'>
                           <Menu as='div' className='relative inline-block text-left '>
@@ -179,7 +191,7 @@ const TemplateContract = () => {
                                       }}
                                       className={`${
                                         active ? 'bg-blue-500 text-white' : 'text-gray-900'
-                                      } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
+                                      } group flex w-full items-center  gap-3 rounded-md px-2 py-1 text-sm `}
                                     >
                                       <Cog6ToothIcon className='h-5' /> Sửa
                                     </button>
@@ -195,7 +207,7 @@ const TemplateContract = () => {
                                       }}
                                       className={`${
                                         active ? 'bg-blue-500 text-white' : 'text-gray-900'
-                                      } group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm `}
+                                      } group flex w-full items-center gap-3 rounded-md px-2 py-1 text-sm `}
                                     >
                                       <NoSymbolIcon className='h-5' /> Xóa
                                     </button>
@@ -269,11 +281,12 @@ const TemplateContract = () => {
                     <div className='w-full flex justify-end mt-6'>
                       <button
                         type='button'
+                        disabled={deleteTemplate.isLoading}
                         className='middle  none center mr-4 rounded-lg bg-red-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#ff00002f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
                         data-ripple-light='true'
                         onClick={() => handleDelete()}
                       >
-                        Đồng ý
+                        {deleteTemplate.isLoading ? <LoadingIcon /> : 'Đồng ý'}
                       </button>
                     </div>
                   </div>
@@ -368,7 +381,6 @@ const TemplateContract = () => {
         </Dialog>
       </Transition>
     </div>
- 
   )
 }
 export default TemplateContract
