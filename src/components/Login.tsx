@@ -1,7 +1,6 @@
 import { SubmitHandler, useForm } from 'react-hook-form'
 import '../styles/login.css'
 import { login } from '~/services/user.service'
-import { getAccessToken, setAccessToken } from '~/config/accessToken'
 import useToast from '~/hooks/useToast'
 import logo from '../assets/svg/Tdocman.svg'
 import { useNavigate } from 'react-router-dom'
@@ -11,7 +10,7 @@ import { AxiosError } from 'axios'
 import LoadingIcon from '~/assets/LoadingIcon'
 import { useState } from 'react'
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
-import data from "../regex.json"
+import data from '../regex.json'
 type FromType = {
   email: string
   password: string
