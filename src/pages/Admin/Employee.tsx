@@ -241,11 +241,11 @@ const Employee = () => {
               </table>
               {(isLoading || isFetching) && (
                 <Loading loading={isLoading || isFetching}>
-                  <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'></div>
+                  <div className='w-full min-h-[60vh] opacity-75 bg-gray-50 flex items-center justify-center'></div>
                 </Loading>
               )}
-              {!isLoading && !isFetching && (data == null || data?.object?.content?.length == 0) && (
-                <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'>
+              {!isLoading && !isFetching && (data?.object == null || data?.object?.content?.length == 0) && (
+                <div className='w-full min-h-[60vh] opacity-75 bg-gray-50 flex items-center justify-center'>
                   <div className='flex flex-col justify-center items-center opacity-60'>
                     <UserIcon width={50} height={50} />
                     Chưa có nhân viên
@@ -254,7 +254,7 @@ const Employee = () => {
               )}
             </div>
           </div>
-          {!isLoading && !isFetching && data && data?.object?.content?.length != 0 && (
+          {!isLoading && !isFetching && data?.object && data?.object?.content?.length != 0 && (
             <Pagination
               totalPages={totalPage}
               currentPage={page + 1}
