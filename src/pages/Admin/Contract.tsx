@@ -647,10 +647,12 @@ const Contract = () => {
               <table className='w-full text-sm text-left rtl:text-right text-black dark:text-gray-400 '>
                 <thead className=' text-xs text-black bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
                   <tr>
-                    <th className='px-3 py-3 w-[5%]'>STT</th>
+                    <th className='px-3 py-3 w-[5%]' align='center'>
+                      STT
+                    </th>
                     <th className='px-3 py-3 w-[40%]'>Tên hợp đồng</th>
                     <th className='px-3 py-3 w-[20%]'>Người tạo</th>
-                    <th scope='col' className='px-3 py-3'>
+                    <th scope='col' className='px-3 py-3' align='center'>
                       Ngày tạo
                     </th>
                     <th scope='col' className='px-3 py-3' align='center'>
@@ -668,12 +670,12 @@ const Contract = () => {
                     data?.object?.content?.map((d: DataContract, index: number) => (
                       <tr
                         key={d.id}
-                        className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
+                        className={`${d.status != 'SUCCESS' && d.urgent ? 'text-red-700 font-semibold' : ''} w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600`}
                       >
-                        <td className='px-3 py-4'>{size * page + index + 1}</td>
-                        <td
-                          className={`px-3 py-4 ${d.status != 'SUCCESS' && d.urgent ? 'text-red-700 font-semibold' : ''}`}
-                        >
+                        <td className='px-3 py-4' align='center'>
+                          {page * size + index + 1 < 10 ? `0${page * size + index + 1}` : page * size + index + 1}
+                        </td>
+                        <td className={`px-3 py-4`}>
                           <div className='flex items-center gap-4'>
                             {d.name}
                             {d.status != 'SUCCESS' && d.urgent && (
@@ -684,7 +686,7 @@ const Contract = () => {
                           </div>
                         </td>
                         <td className='px-3 py-4'>{d.createdBy}</td>
-                        <td className='px-3 py-4'>
+                        <td className='px-3 py-4' align='center'>
                           {d?.createdDate ? moment(d?.createdDate).format('DD/MM/YYYY') : d?.createdDate}
                         </td>
                         <td

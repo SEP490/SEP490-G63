@@ -141,7 +141,7 @@ const OldContract = () => {
         </button>
       </div>
       <div className='overflow-auto'>
-        <div className='shadow-md sm:rounded-lg my-3 h-fit'>
+        <div className='shadow-md sm:rounded-lg h-fit'>
           <table className='w-full text-sm text-left rtl:text-right'>
             <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 shadow-md'>
               <tr>
@@ -176,7 +176,7 @@ const OldContract = () => {
                     className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
                   >
                     <td className='px-3 py-4' align='center'>
-                      {page * size + index + 1}
+                      {page * size + index + 1 < 10 ? `0${page * size + index + 1}` : page * size + index + 1}
                     </td>
                     <td className='px-3 py-4'>{d.contractName}</td>
                     <td className='px-3 py-4'>

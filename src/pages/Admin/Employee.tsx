@@ -102,10 +102,10 @@ const Employee = () => {
   }
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
-      <div className='flex flex-wrap py-4'>
-        <div className='w-full px-5'>
-          <div className='flex gap-3 justify-between w-full'>
-            <div className='flex w-[50%]'>
+      <div className='flex flex-wrap'>
+        <div className='w-full px-3'>
+          <div className='flex gap-3 justify-between w-full py-3 h-[60px]'>
+            <div className='flex md:w-[50%] w-[70%]'>
               <div className='relative'>
                 <div className='absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none'>
                   <svg
@@ -126,29 +126,33 @@ const Employee = () => {
               <input
                 type='text'
                 id='table-search'
-                className='block p-2 ps-10 w-full text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                className='shadow-md block p-2 ps-10 w-full text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
                 placeholder='Tìm kiếm'
                 onChange={handChangeInputSearch}
               />
             </div>
-
             <button
               type='button'
               onClick={openModal}
-              className='rounded-md flex gap-1 bg-main-color px-4 py-2 text-sm font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
+              className='shadow-md rounded-md flex gap-1 bg-main-color px-4 py-2 text-xs sm:text-sm items-center font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
             >
-              <PlusIcon className='h-5 w-5' /> Thêm mới
+              <PlusIcon className='h-5 w-5' /> Tạo mới
             </button>
           </div>
+
           <div className='overflow-auto'>
-            <div className='shadow-md sm:rounded-lg my-3 h-fit'>
+            <div className='shadow-md sm:rounded-lg h-fit'>
               <table className='w-full text-sm text-left rtl:text-right text-black dark:text-gray-400 '>
                 <thead className='text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
                   <tr>
-                    <th className='px-3 py-3 w-[30px]'>STT</th>
+                    <th className='px-3 py-3 w-[30px]' align='center'>
+                      STT
+                    </th>
                     <th className='px-3 py-3 w-[200px]'>Tên nhân viên</th>
                     <th className='px-3 py-3 w-[250px]'>Email</th>
-                    <th className='px-3 py-3 '>Số điện thoại</th>
+                    <th className='px-3 py-3 ' align='center'>
+                      Số điện thoại
+                    </th>
                     <th className='px-3 py-3 '>Phòng ban</th>
                     <th className='px-6 py-3 '>Vị trí</th>
                     <th className='px-3 py-3 w-[300px]'>Địa chỉ</th>
@@ -164,7 +168,9 @@ const Employee = () => {
                         key={d.id}
                         className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
                       >
-                        <th className='px-3 py-3 w-[30px]'>{page * size + index + 1}</th>
+                        <td className='px-3 py-3 w-[30px]' align='center'>
+                          {page * size + index + 1 < 10 ? `0${page * size + index + 1}` : page * size + index + 1}
+                        </td>
 
                         <th
                           className='px-3 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white hover:underline cursor-pointer hover:text-blue-500'
@@ -176,7 +182,9 @@ const Employee = () => {
                           <div className='w-[150px] truncate ...'>{d.name}</div>
                         </th>
                         <td className='px-3 py-4 w-[250px]'>{d.email}</td>
-                        <td className='px-3 py-4'>{d.phone}</td>
+                        <td className='px-3 py-4' align='center'>
+                          {d.phone}
+                        </td>
                         <td className='px-3 py-4'>{d.department}</td>
                         <td className='px-3 py-4'>{d.position}</td>
                         <td className='px-3 py-4'>
