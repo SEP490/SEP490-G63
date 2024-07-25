@@ -9,6 +9,7 @@ import { updateTemplateContract } from '~/services/template-contract.service'
 import { AxiosError } from 'axios'
 import { VietQR } from 'vietqr'
 import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
+import LoadingIcon from '~/assets/LoadingIcon'
 interface FormType {
   nameContract: string
   numberContract: string
@@ -73,22 +74,21 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
     }
     updateTemplate.mutate({ id: selectedContract.id, data: bodyData })
   }
-  if (updateTemplate.isLoading) return <LoadingPage />
-
   return (
-    <div className=' full flex justify-center overflow-auto h-[90%] mb-6'>
+    <div className='full flex justify-center overflow-auto h-[90%] mb-6'>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className='justify-center sm:justify-between w-full rounded-md flex h-full flex-wrap my-5 bg-white'
         autoComplete='on'
       >
-        <div className='w-full mt-5 relative'>
+        <div className='w-full relative'>
           <label className='font-light '>
             Tên hợp đồng<sup className='text-red-500'>*</sup>
           </label>
           <input
             className={`${errors.nameContract ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             placeholder='Nhập tên hợp đồng'
+            disabled={updateTemplate.isLoading}
             {...register('nameContract', {
               required: 'Tên hợp đồng không được để trống'
             })}
@@ -104,6 +104,7 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
           <input
             className={`${errors.numberContract ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled={updateTemplate.isLoading}
             placeholder='Nhập số hợp đồng'
             {...register('numberContract', {
               required: 'Số hợp đồng không được để trống'
@@ -119,6 +120,8 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             name='rule'
             placeholder='Căn cứ vào điều luật...'
             height='40vh'
+            disableToolbar={updateTemplate?.isLoading}
+            disable={updateTemplate?.isLoading}
             setContents={selectedContract?.ruleContract}
             setOptions={{
               buttonList: [
@@ -324,6 +327,8 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             name='term'
             placeholder='Điều khoản'
             height='60vh'
+            disableToolbar={updateTemplate?.isLoading}
+            disable={updateTemplate?.isLoading}
             setContents={selectedContract?.termContract}
             setOptions={{
               buttonList: [
@@ -347,9 +352,10 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
 
         <button
           type='submit'
+          disabled={updateTemplate.isLoading}
           className='middle my-3 none center mr-4 rounded-lg bg-[#0070f4] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
         >
-          Lưu
+          {updateTemplate.isLoading ? <LoadingIcon /> : 'Lưu'}
         </button>
       </form>
     </div>
