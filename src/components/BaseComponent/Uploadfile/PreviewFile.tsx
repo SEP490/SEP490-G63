@@ -37,7 +37,7 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
   const [pdfUrl, setPdfUrl] = useState<any>()
   const { successNotification, errorNotification } = useToast()
   const { data: typeContract, isLoading: loadingTypeContract } = useQuery('type-contract', () =>
-    getContractType({ page: 0, size: 100 })
+    getContractType({ page: 0, size: 100,title:"" })
   )
   const getBase64 = (file: any) =>
     new Promise((resolve, reject) => {

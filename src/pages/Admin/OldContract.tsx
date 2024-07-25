@@ -64,7 +64,7 @@ const OldContract = () => {
   }
 
   const { data: typeContract, isLoading: loadingTypeContract } = useQuery('type-contract', () =>
-    getContractType({ page: 0, size: 100 })
+    getContractType({ page: 0, size: 100, title: '' })
   )
   const { isLoading, refetch, isFetching } = useQuery(
     ['old-contract-list', page, size],

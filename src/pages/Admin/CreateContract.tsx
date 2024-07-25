@@ -66,8 +66,8 @@ const CreateContract = () => {
   const [loadingA, setLoadingA] = useState(false)
   const [loadingB, setLoadingB] = useState(false)
   const resultQuery = useQueries([
-    { queryKey: 'template-contract', queryFn: () => getTemplateContract(0, 100) },
-    { queryKey: 'type-contract', queryFn: () => getContractType({ page: 0, size: 100 }) }
+    { queryKey: 'template-contract', queryFn: () => getTemplateContract(0, 100, '') },
+    { queryKey: 'type-contract', queryFn: () => getContractType({ page: 0, size: 100, title: '' }) }
   ])
 
   useEffect(() => {
