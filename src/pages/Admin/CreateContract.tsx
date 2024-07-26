@@ -25,6 +25,7 @@ interface FormType {
   name: string
   number: string
   urgent: boolean
+  value:number
   contractTypeId: string
 }
 interface CompanyInfo {
@@ -311,6 +312,23 @@ const CreateContract = () => {
           />
           <div className={`text-red-500 absolute text-[12px] ${errors.number ? 'visible' : 'invisible'}`}>
             {errors.number?.message}
+          </div>
+        </div>
+        <div className='w-full mt-5 relative'>
+          <label className='font-light '>
+            Giá trị(VND)<sup className='text-red-500'>*</sup>
+          </label>
+          <input
+            className={`${errors.value ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            type='text'
+            disabled={createContractQuery?.isLoading}
+            placeholder='Giá trị hợp đồng'
+            {...register('value', {
+              required: 'Giá trị không được để trống'
+            })}
+          />
+          <div className={`text-red-500 absolute text-[12px] ${errors.value ? 'visible' : 'invisible'}`}>
+            {errors.value?.message}
           </div>
         </div>
         <div className='w-full mt-5 font-bold'>Điều khoản thông tin các bên</div>

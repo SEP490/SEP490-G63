@@ -13,11 +13,13 @@ import { VietQR } from 'vietqr'
 import Loading from '~/components/shared/Loading/Loading'
 import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
 import { getContractType } from '~/services/type-contract.service'
+import LoadingIcon from '~/assets/LoadingIcon'
 
 interface FormType {
   name: string
   number: string
   urgent: boolean
+  value: number
   contractTypeId: string
 }
 interface CompanyInfo {
@@ -43,7 +45,7 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
   const [detailContract, setDetailContract] = useState<any>()
   const queryClient = useQueryClient()
   const { data: typeContract, isLoading: loadingTypeContract } = useQuery('type-contract', () =>
-    getContractType({ page: 0, size: 100 })
+    getContractType({ page: 0, size: 100, title: '' })
   )
   const {
     register,
@@ -140,7 +142,7 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
     // }
   }
 
-  if (updateContract.isLoading || loading || loadingTypeContract) return <LoadingPage />
+  if (loading || loadingTypeContract) return <LoadingPage />
 
   return (
     <div className='full flex justify-center overflow-auto h-[90%] mb-6'>
@@ -186,6 +188,23 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
           />
           <div className={`text-red-500 absolute text-[12px] ${errors.number ? 'visible' : 'invisible'}`}>
             {errors.number?.message}
+          </div>
+        </div>
+        <div className='w-full mt-5 relative'>
+          <label className='font-light '>
+            Giá trị(VND)<sup className='text-red-500'>*</sup>
+          </label>
+          <input
+            className={`${errors.value ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            type='text'
+            disabled={updateContract?.isLoading}
+            placeholder='Giá trị hợp đồng'
+            {...register('value', {
+              required: 'Giá trị không được để trống'
+            })}
+          />
+          <div className={`text-red-500 absolute text-[12px] ${errors.value ? 'visible' : 'invisible'}`}>
+            {errors.value?.message}
           </div>
         </div>
         <div className='w-full mt-5 font-bold'>Điều khoản thông tin các bên</div>
@@ -645,7 +664,7 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
             className='middle my-3 none center mr-4 rounded-lg bg-[#0070f4] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
             data-ripple-light='true'
           >
-            Cập nhật
+            {updateContract.isLoading ? <LoadingIcon /> : ' Cập nhật'}
           </button>
         </div>
       </form>
