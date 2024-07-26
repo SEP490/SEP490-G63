@@ -1,5 +1,5 @@
 import { Dialog, Menu, Transition } from '@headlessui/react'
-import { Fragment, useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import AddNewEmployee from '~/components/Admin/Employee/AddNewEmployee'
 import {
   Cog6ToothIcon,
@@ -19,7 +19,16 @@ import { AxiosError } from 'axios'
 import useToast from '~/hooks/useToast'
 import LoadingIcon from '~/assets/LoadingIcon'
 import { debounce } from 'lodash'
-
+import PaySlipFormula from '~/components/Admin/Salary/PaySlipFormula'
+import { getSalaryAll, getSalaryByMail } from '~/services/salary.service'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
+import { months } from '~/common/const'
+import { listMonth, listYear } from '~/common/utils/formatDate'
+import { formatPrice } from '~/common/utils/formatPrice'
+import { useAuth } from '~/context/authProvider'
+import { ADMIN } from '~/common/const/role'
 export interface DataEmployee {
   id?: string
   name?: string
@@ -34,26 +43,32 @@ export interface DataEmployee {
   address?: string
   dob?: string
 }
+type FormSearch = {
+  searchText: string
+  year: number
+  month: number
+}
 const Salary = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [viewDetail, setViewDetail] = useState(false)
   const [editModal, setEditModal] = useState(false)
   const [deleteModal, setDeleteModal] = useState(false)
+  const [manageModal, setManageModal] = useState(false)
   const [totalPage, setTotalPage] = useState(1)
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(10)
+  const { user } = useAuth()
   const { errorNotification, successNotification } = useToast()
   const prevPageRef = useRef(page)
   const prevSizeRef = useRef(size)
-
   const [selectedUser, setSelectedUser] = useState<DataEmployee | undefined>(undefined)
-  const [searchData, setSearchData] = useState('')
   function closeAllModal() {
     setDeleteModal(false)
     setEditModal(false)
     setViewDetail(false)
     setSelectedUser(undefined)
   }
+  const years = listYear()
   const handlePageChange = (page: any) => {
     setPage(page - 1)
   }
@@ -64,12 +79,33 @@ const Salary = () => {
   function openModal() {
     setIsOpen(true)
   }
-  const handChangeInputSearch = (e: any) => {
-    setSearchData(e.target.value)
+  const { handleSubmit, register, getValues, watch } = useForm<FormSearch>({
+    defaultValues: { year: new Date().getFullYear(), month: new Date().getMonth() + 1 }
+  })
+  const onSubmit: SubmitHandler<FormSearch> = async () => {
+    refetch()
   }
+
+  const listMonths = useMemo(() => listMonth(getValues('year') || 0), [watch('year')])
   const { data, isLoading, refetch, isFetching } = useQuery(
-    ['employee-list', searchData],
-    () => getListEmployee({ size: size, page: page, name: searchData }),
+    ['employee-list'],
+    () => {
+      if (user?.role == ADMIN) {
+        return getSalaryAll({
+          page: page,
+          size: size,
+          month: getValues('month'),
+          year: getValues('year'),
+          type: 'SALE'
+        })
+      }
+      return getSalaryByMail({
+        page: page,
+        size: size,
+        month: getValues('month'),
+        year: getValues('year')
+      })
+    },
     {
       onSuccess: (result) => {
         setTotalPage(result?.object?.totalPages)
@@ -86,6 +122,7 @@ const Salary = () => {
       refetch()
     }
   }, [page, refetch, size])
+
   const deleteQuery = useMutation(deleteEmployee, {
     onSuccess: (data) => {
       if (data?.code == '00') {
@@ -98,6 +135,7 @@ const Salary = () => {
       errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
     }
   })
+
   const handleDeleteEmployee = async () => {
     deleteQuery.mutate(selectedUser?.id)
   }
@@ -105,8 +143,8 @@ const Salary = () => {
     <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex flex-wrap'>
         <div className='w-full px-3'>
-          <div className='flex gap-3 justify-start w-full py-3 h-[60px]'>
-            <div className='flex md:w-[50%] w-[70%]'>
+          <div className='flex gap-3 justify-between w-full py-3 h-[60px]'>
+            <div className='flex  w-[70%]'>
               <div className='relative'>
                 <div className='absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none'>
                   <svg
@@ -124,14 +162,50 @@ const Salary = () => {
                   </svg>
                 </div>
               </div>
-              <input
-                type='text'
-                id='table-search'
-                className='shadow-md block p-2 ps-10 w-full text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                placeholder='Tìm kiếm'
-                // onChange={debounce(handChangeInputSearch, 300)}
-              />
+              <form onSubmit={handleSubmit(onSubmit)} className='flex w-full gap-2'>
+                <input
+                  type='text'
+                  id='table-search'
+                  {...register('searchText')}
+                  className='block p-2 ps-10 w-[80%] shadow-md text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                  placeholder='Nhân viên'
+                />
+                <select
+                  {...register('month')}
+                  className='block  w-[16%] shadow-md text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                >
+                  <option value={0}>Trống</option>
+                  {listMonths?.map((m: number) => (
+                    <option value={m} key={m}>
+                      {m}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  {...register('year')}
+                  className='block w-[16%] shadow-md text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                >
+                  {years?.reverse().map((m: number) => (
+                    <option value={m} key={m}>
+                      {m}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type='submit'
+                  className='rounded-md w-[150px] shadow-md bg-main-color px-2 py-1 text-xs sm:text-sm font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
+                >
+                  Tìm kiếm
+                </button>
+              </form>
             </div>
+            <button
+              type='button'
+              onClick={() => setManageModal(true)}
+              className='rounded-md flex gap-1 bg-main-color px-4 py-2 text-xs sm:text-sm items-center font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
+            >
+              Quản lí
+            </button>
           </div>
 
           <div className='overflow-auto'>
@@ -142,24 +216,25 @@ const Salary = () => {
                     <th className='px-3 py-3 w-[30px]' align='center'>
                       STT
                     </th>
-                    <th className='px-3 py-3 w-[200px]'>Tên nhân viên</th>
-                    <th className='px-3 py-3 w-[250px]'>Email</th>
+                    <th className='px-3 py-3 '>Email</th>
                     <th className='px-3 py-3 ' align='center'>
-                      Số điện thoại
+                      Lương cơ bản(VND)
                     </th>
-                    <th className='px-3 py-3 '>Phòng ban</th>
-                    <th className='px-6 py-3 '>Vị trí</th>
+                    <th className='px-3 py-3 ' align='center'>
+                      Tổng DS(VND)
+                    </th>
+                    {/* <th className='px-6 py-3 '>Vị trí</th> */}
                     <th className='px-6 py-3 ' align='center'>
                       Tiền lương(VND)
                     </th>
-                    <th className='px-3 py-3'></th>
+                    {/* <th className='px-3 py-3'></th> */}
                   </tr>
                 </thead>
 
                 <tbody className='w-full '>
                   {!isLoading &&
                     !isFetching &&
-                    data?.object?.content?.map((d: DataEmployee, index: number) => (
+                    data?.object?.content?.map((d: any, index: number) => (
                       <tr
                         key={d.id}
                         className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
@@ -168,25 +243,18 @@ const Salary = () => {
                           {page * size + index + 1 < 10 ? `0${page * size + index + 1}` : page * size + index + 1}
                         </td>
 
-                        <th
-                          className='px-3 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white hover:underline cursor-pointer hover:text-blue-500'
-                          onClick={() => {
-                            setViewDetail(true)
-                            setSelectedUser(d)
-                          }}
-                        >
-                          <div className='w-[150px] truncate ...'>{d.name}</div>
-                        </th>
-                        <td className='px-3 py-4 w-[250px]'>{d.email}</td>
+                        <td className='px-3 py-4'>{d.email}</td>
                         <td className='px-3 py-4' align='center'>
-                          {d.phone}
+                          {formatPrice(d.baseSalary)}
                         </td>
-                        <td className='px-3 py-4'>{d.department}</td>
-                        <td className='px-3 py-4'>{d.position}</td>
                         <td className='px-3 py-4' align='center'>
-                          100.000.000
+                          {formatPrice(d.totalValueContract)}
                         </td>
-                        <td className='px-3 py-4 text-right'>
+                        {/* <td className='px-3 py-4'>{d.position}</td> */}
+                        <td className='px-3 py-4' align='center'>
+                          {formatPrice(d.totalSalary)}
+                        </td>
+                        {/* <td className='px-3 py-4 text-right'>
                           <Menu as='div' className='relative inline-block text-left '>
                             <Menu.Button className='flex justify-center items-center gap-3 cursor-pointer hover:text-blue-500'>
                               <EllipsisVerticalIcon className='h-7 w-7' title='Hành động' />
@@ -237,7 +305,7 @@ const Salary = () => {
                               </Menu.Items>
                             </Transition>
                           </Menu>
-                        </td>
+                        </td> */}
                       </tr>
                     ))}
                 </tbody>
@@ -302,6 +370,45 @@ const Salary = () => {
                     </div>
                   </div>
                   <AddNewEmployee closeModal={closeModal} refetch={refetch} />
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+      <Transition appear show={manageModal} as={Fragment}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={() => setManageModal(false)}>
+          <Transition.Child
+            as={Fragment}
+            enter='ease-out duration-300'
+            enterFrom='opacity-0'
+            enterTo='opacity-100'
+            leave='ease-in duration-200'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0'
+          >
+            <div className='fixed inset-0 bg-black/25' />
+          </Transition.Child>
+
+          <div className='fixed inset-0 overflow-y-auto'>
+            <div className='flex min-h-full  items-center justify-center p-4 text-center'>
+              <Transition.Child
+                as={Fragment}
+                enter='ease-out duration-300'
+                enterFrom='opacity-0 scale-95'
+                enterTo='opacity-100 scale-100'
+                leave='ease-in duration-200'
+                leaveFrom='opacity-100 scale-100'
+                leaveTo='opacity-0 scale-95'
+              >
+                <Dialog.Panel className='w-[100vw] md:w-[80vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+                  <div className='flex justify-between mb-2'>
+                    <div className='font-bold'>Quản lí công thức phiếu lương</div>
+                    <div className='flex gap-3 items-center'>
+                      <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => setManageModal(false)} />
+                    </div>
+                  </div>
+                  <PaySlipFormula />
                 </Dialog.Panel>
               </Transition.Child>
             </div>

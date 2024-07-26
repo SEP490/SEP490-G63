@@ -205,8 +205,6 @@ const Contract = () => {
       }
     }
   ]
-  console.log(user)
-
   const actionOfficeAdmin: ActionType[] = [
     {
       id: 1,
