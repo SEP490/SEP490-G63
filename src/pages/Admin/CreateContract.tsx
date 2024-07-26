@@ -20,11 +20,12 @@ import { EyeIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import ViewTemplateContract from '~/components/Admin/TemplateContract/ViewTemplateContract'
 import { AxiosError } from 'axios'
 import LoadingIcon from '~/assets/LoadingIcon'
-import { REGEX_TEXT } from '~/common/const/regexForm'
+import dataRegex from '../../regex.json'
 interface FormType {
   name: string
   number: string
   urgent: boolean
+  value:number
   contractTypeId: string
 }
 interface CompanyInfo {
@@ -66,8 +67,8 @@ const CreateContract = () => {
   const [loadingA, setLoadingA] = useState(false)
   const [loadingB, setLoadingB] = useState(false)
   const resultQuery = useQueries([
-    { queryKey: 'template-contract', queryFn: () => getTemplateContract(0, 100) },
-    { queryKey: 'type-contract', queryFn: () => getContractType({ page: 0, size: 100 }) }
+    { queryKey: 'template-contract', queryFn: () => getTemplateContract(0, 100, '') },
+    { queryKey: 'type-contract', queryFn: () => getContractType({ page: 0, size: 100, title: '' }) }
   ])
 
   useEffect(() => {
@@ -287,7 +288,7 @@ const CreateContract = () => {
             {...register('name', {
               required: 'Tên hợp đồng không được để trống',
               pattern: {
-                value: REGEX_TEXT,
+                value: new RegExp(dataRegex.REGEX_TEXT),
                 message: 'Tên hợp đồng không hợp lệ'
               }
             })}
@@ -311,6 +312,23 @@ const CreateContract = () => {
           />
           <div className={`text-red-500 absolute text-[12px] ${errors.number ? 'visible' : 'invisible'}`}>
             {errors.number?.message}
+          </div>
+        </div>
+        <div className='w-full mt-5 relative'>
+          <label className='font-light '>
+            Giá trị(VND)<sup className='text-red-500'>*</sup>
+          </label>
+          <input
+            className={`${errors.value ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            type='text'
+            disabled={createContractQuery?.isLoading}
+            placeholder='Giá trị hợp đồng'
+            {...register('value', {
+              required: 'Giá trị không được để trống'
+            })}
+          />
+          <div className={`text-red-500 absolute text-[12px] ${errors.value ? 'visible' : 'invisible'}`}>
+            {errors.value?.message}
           </div>
         </div>
         <div className='w-full mt-5 font-bold'>Điều khoản thông tin các bên</div>

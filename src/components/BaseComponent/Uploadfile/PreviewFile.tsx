@@ -1,4 +1,4 @@
-import { Fragment, LegacyRef, useCallback, useEffect, useRef, useState } from 'react'
+import { Fragment, useCallback, useEffect, useState } from 'react'
 import { ArrowUpOnSquareIcon, CheckCircleIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import update from 'immutability-helper'
 import ItemImage from './ItemImage'
@@ -13,11 +13,10 @@ import { Dialog, Transition } from '@headlessui/react'
 import { useMutation, useQuery } from 'react-query'
 import { getContractType } from '~/services/type-contract.service'
 import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
-
-import { REGEX_TEXT } from '~/common/const/regexForm'
 import { AxiosError } from 'axios'
 import LoadingIcon from '~/assets/LoadingIcon'
 import TooltipComponent from '../TooltipComponent'
+import dataRegex from '../../../regex.json'
 interface Iprops {
   files: any[]
   handleCloseModal: () => void
@@ -38,7 +37,7 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
   const [pdfUrl, setPdfUrl] = useState<any>()
   const { successNotification, errorNotification } = useToast()
   const { data: typeContract, isLoading: loadingTypeContract } = useQuery('type-contract', () =>
-    getContractType({ page: 0, size: 100 })
+    getContractType({ page: 0, size: 100, title: '' })
   )
   const getBase64 = (file: any) =>
     new Promise((resolve, reject) => {
@@ -179,7 +178,7 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
               rules={{
                 required: 'Tên hợp đồng không được để trống',
                 pattern: {
-                  value: REGEX_TEXT,
+                  value: new RegExp(dataRegex.REGEX_TEXT),
                   message: 'Tên hợp đồng không hợp lệ'
                 }
               }}
@@ -245,14 +244,11 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
                   onChange={(date) => field.onChange(date)}
                   disabled={submitOldContract?.isLoading}
                   selected={field.value}
+                  dateFormat='MM'
                 />
               )}
             />
-            <div
-              className={`text-red-500 absolute text-[12px] bottom-0 translate-y-full ${errors.contractStartDate ? 'visible' : 'invisible'}`}
-            >
-              {errors.contractEndDate?.message}
-            </div>
+            
           </div>
           <div className='flex flex-col w-full  relative'>
             <label className='flex items-center'>

@@ -205,8 +205,6 @@ const Contract = () => {
       }
     }
   ]
-  console.log(user);
-  
   const actionOfficeAdmin: ActionType[] = [
     {
       id: 1,
@@ -604,7 +602,10 @@ const Contract = () => {
             <input
               type='text'
               id='table-search'
-              {...register('searchText')}
+              {...(register('searchText'),
+              {
+                required: true
+              })}
               className='block p-2 ps-10 w-[80%] shadow-md text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
               placeholder='Thông tin hợp đồng'
             />
@@ -624,30 +625,32 @@ const Contract = () => {
           <PlusIcon className='h-5 w-5' /> Tạo mới
         </button>
       </div>
-      <div className='flex h-[calc(100%-70px)] flex-col md:flex-row justify-start md:justify-between px-3'>
-        <div className='flex gap-2 md:flex-col w-full h-fit md:h-full md:w-[15%] bg-white shadow-md my-2 py-1 overflow-auto'>
+      <div className='flex h-[calc(100%-70px)] flex-col gap-2 md:flex-row justify-start sm:justify-between px-3'>
+        <div className='flex gap-2 md:flex-col w-full h-fit md:h-full md:w-[15%] bg-white shadow-md overflow-auto'>
           {menuContract[permissionUser]?.map((t: any) => (
             <div
               key={t.id}
-              className={`cursor-pointer rounded-md md:h-fit h-[30px] px-3 py-1 ${statusContract?.id == t.id ? 'bg-main-color text-white' : 'text-black'} hover:bg-hover-main hover:text-white`}
+              className={`cursor-pointer text-xs sm:text-sm md:text-md h-[30px] px-3 py-1 ${statusContract?.id == t.id ? 'bg-main-color text-white' : 'text-black'} hover:bg-hover-main hover:text-white`}
               onClick={() => setStatusContract(t)}
             >
               {t?.title}
             </div>
           ))}
         </div>
-        <div className='w-full md:w-[84%] h-[calc(100%-70px)]'>
+        <div className='w-full md:w-[84%] h-full  overflow-auto'>
           <div
             className={`${data != null && data?.object?.content?.length != 0 && !isLoading && !isFetching ? 'overflow-auto' : 'overflow-hidden'}`}
           >
-            <div className='shadow-md sm:rounded-lg my-3 h-fit'>
+            <div className='shadow-md sm:rounded-lg h-fit'>
               <table className='w-full text-sm text-left rtl:text-right text-black dark:text-gray-400 '>
                 <thead className=' text-xs text-black bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
                   <tr>
-                    <th className='px-3 py-3 w-[5%]'>STT</th>
+                    <th className='px-3 py-3 w-[5%]' align='center'>
+                      STT
+                    </th>
                     <th className='px-3 py-3 w-[40%]'>Tên hợp đồng</th>
                     <th className='px-3 py-3 w-[20%]'>Người tạo</th>
-                    <th scope='col' className='px-3 py-3'>
+                    <th scope='col' className='px-3 py-3' align='center'>
                       Ngày tạo
                     </th>
                     <th scope='col' className='px-3 py-3' align='center'>
@@ -665,12 +668,12 @@ const Contract = () => {
                     data?.object?.content?.map((d: DataContract, index: number) => (
                       <tr
                         key={d.id}
-                        className='w-full  bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
+                        className={`${d.status != 'SUCCESS' && d.urgent ? 'text-red-700 font-semibold' : ''} w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600`}
                       >
-                        <td className='px-3 py-4'>{size * page + index + 1}</td>
-                        <td
-                          className={`px-3 py-4 ${d.status != 'SUCCESS' && d.urgent ? 'text-red-700 font-semibold' : ''}`}
-                        >
+                        <td className='px-3 py-4' align='center'>
+                          {page * size + index + 1 < 10 ? `0${page * size + index + 1}` : page * size + index + 1}
+                        </td>
+                        <td className={`px-3 py-4`}>
                           <div className='flex items-center gap-4'>
                             {d.name}
                             {d.status != 'SUCCESS' && d.urgent && (
@@ -681,7 +684,7 @@ const Contract = () => {
                           </div>
                         </td>
                         <td className='px-3 py-4'>{d.createdBy}</td>
-                        <td className='px-3 py-4'>
+                        <td className='px-3 py-4' align='center'>
                           {d?.createdDate ? moment(d?.createdDate).format('DD/MM/YYYY') : d?.createdDate}
                         </td>
                         <td
@@ -717,13 +720,13 @@ const Contract = () => {
                                 leaveFrom='transform opacity-100 scale-100'
                                 leaveTo='transform opacity-0 scale-95'
                               >
-                                <Menu.Items className='absolute right-4 -top-4 z-50 mt-2 w-48 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
+                                <Menu.Items className='absolute right-4 -top-6 z-50 mt-2 w-48 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
                                   {actionTable[permissionUser]?.map((action: ActionType) => (
                                     <Menu.Item key={action.id} disabled={action.disable(d)}>
                                       {({ active }) => (
                                         <button
                                           onClick={() => action.callback(d)}
-                                          className={`group flex w-full items-center ${action.disable(d) ? 'text-gray-300' : active ? 'bg-blue-500 text-white' : action?.color} gap-3 rounded-md px-2 py-2 text-sm `}
+                                          className={`group flex w-full items-center ${action.disable(d) ? 'text-gray-300' : active ? 'bg-blue-500 text-white' : action?.color} gap-3 rounded-md px-2 py-1 text-sm `}
                                         >
                                           {action.title}
                                         </button>
@@ -744,12 +747,12 @@ const Contract = () => {
               </table>
               {(isLoading || isFetching) && (
                 <Loading loading={isLoading || isFetching}>
-                  <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'></div>
+                  <div className='w-full min-h-[60vh] opacity-75 bg-gray-50 flex items-center justify-center'></div>
                 </Loading>
               )}
 
               {!isLoading && !isFetching && (data == null || data?.object?.content?.length == 0) && (
-                <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'>
+                <div className='w-full min-h-[60vh] opacity-75 bg-gray-50 flex items-center justify-center'>
                   <div className='flex flex-col justify-center items-center opacity-60'>
                     <DocumentIcon />
                     Chưa có hợp đồng
@@ -757,18 +760,17 @@ const Contract = () => {
                 </div>
               )}
             </div>
+            {!isLoading && !isFetching && data && data?.object?.content?.length != 0 && (
+              <Pagination
+                totalPages={totalPage}
+                currentPage={page + 1}
+                size={size}
+                setSize={setSize}
+                setPage={setPage}
+                onPageChange={handlePageChange}
+              />
+            )}
           </div>
-
-          {!isLoading && !isFetching && data && data?.object?.content?.length != 0 && (
-            <Pagination
-              totalPages={totalPage}
-              currentPage={page + 1}
-              size={size}
-              setSize={setSize}
-              setPage={setPage}
-              onPageChange={handlePageChange}
-            />
-          )}
         </div>
       </div>
       {/* Modal thay đổi trạng thái hợp đồng */}

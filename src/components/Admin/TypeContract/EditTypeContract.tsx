@@ -1,10 +1,11 @@
 import { debounce } from 'lodash'
 import { useForm } from 'react-hook-form'
+import LoadingIcon from '~/assets/LoadingIcon'
 type FormField = {
   title: string
   description: string
 }
-const EditTypeContract = ({ onSubmit, selectedContract }: any) => {
+const EditTypeContract = ({ onSubmit, selectedContract, loading }: any) => {
   const {
     register,
     handleSubmit,
@@ -17,7 +18,7 @@ const EditTypeContract = ({ onSubmit, selectedContract }: any) => {
     >
       <div className='w-[100%] relative'>
         <label className=' flex items-center'>
-          <div className='font-bold'>
+          <div className=''>
             Tên loại hợp đồng <sup className='text-red-500'>*</sup>
           </div>
         </label>
@@ -34,7 +35,7 @@ const EditTypeContract = ({ onSubmit, selectedContract }: any) => {
       </div>
       <div className='w-[100%] pt-3 relative'>
         <label className=' flex items-center'>
-          <div className='font-bold'>Mô tả</div>
+          <div className=''>Mô tả</div>
         </label>
         <textarea
           className={`${errors.description ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
@@ -54,7 +55,7 @@ const EditTypeContract = ({ onSubmit, selectedContract }: any) => {
           className='middle my-3 none center mr-4 rounded-lg bg-[#0070f4] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
           data-ripple-light='true'
         >
-          Lưu
+          {loading ? <LoadingIcon /> : 'Lưu'}
         </button>
       </div>
     </form>

@@ -1,10 +1,12 @@
 import { Dialog, Menu, Transition } from '@headlessui/react'
 import { Cog6ToothIcon, EllipsisVerticalIcon, NoSymbolIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { AxiosError } from 'axios'
+import { debounce } from 'lodash'
 import moment from 'moment'
 import { Fragment, useEffect, useRef, useState } from 'react'
 import { useMutation, useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
+import LoadingIcon from '~/assets/LoadingIcon'
 import DocumentIcon from '~/assets/svg/document'
 import EditTemplateContract from '~/components/Admin/TemplateContract/EditTemplateContract'
 import ViewTemplateContract from '~/components/Admin/TemplateContract/ViewTemplateContract'
@@ -27,14 +29,14 @@ const TypeContract = () => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [openModal, setOpenModal] = useState(false)
   const [addModal, setAddModal] = useState(false)
-  const navigate = useNavigate()
+  const [searchData, setSearchData] = useState('')
   const [selectedContract, setSelectedContract] = useState<any>(null)
   const { successNotification, errorNotification } = useToast()
   const [dataTable, setDataTable] = useState([])
   const prevPageRef = useRef(page)
   const prevSizeRef = useRef(size)
-  const { data, error, isError, isLoading, refetch, isFetching } = useQuery('type-contract', () =>
-    getContractType({ page: page, size: size })
+  const { data, error, isError, isLoading, refetch, isFetching } = useQuery(['type-contract', searchData], () =>
+    getContractType({ page: page, size: size, title: searchData })
   )
   const handlePageChange = (page: any) => {
     setPage(page - 1)
@@ -58,31 +60,34 @@ const TypeContract = () => {
   const handleDelete = () => {
     if (selectedContract) deleteType.mutate(selectedContract.id)
   }
-  const handleEditType = async (data: any) => {
-    try {
-      const result = await updateTypeContract({ id: selectedContract.id, data: data })
-      if (result?.data) {
-        successNotification('Chỉnh sửa thông tin thành công')
-        handleCloseModal()
-        refetch()
-      }
-    } catch (e) {
-      console.log(e)
-      errorNotification('Chỉnh sửa thất bại thất bại')
+  const editQuery = useMutation(updateTypeContract, {
+    onError: (error: AxiosError<{ message: string }>) => {
+      errorNotification(error.response?.data.message || 'Lỗi hệ thống')
+    },
+    onSuccess: () => {
+      successNotification('Chỉnh sửa thông tin thành công')
+      handleCloseModal()
+      refetch()
     }
+  })
+  const createQuery = useMutation(createTypeContract, {
+    onError: (error: AxiosError<{ message: string }>) => {
+      errorNotification(error.response?.data.message || 'Lỗi hệ thống')
+    },
+    onSuccess: () => {
+      successNotification('Tạo mới thành công')
+      handleCloseModal()
+      refetch()
+    }
+  })
+  const handleEditType = async (data: any) => {
+    editQuery.mutate({ id: selectedContract.id, data: data })
   }
   const handleAddTypeContract = async (data: any) => {
-    try {
-      const result = await createTypeContract(data)
-      if (result?.data) {
-        successNotification('Tạo mới thành công')
-        handleCloseModal()
-        refetch()
-      }
-    } catch (e) {
-      console.log(e)
-      errorNotification('Tạo mới thất bại')
-    }
+    createQuery.mutate(data)
+  }
+  const handChangeInputSearch = (e: any) => {
+    setSearchData(e.target.value)
   }
   useEffect(() => {
     if (isError) {
@@ -103,10 +108,10 @@ const TypeContract = () => {
 
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
-      <div className='flex flex-wrap py-4'>
-        <div className=' w-full px-5'>
-          <div className='flex gap-3 justify-between w-full'>
-            <div className='flex w-[50%]'>
+      <div className='flex flex-wrap'>
+        <div className='w-full px-3'>
+          <div className='flex gap-3 justify-between w-full py-3 h-[60px]'>
+            <div className='flex md:w-[50%] w-[70%]'>
               <div className='relative'>
                 <div className='absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none'>
                   <svg
@@ -127,116 +132,124 @@ const TypeContract = () => {
               <input
                 type='text'
                 id='table-search'
-                className='block p-2 ps-10 w-full text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                placeholder='Tìm kiếm mẫu hợp đồng'
-                // onChange={handChangeInputSearch}
+                className='shadow-md block p-2 ps-10 w-full text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                placeholder='Tìm kiếm'
+                onChange={debounce(handChangeInputSearch, 300)}
               />
             </div>
-
             <button
               type='button'
               onClick={() => setAddModal(true)}
-              className='rounded-md flex gap-1 bg-main-color px-4 py-2 text-sm font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
+              className='rounded-md flex gap-1 bg-main-color px-4 py-2 text-xs sm:text-sm items-center font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
             >
               <PlusIcon className='h-5 w-5' /> Tạo mới
             </button>
           </div>
-          <div className='shadow-md sm:rounded-lg my-3  max-h-[75vh]'>
-            <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 '>
-              <thead className='text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 shadow-md'>
-                <tr>
-                  <th className='px-3 py-3'>STT</th>
-                  <th className='px-3 py-3'>Loại hợp đồng</th>
-                  <th className='px-3 py-3'>Mô tả</th>
-                  <th className='px-3 py-3 w-1'></th>
-                </tr>
-              </thead>
 
-              <tbody className='w-full '>
-                {!isLoading && !isFetching ? (
-                  dataTable?.map((d: any, index: number) => (
-                    <tr
-                      key={d.id}
-                      className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
-                    >
-                      <td className='px-3 py-4'>{page * size + index + 1}</td>
-                      <td className='px-3 py-4'>{d.title}</td>
-                      <td className='px-3 py-4'>{d.description}</td>
+          <div className='overflow-auto'>
+            <div className='shadow-md sm:rounded-lg h-fit'>
+              <table className='w-full text-sm text-left rtl:text-right text-black dark:text-gray-400 '>
+                <thead className='text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
+                  <tr>
+                    <th className='px-3 py-3 w-[30px]' align='center'>
+                      STT
+                    </th>
+                    <th className='px-3 py-3 w-[16%]'>Loại hợp đồng</th>
+                    <th className='px-3 py-3 w-[80%]'>Mô tả</th>
+                    <th className='px-3 py-3 w-1'></th>
+                  </tr>
+                </thead>
 
-                      <td className='px-3 py-4 w-[20px] cursor-pointer ho'>
-                        <Menu as='div' className='relative inline-block text-left '>
-                          <Menu.Button className='flex justify-center items-center gap-3 cursor-pointer hover:text-blue-500'>
-                            <EllipsisVerticalIcon className='h-7 w-7' title='Hành động' />
-                          </Menu.Button>
+                <tbody className='w-full '>
+                  {!isLoading &&
+                    !isFetching &&
+                    dataTable?.map((d: any, index: number) => (
+                      <tr
+                        key={d.id}
+                        className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
+                      >
+                        <td className='px-3 py-4 w-[30px]' align='center'>
+                          {page * size + index + 1 < 10 ? `0${page * size + index + 1}` : page * size + index + 1}
+                        </td>
+                        <td className='px-3 py-4 w-[16%]'>
+                          <div className='w-[100%] truncate ...'>{d.title}</div>
+                        </td>
+                        <td className='px-3 py-4 w-[80%]'>
+                          <div className='w-[100%] truncate ...'>{d.description}</div>
+                        </td>
 
-                          <Transition
-                            as={Fragment}
-                            enter='transition ease-out duration-100'
-                            enterFrom='transform opacity-0 scale-95'
-                            enterTo='transform opacity-100 scale-100'
-                            leave='transition ease-in duration-75'
-                            leaveFrom='transform opacity-100 scale-100'
-                            leaveTo='transform opacity-0 scale-95'
-                          >
-                            <Menu.Items className='absolute right-8 top-[-100%] z-50 mt-2 w-24 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
-                              <Menu.Item>
-                                {({ active }) => (
-                                  <button
-                                    title='Sửa'
-                                    onClick={() => {
-                                      setOpenModal(true)
-                                      setSelectedContract(d)
-                                    }}
-                                    className={`${
-                                      active ? 'bg-blue-500 text-white' : 'text-gray-900'
-                                    } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
-                                  >
-                                    <Cog6ToothIcon className='h-5' /> Sửa
-                                  </button>
-                                )}
-                              </Menu.Item>
-                              <Menu.Item>
-                                {({ active }) => (
-                                  <button
-                                    title='Xóa'
-                                    onClick={() => {
-                                      setDeleteModal(true)
-                                      setSelectedContract(d)
-                                    }}
-                                    className={`${
-                                      active ? 'bg-blue-500 text-white' : 'text-gray-900'
-                                    } group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm `}
-                                  >
-                                    <NoSymbolIcon className='h-5' /> Xóa
-                                  </button>
-                                )}
-                              </Menu.Item>
-                            </Menu.Items>
-                          </Transition>
-                        </Menu>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <></>
-                )}
-              </tbody>
-            </table>
-            {(isLoading || isFetching) && (
-              <Loading loading={isLoading || isFetching}>
-                <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'></div>
-              </Loading>
-            )}
-            {!isLoading && !isFetching && (data == null || data?.content?.length == 0) && (
-              <div className='w-full min-h-[200px] opacity-75 bg-gray-50 flex items-center justify-center'>
-                <div className='flex flex-col justify-center items-center opacity-60'>
-                  <DocumentIcon />
-                  Chưa có loại hợp đồng
+                        <td className='px-3 py-4 w-[20px] cursor-pointer ho'>
+                          <Menu as='div' className='relative inline-block text-left '>
+                            <Menu.Button className='flex justify-center items-center gap-3 cursor-pointer hover:text-blue-500'>
+                              <EllipsisVerticalIcon className='h-7 w-7' title='Hành động' />
+                            </Menu.Button>
+
+                            <Transition
+                              as={Fragment}
+                              enter='transition ease-out duration-100'
+                              enterFrom='transform opacity-0 scale-95'
+                              enterTo='transform opacity-100 scale-100'
+                              leave='transition ease-in duration-75'
+                              leaveFrom='transform opacity-100 scale-100'
+                              leaveTo='transform opacity-0 scale-95'
+                            >
+                              <Menu.Items className='absolute right-8 top-[-100%] z-50 mt-2 w-24 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
+                                <Menu.Item>
+                                  {({ active }) => (
+                                    <button
+                                      title='Sửa'
+                                      onClick={() => {
+                                        setOpenModal(true)
+                                        setSelectedContract(d)
+                                      }}
+                                      className={`${
+                                        active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                      } group flex w-full items-center  gap-3 rounded-md px-2 py-1 text-sm `}
+                                    >
+                                      <Cog6ToothIcon className='h-5' /> Sửa
+                                    </button>
+                                  )}
+                                </Menu.Item>
+                                <Menu.Item>
+                                  {({ active }) => (
+                                    <button
+                                      title='Xóa'
+                                      onClick={() => {
+                                        setDeleteModal(true)
+                                        setSelectedContract(d)
+                                      }}
+                                      className={`${
+                                        active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                      } group flex w-full items-center gap-3 rounded-md px-2 py-1 text-sm `}
+                                    >
+                                      <NoSymbolIcon className='h-5' /> Xóa
+                                    </button>
+                                  )}
+                                </Menu.Item>
+                              </Menu.Items>
+                            </Transition>
+                          </Menu>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+              {(isLoading || isFetching) && (
+                <Loading loading={isLoading || isFetching}>
+                  <div className='w-full min-h-[60vh] opacity-75 bg-gray-50 flex items-center justify-center'></div>
+                </Loading>
+              )}
+              {!isLoading && !isFetching && (data == null || data?.content?.length == 0) && (
+                <div className='w-full min-h-[60vh] opacity-75 bg-gray-50 flex items-center justify-center'>
+                  <div className='flex flex-col justify-center items-center opacity-60'>
+                    <DocumentIcon />
+                    Chưa có hợp đồng mẫu
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-          {!isLoading && !isFetching && dataTable && dataTable?.length != 0 && (
+          {!isLoading && !isFetching && data && data?.content?.length != 0 && (
             <Pagination
               totalPages={totalPage}
               currentPage={page + 1}
@@ -286,7 +299,7 @@ const TypeContract = () => {
                         data-ripple-light='true'
                         onClick={() => handleDelete()}
                       >
-                        Đồng ý
+                        {deleteType.isLoading ? <LoadingIcon /> : 'Đồng ý'}
                       </button>
                     </div>
                   </div>
@@ -326,7 +339,11 @@ const TypeContract = () => {
                     <div className='font-semibold'>Chỉnh sửa</div>
                     <XMarkIcon className='h-5 w-5 mr-3 mb-3 cursor-pointer' onClick={handleCloseModal} />
                   </div>
-                  <EditTypeContract selectedContract={selectedContract} onSubmit={handleEditType} />
+                  <EditTypeContract
+                    selectedContract={selectedContract}
+                    onSubmit={handleEditType}
+                    loading={editQuery.isLoading}
+                  />
                 </Dialog.Panel>
               </Transition.Child>
             </div>
@@ -364,7 +381,7 @@ const TypeContract = () => {
                     <div className='font-semibold'>Tạo mới</div>
                     <XMarkIcon className='h-5 w-5 mr-3 mb-3 cursor-pointer' onClick={handleCloseModal} />
                   </div>
-                  <AddNewTypeContract onSubmit={handleAddTypeContract} />
+                  <AddNewTypeContract onSubmit={handleAddTypeContract} loading={createQuery.isLoading} />
                 </Dialog.Panel>
               </Transition.Child>
             </div>

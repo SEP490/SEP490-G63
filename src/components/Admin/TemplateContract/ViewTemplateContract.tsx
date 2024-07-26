@@ -36,7 +36,7 @@ const ViewTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
         className='justify-center sm:justify-between w-full rounded-md flex h-full flex-wrap mb-5 bg-white'
         autoComplete='on'
       >
-        <div className='w-full mt-5 relative'>
+        <div className='w-full relative'>
           <label className='font-light '>
             Tên hợp đồng<sup className='text-red-500'>*</sup>
           </label>
