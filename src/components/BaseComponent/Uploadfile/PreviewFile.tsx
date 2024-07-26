@@ -37,7 +37,7 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
   const [pdfUrl, setPdfUrl] = useState<any>()
   const { successNotification, errorNotification } = useToast()
   const { data: typeContract, isLoading: loadingTypeContract } = useQuery('type-contract', () =>
-    getContractType({ page: 0, size: 100,title:"" })
+    getContractType({ page: 0, size: 100, title: '' })
   )
   const getBase64 = (file: any) =>
     new Promise((resolve, reject) => {
@@ -244,14 +244,11 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
                   onChange={(date) => field.onChange(date)}
                   disabled={submitOldContract?.isLoading}
                   selected={field.value}
+                  dateFormat='MM'
                 />
               )}
             />
-            <div
-              className={`text-red-500 absolute text-[12px] bottom-0 translate-y-full ${errors.contractStartDate ? 'visible' : 'invisible'}`}
-            >
-              {errors.contractEndDate?.message}
-            </div>
+            
           </div>
           <div className='flex flex-col w-full  relative'>
             <label className='flex items-center'>
