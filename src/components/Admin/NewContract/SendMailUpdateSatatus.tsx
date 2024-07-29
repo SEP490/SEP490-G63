@@ -54,6 +54,8 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch }: IProps) => {
         response.object.approvedBy != null &&
           mailCC.push({ label: response.object.approvedBy, value: response.object.approvedBy })
         setSelectedCc(mailCC)
+        response.object.partyB != null &&
+          setSelectedTo([{ label: response.object.partyB.email, value: response.object.partyB.email }])
       } else if (status == 9) {
         response.object.createdBy != null &&
           setSelectedTo([{ label: response.object.createdBy, value: response.object.createdBy }])
