@@ -98,11 +98,12 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
       />
     )
   }, [])
+
   const handleOcrFile = async (data: any) => {
     if (files?.length > 0) {
       try {
         const formData = new FormData()
-        if (fileType == 'img') {
+        if (fileType.current == 'img') {
           const doOCR = async (images: any) => {
             const worker = await createWorker('vie', 1)
             const {
@@ -111,6 +112,7 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
             return text
           }
           const dataScrip = await Promise.all(listUrl.map(async (d: any) => doOCR(d.file)))
+          console.log(dataScrip)
 
           formData.append(
             'content',
@@ -123,7 +125,7 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
         formData.append('contractStartDate', moment(data.contractStartDate).format('DD/MM/YYYY'))
         formData.append('contractEndDate', moment(data.contractEndDate).format('DD/MM/YYYY'))
         formData.append('contractSignDate', moment(data.contractSignDate).format('DD/MM/YYYY'))
-        if (fileType == 'img')
+        if (fileType.current == 'img')
           listUrl?.forEach((e: any) => {
             formData.append('images', e.file)
           })
@@ -244,11 +246,10 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
                   onChange={(date) => field.onChange(date)}
                   disabled={submitOldContract?.isLoading}
                   selected={field.value}
-                  dateFormat='MM'
+                 
                 />
               )}
             />
-            
           </div>
           <div className='flex flex-col w-full  relative'>
             <label className='flex items-center'>
