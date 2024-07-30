@@ -51,3 +51,7 @@ export const registerUser = async ({ company, taxCode, presenter, email, phone }
   })
   return response
 }
+export const resetPassword = async (email: string) => {
+  const response = await axiosInstance.post(`user/reset-password?email=${email}`)
+  return response
+}
