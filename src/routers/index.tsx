@@ -30,6 +30,7 @@ import DashboardSale from '~/components/Dashboard/DashboardSale.tsx'
 import StaffOfficer from '~/middleware/StaffOfficer/index.tsx'
 import HomeUser from '~/pages/User/HomeUser.tsx'
 import Login from '~/components/Login.tsx'
+import ChangePassword from '~/components/ChangePassword.tsx'
 
 const Routes = () => {
   const { token, user } = useAuth()
@@ -92,7 +93,14 @@ const Routes = () => {
             </AdminLayout>
           )
         },
-
+        {
+          path: '/change-password',
+          element: (
+            <AdminLayout>
+              <ChangePassword />
+            </AdminLayout>
+          )
+        },
         {
           path: '/send-mail/:id/:type',
           element: (
@@ -225,6 +233,16 @@ const Routes = () => {
             <UserLayout>
               <AdminOfficer>
                 <Profile />
+              </AdminOfficer>
+            </UserLayout>
+          )
+        },
+        {
+          path: '/change-password',
+          element: (
+            <UserLayout>
+              <AdminOfficer>
+                <ChangePassword />
               </AdminOfficer>
             </UserLayout>
           )
@@ -393,6 +411,16 @@ const Routes = () => {
             <UserLayout>
               <Sale>
                 <Profile />
+              </Sale>
+            </UserLayout>
+          )
+        },
+        {
+          path: '/change-password',
+          element: (
+            <UserLayout>
+              <Sale>
+                <ChangePassword />
               </Sale>
             </UserLayout>
           )
