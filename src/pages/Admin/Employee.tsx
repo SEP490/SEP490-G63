@@ -4,13 +4,14 @@ import AddNewEmployee from '~/components/Admin/Employee/AddNewEmployee'
 import {
   Cog6ToothIcon,
   EllipsisVerticalIcon,
+  KeyIcon,
   NoSymbolIcon,
   PlusIcon,
   UserIcon,
   XMarkIcon
 } from '@heroicons/react/24/outline'
 import ViewEmployee from '~/components/Admin/Employee/ViewEmployee'
-import { deleteEmployee, getListEmployee } from '~/services/employee.service'
+import { deleteEmployee, getListEmployee, resetPassword } from '~/services/employee.service'
 import EditEmployee from '~/components/Admin/Employee/EditEmployee'
 import Pagination from '~/components/BaseComponent/Pagination/Pagination'
 import Loading from '~/components/shared/Loading/Loading'
@@ -19,6 +20,8 @@ import { AxiosError } from 'axios'
 import useToast from '~/hooks/useToast'
 import LoadingIcon from '~/assets/LoadingIcon'
 import { debounce } from 'lodash'
+import { useAuth } from '~/context/authProvider'
+import { ADMIN } from '~/common/const/role'
 
 export interface DataEmployee {
   id?: string
@@ -38,10 +41,12 @@ const Employee = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [viewDetail, setViewDetail] = useState(false)
   const [editModal, setEditModal] = useState(false)
+  const [resetModal, setResetModal] = useState(false)
   const [deleteModal, setDeleteModal] = useState(false)
   const [totalPage, setTotalPage] = useState(1)
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(10)
+  const { user } = useAuth()
   const { errorNotification, successNotification } = useToast()
   const prevPageRef = useRef(page)
   const prevSizeRef = useRef(size)
@@ -50,6 +55,7 @@ const Employee = () => {
   const [searchData, setSearchData] = useState('')
   function closeAllModal() {
     setDeleteModal(false)
+    setResetModal(false)
     setEditModal(false)
     setViewDetail(false)
     setSelectedUser(undefined)
@@ -75,7 +81,7 @@ const Employee = () => {
         setTotalPage(result?.object?.totalPages)
       },
       onError: (error: AxiosError<{ message: string }>) => {
-        errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
+        errorNotification(error.response?.data?.message || error.message || 'Hệ thống lỗi')
       }
     }
   )
@@ -100,6 +106,18 @@ const Employee = () => {
   })
   const handleDeleteEmployee = async () => {
     deleteQuery.mutate(selectedUser?.id)
+  }
+  const resetPasswordQuery = useMutation(resetPassword, {
+    onSuccess: () => {
+      successNotification('Xóa người dùng thành công!!!')
+      closeAllModal()
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
+    }
+  })
+  const handleResetPassword = () => {
+    resetPasswordQuery.mutate(selectedUser?.email as string)
   }
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
@@ -132,13 +150,17 @@ const Employee = () => {
                 onChange={debounce(handChangeInputSearch, 300)}
               />
             </div>
-            <button
-              type='button'
-              onClick={openModal}
-              className='shadow-md rounded-md flex gap-1 bg-main-color px-4 py-2 text-xs sm:text-sm items-center font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
-            >
-              <PlusIcon className='h-5 w-5' /> Tạo mới
-            </button>
+            {user?.role == ADMIN ? (
+              <button
+                type='button'
+                onClick={openModal}
+                className='shadow-md rounded-md flex gap-1 bg-main-color px-4 py-2 text-xs sm:text-sm items-center font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
+              >
+                <PlusIcon className='h-5 w-5' /> Tạo mới
+              </button>
+            ) : (
+              <></>
+            )}
           </div>
 
           <div className='overflow-auto'>
@@ -194,9 +216,13 @@ const Employee = () => {
 
                         <td className='px-3 py-4 text-right'>
                           <Menu as='div' className='relative inline-block text-left '>
-                            <Menu.Button className='flex justify-center items-center gap-3 cursor-pointer hover:text-blue-500'>
-                              <EllipsisVerticalIcon className='h-7 w-7' title='Hành động' />
-                            </Menu.Button>
+                            {user?.role == ADMIN ? (
+                              <Menu.Button className='flex justify-center items-center gap-3 cursor-pointer hover:text-blue-500'>
+                                <EllipsisVerticalIcon className='h-7 w-7' title='Hành động' />
+                              </Menu.Button>
+                            ) : (
+                              <></>
+                            )}
 
                             <Transition
                               as={Fragment}
@@ -207,7 +233,7 @@ const Employee = () => {
                               leaveFrom='transform opacity-100 scale-100'
                               leaveTo='transform opacity-0 scale-95'
                             >
-                              <Menu.Items className='absolute right-8 top-[-100%] z-50 mt-2 w-24 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
+                              <Menu.Items className='absolute right-8 top-[-100%] z-50 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
                                 <Menu.Item>
                                   {({ active }) => (
                                     <button
@@ -221,6 +247,23 @@ const Employee = () => {
                                       } group flex w-full items-center  gap-3 rounded-md px-2 py-1 text-sm `}
                                     >
                                       <Cog6ToothIcon className='h-5' /> Sửa
+                                    </button>
+                                  )}
+                                </Menu.Item>
+
+                                <Menu.Item>
+                                  {({ active }) => (
+                                    <button
+                                      title='Reset'
+                                      onClick={() => {
+                                        setResetModal(true)
+                                        setSelectedUser(d)
+                                      }}
+                                      className={`${
+                                        active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                      } group flex w-full items-center  gap-3 rounded-md px-2 py-1 text-sm `}
+                                    >
+                                      <KeyIcon className='h-5' /> Đặt lại MK
                                     </button>
                                   )}
                                 </Menu.Item>
@@ -435,6 +478,60 @@ const Employee = () => {
                         onClick={handleDeleteEmployee}
                       >
                         {deleteQuery.isLoading ? <LoadingIcon /> : 'Xóa'}
+                      </button>
+                    </div>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+      <Transition appear show={resetModal} as={Fragment}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeAllModal}>
+          <Transition.Child
+            as={Fragment}
+            enter='ease-out duration-300'
+            enterFrom='opacity-0'
+            enterTo='opacity-100'
+            leave='ease-in duration-200'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0'
+          >
+            <div className='fixed inset-0 bg-black/25' />
+          </Transition.Child>
+
+          <div className='fixed inset-0 overflow-y-auto'>
+            <div className='flex min-h-full  items-center justify-center p-4 text-center'>
+              <Transition.Child
+                as={Fragment}
+                enter='ease-out duration-300'
+                enterFrom='opacity-0 scale-95'
+                enterTo='opacity-100 scale-100'
+                leave='ease-in duration-200'
+                leaveFrom='opacity-100 scale-100'
+                leaveTo='opacity-0 scale-95'
+              >
+                <Dialog.Panel className='w-[100vw] md:w-[40vw] md:h-fit transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+                  <div className='flex justify-between mb-2'>
+                    <div className='font-bold'>Thông báo</div>
+                    <div className='flex gap-3 items-center'>
+                      <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeAllModal()} />
+                    </div>
+                  </div>
+                  <div>
+                    <div>
+                      Mật khẩu của nhân viên sẽ được đặt lại là 123456. Bạn có chắc chắn với quyết định của mình?
+                    </div>
+                    <div className='w-full flex justify-end mt-6'>
+                      <button
+                        type='button'
+                        className='middle  none center mr-4 rounded-lg bg-red-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#ff00002f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
+                        data-ripple-light='true'
+                        disabled={resetPasswordQuery.isLoading}
+                        onClick={handleResetPassword}
+                      >
+                        {resetPasswordQuery.isLoading ? <LoadingIcon /> : 'Chắc chắn'}
                       </button>
                     </div>
                   </div>

@@ -6,7 +6,9 @@ import {
   ArrowRightStartOnRectangleIcon,
   BellAlertIcon,
   EllipsisVerticalIcon,
-  XMarkIcon
+  XMarkIcon,
+  KeyIcon,
+  InformationCircleIcon
 } from '@heroicons/react/24/outline'
 import avatar from '../../../assets/images/avatar1.png'
 import useViewport from '~/hooks/useViewport'
@@ -14,14 +16,14 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '~/context/authProvider'
 import useToast from '~/hooks/useToast'
 import { routerAdmin } from '~/common/const/router'
-import { Popover, Transition } from '@headlessui/react'
+import { Menu, Popover, Transition } from '@headlessui/react'
 import { NotificationData, useNotification } from '~/context/notiProvider'
 import LoadingIcon from '~/assets/LoadingIcon'
 const NavBar = () => {
   const [openNav, setOpenNav] = useState(false)
   const [openProfile, setOpenProfile] = useState(false)
   const { width } = useViewport()
-  const isMobile = width <= 1024
+  const isMobile = width <= 728
   const navigate = useNavigate()
   const { removeToken, user } = useAuth()
   const { successNotification } = useToast()
@@ -62,6 +64,7 @@ const NavBar = () => {
             openProfile && setOpenProfile(false)
           }}
         ></div>
+
         <div
           className={`absolute z-30 h-[100vh] overflow-hidden bg-white w-[200px] right-0 transition-all duration-100 delay-100 ease-in ${openProfile ? 'visible' : 'invisible'}`}
         >
@@ -231,38 +234,86 @@ const NavBar = () => {
               onClick={() => setOpenProfile(true)}
             />
           ) : (
-            <div className='flex items-center gap-2'>
-              <div
-                className='flex justify-center items-center gap-3 cursor-pointer'
-                title='Trang cá nhân'
-                onClick={() => navigate('/profile')}
+            <Menu as='div' className='relative inline-block text-left '>
+              <Menu.Button className='flex justify-center items-center gap-3 cursor-pointer'>
+                <div className='flex items-center gap-2 mr-3'>
+                  <div className='flex justify-center items-center gap-3 cursor-pointer' title='Trang cá nhân'>
+                    <img
+                      src={user?.avatar ? user?.avatar : avatar}
+                      alt='avatar'
+                      style={{
+                        width: '38px',
+                        height: '38px',
+                        objectFit: 'cover',
+                        borderRadius: '50%',
+                        border: '2px solid blue  '
+                      }}
+                      title={user?.name}
+                    />
+                    <label className='font-bold cursor-pointer flex items-center gap-1 max-w-[120px] truncate ...'>
+                      {user?.name}
+                    </label>
+                  </div>
+                </div>
+              </Menu.Button>
+
+              <Transition
+                as={Fragment}
+                enter='transition ease-out duration-100'
+                enterFrom='transform opacity-0 scale-95'
+                enterTo='transform opacity-100 scale-100'
+                leave='transition ease-in duration-75'
+                leaveFrom='transform opacity-100 scale-100'
+                leaveTo='transform opacity-0 scale-95'
               >
-                <img
-                  src={user?.avatar ? user?.avatar : avatar}
-                  alt='avatar'
-                  style={{
-                    width: '38px',
-                    height: '38px',
-                    objectFit: 'cover',
-                    borderRadius: '50%',
-                    border: '2px solid blue  '
-                  }}
-                  title={user?.name}
-                />
-                <label className='font-bold cursor-pointer flex items-center gap-1 max-w-[120px] truncate ...'>
-                  {user?.name}
-                </label>
-              </div>
-              <ArrowRightStartOnRectangleIcon
-                className='h-5 w-5 cursor-pointer'
-                title='Đăng xuất'
-                onClick={() => {
-                  removeToken()
-                  successNotification('Đăng xuất thành công')
-                  navigate('/')
-                }}
-              />{' '}
-            </div>
+                <Menu.Items className='absolute right-0  z-50 mt-2 w-[180px] origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
+                  <Menu.Item>
+                    {({ active }) => (
+                      <button
+                        title='Sửa'
+                        onClick={() => navigate('/profile')}
+                        className={`${
+                          active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                        } group flex w-full items-center gap-3 rounded-md px-2 py-1 text-sm `}
+                      >
+                        <InformationCircleIcon className='h-5' /> Trang cá nhân
+                      </button>
+                    )}
+                  </Menu.Item>
+
+                  <Menu.Item>
+                    {({ active }) => (
+                      <button
+                        title='Reset'
+                        onClick={() => {navigate("/change-password")}}
+                        className={`${
+                          active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                        } group flex w-full items-center gap-3 rounded-md px-2 py-1 text-sm `}
+                      >
+                        <KeyIcon className='h-5' /> Đổi mật khẩu
+                      </button>
+                    )}
+                  </Menu.Item>
+                  <Menu.Item>
+                    {({ active }) => (
+                      <button
+                        title='Xóa'
+                        onClick={() => {
+                          removeToken()
+                          successNotification('Đăng xuất thành công')
+                          navigate('/')
+                        }}
+                        className={`${
+                          active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                        } group flex w-full items-center gap-3 rounded-md px-2 py-1 text-sm `}
+                      >
+                        <ArrowRightStartOnRectangleIcon className='h-5' /> Đăng xuất
+                      </button>
+                    )}
+                  </Menu.Item>
+                </Menu.Items>
+              </Transition>
+            </Menu>
           )}
         </div>
       </div>
