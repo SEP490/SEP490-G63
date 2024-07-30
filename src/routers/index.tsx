@@ -10,7 +10,6 @@ import AdminLayout from '~/layout/AdminLayout/index.tsx'
 import SearchPage from '~/pages/Admin/Search/SearchPage.tsx'
 import CreateAppendices from '~/components/Admin/Appendices/CreateAppendices.tsx'
 import AppendicesContract from '~/pages/Admin/Appendices/AppendicesContract.tsx'
-import Dashboard from '~/pages/Admin/Dashboard.tsx'
 import ViewSignContract from '~/pages/BasePage/ViewSignContract.tsx'
 import SearchPageResult from '~/pages/Admin/Search/SearchPageResult.tsx'
 import Profile from '~/pages/Profile.tsx'
@@ -65,10 +64,7 @@ const Routes = () => {
             </AdminLayout>
           )
         },
-        {
-          path: '/dashboard',
-          element: <Dashboard />
-        },
+        
         {
           path: '/view/:id/sign/:customer',
           element: (
