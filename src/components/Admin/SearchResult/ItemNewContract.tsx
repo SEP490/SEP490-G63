@@ -3,7 +3,6 @@ import { XMarkIcon } from '@heroicons/react/24/outline'
 import { useNavigate } from 'react-router-dom'
 import ViewContract from '../NewContract/ViewContract'
 import { useState, Fragment } from 'react'
-import '~/styles/iframe.css'
 
 const ItemNewContract = ({ data }: any) => {
   const navigate = useNavigate()
