@@ -1,5 +1,3 @@
-import { Provider } from 'react-redux'
-import { store } from './redux/Store.tsx'
 import AuthProvider from './context/authProvider.tsx'
 import Routes from './routers/index.tsx'
 import { DndProvider } from 'react-dnd'
@@ -11,17 +9,15 @@ import LoadingPage from './components/shared/LoadingPage/LoadingPage.tsx'
 
 function App() {
   return (
-    <Provider store={store}>
-      <AuthProvider>
-        <NotifyProvider>
-          <DndProvider backend={HTML5Backend}>
-            <Suspense fallback={<LoadingPage />}>
-              <Routes />
-            </Suspense>
-          </DndProvider>
-        </NotifyProvider>
-      </AuthProvider>
-    </Provider>
+    <AuthProvider>
+      <NotifyProvider>
+        <DndProvider backend={HTML5Backend}>
+          <Suspense fallback={<LoadingPage />}>
+            <Routes />
+          </Suspense>
+        </DndProvider>
+      </NotifyProvider>
+    </AuthProvider>
   )
 }
 
