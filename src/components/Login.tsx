@@ -114,9 +114,19 @@ const Login = () => {
             {errors.password?.message}
           </div>
         </div>
+        <div className='w-full  flex justify-end'>
+          <div
+            onClick={() => {
+              navigate('/change-password')
+            }}
+            className='cursor-pointer text-blue-500 hover:underline w-fit'
+          >
+            Quên mật khẩu
+          </div>
+        </div>
         <button
           type='submit'
-          className='middle my-6 none center mr-4 rounded-lg bg-[#0070f4] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
+          className='middle my-2 none center mr-4 rounded-lg bg-[#0070f4] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
           data-ripple-light='true'
           disabled={loginQuery.isLoading}
         >
