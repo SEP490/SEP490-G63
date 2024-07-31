@@ -64,7 +64,7 @@ const Routes = () => {
             </AdminLayout>
           )
         },
-        
+
         {
           path: '/view/:id/sign/:customer',
           element: (
@@ -589,6 +589,14 @@ const Routes = () => {
       element: (
         <div className='w-[100vw] h-[100vh]'>
           <ViewSignContract />
+        </div>
+      )
+    },
+    {
+      path: '/change-password',
+      element: (
+        <div className='w-[100vw] h-[100vh]'>
+          <ChangePassword />
         </div>
       )
     },
