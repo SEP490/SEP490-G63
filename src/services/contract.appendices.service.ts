@@ -6,7 +6,7 @@ type SignRequest = {
   createdBy: string
   customer: boolean
 }
-export const getAppendicesContactAll = async (id:string,page: number, size: number) => {
+export const getAppendicesContactAll = async (id: string, page: number, size: number) => {
   console.log(id)
   console.log(page)
   console.log(size)

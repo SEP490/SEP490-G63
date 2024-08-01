@@ -14,13 +14,12 @@
     "prettier:fix": "prettier --write \"src/**/(*.tsx|*.ts|*.css|*.scss)\""
   },
   "dependencies": {
-    "@ckeditor/ckeditor5-build-classic": "^41.4.2",
-    "@ckeditor/ckeditor5-react": "^6.3.0",
     "@headlessui/react": "^2.0.3",
     "@heroicons/react": "^2.1.3",
     "@reduxjs/toolkit": "^2.2.3",
     "@stomp/stompjs": "^7.0.0",
-    "aos": "^2.3.4",
+    "@types/js-cookie": "^3.0.6",
+    "@types/react-datepicker": "^7.0.0",
     "apexcharts": "^3.49.1",
     "axios": "^1.6.8",
     "chart.js": "^4.4.3",
@@ -31,6 +30,7 @@
     "immutability-helper": "^3.1.1",
     "js-cookie": "^3.0.5",
     "konva": "^9.3.11",
+    "lodash": "^4.17.21",
     "moment": "^2.30.1",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.1",
@@ -56,12 +56,9 @@
     "vietqr": "^1.1.9"
   },
   "devDependencies": {
-    "@types/aos": "^3.0.7",
-    "@types/js-cookie": "^3.0.6",
     "@types/lodash": "^4.17.4",
     "@types/node": "^20.12.7",
     "@types/react": "^18.2.66",
-    "@types/react-datepicker": "^7.0.0",
     "@types/react-dom": "^18.2.22",
     "@types/react-router-dom": "^5.3.3",
     "@types/react-slick": "^0.23.13",

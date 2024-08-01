@@ -141,7 +141,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-blue-700',
-      disable: (d: any) => !d?.canSend,
+      disable: (d: any) => !d?.canSend || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
       callback: (d: any) => {
         setSelectedContract(d)
         setStatus(1)
@@ -156,7 +156,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-teal-700',
-      disable: (d: any) => false,
+      disable: (d: any) => !d?.canSendForCustomer || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
       callback: (d: any) => {
         setSelectedContract(d)
         setStatus(7)
@@ -236,19 +236,7 @@ const Contract = () => {
         setChangeStatus(true)
       }
     },
-    {
-      id: 3,
-      title: (
-        <>
-          <DocumentPlusIcon className='h-5' /> Phụ lục hợp đồng
-        </>
-      ),
-      color: 'text-blue-700',
-      disable: (d: any) => false,
-      callback: (d: any) => {
-        navigate(`/appendices/${d.id}`)
-      }
-    },
+
     {
       id: 4,
       title: (
@@ -265,6 +253,19 @@ const Contract = () => {
       }
     },
     {
+      id: 3,
+      title: (
+        <>
+          <DocumentPlusIcon className='h-5' /> Phụ lục hợp đồng
+        </>
+      ),
+      color: 'text-blue-700',
+      disable: (d: any) => false,
+      callback: (d: any) => {
+        navigate(`/appendices/${d.id}`)
+      }
+    },
+    {
       id: 5,
       title: (
         <>
@@ -272,7 +273,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-violet-700',
-      disable: (d: any) => false,
+      disable: (d: any) => !d?.canUpdate,
       callback: (d: any) => {
         setEditModal(true)
         setSelectedContract(d)
@@ -286,7 +287,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-red-700',
-      disable: (d: any) => false,
+      disable: (d: any) => !d?.canDelete,
       callback: (d: any) => {
         setDeleteModal(true)
         setSelectedContract(d)
@@ -302,7 +303,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-green-700',
-      disable: (d: any) => !d?.canSign && user?.email != d.createdBy,
+      disable: (d: any) => (!d?.canSign && user?.email != d.createdBy) || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
       callback: (d: any) => {
         navigate(`/view/${d?.id}/sign/1`)
       }
@@ -315,7 +316,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-orange-700',
-      disable: (d: any) => !d?.canSign,
+      disable: (d: any) => (!d?.canSign && user?.email == d.createdBy) || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
       callback: (d: any) => {
         setSelectedContract(d)
         setStatus(6)
@@ -400,30 +401,20 @@ const Contract = () => {
       title: (
         <div className='flex items-center gap-2'>
           <FaUserClock />
-          <div className='w-[90%] truncate ...'> Chờ sếp ký</div>
+          <div className='w-[90%] truncate ...'> Chờ ký</div>
         </div>
       ),
-      status: 'WAIT_SIGN_A'
+      status: 'WAIT_SIGN'
     },
     {
       id: 5,
       title: (
         <div className='flex items-center gap-2'>
           <FaUserCheck />
-          <div className='w-[90%] truncate ...'> Sếp ký thành công</div>
+          <div className='w-[90%] truncate ...'>Đã ký</div>
         </div>
       ),
-      status: 'SIGN_A_OK'
-    },
-    {
-      id: 6,
-      title: (
-        <div className='flex items-center gap-2'>
-          <FaUserClock />
-          <div className='w-[90%] truncate ...'> Chờ khách hàng ký</div>
-        </div>
-      ),
-      status: 'WAIT_SIGN_B'
+      status: 'SIGN_OK'
     },
     {
       id: 7,
@@ -472,10 +463,10 @@ const Contract = () => {
       title: (
         <div className='flex items-center gap-2'>
           <FaUserClock />
-          <div className='w-[90%] truncate ...'> Chờ sếp ký</div>
+          <div className='w-[90%] truncate ...'> Chờ ký</div>
         </div>
       ),
-      status: 'WAIT_SIGN_A'
+      status: 'WAIT_SIGN'
     },
     {
       id: 5,
@@ -485,7 +476,7 @@ const Contract = () => {
           <div className='w-[90%] truncate ...'> Đã ký</div>
         </div>
       ),
-      status: 'SIGN_A_OK'
+      status: 'SIGN_OK'
     },
     {
       id: 6,
@@ -517,7 +508,7 @@ const Contract = () => {
           <div className='w-[90%] truncate ...'> Chờ ký</div>
         </div>
       ),
-      status: 'WAIT_SIGN_A'
+      status: 'WAIT_SIGN'
     },
     {
       id: 3,
@@ -527,7 +518,7 @@ const Contract = () => {
           <div className='w-[90%] truncate ...'> Đã ký</div>
         </div>
       ),
-      status: 'SIGN_A_OK'
+      status: 'SIGN_OK'
     },
     {
       id: 4,
@@ -705,38 +696,36 @@ const Contract = () => {
                           </div>
                         </td>
                         <td className='px-3 py-4'>
-                          <div className={`${d?.statusCurrent == 'SUCCESS' ? 'invisible' : 'visible'}`}>
-                            <Menu as='div' className='relative inline-block text-left '>
-                              <Menu.Button className='flex justify-center items-center gap-3 cursor-pointer hover:text-blue-500'>
-                                <EllipsisVerticalIcon className='h-7 w-7' title='Hành động' />
-                              </Menu.Button>
+                          <Menu as='div' className='relative inline-block text-left '>
+                            <Menu.Button className='flex justify-center items-center gap-3 cursor-pointer hover:text-blue-500'>
+                              <EllipsisVerticalIcon className='h-7 w-7' title='Hành động' />
+                            </Menu.Button>
 
-                              <Transition
-                                as={Fragment}
-                                enter='transition ease-out duration-100'
-                                enterFrom='transform opacity-0 scale-95'
-                                enterTo='transform opacity-100 scale-100'
-                                leave='transition ease-in duration-75'
-                                leaveFrom='transform opacity-100 scale-100'
-                                leaveTo='transform opacity-0 scale-95'
-                              >
-                                <Menu.Items className='absolute right-4 -top-10 z-50 mt-2 w-48 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
-                                  {actionTable[permissionUser]?.map((action: ActionType) => (
-                                    <Menu.Item key={action.id} disabled={action.disable(d)}>
-                                      {({ active }) => (
-                                        <button
-                                          onClick={() => action.callback(d)}
-                                          className={`group flex w-full items-center ${action.disable(d) ? 'text-gray-300' : active ? 'bg-blue-500 text-white' : action?.color} gap-3 rounded-md px-2 py-1 text-sm `}
-                                        >
-                                          {action.title}
-                                        </button>
-                                      )}
-                                    </Menu.Item>
-                                  ))}
-                                </Menu.Items>
-                              </Transition>
-                            </Menu>
-                          </div>
+                            <Transition
+                              as={Fragment}
+                              enter='transition ease-out duration-100'
+                              enterFrom='transform opacity-0 scale-95'
+                              enterTo='transform opacity-100 scale-100'
+                              leave='transition ease-in duration-75'
+                              leaveFrom='transform opacity-100 scale-100'
+                              leaveTo='transform opacity-0 scale-95'
+                            >
+                              <Menu.Items className='absolute right-4 -top-10 z-50 mt-2 w-48 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
+                                {actionTable[permissionUser]?.map((action: ActionType) => (
+                                  <Menu.Item key={action.id} disabled={action.disable(d)}>
+                                    {({ active }) => (
+                                      <button
+                                        onClick={() => action.callback(d)}
+                                        className={`group flex w-full items-center ${action.disable(d) ? 'text-gray-300' : active ? 'bg-blue-500 text-white' : action?.color} gap-3 rounded-md px-2 py-1 text-sm `}
+                                      >
+                                        {action.title}
+                                      </button>
+                                    )}
+                                  </Menu.Item>
+                                ))}
+                              </Menu.Items>
+                            </Transition>
+                          </Menu>
                         </td>
                       </tr>
                     ))
