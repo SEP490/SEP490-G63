@@ -60,3 +60,7 @@ export const getNotification = async (page: number) => {
   const response = await axiosInstance.get(`notification?page=${page}&size=10`)
   return response?.data
 }
+export const changePassword = async (data: any) => {
+  const response = await axiosInstance.post('public/auth/change-password', data)
+  return response.data
+}

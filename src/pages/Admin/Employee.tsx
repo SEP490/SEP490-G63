@@ -109,7 +109,7 @@ const Employee = () => {
   }
   const resetPasswordQuery = useMutation(resetPassword, {
     onSuccess: () => {
-      successNotification('Xóa người dùng thành công!!!')
+      successNotification('Đặt lại thành công, Hãy kiểm tra email để nhận mật khẩu mới')
       closeAllModal()
     },
     onError: (error: AxiosError<{ message: string }>) => {
@@ -521,7 +521,7 @@ const Employee = () => {
                   </div>
                   <div>
                     <div>
-                      Mật khẩu của nhân viên sẽ được đặt lại là 123456. Bạn có chắc chắn với quyết định của mình?
+                      Mật khẩu của nhân viên sẽ được đặt lại. Bạn có chắc chắn với quyết định của mình?
                     </div>
                     <div className='w-full flex justify-end mt-6'>
                       <button
