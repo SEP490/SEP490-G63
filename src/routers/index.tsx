@@ -13,7 +13,6 @@ import AppendicesContract from '~/pages/Admin/Appendices/AppendicesContract.tsx'
 import ViewSignContract from '~/pages/BasePage/ViewSignContract.tsx'
 import SearchPageResult from '~/pages/Admin/Search/SearchPageResult.tsx'
 import Profile from '~/pages/Profile.tsx'
-import SendMailContract from '~/components/Admin/NewContract/SendMailContract.tsx'
 import OldContract from '~/pages/Admin/OldContract.tsx'
 import TemplateContract from '~/pages/Admin/TemplateContract.tsx'
 import TypeContract from '~/pages/Admin/TypeContract.tsx'
@@ -30,6 +29,7 @@ import StaffOfficer from '~/middleware/StaffOfficer/index.tsx'
 import HomeUser from '~/pages/User/HomeUser.tsx'
 import Login from '~/components/Login.tsx'
 import ChangePassword from '~/components/ChangePassword.tsx'
+import Department from '~/pages/Admin/Department/Department.tsx'
 
 const Routes = () => {
   const { token, user } = useAuth()
@@ -64,7 +64,14 @@ const Routes = () => {
             </AdminLayout>
           )
         },
-        
+        {
+          path: '/department',
+          element: (
+            <AdminLayout>
+              <Department />
+            </AdminLayout>
+          )
+        },
         {
           path: '/view/:id/sign/:customer',
           element: (
@@ -94,14 +101,6 @@ const Routes = () => {
           element: (
             <AdminLayout>
               <ChangePassword />
-            </AdminLayout>
-          )
-        },
-        {
-          path: '/send-mail/:id/:type',
-          element: (
-            <AdminLayout>
-              <SendMailContract />
             </AdminLayout>
           )
         },
@@ -249,16 +248,6 @@ const Routes = () => {
             <UserLayout>
               <AdminOfficer>
                 <SearchPageResult />
-              </AdminOfficer>
-            </UserLayout>
-          )
-        },
-        {
-          path: '/send-mail/:id/:type',
-          element: (
-            <UserLayout>
-              <AdminOfficer>
-                <SendMailContract />
               </AdminOfficer>
             </UserLayout>
           )
@@ -442,16 +431,6 @@ const Routes = () => {
           )
         },
         {
-          path: '/send-mail/:id/:type',
-          element: (
-            <UserLayout>
-              <Sale>
-                <SendMailContract />
-              </Sale>
-            </UserLayout>
-          )
-        },
-        {
           path: '/type-contract',
           element: (
             <UserLayout>
@@ -589,6 +568,14 @@ const Routes = () => {
       element: (
         <div className='w-[100vw] h-[100vh]'>
           <ViewSignContract />
+        </div>
+      )
+    },
+    {
+      path: '/change-password',
+      element: (
+        <div className='w-[100vw] h-[100vh]'>
+          <ChangePassword />
         </div>
       )
     },

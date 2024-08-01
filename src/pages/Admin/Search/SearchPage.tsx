@@ -3,6 +3,8 @@ import logo from '../../../assets/svg/Tdocman.svg'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { debounce } from 'lodash'
 import { useState } from 'react'
+import { getContractType } from '~/services/type-contract.service'
+import { useQuery } from 'react-query'
 type FormData = {
   searchText: string
 }
@@ -11,6 +13,10 @@ const SearchPage = () => {
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     navigate(`/search/${fieldSearch}/${data.searchText}`)
   }
+  const { data: typeData } = useQuery('type-contract', () => getContractType({ page: 0, size: 100, title: '' }), {
+    onSuccess: (res) => console.log(res),
+    onError: (err) => console.log(err)
+  })
   const [fieldSearch, setFieldSearch] = useState('contract')
   const { register, handleSubmit } = useForm<FormData>()
   return (
@@ -50,7 +56,7 @@ const SearchPage = () => {
               placeholder='Tìm kiếm'
             />
           </div>
-          <div className='flex gap-10 select-none mt-3'>
+          <div className='flex gap-10 select-none mt-3 text-center items-center'>
             <div
               className={`${fieldSearch == 'contract' ? 'text-blue-600' : ''} hover:underline hover:text-blue-600 cursor-pointer font-bold`}
               onClick={() => setFieldSearch('contract')}
@@ -63,6 +69,20 @@ const SearchPage = () => {
             >
               Hợp đồng cũ
             </div>
+            {/* {resultQuery.isLoading ? (
+              <LoadingSvgV2 />
+            ) : ( */}
+            <select
+              // {...register('')}
+              className={` block w-fit rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            >
+              {typeData?.content?.map((d: any) => (
+                <option value={d.id} className='w-[300px] truncate ...'>
+                  {d.title}
+                </option>
+              ))}
+            </select>
+            {/* )} */}
           </div>
         </form>
       </div>

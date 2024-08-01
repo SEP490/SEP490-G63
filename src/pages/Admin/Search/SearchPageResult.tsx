@@ -11,6 +11,11 @@ import ItemOldContract from '~/components/Admin/SearchResult/ItemOldContract'
 import Pagination from '~/components/BaseComponent/Pagination/Pagination'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
+import { url } from 'inspector'
+import bgsearch from '~/assets/images/bgsearch.jpg'
+import LoadingSvgV2 from '~/assets/svg/loadingsvg'
+import { getContractType } from '~/services/type-contract.service'
+
 type FormData = {
   searchText: string
   fieldSearch: string
@@ -26,6 +31,12 @@ const SearchPageResult = () => {
   const { register, handleSubmit, getValues, setValue } = useForm<FormData>({
     defaultValues: { fieldSearch, searchText }
   })
+
+  const { data: typeData } = useQuery('type-contract', () => getContractType({ page: 0, size: 100, title: '' }), {
+    onSuccess: (res) => console.log(res),
+    onError: (err) => console.log(err)
+  })
+
   useEffect(() => {
     searchQuery.mutate({ fieldSearch: getValues('fieldSearch'), data: { page, size, key: getValues('searchText') } })
   }, [page, size])
@@ -45,7 +56,10 @@ const SearchPageResult = () => {
   if (searchQuery.isLoading || searchQuery.isIdle) return <LoadingPage />
   return (
     <div className=' h-full'>
-      <div className='flex items-center justify-start gap-5 shadow-lg bg-[url(https://i.ibb.co/QMrFzkS/wallpaperflare-com-wallpaper-13.jpg)] bg-cover h-[100px]'>
+      <div
+        className='flex items-center justify-start gap-5 shadow-lg bg-cover h-[100px]'
+        style={{ backgroundImage: `url(${bgsearch})` }}
+      >
         <div className='flex justify-center items-center select-none p-6 '>
           <img src={logo} alt='logo' className='w-[20px] md:w-[50px]' />
           <div
@@ -82,9 +96,9 @@ const SearchPageResult = () => {
             />
             {/* <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => console.log('clear')} /> */}
           </div>
-          <div className='pl-6 my-1 flex gap-5 select-none w-full text-[14px]'>
+          <div className='pl-6 my-1 flex gap-5 select-none w-full text-[14px] items-center'>
             <div
-              className={`font-mono font-semibold ${fieldSearch == 'contract' ? 'text-blue-600 border-b-4 border-blue-500' : ''} border-blue-400 hover:text-blue-600 cursor-pointer`}
+              className={`font-mono font-semibold ${fieldSearch == 'contract' ? 'text-blue-700 border-b-4 border-blue-500' : ''} border-blue-400 hover:text-blue-600 cursor-pointer`}
               onClick={() => {
                 setValue('fieldSearch', 'contract')
                 refForm.current.click()
@@ -93,7 +107,7 @@ const SearchPageResult = () => {
               Hợp đồng mới
             </div>
             <div
-              className={`font-mono font-semibold ${fieldSearch == 'old-contract' ? 'text-blue-600 border-b-4 border-blue-500' : ''} border-blue-400 hover:text-blue-600 cursor-pointer`}
+              className={`font-mono font-semibold ${fieldSearch == 'old-contract' ? 'text-blue-700 border-b-4 border-blue-500' : ''} border-blue-400 hover:text-blue-600 cursor-pointer`}
               onClick={() => {
                 setValue('fieldSearch', 'old-contract')
                 refForm.current.click()
@@ -101,14 +115,29 @@ const SearchPageResult = () => {
             >
               Hợp đồng cũ
             </div>
+            {searchQuery.isLoading ? (
+              <LoadingSvgV2 />
+            ) : (
+              <select
+                // {...register('')}
+                disabled={searchQuery?.isLoading}
+                className={` block w-[150px] truncate ... rounded-md border-0 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+              >
+                {typeData?.content?.map((d: any) => (
+                  <option value={d.id} className='w-[200px] truncate ...'>
+                    {d.title}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
           <button type='submit' className='hidden' ref={refForm}></button>
         </form>
       </div>
 
-      <div className='h-[calc(100%-100px)] overflow-auto'>
-        <div className='pl-5 text-black mt-2 bg-slate-300 rounded-3xl py-1'>
-          👉 Hiển thị {data?.totalElements} kết quả cho "{getValues('searchText')}" của
+      <div className='h-[calc(100%-100px)] overflow-auto bg-white'>
+        <div className='pl-5 text-sky-800 mt-2 rounded-3xl py-1'>
+          👉 Hiển thị {data?.totalElements} kết quả cho "<strong>{getValues('searchText')}</strong>" của
           {fieldSearch == 'contract' ? ' Hợp đồng mới' : ' Hợp đồng cũ'}
         </div>
         <div className='flex flex-wrap gap-5 px-6 lg:px-52 mt-4'>

@@ -52,7 +52,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
   const onSubmit: SubmitHandler<FromType> = async (data) => {
     addNewEmployeeQuery.mutate({
       ...data,
-      dob: data.dob ? moment(data.dob).format('DD/MM/YYYY') : data.dob,
+      dob: data.dob ? moment(data.dob).format('YYYY/MM/DD') : data.dob,
       permissions: [data.permissions]
     })
   }

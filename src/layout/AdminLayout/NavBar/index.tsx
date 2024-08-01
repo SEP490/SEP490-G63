@@ -23,7 +23,7 @@ const NavBar = () => {
   const [openNav, setOpenNav] = useState(false)
   const [openProfile, setOpenProfile] = useState(false)
   const { width } = useViewport()
-  const isMobile = width <= 728
+  const isMobile = width <= 1024
   const navigate = useNavigate()
   const { removeToken, user } = useAuth()
   const { successNotification } = useToast()
