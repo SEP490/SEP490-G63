@@ -32,11 +32,10 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
   const {
     register,
     handleSubmit,
-    watch,
     setValue,
     getValues,
     formState: { errors }
-  } = useForm<FromType>({ defaultValues: { permissions: 'SALE' } })
+  } = useForm<FromType>({defaultValues:{permissions:"SALE"}})
   const { successNotification, errorNotification } = useToast()
   const addNewEmployeeQuery = useMutation(createEmployee, {
     onError: (error: AxiosError<{ message: string }>) => {
@@ -52,7 +51,6 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
       }
     }
   })
-  console.log(watch('permissions'))
 
   const onSubmit: SubmitHandler<FromType> = async (data) => {
     addNewEmployeeQuery.mutate({
@@ -284,7 +282,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
                 name='permissions'
                 className='rounded-lg'
                 value={e.value}
-                defaultChecked={e.value == getValues('permissions')}
+                defaultChecked={e.value == getValues("permissions")}
                 onChange={() => {
                   setValue('permissions', e.value)
                 }}
