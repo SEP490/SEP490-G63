@@ -13,8 +13,9 @@ import logo from '../../assets/svg/Tdocman.svg'
 import { useForm } from 'react-hook-form'
 import useToast from '~/hooks/useToast'
 import { useAuth } from '~/context/authProvider'
-import { ADMIN } from '~/common/const/role'
+import { ADMIN, USER } from '~/common/const/role'
 import Loading from '~/components/shared/Loading/Loading'
+import { permissionObject } from '~/common/const/permissions'
 type FormType = {
   email: string
   code: number
@@ -128,7 +129,13 @@ const ViewSignContract = () => {
       </div>
     )
 
-  if (customer == '1' && user?.role != ADMIN)
+  if (
+    customer == '1' &&
+    user?.role == USER &&
+    (user?.permissions.includes(permissionObject.SALE) ||
+      user?.permissions.includes(permissionObject.OFFICE_STAFF) ||
+      user?.permissions.includes(permissionObject.OFFICE_STAFF))
+  )
     return <Navigate to='/404notfound' state={{ from: location }} replace></Navigate>
   return (
     <div className='w-full h-full flex flex-col md:flex-row justify-center  bg-white overflow-auto'>

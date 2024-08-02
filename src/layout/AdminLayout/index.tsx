@@ -17,7 +17,7 @@ function AdminLayout({ children }: any) {
         <div className='fixed w-full z-30'>
           <NavBar />
         </div>
-  
+
         <div
           className={`${isMobile ? 'mt-[50px] h-[calc(100vh-50px)]' : 'mt-[100px] h-[calc(100vh-100px)]'} overflow-auto`}
         >
@@ -27,7 +27,6 @@ function AdminLayout({ children }: any) {
     )
   }
   return <Navigate to='/404notfound' state={{ from: location }} replace></Navigate>
- 
 }
 
 export default AdminLayout
