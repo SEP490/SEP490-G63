@@ -1,7 +1,11 @@
-// export const BASE_URL = 'http://localhost:8080/'
-export const BASE_URL = 'http://api.tdocman.id.vn/api/'
 export const BASE_URL_FE = 'http://tdocman.id.vn/'
-export const BASE_ADMIN_URL = 'http://localhost:8081/'
+export const BASE_URL = 'http://api.tdocman.id.vn/api/'
+export const BASE_ADMIN_URL = 'http://admin.api.tdocman.id.vn/api/'
+
+// export const BASE_URL_FE = 'http://localhost:3000/'
+// export const BASE_URL = 'http://localhost:8080/'
+// export const BASE_ADMIN_URL = 'http://localhost:8081/'
+
 export const BASE_PROVINCE_URL = 'https://vapi.vnappmob.com'
 export const INTERNAL_SERVER_ERROR = 500
 export const NOT_FOUND = 404
