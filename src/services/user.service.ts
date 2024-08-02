@@ -64,3 +64,7 @@ export const changePassword = async (data: any) => {
   const response = await axiosInstance.post('public/auth/change-password', data)
   return response.data
 }
+export const getUserToken = async () => {
+  const response = await axiosInstance.post('user/get-user')
+  return response.data
+}

@@ -32,8 +32,10 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
   const {
     register,
     handleSubmit,
+    setValue,
+    getValues,
     formState: { errors }
-  } = useForm<FromType>()
+  } = useForm<FromType>({defaultValues:{permissions:"SALE"}})
   const { successNotification, errorNotification } = useToast()
   const addNewEmployeeQuery = useMutation(createEmployee, {
     onError: (error: AxiosError<{ message: string }>) => {
@@ -49,6 +51,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
       }
     }
   })
+
   const onSubmit: SubmitHandler<FromType> = async (data) => {
     addNewEmployeeQuery.mutate({
       ...data,
@@ -276,10 +279,13 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
             <div className='relative flex w-[100%] md:w-[48%] gap-4 items-center' key={e.id}>
               <input
                 type='radio'
-                {...register('permissions')}
+                name='permissions'
                 className='rounded-lg'
                 value={e.value}
-                defaultChecked={e.value == 'SALE'}
+                defaultChecked={e.value == getValues("permissions")}
+                onChange={() => {
+                  setValue('permissions', e.value)
+                }}
               />
               <label className='flex items-center gap-1'>
                 {e.title}
@@ -287,6 +293,9 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
               </label>
             </div>
           ))}
+        </div>
+        <div className={`text-red-500 absolute text-[12px] ${errors.permissions ? 'visible' : 'invisible'}`}>
+          {errors.permissions?.message}
         </div>
       </div>
       <div className='w-full flex justify-end'>

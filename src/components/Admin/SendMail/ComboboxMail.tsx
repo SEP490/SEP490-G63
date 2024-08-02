@@ -2,7 +2,7 @@ import AsyncCreatableSelect from 'react-select/async-creatable'
 import useToast from '~/hooks/useToast'
 import { validateEmail } from '~/common/utils/checkMail'
 
-const AsyncCreatableSelectComponent = ({ selected, setSelected, option }: any) => {
+const AsyncCreatableSelectComponent = ({ selected, setSelected, option, isDisabled = false }: any) => {
   const { errorNotification } = useToast()
 
   const filterColors = (inputValue: string) => {
@@ -67,8 +67,8 @@ const AsyncCreatableSelectComponent = ({ selected, setSelected, option }: any) =
         isMulti
         value={selected}
         onChange={setSelected}
-        onCreateOption={handleCreate}
         styles={customStyles}
+        isDisabled={isDisabled}
       />
     </div>
   )
