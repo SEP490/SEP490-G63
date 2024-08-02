@@ -162,6 +162,7 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
             }
           })}
           placeholder='abc@gmail.com'
+          disabled
         />
         <div className={`text-red-500 absolute text-[12px] ${errors.email ? 'visible' : 'invisible'}`}>
           {errors.email?.message}
