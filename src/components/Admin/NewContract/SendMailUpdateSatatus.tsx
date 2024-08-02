@@ -151,11 +151,11 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch }: IProps) => {
       <div className='w-full flex flex-col md:flex-row justify-between border-b-2'>
         <div className='w-full md:w-[46%] py-2 flex items-center z-50'>
           <span className='w-20 font-bold'>Đến</span>
-          <ComboboxMail selected={selectedTo} setSelected={setSelectedTo} option={optionTo} />
+          <ComboboxMail selected={selectedTo} setSelected={setSelectedTo} option={optionTo} isCreate={status == 7} />
         </div>
         <div className='w-full md:w-[46%] py-2  flex items-center z-50'>
           <span className='w-20 font-bold'>CC</span>
-          <ComboboxMail selected={selectedCc} setSelected={setSelectedCc} option={optionCC} />
+          <ComboboxMail selected={selectedCc} setSelected={setSelectedCc} option={optionCC} isCreate={status == 7} />
         </div>
       </div>
 
