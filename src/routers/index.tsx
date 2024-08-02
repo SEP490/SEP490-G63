@@ -590,7 +590,7 @@ const Routes = () => {
   ]
 
   if (token) {
-    if (user?.role == ADMIN) {
+    if (user?.role == ADMIN || (user?.role == USER && user?.permissions.includes(permissionObject.MANAGER))) {
       routes = routesForAuthenticatedOnly
     } else if (user?.role == USER && user?.permissions.includes(permissionObject.OFFICE_ADMIN)) {
       routes = routesForAdminOfficer
