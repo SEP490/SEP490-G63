@@ -285,7 +285,9 @@ const NavBar = () => {
                     {({ active }) => (
                       <button
                         title='Reset'
-                        onClick={() => {navigate("/change-password")}}
+                        onClick={() => {
+                          navigate('/change-password')
+                        }}
                         className={`${
                           active ? 'bg-blue-500 text-white' : 'text-gray-900'
                         } group flex w-full items-center gap-3 rounded-md px-2 py-1 text-sm `}
