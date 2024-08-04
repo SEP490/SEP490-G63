@@ -5,7 +5,6 @@ import {
   UserIcon,
   ArrowRightStartOnRectangleIcon,
   BellAlertIcon,
-  EllipsisVerticalIcon,
   XMarkIcon,
   InformationCircleIcon,
   KeyIcon
@@ -29,6 +28,7 @@ moment.locale('vi')
 const NavBar = () => {
   const [openNav, setOpenNav] = useState(false)
   const [openProfile, setOpenProfile] = useState(false)
+  const [activeButton, setActiveButton] = useState('all')
   const { width } = useViewport()
   const isMobile = width <= 1024
   const navigate = useNavigate()
@@ -89,6 +89,11 @@ const NavBar = () => {
     })
 
     return moment(time).fromNow()
+  }
+  const handleButtonClick = (buttonType: string) => {
+    console.log(buttonType)
+
+    setActiveButton(buttonType)
   }
   return (
     <div>
@@ -206,14 +211,22 @@ const NavBar = () => {
                   leaveTo='opacity-0 translate-y-1'
                 >
                   <Popover.Panel
-                    className={`absolute left-1/2 z-10  w-96  ${isMobile ? '-translate-x-[80%] ' : 'md:-translate-x-[100%] md:w-80'} transform px-4 sm:px-0 `}
+                    className={`absolute left-1/2 z-10  w-96  ${isMobile ? '-translate-x-[80%] ' : 'md:-translate-x-[100%] md:w-90'} transform px-4 sm:px-0 `}
                   >
                     <div className='overflow-hidden rounded-lg bg-white w-full shadow-lg ring-1 ring-black/5'>
                       <div className='font-bold text-[20px] pl-4 my-2'>Thông báo</div>
-                      <button className='bg-blue-100 px-4 py-2 rounded-3xl ml-3 text-blue-600 font-semibold'>
+                      <button
+                        className={`px-4 py-2 rounded-3xl ml-3 text-blue-600 font-semibold ${activeButton === 'all' ? 'bg-blue-100' : ''}`}
+                        onClick={() => handleButtonClick('all')}
+                      >
                         Tất cả
                       </button>
-                      <button className='ml-4'>Chưa đọc</button>
+                      <button
+                        className={`ml-4 px-4 py-2 rounded-3xl text-blue-600 font-semibold ${activeButton === 'unread' ? 'bg-blue-100' : ''}`}
+                        onClick={() => handleButtonClick('unread')}
+                      >
+                        Chưa đọc
+                      </button>
                       <div className='relative w-full max-h-[60vh] overflow-auto'>
                         {loading && notifications?.length == 0 ? (
                           <div className='min-h-[200px] flex items-center justify-center'>
@@ -226,7 +239,7 @@ const NavBar = () => {
                             {notifications?.map((n: NotificationData) => (
                               <div
                                 key={n.id}
-                                className={`bg-white m-[1px] cursor-pointer w-full flex justify-start items-center group relative`}
+                                className={`bg-white m-[1px] cursor-pointer w-full flex justify-start items-center group relative hover:bg-gray-200 rounded-md`}
                               >
                                 <img
                                   src={LogoNoti}
@@ -236,12 +249,14 @@ const NavBar = () => {
                                     height: '50px',
                                     objectFit: 'cover',
                                     borderRadius: '50%',
-                                    border: '1px solid ghostwhite'
+                                    border: '1px solid ghostwhite',
+                                    marginRight: '10px',
+                                    marginLeft: '5px'
                                   }}
                                   title={n.sender}
                                 />
                                 <div
-                                  className=' flex flex-col hover:bg-gray-200 w-[80%] px-3 py-1 rounded-md transition-colors delay-[200]'
+                                  className=' flex flex-col  w-[80%] pr-8 py-1 rounded-md transition-colors delay-[200]'
                                   onClick={() => handleReadNotify(n.id, n.markRead)}
                                 >
                                   <div className='font-semibold text-[16px]'>{n.title}</div>
@@ -250,9 +265,9 @@ const NavBar = () => {
                                     {formatTime(n.createdDate)}
                                   </div>
                                 </div>
-                                {!n.markRead && <div className='w-3 h-3 rounded-[50%] bg-blue-600 mr-3'></div>}
+                                {!n.markRead && <div className='w-3 h-3 rounded-[50%] bg-blue-600 mr-2'></div>}
                                 <div
-                                  className='w-5 h-5 rounded-[50%] absolute right-8 z-50 cursor-pointer border hover:text-red-500 group-hover:visible invisible'
+                                  className='w-5 h-5 rounded-[50%] absolute right-8 z-50 cursor-pointer border hover:text-white hover:bg-red-800 group-hover:visible invisible'
                                   onClick={() => handleDeleteNotify(n.id)}
                                 >
                                   <XMarkIcon />
