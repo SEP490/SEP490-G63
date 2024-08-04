@@ -253,7 +253,7 @@ const ViewSignContract = () => {
                   <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
                     Từ chối ký hợp đồng
                   </Dialog.Title>
-                  <RejectSignContract />
+                  <RejectSignContract contract={data.object}/>
                 </Dialog.Panel>
               </Transition.Child>
             </div>

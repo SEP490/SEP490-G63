@@ -27,6 +27,19 @@ const useToast = () => {
       transition: Zoom
     })
   }
+  const inforNotification = (message: string) => {
+    toast.info(message, {
+      position: 'bottom-left',
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+      theme: 'colored',
+      transition: Zoom
+    })
+  }
   const errorNotification = (message: string) => {
     toast.error(message, {
       position: 'bottom-left',
@@ -41,7 +54,7 @@ const useToast = () => {
     })
   }
 
-  return { successNotification, warningNotification, errorNotification }
+  return { successNotification, warningNotification, errorNotification,inforNotification}
 }
 
 export default useToast
