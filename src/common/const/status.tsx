@@ -1,13 +1,13 @@
 export const statusObject = {
   NEW: {
-    title: { ['SALE']: 'Tạo mới', ['OFFICE_ADMIN']: 'Tạo mới', ['MANAGER']: 'Tạo mới', ['LEADER_SALE']: 'Tạo mới' },
+    title: { ['SALE']: 'Tạo mới', ['OFFICE_ADMIN']: 'Tạo mới', ['ADMIN']: 'Tạo mới', ['LEADER_SALE']: 'Tạo mới' },
     color: 'text-blue-500'
   },
   WAIT_APPROVE: {
     title: {
       ['SALE']: 'Chờ duyệt',
       ['OFFICE_ADMIN']: 'Chờ duyệt',
-      ['MANAGER']: 'Chờ duyệt',
+      ['ADMIN']: 'Chờ duyệt',
       ['LEADER_SALE']: 'Chờ duyệt'
     },
     color: 'text-yellow-500'
@@ -16,7 +16,7 @@ export const statusObject = {
     title: {
       ['SALE']: 'Đã được duyệt',
       ['OFFICE_ADMIN']: 'Đã duyệt',
-      ['MANAGER']: 'Chờ duyệt',
+      ['ADMIN']: 'Chờ duyệt',
       ['LEADER_SALE']: 'Đã được duyệt'
     },
     color: 'text-yellow-500'
@@ -25,7 +25,7 @@ export const statusObject = {
     title: {
       ['SALE']: 'Xin duyệt thất bại',
       ['OFFICE_ADMIN']: 'Đã từ chối duyệt',
-      ['MANAGER']: 'Đã từ chối duyệt',
+      ['ADMIN']: 'Đã từ chối duyệt',
       ['LEADER_SALE']: 'Xin duyệt thất bại'
     },
     color: 'text-red-500'
@@ -34,7 +34,7 @@ export const statusObject = {
     title: {
       ['SALE']: 'Chờ sếp ký',
       ['OFFICE_ADMIN']: 'Chờ sếp ký',
-      ['MANAGER']: 'Chờ ký',
+      ['ADMIN']: 'Chờ ký',
       ['LEADER_SALE']: 'Chờ sếp ký'
     },
     color: 'text-yellow-500'
@@ -43,7 +43,7 @@ export const statusObject = {
     title: {
       ['SALE']: 'Sếp ký thành công',
       ['OFFICE_ADMIN']: 'Sếp ký thành công',
-      ['MANAGER']: 'Đã ký',
+      ['ADMIN']: 'Đã ký',
       ['LEADER_SALE']: 'Sếp ký thành công'
     },
     color: 'text-green-500'
@@ -52,7 +52,7 @@ export const statusObject = {
     title: {
       ['SALE']: 'Sếp từ chối ký',
       ['OFFICE_ADMIN']: 'Sếp ký thành công',
-      ['MANAGER']: 'Đã ký',
+      ['ADMIN']: 'Đã ký',
       ['LEADER_SALE']: 'Sếp ký thành công'
     },
     color: 'text-red-500'
@@ -61,7 +61,7 @@ export const statusObject = {
     title: {
       ['SALE']: 'Chờ khách hàng ký',
       ['OFFICE_ADMIN']: 'Chờ khách hàng ký',
-      ['MANAGER']: 'Chờ khách hàng ký',
+      ['ADMIN']: 'Chờ khách hàng ký',
       ['LEADER_SALE']: 'Chờ khách hàng ký'
     },
     color: 'text-yellow-500'
@@ -70,7 +70,7 @@ export const statusObject = {
     title: {
       ['SALE']: 'Khách ký thành công',
       ['OFFICE_ADMIN']: 'Khách ký thành công',
-      ['MANAGER']: 'Khách ký thành công',
+      ['ADMIN']: 'Khách ký thành công',
       ['LEADER_SALE']: 'Khách ký thành công'
     },
     color: 'text-green-500'
@@ -79,7 +79,7 @@ export const statusObject = {
     title: {
       ['SALE']: 'Khách từ chối ký',
       ['OFFICE_ADMIN']: 'Khách từ chối ký',
-      ['MANAGER']: 'Khách từ chối ký',
+      ['ADMIN']: 'Khách từ chối ký',
       ['LEADER_SALE']: 'Khách từ chối ký'
     },
     color: 'text-red-500'
@@ -88,7 +88,7 @@ export const statusObject = {
     title: {
       ['SALE']: 'Hợp đồng hoàn thành',
       ['OFFICE_ADMIN']: 'Hợp đồng hoàn thành',
-      ['MANAGER']: 'Hợp đồng hoàn thành',
+      ['ADMIN']: 'Hợp đồng hoàn thành',
       ['LEADER_SALE']: 'Hợp đồng hoàn thành'
     },
     color: 'text-black'

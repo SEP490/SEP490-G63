@@ -32,7 +32,10 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch }: IProps) => {
   )
   const { isLoading: loading, data: dataContract } = useQuery('getContractDetail', () => getNewContractById(id), {
     onSuccess: async (response) => {
-      if (status == 2 || status == 3) {
+      if (status == 1) {
+        response.object.rejectedBy != null &&
+          setSelectedTo([{ label: response.object.rejectedBy, value: response.object.rejectedBy }])
+      } else if (status == 2 || status == 3) {
         response.object.createdBy != null &&
           setSelectedTo([{ label: response.object.createdBy, value: response.object.createdBy }])
       } else if (status == 4) {
