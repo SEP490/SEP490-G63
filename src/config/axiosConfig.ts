@@ -3,28 +3,28 @@ import { BASE_URL, BASE_ADMIN_URL, FORBIDDEN, NOT_FOUND, UNAUTHORIZED, BASE_PROV
 import { getAccessToken, removeAccessToken } from './accessToken'
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
-  timeout: 20000,
+  timeout: 100000,
   headers: {
     'Content-Type': 'application/json'
   }
 })
 export const axiosInstanceFormData = axios.create({
   baseURL: BASE_URL,
-  timeout: 20000,
+  timeout: 100000,
   headers: {
     'Content-Type': 'multipart/form-data'
   }
 })
 export const adminInstance = axios.create({
   baseURL: BASE_ADMIN_URL,
-  timeout: 20000,
+  timeout: 100000,
   headers: {
     'Content-Type': 'application/json'
   }
 })
 export const provinceInstance = axios.create({
   baseURL: BASE_PROVINCE_URL,
-  timeout: 5000,
+  timeout: 100000,
   headers: {
     'Content-Type': 'application/json'
   }
