@@ -65,6 +65,8 @@ const NavBar = () => {
     }
   }
   const handleDeleteNotify = (id: any) => {
+    setNotifications((prevNotifications: any) => prevNotifications.filter((n: any) => n.id !== id))
+
     isDeleteNotify(id)
   }
 
@@ -258,7 +260,7 @@ const NavBar = () => {
                                 />
                                 <div
                                   className={`flex flex-col w-[80%] pr-8 py-1 rounded-md transition-colors delay-[200] ${
-                                    n.markRead ? 'opacity-60' : 'hover:bg-gray-200'
+                                    n.markRead ? 'opacity-60' : ''
                                   }`}
                                   onClick={() => handleReadNotify(n.id, n.markRead)}
                                 >
