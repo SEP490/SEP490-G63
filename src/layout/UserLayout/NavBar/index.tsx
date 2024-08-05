@@ -288,7 +288,7 @@ const NavBar = () => {
                             ))}
                             {page.current + 1 != totalPages.current && (
                               <div
-                                className='flex justify-center text-blue-400 hover:underline border-t-2 cursor-pointer'
+                                className='flex justify-center text-blue-400 hover:underline border-t-2 cursor-pointer p-2'
                                 onClick={() => {
                                   viewMoreNotify()
                                 }}
