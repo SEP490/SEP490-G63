@@ -1,41 +1,97 @@
 export const statusObject = {
   NEW: {
-    title: 'Tạo mới',
+    title: { ['SALE']: 'Tạo mới', ['OFFICE_ADMIN']: 'Tạo mới', ['MANAGER']: 'Tạo mới', ['LEADER_SALE']: 'Tạo mới' },
     color: 'text-blue-500'
   },
   WAIT_APPROVE: {
-    title: 'Chờ duyệt',
+    title: {
+      ['SALE']: 'Chờ duyệt',
+      ['OFFICE_ADMIN']: 'Chờ duyệt',
+      ['MANAGER']: 'Chờ duyệt',
+      ['LEADER_SALE']: 'Chờ duyệt'
+    },
     color: 'text-yellow-500'
   },
   APPROVED: {
-    title: 'Đã được duyệt',
+    title: {
+      ['SALE']: 'Đã được duyệt',
+      ['OFFICE_ADMIN']: 'Đã duyệt',
+      ['MANAGER']: 'Chờ duyệt',
+      ['LEADER_SALE']: 'Đã được duyệt'
+    },
     color: 'text-yellow-500'
   },
   APPROVE_FAIL: {
-    title: 'Xin duyệt thất bại',
-    color: 'text-green-500'
+    title: {
+      ['SALE']: 'Xin duyệt thất bại',
+      ['OFFICE_ADMIN']: 'Đã từ chối duyệt',
+      ['MANAGER']: 'Đã từ chối duyệt',
+      ['LEADER_SALE']: 'Xin duyệt thất bại'
+    },
+    color: 'text-red-500'
   },
   WAIT_SIGN_A: {
-    title: 'Chờ bên A ký',
+    title: {
+      ['SALE']: 'Chờ sếp ký',
+      ['OFFICE_ADMIN']: 'Chờ sếp ký',
+      ['MANAGER']: 'Chờ ký',
+      ['LEADER_SALE']: 'Chờ sếp ký'
+    },
+    color: 'text-yellow-500'
+  },
+  SIGN_A_OK: {
+    title: {
+      ['SALE']: 'Sếp ký thành công',
+      ['OFFICE_ADMIN']: 'Sếp ký thành công',
+      ['MANAGER']: 'Đã ký',
+      ['LEADER_SALE']: 'Sếp ký thành công'
+    },
     color: 'text-green-500'
   },
-  SIGN_A_OK: { title: 'Bên A kí thành công', color: 'text-green-500' },
   SIGN_A_FAIL: {
-    title: 'Bên A từ chối ký',
-    color: 'text-green-500'
+    title: {
+      ['SALE']: 'Sếp từ chối ký',
+      ['OFFICE_ADMIN']: 'Sếp ký thành công',
+      ['MANAGER']: 'Đã ký',
+      ['LEADER_SALE']: 'Sếp ký thành công'
+    },
+    color: 'text-red-500'
   },
   WAIT_SIGN_B: {
-    title: 'Chờ bên B ký',
+    title: {
+      ['SALE']: 'Chờ khách hàng ký',
+      ['OFFICE_ADMIN']: 'Chờ khách hàng ký',
+      ['MANAGER']: 'Chờ khách hàng ký',
+      ['LEADER_SALE']: 'Chờ khách hàng ký'
+    },
+    color: 'text-yellow-500'
+  },
+  SIGN_B_OK: {
+    title: {
+      ['SALE']: 'Khách ký thành công',
+      ['OFFICE_ADMIN']: 'Khách ký thành công',
+      ['MANAGER']: 'Khách ký thành công',
+      ['LEADER_SALE']: 'Khách ký thành công'
+    },
     color: 'text-green-500'
   },
-  SIGN_B_OK: { title: 'Bên B kí thành công', color: 'text-green-500' },
   SIGN_B_FAIL: {
-    title: 'Bên B từ chối ký',
-    color: 'text-green-500'
+    title: {
+      ['SALE']: 'Khách từ chối ký',
+      ['OFFICE_ADMIN']: 'Khách từ chối ký',
+      ['MANAGER']: 'Khách từ chối ký',
+      ['LEADER_SALE']: 'Khách từ chối ký'
+    },
+    color: 'text-red-500'
   },
   SUCCESS: {
-    title: 'Hợp đồng hoàn thành',
-    color: 'text-green-500'
+    title: {
+      ['SALE']: 'Hợp đồng hoàn thành',
+      ['OFFICE_ADMIN']: 'Hợp đồng hoàn thành',
+      ['MANAGER']: 'Hợp đồng hoàn thành',
+      ['LEADER_SALE']: 'Hợp đồng hoàn thành'
+    },
+    color: 'text-black'
   }
 }
 export const statusRequest: any = {

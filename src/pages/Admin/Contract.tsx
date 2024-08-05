@@ -682,7 +682,7 @@ const Contract = () => {
                           className={`px-3 py-4 font-semibold ${statusObject[d.statusCurrent]?.color}`}
                           align='center'
                         >
-                          {d.statusCurrent ? statusObject[d.statusCurrent]?.title : ''}
+                          {d.statusCurrent ? statusObject[d.statusCurrent]?.title?.[permissionUser] : ''}
                         </td>
                         <td className='px-3 py-4' align='center'>
                           <div
