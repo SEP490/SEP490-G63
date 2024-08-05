@@ -109,7 +109,7 @@ const NotifyProvider: React.FC<Props> = ({ children }) => {
         if (message.body) {
           setTotalNotRead((totalNotRead) => totalNotRead + 1)
           setNotifications((prevNotifications) => [JSON.parse(message.body), ...prevNotifications])
-          inforNotification('Bạn có một thông báo mới')
+          inforNotification('📣 Bạn có một thông báo mới')
           const audio = document.getElementById('notification-sound') as HTMLAudioElement
           if (audio) {
             audio.play()
