@@ -90,11 +90,12 @@ const NavBar = () => {
 
     return moment(time).fromNow()
   }
-  const handleButtonClick = (buttonType: string) => {
-    console.log(buttonType)
-
-    setActiveButton(buttonType)
+  const handleButtonClick = (type: 'all' | 'unread') => {
+    setActiveButton(type)
   }
+
+  const filteredNotifications =
+    activeButton === 'all' ? notifications : notifications.filter((n: NotificationData) => !n.markRead)
   return (
     <div>
       <div className='relative visible'>
@@ -236,7 +237,7 @@ const NavBar = () => {
                           <div className='min-h-[200px] flex items-center justify-center'>Không có thông báo </div>
                         ) : (
                           <div className='flex flex-col justify-center overflow-y-auto overflow-x-hidden px-1 w-full '>
-                            {notifications?.map((n: NotificationData) => (
+                            {filteredNotifications?.map((n: NotificationData) => (
                               <div
                                 key={n.id}
                                 className={`bg-white m-[1px] cursor-pointer w-full flex items-center group relative hover:bg-gray-200 rounded-md`}
@@ -257,7 +258,7 @@ const NavBar = () => {
                                 />
                                 <div
                                   className={`flex flex-col w-[80%] pr-8 py-1 rounded-md transition-colors delay-[200] ${
-                                    n.markRead ? 'opacity-60' : 'bg-white hover:bg-gray-200'
+                                    n.markRead ? 'opacity-60' : 'hover:bg-gray-200'
                                   }`}
                                   onClick={() => handleReadNotify(n.id, n.markRead)}
                                 >
@@ -274,7 +275,10 @@ const NavBar = () => {
                                 {!n.markRead && <div className='w-3 h-3 rounded-[50%] bg-blue-600 mr-2'></div>}
                                 <div
                                   className='w-5 h-5 rounded-[50%] absolute right-8 z-50 cursor-pointer border hover:text-white hover:bg-red-800 group-hover:visible invisible'
-                                  onClick={() => handleDeleteNotify(n.id)}
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    handleDeleteNotify(n.id)
+                                  }}
                                 >
                                   <XMarkIcon />
                                 </div>
