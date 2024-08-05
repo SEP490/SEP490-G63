@@ -222,7 +222,7 @@ const NavBar = () => {
                         Tất cả
                       </button>
                       <button
-                        className={`ml-4 px-4 py-2 rounded-3xl text-blue-600 font-semibold ${activeButton === 'unread' ? 'bg-blue-100' : ''}`}
+                        className={`ml-1 px-4 py-2 rounded-3xl text-blue-600 font-semibold ${activeButton === 'unread' ? 'bg-blue-100' : ''}`}
                         onClick={() => handleButtonClick('unread')}
                       >
                         Chưa đọc
@@ -239,7 +239,7 @@ const NavBar = () => {
                             {notifications?.map((n: NotificationData) => (
                               <div
                                 key={n.id}
-                                className={`bg-white m-[1px] cursor-pointer w-full flex justify-start items-center group relative hover:bg-gray-200 rounded-md`}
+                                className={`bg-white m-[1px] cursor-pointer w-full flex items-center group relative hover:bg-gray-200 rounded-md`}
                               >
                                 <img
                                   src={LogoNoti}
@@ -256,12 +256,18 @@ const NavBar = () => {
                                   title={n.sender}
                                 />
                                 <div
-                                  className=' flex flex-col  w-[80%] pr-8 py-1 rounded-md transition-colors delay-[200]'
+                                  className={`flex flex-col w-[80%] pr-8 py-1 rounded-md transition-colors delay-[200] ${
+                                    n.markRead ? 'opacity-60' : 'bg-white hover:bg-gray-200'
+                                  }`}
                                   onClick={() => handleReadNotify(n.id, n.markRead)}
                                 >
                                   <div className='font-semibold text-[16px]'>{n.title}</div>
                                   <div className='text-[12px]'>{n.message}</div>
-                                  <div className='text-[12px] text-blue-600 font-semibold'>
+                                  <div
+                                    className={`text-[12px] font-semibold ${
+                                      n.markRead ? 'opacity-60' : 'text-blue-600'
+                                    }`}
+                                  >
                                     {formatTime(n.createdDate)}
                                   </div>
                                 </div>
