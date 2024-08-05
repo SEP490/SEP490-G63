@@ -59,8 +59,11 @@ const NavBar = () => {
     }
   }
   const handleDeleteNotify = (id: any) => {
+    setNotifications((prevNotifications: any) => prevNotifications.filter((n: any) => n.id !== id))
+
     isDeleteNotify(id)
   }
+
   const formatTime = (time: string) => {
     moment.updateLocale('vi', {
       relativeTime: {
