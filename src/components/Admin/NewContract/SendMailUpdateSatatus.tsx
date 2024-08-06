@@ -11,8 +11,8 @@ import { useQuery } from 'react-query'
 import { getUserByPermission } from '~/services/user.service'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
-type IProps = { id: string | undefined; status: number; closeModal: any; refetch: any }
-const SendMailUpdateStatus = ({ id, status, closeModal, refetch }: IProps) => {
+type IProps = { id: string | undefined; status: number; closeModal: any; refetch: any; dataC: any,refetchNumber:any }
+const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC,refetchNumber }: IProps) => {
   const [selectedFiles, setSelectedFiles] = useState<any[]>([])
   const [previewUrls, setPreviewUrls] = useState<string[]>([])
   const [selectedTo, setSelectedTo] = useState<any[]>([])
@@ -33,8 +33,7 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch }: IProps) => {
   const { isLoading: loading, data: dataContract } = useQuery('getContractDetail', () => getNewContractById(id), {
     onSuccess: async (response) => {
       if (status == 1) {
-        response.object.rejectedBy != null &&
-          setSelectedTo([{ label: response.object.rejectedBy, value: response.object.rejectedBy }])
+        dataC?.rejectedBy != null && setSelectedTo([{ label: dataC?.rejectedBy, value: dataC?.rejectedBy }])
       } else if (status == 2 || status == 3) {
         response.object.createdBy != null &&
           setSelectedTo([{ label: response.object.createdBy, value: response.object.createdBy }])
@@ -138,6 +137,7 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch }: IProps) => {
         successNotification('Gửi yêu cầu thành công!')
         closeModal()
         refetch()
+        refetchNumber()
       } else {
         errorNotification('Gửi yêu cầu thất bại')
       }

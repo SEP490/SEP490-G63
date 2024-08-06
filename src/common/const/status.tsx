@@ -51,9 +51,9 @@ export const statusObject = {
   SIGN_A_FAIL: {
     title: {
       ['SALE']: 'Sếp từ chối ký',
-      ['OFFICE_ADMIN']: 'Sếp ký thành công',
-      ['ADMIN']: 'Đã ký',
-      ['LEADER_SALE']: 'Sếp ký thành công'
+      ['OFFICE_ADMIN']: 'Sếp từ chối ký',
+      ['ADMIN']: 'Đã từ chối ký',
+      ['LEADER_SALE']: 'Sếp từ chối ký'
     },
     color: 'text-red-500'
   },
