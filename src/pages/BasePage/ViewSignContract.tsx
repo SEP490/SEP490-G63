@@ -155,15 +155,17 @@ const ViewSignContract = () => {
             </Field>
           </div>
           <div className='w-full flex gap-1 justify-center'>
-            <button
-              type='button'
-              disabled={(customer == '1' && data?.object?.signA != null) || (customer == '2' && data?.object?.signB)}
-              className=' my-3 none center mr-4 rounded-lg bg-red-500 px-2 py-2 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#ad649191] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
-              data-ripple-light='true'
-              onClick={() => setModalReject(true)}
-            >
-              Từ chối ký
-            </button>
+            {customer == '2' && (
+              <button
+                type='button'
+                disabled={customer == '2' && data?.object?.signB}
+                className=' my-3 none center mr-4 rounded-lg bg-red-500 px-2 py-2 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#ad649191] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
+                data-ripple-light='true'
+                onClick={() => setModalReject(true)}
+              >
+                Từ chối ký
+              </button>
+            )}
             <button
               type='button'
               disabled={(customer == '1' && data?.object?.signA != null) || (customer == '2' && data?.object?.signB)}
@@ -253,7 +255,7 @@ const ViewSignContract = () => {
                   <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
                     Từ chối ký hợp đồng
                   </Dialog.Title>
-                  <RejectSignContract contract={data.object}/>
+                  <RejectSignContract contract={data.object} />
                 </Dialog.Panel>
               </Transition.Child>
             </div>
