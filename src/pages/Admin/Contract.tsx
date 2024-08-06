@@ -328,7 +328,7 @@ const Contract = () => {
       ),
       color: 'text-orange-700',
       disable: (d: any) =>
-        (!d?.canSign && user?.email == d.createdBy) || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
+        !d?.canSign || user?.email == d.createdBy || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
       callback: (d: any) => {
         setSelectedContract(d)
         setStatus(6)

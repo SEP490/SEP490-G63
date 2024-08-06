@@ -50,18 +50,16 @@ const CreateContract = () => {
   const formInfoPartB = useForm<CompanyInfo>({ mode: 'onBlur' })
   const { successNotification, errorNotification } = useToast()
   const navigate = useNavigate()
-  const [open, setOpen] = useState(false)
   const [selectedTemplate, setSelectedTemplate] = useState<any>(null)
   const [selectedView, setSelectedView] = useState<any>(null)
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [banks, setBanks] = useState([])
-  const { user } = useAuth()
   const clientID = '258d5960-4516-48c5-9316-bb95b978424f'
   const apiKey = '5fe49afb-2e07-4079-baf6-ca58356deadd'
   const [loadingA, setLoadingA] = useState(false)
   const [loadingB, setLoadingB] = useState(false)
-  const [loadingBankA, setLoadingBankA] = useState(false)
-  const [loadingBankB, setLoadingBankB] = useState(false)
+  const [loadingMailA, setLoadingMailA] = useState(false)
+  const [loadingMailB, setLoadingMailB] = useState(false)
   const disableFormA = useRef(false)
   const disableFormB = useRef(false)
   const resultQuery = useQueries([
@@ -113,7 +111,6 @@ const CreateContract = () => {
     onSuccess: (response) => {
       if (response.success && response.code == '00') {
         successNotification('Tạo mẫu hợp đồng thành công')
-        setOpen(false)
       } else errorNotification('Tạo mới mẫu hợp đồng thất bại')
     }
   })
@@ -161,6 +158,7 @@ const CreateContract = () => {
     }
   }
   const handleCheckMailA = async () => {
+    setLoadingMailA(true)
     try {
       const response = await validateEmail(formInfoPartA.getValues('email'))
       if (!response) {
@@ -169,8 +167,10 @@ const CreateContract = () => {
     } catch (e) {
       errorNotification('Lỗi')
     }
+    setLoadingMailA(false)
   }
   const handleCheckMailB = async () => {
+    setLoadingMailB(true)
     try {
       const response = await validateEmail(formInfoPartB.getValues('email'))
       if (!response) {
@@ -179,6 +179,7 @@ const CreateContract = () => {
     } catch (e) {
       errorNotification('Lỗi')
     }
+    setLoadingMailB(false)
   }
   // const handleCheckBankPartyA = async () => {
   //   setLoadingBankA(true)
@@ -463,23 +464,26 @@ const CreateContract = () => {
           <label className='font-light '>
             Email<sup className='text-red-500'>*</sup>
           </label>
-          <input
-            onInput={debounce(handleCheckMailA, 1000)}
-            className={`${formInfoPartA.formState.errors.email ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
-            type='text'
-            disabled={createContractQuery?.isLoading || disableFormA.current}
-            placeholder='Nhập email công ty'
-            {...formInfoPartA.register('email', {
-              required: 'Email công ty không được để trống',
-              pattern: {
-                value: new RegExp(dataRegex.REGEX_EMAIL, 'i'),
-                message: 'Email không đúng định dạng'
-              }
-              // validate: {
-              //   checkMail: async (value) => (await validateEmail(value)) || 'Email không tồn tại'
-              // }
-            })}
-          />
+          <div className='relative'>
+            <input
+              onInput={debounce(handleCheckMailA, 1000)}
+              className={`${formInfoPartA.formState.errors.email ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
+              type='text'
+              disabled={createContractQuery?.isLoading || disableFormA.current}
+              placeholder='Nhập email công ty'
+              {...formInfoPartA.register('email', {
+                required: 'Email công ty không được để trống',
+                pattern: {
+                  value: new RegExp(dataRegex.REGEX_EMAIL, 'i'),
+                  message: 'Email không đúng định dạng'
+                }
+              })}
+            />
+            <div className='absolute z-10 right-1 top-0 h-full flex items-center'>
+              {loadingMailA && <LoadingSvgV2 />}
+            </div>
+          </div>
+
           <div
             className={`text-red-500 absolute text-[12px] ${formInfoPartA.formState.errors.email ? 'visible' : 'invisible'}`}
           >
@@ -601,23 +605,19 @@ const CreateContract = () => {
           <label className='font-light '>
             Số TK ngân hàng<sup className='text-red-500'>*</sup>
           </label>
-          <div className='relative'>
-            <input
-              className={`${formInfoPartA.formState.errors.bankId ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
-              type='text'
-              disabled={createContractQuery?.isLoading || disableFormA.current}
-              placeholder='Nhập STK'
-              {...formInfoPartA.register('bankId', {
-                required: 'STK không được để trống'
-                // validate: {
-                //   checkBank: handleCheckBankPartyA
-                // }
-              })}
-            />
-            <div className='absolute z-10 right-1 top-0 h-full flex items-center'>
-              {loadingBankA && <LoadingSvgV2 />}
-            </div>
-          </div>
+
+          <input
+            className={`${formInfoPartA.formState.errors.bankId ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
+            type='text'
+            disabled={createContractQuery?.isLoading || disableFormA.current}
+            placeholder='Nhập STK'
+            {...formInfoPartA.register('bankId', {
+              required: 'STK không được để trống'
+              // validate: {
+              //   checkBank: handleCheckBankPartyA
+              // }
+            })}
+          />
 
           <div
             className={`text-red-500 absolute text-[12px] ${formInfoPartA.formState.errors.bankId ? 'visible' : 'invisible'}`}
@@ -703,20 +703,25 @@ const CreateContract = () => {
           <label className='font-light '>
             Email<sup className='text-red-500'>*</sup>
           </label>
-          <input
-            onInput={debounce(handleCheckMailB, 1000)}
-            className={`${formInfoPartB.formState.errors.email ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
-            type='text'
-            disabled={createContractQuery?.isLoading || disableFormB.current}
-            placeholder='Nhập email công ty'
-            {...formInfoPartB.register('email', {
-              required: 'Email công ty không được để trống',
-              pattern: {
-                value: new RegExp(dataRegex.REGEX_EMAIL, 'i'),
-                message: 'Email không đúng định dạng'
-              }
-            })}
-          />
+          <div className='relative'>
+            <input
+              onInput={debounce(handleCheckMailB, 1000)}
+              className={`${formInfoPartB.formState.errors.email ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
+              type='text'
+              disabled={createContractQuery?.isLoading || disableFormB.current}
+              placeholder='Nhập email công ty'
+              {...formInfoPartB.register('email', {
+                required: 'Email công ty không được để trống',
+                pattern: {
+                  value: new RegExp(dataRegex.REGEX_EMAIL, 'i'),
+                  message: 'Email không đúng định dạng'
+                }
+              })}
+            />
+            <div className='absolute z-10 right-1 top-0 h-full flex items-center'>
+              {loadingMailA && <LoadingSvgV2 />}
+            </div>
+          </div>
           <div
             className={`text-red-500 absolute text-[12px] ${formInfoPartB.formState.errors.email ? 'visible' : 'invisible'}`}
           >
@@ -839,24 +844,19 @@ const CreateContract = () => {
           <label className='font-light '>
             Số TK ngân hàng<sup className='text-red-500'>*</sup>
           </label>
-          <div className='relative'>
-            <input
-              className={`${formInfoPartB.formState.errors.bankId ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
-              type='text'
-              disabled={createContractQuery?.isLoading || disableFormB.current}
-              placeholder='Nhập STK'
-              {...formInfoPartB.register('bankId', {
-                required: 'STK không được để trống'
-                // validate: {
-                //   checkBank: handleCheckBankPartyB
-                // }
-              })}
-            />
-            <div className='absolute z-10 right-1 top-0 h-full flex items-center'>
-              {loadingBankB && <LoadingSvgV2 />}
-            </div>
-          </div>
 
+          <input
+            className={`${formInfoPartB.formState.errors.bankId ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
+            type='text'
+            disabled={createContractQuery?.isLoading || disableFormB.current}
+            placeholder='Nhập STK'
+            {...formInfoPartB.register('bankId', {
+              required: 'STK không được để trống'
+              // validate: {
+              //   checkBank: handleCheckBankPartyB
+              // }
+            })}
+          />
           <div
             className={`text-red-500 absolute text-[12px] ${formInfoPartB.formState.errors.bankId ? 'visible' : 'invisible'}`}
           >
@@ -940,54 +940,7 @@ const CreateContract = () => {
           </button>
         </div>
       </form>
-      <Transition appear show={open} as={Fragment}>
-        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={() => setOpen(false)}>
-          <Transition.Child
-            as={Fragment}
-            enter='ease-out duration-300'
-            enterFrom='opacity-0'
-            enterTo='opacity-100'
-            leave='ease-in duration-200'
-            leaveFrom='opacity-100'
-            leaveTo='opacity-0'
-          >
-            <div className='fixed inset-0 bg-black/25' />
-          </Transition.Child>
 
-          <div className='fixed inset-0 overflow-y-auto'>
-            <div className='flex min-h-full  items-center justify-center p-4 text-center'>
-              <Transition.Child
-                as={Fragment}
-                enter='ease-out duration-300'
-                enterFrom='opacity-0 scale-95'
-                enterTo='opacity-100 scale-100'
-                leave='ease-in duration-200'
-                leaveFrom='opacity-100 scale-100'
-                leaveTo='opacity-0 scale-95'
-              >
-                <Dialog.Panel className='w-[100vw] md:w-[40vw] md:h-fit transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all'>
-                  <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
-                    Thông báo
-                  </Dialog.Title>
-                  <div>
-                    <div>Xác định lưu hợp đồng thành bản mẫu?</div>
-                    <div className='w-full flex justify-end mt-6'>
-                      <button
-                        onClick={handleCreateContractTemplate}
-                        type='button'
-                        className='middle  none center mr-4 rounded-lg bg-red-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#ff00002f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
-                        data-ripple-light='true'
-                      >
-                        {createTemplateContractQuery?.isLoading ? <LoadingIcon /> : 'Xác nhận'}
-                      </button>
-                    </div>
-                  </div>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
       <Transition appear show={openModal} as={Fragment}>
         <Dialog as='div' className='relative z-50 w-[90vw]' onClose={() => setOpenModal(false)}>
           <Transition.Child
