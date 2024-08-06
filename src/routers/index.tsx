@@ -30,6 +30,7 @@ import HomeUser from '~/pages/User/HomeUser.tsx'
 import Login from '~/components/Login.tsx'
 import ChangePassword from '~/components/ChangePassword.tsx'
 import Department from '~/pages/Admin/Department/Department.tsx'
+import FormProvider from '~/context/formProvider.tsx'
 
 const Routes = () => {
   const { token, user } = useAuth()
@@ -164,7 +165,9 @@ const Routes = () => {
           path: '/salary',
           element: (
             <AdminLayout>
-              <Salary />
+              <FormProvider>
+                <Salary />
+              </FormProvider>
             </AdminLayout>
           )
         },
@@ -590,7 +593,7 @@ const Routes = () => {
   ]
 
   if (token) {
-    if (user?.role == ADMIN) {
+    if (user?.role == ADMIN || (user?.role == USER && user?.permissions.includes(permissionObject.MANAGER))) {
       routes = routesForAuthenticatedOnly
     } else if (user?.role == USER && user?.permissions.includes(permissionObject.OFFICE_ADMIN)) {
       routes = routesForAdminOfficer

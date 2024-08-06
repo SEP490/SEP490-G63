@@ -6,6 +6,8 @@ import { BASE_URL } from '~/common/const'
 import { getNotification } from '~/services/user.service'
 import { deleteNotify, getNumberUnreadNotify, readNotify } from '~/services/notification.service'
 import { useMutation } from 'react-query'
+import useToast from '~/hooks/useToast'
+import NotiSound from '~/assets/noti.mp3'
 
 export type NotificationData = {
   id: string
@@ -53,6 +55,7 @@ const NotifyProvider: React.FC<Props> = ({ children }) => {
   const page = useRef<number>(0)
   const totalPages = useRef<number>(0)
   const { user } = useAuth()
+  const { inforNotification } = useToast()
 
   const readNotifyQuery = useMutation(readNotify)
   const getNotifyDataQuery = useMutation(getNotification, {
@@ -106,6 +109,11 @@ const NotifyProvider: React.FC<Props> = ({ children }) => {
         if (message.body) {
           setTotalNotRead((totalNotRead) => totalNotRead + 1)
           setNotifications((prevNotifications) => [JSON.parse(message.body), ...prevNotifications])
+          inforNotification('📣 Bạn có một thông báo mới')
+          const audio = document.getElementById('notification-sound') as HTMLAudioElement
+          if (audio) {
+            audio.play()
+          }
         }
       })
     })
@@ -134,6 +142,7 @@ const NotifyProvider: React.FC<Props> = ({ children }) => {
 
   return (
     <>
+      <audio id='notification-sound' src={NotiSound} />
       <NotifyContext.Provider value={contextValue}>{children}</NotifyContext.Provider>
     </>
   )

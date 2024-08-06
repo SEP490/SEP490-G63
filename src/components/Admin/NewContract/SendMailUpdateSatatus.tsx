@@ -11,8 +11,8 @@ import { useQuery } from 'react-query'
 import { getUserByPermission } from '~/services/user.service'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
-type IProps = { id: string | undefined; status: number; closeModal: any; refetch: any }
-const SendMailUpdateStatus = ({ id, status, closeModal, refetch }: IProps) => {
+type IProps = { id: string | undefined; status: number; closeModal: any; refetch: any; dataC: any,refetchNumber:any }
+const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC,refetchNumber }: IProps) => {
   const [selectedFiles, setSelectedFiles] = useState<any[]>([])
   const [previewUrls, setPreviewUrls] = useState<string[]>([])
   const [selectedTo, setSelectedTo] = useState<any[]>([])
@@ -32,7 +32,9 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch }: IProps) => {
   )
   const { isLoading: loading, data: dataContract } = useQuery('getContractDetail', () => getNewContractById(id), {
     onSuccess: async (response) => {
-      if (status == 2 || status == 3) {
+      if (status == 1) {
+        dataC?.rejectedBy != null && setSelectedTo([{ label: dataC?.rejectedBy, value: dataC?.rejectedBy }])
+      } else if (status == 2 || status == 3) {
         response.object.createdBy != null &&
           setSelectedTo([{ label: response.object.createdBy, value: response.object.createdBy }])
       } else if (status == 4) {
@@ -135,6 +137,7 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch }: IProps) => {
         successNotification('Gửi yêu cầu thành công!')
         closeModal()
         refetch()
+        refetchNumber()
       } else {
         errorNotification('Gửi yêu cầu thất bại')
       }
@@ -151,11 +154,11 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch }: IProps) => {
       <div className='w-full flex flex-col md:flex-row justify-between border-b-2'>
         <div className='w-full md:w-[46%] py-2 flex items-center z-50'>
           <span className='w-20 font-bold'>Đến</span>
-          <ComboboxMail selected={selectedTo} setSelected={setSelectedTo} option={optionTo} />
+          <ComboboxMail selected={selectedTo} setSelected={setSelectedTo} option={optionTo} isCreate={status == 7} />
         </div>
         <div className='w-full md:w-[46%] py-2  flex items-center z-50'>
           <span className='w-20 font-bold'>CC</span>
-          <ComboboxMail selected={selectedCc} setSelected={setSelectedCc} option={optionCC} />
+          <ComboboxMail selected={selectedCc} setSelected={setSelectedCc} option={optionCC} isCreate={status == 7} />
         </div>
       </div>
 
