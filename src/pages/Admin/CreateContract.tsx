@@ -127,7 +127,7 @@ const CreateContract = () => {
       partyA: formInfoPartA.getValues(),
       partyB: formInfoPartB.getValues()
     }
-    // createContractQuery.mutate(bodyData)
+    createContractQuery.mutate(bodyData)
   }
 
   const handleAutoFillPartyA = async () => {
@@ -160,36 +160,56 @@ const CreateContract = () => {
       setLoadingA(false)
     }
   }
-  const handleCheckBankPartyA = async () => {
-    setLoadingBankA(true)
+  const handleCheckMailA = async () => {
     try {
-      const response = await handleSubmitBank(formInfoPartA.getValues('bankName'), formInfoPartA.getValues('bankId'))
-      if (response.data) {
-        formInfoPartA.reset({ bankAccOwer: response?.data?.accountName })
-      } else {
-        formInfoPartA.reset({ bankAccOwer: '' })
-        errorNotification('Số tài khoản không hợp lệ')
+      const response = await validateEmail(formInfoPartA.getValues('email'))
+      if (!response) {
+        errorNotification('Email không hợp lệ')
       }
     } catch (e) {
-      errorNotification('Số tài khoản không hợp lệ')
+      errorNotification('Lỗi')
     }
-    setLoadingBankA(false)
   }
-  const handleCheckBankPartyB = async () => {
-    setLoadingBankA(true)
+  const handleCheckMailB = async () => {
     try {
-      const response = await handleSubmitBank(formInfoPartB.getValues('bankName'), formInfoPartB.getValues('bankId'))
-      if (response.data) {
-        formInfoPartB.reset({ bankAccOwer: response?.data?.accountName })
-      } else {
-        formInfoPartB.reset({ bankAccOwer: '' })
-        errorNotification('Số tài khoản không hợp lệ')
+      const response = await validateEmail(formInfoPartB.getValues('email'))
+      if (!response) {
+        errorNotification('Email không hợp lệ')
       }
     } catch (e) {
-      errorNotification('Số tài khoản không hợp lệ')
+      errorNotification('Lỗi')
     }
-    setLoadingBankB(false)
   }
+  // const handleCheckBankPartyA = async () => {
+  //   setLoadingBankA(true)
+  //   try {
+  //     const response = await handleSubmitBank(formInfoPartA.getValues('bankName'), formInfoPartA.getValues('bankId'))
+  //     if (response.data) {
+  //       formInfoPartA.reset({ bankAccOwer: response?.data?.accountName })
+  //     } else {
+  //       formInfoPartA.reset({ bankAccOwer: '' })
+  //       errorNotification('Số tài khoản không hợp lệ')
+  //     }
+  //   } catch (e) {
+  //     errorNotification('Số tài khoản không hợp lệ')
+  //   }
+  //   setLoadingBankA(false)
+  // }
+  // const handleCheckBankPartyB = async () => {
+  //   setLoadingBankB(true)
+  //   try {
+  //     const response = await handleSubmitBank(formInfoPartB.getValues('bankName'), formInfoPartB.getValues('bankId'))
+  //     if (response.data) {
+  //       formInfoPartB.reset({ bankAccOwer: response?.data?.accountName })
+  //     } else {
+  //       formInfoPartB.reset({ bankAccOwer: '' })
+  //       errorNotification('Số tài khoản không hợp lệ')
+  //     }
+  //   } catch (e) {
+  //     errorNotification('Số tài khoản không hợp lệ')
+  //   }
+  //   setLoadingBankB(false)
+  // }
 
   const handleAutoFillPartyB = async () => {
     const result = await formInfoPartB.trigger('taxNumber')
@@ -444,7 +464,7 @@ const CreateContract = () => {
             Email<sup className='text-red-500'>*</sup>
           </label>
           <input
-            // onInput={(event) => validateEmailDebounced((event.target as HTMLInputElement).value)}
+            onInput={debounce(handleCheckMailA, 1000)}
             className={`${formInfoPartA.formState.errors.email ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
             type='text'
             disabled={createContractQuery?.isLoading || disableFormA.current}
@@ -454,10 +474,10 @@ const CreateContract = () => {
               pattern: {
                 value: new RegExp(dataRegex.REGEX_EMAIL, 'i'),
                 message: 'Email không đúng định dạng'
-              },
-              validate: {
-                checkMail: async (value) => (await validateEmail(value)) || 'Email không tồn tại'
               }
+              // validate: {
+              //   checkMail: async (value) => (await validateEmail(value)) || 'Email không tồn tại'
+              // }
             })}
           />
           <div
@@ -588,10 +608,10 @@ const CreateContract = () => {
               disabled={createContractQuery?.isLoading || disableFormA.current}
               placeholder='Nhập STK'
               {...formInfoPartA.register('bankId', {
-                required: 'STK không được để trống',
-                validate: {
-                  checkBank: handleCheckBankPartyA
-                }
+                required: 'STK không được để trống'
+                // validate: {
+                //   checkBank: handleCheckBankPartyA
+                // }
               })}
             />
             <div className='absolute z-10 right-1 top-0 h-full flex items-center'>
@@ -684,7 +704,7 @@ const CreateContract = () => {
             Email<sup className='text-red-500'>*</sup>
           </label>
           <input
-            // onInput={(event) => validateEmailDebounced((event.target as HTMLInputElement).value)}
+            onInput={debounce(handleCheckMailB, 1000)}
             className={`${formInfoPartB.formState.errors.email ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
             type='text'
             disabled={createContractQuery?.isLoading || disableFormB.current}
@@ -694,9 +714,6 @@ const CreateContract = () => {
               pattern: {
                 value: new RegExp(dataRegex.REGEX_EMAIL, 'i'),
                 message: 'Email không đúng định dạng'
-              },
-              validate: {
-                checkMail: async (value) => (await validateEmail(value)) || 'Email không tồn tại'
               }
             })}
           />
@@ -829,10 +846,10 @@ const CreateContract = () => {
               disabled={createContractQuery?.isLoading || disableFormB.current}
               placeholder='Nhập STK'
               {...formInfoPartB.register('bankId', {
-                required: 'STK không được để trống',
-                validate: {
-                  checkBank: handleCheckBankPartyB
-                }
+                required: 'STK không được để trống'
+                // validate: {
+                //   checkBank: handleCheckBankPartyB
+                // }
               })}
             />
             <div className='absolute z-10 right-1 top-0 h-full flex items-center'>
@@ -905,22 +922,6 @@ const CreateContract = () => {
           <label className='font-light '>Tạo hợp đồng với trạng thái khẩn cấp</label>
         </div>
         <div className='w-full flex justify-end'>
-          <button
-            type='button'
-            onClick={async () => {
-              const result = await trigger()
-
-              const result3 = await formInfoPartA.trigger()
-
-              if (result && result3) {
-                setOpen(true)
-              }
-            }}
-            className='middle my-3 none center mr-4 rounded-lg bg-[#0070f4] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
-            data-ripple-light='true'
-          >
-            Lưu bản mẫu
-          </button>
           <button
             type='button'
             onClick={async () => {
