@@ -15,3 +15,6 @@ export const FORBIDDEN = 403
 export const GATEWAY_TIME_OUT = 504
 export const REQUEST_SUCCESS = 200
 export const months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+export const apiKey = '7c1f19e0ee18487bbb0a517cacfc5c6d'
+export const clientID = '038ccb1b-6532-461f-9d5e-9ed3d4ddfff1'
+export const apiKeyBank = '853ceea6-6fdb-4f5e-9f8a-6d2789ff5e12'

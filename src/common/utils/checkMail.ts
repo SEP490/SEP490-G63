@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { apiKey, apiKeyBank, clientID } from '../const'
 
 function debounce<T extends (...args: any[]) => void>(func: T, delay: number) {
   let timeoutId: NodeJS.Timeout
@@ -11,8 +12,6 @@ function debounce<T extends (...args: any[]) => void>(func: T, delay: number) {
 }
 
 export async function validateEmail(email: string) {
-  const apiKey = '5e309805ed0446e2949c9c8722d5b02d'
-
   try {
     const response = await axios.get('https://emailvalidation.abstractapi.com/v1/', {
       params: {
@@ -20,7 +19,6 @@ export async function validateEmail(email: string) {
         email: email
       }
     })
-
     return response.data.deliverability === 'DELIVERABLE'
   } catch (error) {
     console.error('Error checking email:', error)
@@ -56,9 +54,7 @@ export async function validateEmailWithDebounce(email: string) {
 }
 export const validateEmailDebounced = debounce(validateEmailWithDebounce, 3000)
 
-export const handleSubmitBank = async (bin: string, accountNumber: number) => {
-  const clientID = '258d5960-4516-48c5-9316-bb95b978424f'
-  const apiKey = '5fe49afb-2e07-4079-baf6-ca58356deadd'
+export const handleSubmitBank = async (bin: string, accountNumber: string) => {
   try {
     const response = await axios.post(
       'https://api.vietqr.io/v2/lookup',
@@ -69,20 +65,13 @@ export const handleSubmitBank = async (bin: string, accountNumber: number) => {
       {
         headers: {
           'x-client-id': clientID,
-          'x-api-key': apiKey,
+          'x-api-key': apiKeyBank,
           'Content-Type': 'application/json'
         }
       }
     )
-
-    const data = response.data
-    if (data.code === '00') {
-      return true
-    } else {
-      return false
-    }
+    return response.data
   } catch (error) {
     console.error(error)
-    alert('Lỗi khi truy cập API')
   }
 }

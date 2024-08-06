@@ -50,7 +50,7 @@ const Employee = () => {
   const { errorNotification, successNotification } = useToast()
   const prevPageRef = useRef(page)
   const prevSizeRef = useRef(size)
-
+  const [status, setStatus] = useState('ACTIVE')
   const [selectedUser, setSelectedUser] = useState<DataEmployee | undefined>(undefined)
   const [searchData, setSearchData] = useState('')
   function closeAllModal() {
@@ -74,8 +74,8 @@ const Employee = () => {
     setSearchData(e.target.value)
   }
   const { data, isLoading, refetch, isFetching } = useQuery(
-    ['employee-list', searchData],
-    () => getListEmployee({ size: size, page: page, name: searchData }),
+    ['employee-list', searchData, status],
+    () => getListEmployee({ size: size, page: page, name: searchData, status }),
     {
       onSuccess: (result) => {
         setTotalPage(result?.object?.totalPages)
@@ -124,31 +124,41 @@ const Employee = () => {
       <div className='flex flex-wrap'>
         <div className='w-full px-3'>
           <div className='flex gap-3 justify-between w-full py-3 h-[60px]'>
-            <div className='flex md:w-[50%] w-[70%]'>
-              <div className='relative'>
-                <div className='absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none'>
-                  <svg
-                    className='w-5 h-5 text-gray-500 dark:text-gray-400'
-                    aria-hidden='true'
-                    fill='currentColor'
-                    viewBox='0 0 20 20'
-                    xmlns='http://www.w3.org/2000/svg'
-                  >
-                    <path
-                      fillRule='evenodd'
-                      d='M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z'
-                      clipRule='evenodd'
-                    ></path>
-                  </svg>
+            <div className='flex md:w-[50%] w-[70%]  gap-6'>
+              <div className='flex w-full'>
+                <div className='relative'>
+                  <div className='absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none'>
+                    <svg
+                      className='w-5 h-5 text-gray-500 dark:text-gray-400'
+                      aria-hidden='true'
+                      fill='currentColor'
+                      viewBox='0 0 20 20'
+                      xmlns='http://www.w3.org/2000/svg'
+                    >
+                      <path
+                        fillRule='evenodd'
+                        d='M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z'
+                        clipRule='evenodd'
+                      ></path>
+                    </svg>
+                  </div>
                 </div>
+                <input
+                  type='text'
+                  id='table-search'
+                  className='shadow-md block p-2 ps-10 w-full text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                  placeholder='Tìm kiếm'
+                  onChange={debounce(handChangeInputSearch, 300)}
+                />
               </div>
-              <input
-                type='text'
-                id='table-search'
-                className='shadow-md block p-2 ps-10 w-full text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                placeholder='Tìm kiếm'
-                onChange={debounce(handChangeInputSearch, 300)}
-              />
+
+              <select
+                className='shadow-md block p-2 w-fit text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                onChange={(e: any) => setStatus(e.target.value)}
+              >
+                <option value={'ACTIVE'}>Đang hoạt động</option>
+                <option value={'INACTIVE'}>Không hoạt động</option>
+              </select>
             </div>
             {user?.role == ADMIN ? (
               <button
@@ -177,8 +187,9 @@ const Employee = () => {
                       Số điện thoại
                     </th>
                     <th className='px-3 py-3 '>Phòng ban</th>
-                    <th className='px-6 py-3 '>Vị trí</th>
-                    <th className='px-3 py-3 w-[300px]'>Địa chỉ</th>
+                    <th className='px-3 py-3 '>Vị trí</th>
+                    <th className='px-3 py-3 '>Quyền</th>
+                    <th className='px-3 py-3 '>Trạng thái</th>
                     <th className='px-3 py-3'></th>
                   </tr>
                 </thead>
@@ -210,8 +221,13 @@ const Employee = () => {
                         </td>
                         <td className='px-3 py-4'>{d.department}</td>
                         <td className='px-3 py-4'>{d.position}</td>
+                        <td className='px-3 py-4'>{d.permissions?.slice(1, -1)}</td>
                         <td className='px-3 py-4'>
-                          <div className='w-[300px] truncate ...'>{d.address}</div>
+                          {d.status == 'ACTIVE' ? (
+                            <span className='text-green-500'>Hoạt động</span>
+                          ) : (
+                            <span className='text-red-500'>Không hoạt động</span>
+                          )}
                         </td>
 
                         <td className='px-3 py-4 text-right'>
@@ -233,56 +249,80 @@ const Employee = () => {
                               leaveFrom='transform opacity-100 scale-100'
                               leaveTo='transform opacity-0 scale-95'
                             >
-                              <Menu.Items className='absolute right-8 top-[-100%] z-50 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
-                                <Menu.Item>
-                                  {({ active }) => (
-                                    <button
-                                      title='Sửa'
-                                      onClick={() => {
-                                        setEditModal(true)
-                                        setSelectedUser(d)
-                                      }}
-                                      className={`${
-                                        active ? 'bg-blue-500 text-white' : 'text-gray-900'
-                                      } group flex w-full items-center  gap-3 rounded-md px-2 py-1 text-sm `}
-                                    >
-                                      <Cog6ToothIcon className='h-5' /> Sửa
-                                    </button>
-                                  )}
-                                </Menu.Item>
+                              <Menu.Items
+                                className={`absolute right-8 ${d.status == 'ACTIVE' ? 'top-[-100%]' : 'top-[-50%]'} z-50 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none`}
+                              >
+                                {d.status == 'ACTIVE' ? (
+                                  <>
+                                    <Menu.Item>
+                                      {({ active }) => (
+                                        <button
+                                          title='Sửa'
+                                          onClick={() => {
+                                            setEditModal(true)
+                                            setSelectedUser(d)
+                                          }}
+                                          className={`${
+                                            active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                          } group flex w-full items-center  gap-3 rounded-md px-2 py-1 text-sm `}
+                                        >
+                                          <Cog6ToothIcon className='h-5' /> Sửa
+                                        </button>
+                                      )}
+                                    </Menu.Item>
 
-                                <Menu.Item>
-                                  {({ active }) => (
-                                    <button
-                                      title='Reset'
-                                      onClick={() => {
-                                        setResetModal(true)
-                                        setSelectedUser(d)
-                                      }}
-                                      className={`${
-                                        active ? 'bg-blue-500 text-white' : 'text-gray-900'
-                                      } group flex w-full items-center  gap-3 rounded-md px-2 py-1 text-sm `}
-                                    >
-                                      <KeyIcon className='h-5' /> Đặt lại MK
-                                    </button>
-                                  )}
-                                </Menu.Item>
-                                <Menu.Item>
-                                  {({ active }) => (
-                                    <button
-                                      title='Xóa'
-                                      onClick={() => {
-                                        setDeleteModal(true)
-                                        setSelectedUser(d)
-                                      }}
-                                      className={`${
-                                        active ? 'bg-blue-500 text-white' : 'text-gray-900'
-                                      } group flex w-full items-center gap-3 rounded-md px-2 py-1 text-sm `}
-                                    >
-                                      <NoSymbolIcon className='h-5' /> Xóa
-                                    </button>
-                                  )}
-                                </Menu.Item>
+                                    <Menu.Item>
+                                      {({ active }) => (
+                                        <button
+                                          title='Reset'
+                                          onClick={() => {
+                                            setResetModal(true)
+                                            setSelectedUser(d)
+                                          }}
+                                          className={`${
+                                            active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                          } group flex w-full items-center  gap-3 rounded-md px-2 py-1 text-sm `}
+                                        >
+                                          <KeyIcon className='h-5' /> Đặt lại MK
+                                        </button>
+                                      )}
+                                    </Menu.Item>
+                                    <Menu.Item>
+                                      {({ active }) => (
+                                        <button
+                                          title='Xóa'
+                                          onClick={() => {
+                                            setDeleteModal(true)
+                                            setSelectedUser(d)
+                                          }}
+                                          className={`${
+                                            active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                          } group flex w-full items-center gap-3 rounded-md px-2 py-1 text-sm `}
+                                        >
+                                          <NoSymbolIcon className='h-5' /> Dừng HĐ
+                                        </button>
+                                      )}
+                                    </Menu.Item>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Menu.Item>
+                                      {({ active }) => (
+                                        <button
+                                          title='Sửa'
+                                          onClick={() => {
+                                            errorNotification('Ai cho ấn mà ấn?')
+                                          }}
+                                          className={`${
+                                            active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                          } group flex w-full items-center  gap-3 rounded-md px-2 py-1 text-sm `}
+                                        >
+                                          <Cog6ToothIcon className='h-5' /> Bật HĐ
+                                        </button>
+                                      )}
+                                    </Menu.Item>
+                                  </>
+                                )}
                               </Menu.Items>
                             </Transition>
                           </Menu>
@@ -520,9 +560,7 @@ const Employee = () => {
                     </div>
                   </div>
                   <div>
-                    <div>
-                      Mật khẩu của nhân viên sẽ được đặt lại. Bạn có chắc chắn với quyết định của mình?
-                    </div>
+                    <div>Mật khẩu của nhân viên sẽ được đặt lại. Bạn có chắc chắn với quyết định của mình?</div>
                     <div className='w-full flex justify-end mt-6'>
                       <button
                         type='button'

@@ -10,6 +10,7 @@ import { AxiosError } from 'axios'
 import LoadingIcon from '~/assets/LoadingIcon'
 import moment from 'moment'
 import dataRegex from '../../../regex.json'
+import { validateEmail } from '~/common/utils/checkMail'
 type FromType = {
   password: string
   address: string
@@ -35,7 +36,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
     setValue,
     getValues,
     formState: { errors }
-  } = useForm<FromType>({defaultValues:{permissions:"SALE"}})
+  } = useForm<FromType>({ defaultValues: { permissions: 'SALE' } })
   const { successNotification, errorNotification } = useToast()
   const addNewEmployeeQuery = useMutation(createEmployee, {
     onError: (error: AxiosError<{ message: string }>) => {
@@ -154,6 +155,9 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
             pattern: {
               value: new RegExp(dataRegex.REGEX_EMAIL, 'i'),
               message: 'Email không hợp lệ'
+            },
+            validate: {
+              checkMail: async (value) =>await validateEmail(value) || 'Email không tồn tại'
             }
           })}
           placeholder='abc@gmail.com'
@@ -282,7 +286,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
                 name='permissions'
                 className='rounded-lg'
                 value={e.value}
-                defaultChecked={e.value == getValues("permissions")}
+                defaultChecked={e.value == getValues('permissions')}
                 onChange={() => {
                   setValue('permissions', e.value)
                 }}
