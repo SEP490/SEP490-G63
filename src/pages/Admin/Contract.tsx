@@ -14,7 +14,7 @@ import {
   DocumentPlusIcon
 } from '@heroicons/react/24/outline'
 import { useNavigate } from 'react-router-dom'
-import { deleteNewContract, getNewContract } from '~/services/contract.service'
+import { deleteNewContract, getNewContract, managerCount } from '~/services/contract.service'
 import DocumentIcon from '~/assets/svg/document'
 import Pagination from '~/components/BaseComponent/Pagination/Pagination'
 import Loading from '~/components/shared/Loading/Loading'
@@ -132,6 +132,16 @@ const Contract = () => {
       }
     }
   )
+  const {
+    data: dataNumber,
+    isLoading: loadingNumber,
+    refetch: refetchNumber
+  } = useQuery('number-contract', managerCount, {
+    onError: (error: AxiosError<{ message: string }>) => {
+      errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
+    }
+  })
+ 
   const actionSale: ActionType[] = [
     {
       id: 1,
@@ -303,7 +313,8 @@ const Contract = () => {
         </>
       ),
       color: 'text-green-700',
-      disable: (d: any) => (!d?.canSign && user?.email != d.createdBy) || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
+      disable: (d: any) =>
+        (!d?.canSign && user?.email != d.createdBy) || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
       callback: (d: any) => {
         navigate(`/view/${d?.id}/sign/1`)
       }
@@ -316,7 +327,8 @@ const Contract = () => {
         </>
       ),
       color: 'text-orange-700',
-      disable: (d: any) => (!d?.canSign && user?.email == d.createdBy) || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
+      disable: (d: any) =>
+        (!d?.canSign && user?.email == d.createdBy) || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
       callback: (d: any) => {
         setSelectedContract(d)
         setStatus(6)
@@ -374,7 +386,8 @@ const Contract = () => {
           <div className='w-[90%] truncate ...'>Quản lí hợp đồng</div>
         </div>
       ),
-      status: 'MANAGER_CONTRACT'
+      status: 'MANAGER_CONTRACT',
+      number: 'managerCount'
     },
     {
       id: 2,
@@ -384,7 +397,8 @@ const Contract = () => {
           <div className='w-[90%] truncate ...'> Đợi duyệt</div>
         </div>
       ),
-      status: 'WAIT_APPROVE'
+      status: 'WAIT_APPROVE',
+      number: 'waitApprovedCount'
     },
     {
       id: 3,
@@ -394,7 +408,8 @@ const Contract = () => {
           <div className='w-[90%] truncate ...'> Đã được duyệt</div>
         </div>
       ),
-      status: 'APPROVED'
+      status: 'APPROVED',
+      number: 'approvedCount'
     },
     {
       id: 4,
@@ -404,7 +419,8 @@ const Contract = () => {
           <div className='w-[90%] truncate ...'> Chờ ký</div>
         </div>
       ),
-      status: 'WAIT_SIGN'
+      status: 'WAIT_SIGN',
+      number: 'waitSignCount'
     },
     {
       id: 5,
@@ -414,7 +430,8 @@ const Contract = () => {
           <div className='w-[90%] truncate ...'>Đã ký</div>
         </div>
       ),
-      status: 'SIGN_OK'
+      status: 'SIGN_OK',
+      number: 'signedCount'
     },
     {
       id: 7,
@@ -424,7 +441,8 @@ const Contract = () => {
           <div className='w-[90%] truncate ...'> Đã Hoàn thành</div>
         </div>
       ),
-      status: 'SUCCESS'
+      status: 'SUCCESS',
+      number: 'successCount'
     }
   ]
   const adminOfficeContract = [
@@ -436,7 +454,8 @@ const Contract = () => {
           <div className='w-[90%] truncate ...'>Quản lí hợp đồng</div>
         </div>
       ),
-      status: 'MANAGER_CONTRACT'
+      status: 'MANAGER_CONTRACT',
+      number: 'managerCount'
     },
     {
       id: 2,
@@ -446,7 +465,8 @@ const Contract = () => {
           <div className='w-[90%] truncate ...'> Cần duyệt</div>
         </div>
       ),
-      status: 'WAIT_APPROVE'
+      status: 'WAIT_APPROVE',
+      number: 'waitApprovedCount'
     },
     {
       id: 3,
@@ -456,7 +476,8 @@ const Contract = () => {
           <div className='w-[90%] truncate ...'> Đã duyệt</div>
         </div>
       ),
-      status: 'APPROVED'
+      status: 'APPROVED',
+      number: 'approvedCount'
     },
     {
       id: 4,
@@ -466,7 +487,8 @@ const Contract = () => {
           <div className='w-[90%] truncate ...'> Chờ ký</div>
         </div>
       ),
-      status: 'WAIT_SIGN'
+      status: 'WAIT_SIGN',
+      number: 'waitSignCount'
     },
     {
       id: 5,
@@ -476,7 +498,8 @@ const Contract = () => {
           <div className='w-[90%] truncate ...'> Đã ký</div>
         </div>
       ),
-      status: 'SIGN_OK'
+      status: 'SIGN_OK',
+      number: 'signedCount'
     },
     {
       id: 6,
@@ -486,7 +509,8 @@ const Contract = () => {
           <div className='w-[90%] truncate ...'> Đã Hoàn thành</div>
         </div>
       ),
-      status: 'SUCCESS'
+      status: 'SUCCESS',
+      number: 'successCount'
     }
   ]
   const adminContract = [
@@ -498,7 +522,8 @@ const Contract = () => {
           <div className='w-[90%] truncate ...'>Quản lí hợp đồng</div>
         </div>
       ),
-      status: 'MANAGER_CONTRACT'
+      status: 'MANAGER_CONTRACT',
+      number: 'managerCount'
     },
     {
       id: 2,
@@ -508,7 +533,8 @@ const Contract = () => {
           <div className='w-[90%] truncate ...'> Chờ ký</div>
         </div>
       ),
-      status: 'WAIT_SIGN'
+      status: 'WAIT_SIGN',
+      number: 'waitSignCount'
     },
     {
       id: 3,
@@ -518,7 +544,8 @@ const Contract = () => {
           <div className='w-[90%] truncate ...'> Đã ký</div>
         </div>
       ),
-      status: 'SIGN_OK'
+      status: 'SIGN_OK',
+      number: 'signedCount'
     },
     {
       id: 4,
@@ -528,7 +555,8 @@ const Contract = () => {
           <div className='w-[90%] truncate ...'> Đã Hoàn thành</div>
         </div>
       ),
-      status: 'SUCCESS'
+      status: 'SUCCESS',
+      number: 'successCount'
     }
   ]
   const actionTable = {
@@ -548,6 +576,7 @@ const Contract = () => {
       successNotification('Xóa thành công!')
       handleCloseModal()
       refetch()
+      refetchNumber()
     },
     onError: (error: AxiosError<{ message: string }>) => {
       errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
@@ -621,10 +650,10 @@ const Contract = () => {
           {menuContract[permissionUser]?.map((t: any) => (
             <div
               key={t.id}
-              className={`cursor-pointer text-xs sm:text-sm md:text-md h-[30px] px-3 py-1 ${statusContract?.id == t.id ? 'bg-main-color text-white' : 'text-black'} hover:bg-hover-main hover:text-white`}
+              className={`cursor-pointer flex justify-between items-center text-xs sm:text-sm md:text-md h-[30px] px-3 py-1 ${statusContract?.id == t.id ? 'bg-main-color text-white' : 'text-black'} hover:bg-hover-main hover:text-white`}
               onClick={() => setStatusContract(t)}
             >
-              {t?.title}
+              {t?.title} {loadingNumber ? <LoadingIcon /> : dataNumber?.object?.[t.number]}
             </div>
           ))}
         </div>
@@ -682,7 +711,7 @@ const Contract = () => {
                           className={`px-3 py-4 font-semibold ${statusObject[d.statusCurrent]?.color}`}
                           align='center'
                         >
-                          {d.statusCurrent ? statusObject[d.statusCurrent]?.title : ''}
+                          {d.statusCurrent ? statusObject[d.statusCurrent]?.title?.[permissionUser] : ''}
                         </td>
                         <td className='px-3 py-4' align='center'>
                           <div
@@ -800,6 +829,8 @@ const Contract = () => {
                     status={status}
                     closeModal={handleCloseModal}
                     refetch={refetch}
+                    refetchNumber={refetchNumber}
+                    dataC={selectedContract}
                   />
                 </Dialog.Panel>
               </Transition.Child>

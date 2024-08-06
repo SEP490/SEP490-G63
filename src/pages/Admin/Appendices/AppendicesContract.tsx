@@ -772,6 +772,7 @@ const AppendicesContract = () => {
                     status={status}
                     closeModal={handleCloseModal}
                     refetch={refetch}
+                    dataC={selectedContract}
                   />
                 </Dialog.Panel>
               </Transition.Child>
