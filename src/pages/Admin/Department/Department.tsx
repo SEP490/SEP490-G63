@@ -1,20 +1,31 @@
 import { Dialog, Menu, Transition } from '@headlessui/react'
-import { Cog6ToothIcon, EllipsisVerticalIcon, NoSymbolIcon, PlusIcon, UserIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import {
+  Cog6ToothIcon,
+  EllipsisVerticalIcon,
+  NoSymbolIcon,
+  PlusIcon,
+  UserIcon,
+  XMarkIcon
+} from '@heroicons/react/24/outline'
 import { AxiosError } from 'axios'
 import { Fragment, useState } from 'react'
 import { MdSettingsInputComponent } from 'react-icons/md'
-import { useQuery } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
+import LoadingIcon from '~/assets/LoadingIcon'
 import AddNewDepartment from '~/components/Admin/Department/AddNewDepartment'
+import EditDepartment from '~/components/Admin/Department/EditDepartment'
 import Pagination from '~/components/BaseComponent/Pagination/Pagination'
 import Loading from '~/components/shared/Loading/Loading'
 import useToast from '~/hooks/useToast'
-import { getListDepartment } from '~/services/department.service'
+import { deleteDepartment, getListDepartment } from '~/services/department.service'
 
 const Department = () => {
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(10)
   const [isOpen, setIsOpen] = useState(false)
-
+  const [deleteModal, setDeleteModal] = useState(false)
+  const [editModal, setEditModal] = useState(false)
+  const [selected, setSelected] = useState<any>(null)
   const [totalPage, setTotalPage] = useState(1)
   const { errorNotification, successNotification } = useToast()
   const handlePageChange = (page: any) => {
@@ -28,8 +39,26 @@ const Department = () => {
       setTotalPage(result?.object?.totalPages)
     }
   })
-  console.log(data)
-
+  const closeModalAll = () => {
+    setDeleteModal(false)
+    setEditModal(false)
+    setSelected(null)
+  }
+  const deleteDepartmentContract = useMutation(deleteDepartment, {
+    onError: (error: AxiosError<{ message: string }>) => {
+      errorNotification(error.response?.data?.message || error.message || 'Hệ thống lỗi')
+    },
+    onSuccess: (result) => {
+      if (result?.code == '00') {
+        successNotification('Xóa thành công!')
+        closeModalAll()
+        refetch()
+      }
+    }
+  })
+  const handleDeleteEmployee = () => {
+    deleteDepartmentContract.mutate(selected?.id as string)
+  }
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex flex-wrap'>
@@ -125,8 +154,8 @@ const Department = () => {
                                     <button
                                       title='Sửa'
                                       onClick={() => {
-                                        // setEditModal(true)
-                                        // setSelectedUser(d)
+                                        setEditModal(true)
+                                        setSelected(d)
                                       }}
                                       className={`${
                                         active ? 'bg-blue-500 text-white' : 'text-gray-900'
@@ -141,8 +170,8 @@ const Department = () => {
                                     <button
                                       title='Xóa'
                                       onClick={() => {
-                                        // setDeleteModal(true)
-                                        // setSelectedUser(d)
+                                        setDeleteModal(true)
+                                        setSelected(d)
                                       }}
                                       className={`${
                                         active ? 'bg-blue-500 text-white' : 'text-gray-900'
@@ -226,190 +255,99 @@ const Department = () => {
           </div>
         </Dialog>
       </Transition>
-      {/* <Transition appear show={viewDetail} as={Fragment}>
-    <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeAllModal}>
-      <Transition.Child
-        as={Fragment}
-        enter='ease-out duration-300'
-        enterFrom='opacity-0'
-        enterTo='opacity-100'
-        leave='ease-in duration-200'
-        leaveFrom='opacity-100'
-        leaveTo='opacity-0'
-      >
-        <div className='fixed inset-0 bg-black/25' />
-      </Transition.Child>
-
-      <div className='fixed inset-0 overflow-y-auto'>
-        <div className='flex min-h-full  items-center justify-center p-4 text-center'>
+      <Transition appear show={deleteModal} as={Fragment}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeModalAll}>
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'
-            enterFrom='opacity-0 scale-95'
-            enterTo='opacity-100 scale-100'
+            enterFrom='opacity-0'
+            enterTo='opacity-100'
             leave='ease-in duration-200'
-            leaveFrom='opacity-100 scale-100'
-            leaveTo='opacity-0 scale-95'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0'
           >
-            <Dialog.Panel className='w-[100vw] md:w-[80vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
-              <div className='flex justify-between mb-2'>
-                <div className='font-bold'>Thông tin chi tiết</div>
-                <div className='flex gap-3 items-center'>
-                  <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeAllModal()} />
-                </div>
-              </div>
-              <ViewEmployee data={selectedUser} />
-            </Dialog.Panel>
+            <div className='fixed inset-0 bg-black/25' />
           </Transition.Child>
-        </div>
-      </div>
-    </Dialog>
-  </Transition>
-  <Transition appear show={editModal} as={Fragment}>
-    <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeAllModal}>
-      <Transition.Child
-        as={Fragment}
-        enter='ease-out duration-300'
-        enterFrom='opacity-0'
-        enterTo='opacity-100'
-        leave='ease-in duration-200'
-        leaveFrom='opacity-100'
-        leaveTo='opacity-0'
-      >
-        <div className='fixed inset-0 bg-black/25' />
-      </Transition.Child>
 
-      <div className='fixed inset-0 overflow-y-auto'>
-        <div className='flex min-h-full  items-center justify-center p-4 text-center'>
+          <div className='fixed inset-0 overflow-y-auto'>
+            <div className='flex min-h-full  items-center justify-center p-4 text-center'>
+              <Transition.Child
+                as={Fragment}
+                enter='ease-out duration-300'
+                enterFrom='opacity-0 scale-95'
+                enterTo='opacity-100 scale-100'
+                leave='ease-in duration-200'
+                leaveFrom='opacity-100 scale-100'
+                leaveTo='opacity-0 scale-95'
+              >
+                <Dialog.Panel className='w-[100vw] md:w-[40vw] md:h-fit transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+                  <div className='flex justify-between mb-2'>
+                    <div className='font-bold'>Thông báo</div>
+                    <div className='flex gap-3 items-center'>
+                      <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeModalAll()} />
+                    </div>
+                  </div>
+                  <div>
+                    <div>Phòng ban sẽ được xóa khỏi hệ thống. Bạn có chắc chắn với quyết định của mình?</div>
+                    <div className='w-full flex justify-end mt-6'>
+                      <button
+                        type='button'
+                        className='middle  none center mr-4 rounded-lg bg-red-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#ff00002f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
+                        data-ripple-light='true'
+                        disabled={deleteDepartmentContract.isLoading}
+                        onClick={handleDeleteEmployee}
+                      >
+                        {deleteDepartmentContract.isLoading ? <LoadingIcon /> : 'Xóa'}
+                      </button>
+                    </div>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+
+      <Transition appear show={editModal} as={Fragment}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeModalAll}>
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'
-            enterFrom='opacity-0 scale-95'
-            enterTo='opacity-100 scale-100'
+            enterFrom='opacity-0'
+            enterTo='opacity-100'
             leave='ease-in duration-200'
-            leaveFrom='opacity-100 scale-100'
-            leaveTo='opacity-0 scale-95'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0'
           >
-            <Dialog.Panel className='w-[100vw] md:w-[80vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
-              <div className='flex justify-between mb-2'>
-                <div className='font-bold'>Chỉnh sửa thông tin</div>
-                <div className='flex gap-3 items-center'>
-                  <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeAllModal()} />
-                </div>
-              </div>
-
-              <EditEmployee data={selectedUser} closeModal={closeAllModal} refetch={refetch} />
-            </Dialog.Panel>
+            <div className='fixed inset-0 bg-black/25' />
           </Transition.Child>
-        </div>
-      </div>
-    </Dialog>
-  </Transition>
-  <Transition appear show={deleteModal} as={Fragment}>
-    <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeAllModal}>
-      <Transition.Child
-        as={Fragment}
-        enter='ease-out duration-300'
-        enterFrom='opacity-0'
-        enterTo='opacity-100'
-        leave='ease-in duration-200'
-        leaveFrom='opacity-100'
-        leaveTo='opacity-0'
-      >
-        <div className='fixed inset-0 bg-black/25' />
-      </Transition.Child>
 
-      <div className='fixed inset-0 overflow-y-auto'>
-        <div className='flex min-h-full  items-center justify-center p-4 text-center'>
-          <Transition.Child
-            as={Fragment}
-            enter='ease-out duration-300'
-            enterFrom='opacity-0 scale-95'
-            enterTo='opacity-100 scale-100'
-            leave='ease-in duration-200'
-            leaveFrom='opacity-100 scale-100'
-            leaveTo='opacity-0 scale-95'
-          >
-            <Dialog.Panel className='w-[100vw] md:w-[40vw] md:h-fit transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
-              <div className='flex justify-between mb-2'>
-                <div className='font-bold'>Thông báo</div>
-                <div className='flex gap-3 items-center'>
-                  <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeAllModal()} />
-                </div>
-              </div>
-              <div>
-                <div>Nhân viên sẽ được xóa khỏi hệ thống. Bạn có chắc chắn với quyết định của mình?</div>
-                <div className='w-full flex justify-end mt-6'>
-                  <button
-                    type='button'
-                    className='middle  none center mr-4 rounded-lg bg-red-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#ff00002f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
-                    data-ripple-light='true'
-                    onClick={handleDeleteEmployee}
-                  >
-                    {deleteQuery.isLoading ? <LoadingIcon /> : 'Xóa'}
-                  </button>
-                </div>
-              </div>
-            </Dialog.Panel>
-          </Transition.Child>
-        </div>
-      </div>
-    </Dialog>
-  </Transition>
-  <Transition appear show={resetModal} as={Fragment}>
-    <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeAllModal}>
-      <Transition.Child
-        as={Fragment}
-        enter='ease-out duration-300'
-        enterFrom='opacity-0'
-        enterTo='opacity-100'
-        leave='ease-in duration-200'
-        leaveFrom='opacity-100'
-        leaveTo='opacity-0'
-      >
-        <div className='fixed inset-0 bg-black/25' />
-      </Transition.Child>
+          <div className='fixed inset-0 overflow-y-auto'>
+            <div className='flex min-h-full  items-center justify-center p-4 text-center'>
+              <Transition.Child
+                as={Fragment}
+                enter='ease-out duration-300'
+                enterFrom='opacity-0 scale-95'
+                enterTo='opacity-100 scale-100'
+                leave='ease-in duration-200'
+                leaveFrom='opacity-100 scale-100'
+                leaveTo='opacity-0 scale-95'
+              >
+                <Dialog.Panel className='w-[100vw] md:w-[80vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+                  <div className='flex justify-between mb-2'>
+                    <div className='font-bold'>Chỉnh sửa thông tin</div>
+                    <div className='flex gap-3 items-center'>
+                      <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeModalAll()} />
+                    </div>
+                  </div>
 
-      <div className='fixed inset-0 overflow-y-auto'>
-        <div className='flex min-h-full  items-center justify-center p-4 text-center'>
-          <Transition.Child
-            as={Fragment}
-            enter='ease-out duration-300'
-            enterFrom='opacity-0 scale-95'
-            enterTo='opacity-100 scale-100'
-            leave='ease-in duration-200'
-            leaveFrom='opacity-100 scale-100'
-            leaveTo='opacity-0 scale-95'
-          >
-            <Dialog.Panel className='w-[100vw] md:w-[40vw] md:h-fit transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
-              <div className='flex justify-between mb-2'>
-                <div className='font-bold'>Thông báo</div>
-                <div className='flex gap-3 items-center'>
-                  <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeAllModal()} />
-                </div>
-              </div>
-              <div>
-                <div>
-                  Mật khẩu của nhân viên sẽ được đặt lại. Bạn có chắc chắn với quyết định của mình?
-                </div>
-                <div className='w-full flex justify-end mt-6'>
-                  <button
-                    type='button'
-                    className='middle  none center mr-4 rounded-lg bg-red-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#ff00002f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
-                    data-ripple-light='true'
-                    disabled={resetPasswordQuery.isLoading}
-                    onClick={handleResetPassword}
-                  >
-                    {resetPasswordQuery.isLoading ? <LoadingIcon /> : 'Chắc chắn'}
-                  </button>
-                </div>
-              </div>
-            </Dialog.Panel>
-          </Transition.Child>
-        </div>
-      </div>
-    </Dialog>
-  </Transition> */}
+                  <EditDepartment data={selected} closeModal={closeModalAll} refetch={refetch} />
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
     </div>
   )
 }
