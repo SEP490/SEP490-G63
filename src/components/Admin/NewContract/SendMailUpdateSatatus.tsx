@@ -12,7 +12,7 @@ import { getUserByPermission } from '~/services/user.service'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 type IProps = { id: string | undefined; status: number; closeModal: any; refetch: any; dataC: any,refetchNumber:any }
-const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC,refetchNumber }: IProps) => {
+const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchNumber }: IProps) => {
   const [selectedFiles, setSelectedFiles] = useState<any[]>([])
   const [previewUrls, setPreviewUrls] = useState<string[]>([])
   const [selectedTo, setSelectedTo] = useState<any[]>([])
@@ -47,8 +47,6 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC,refetchNu
           setSelectedCc([{ label: response.object.approvedBy, value: response.object.approvedBy }])
       } else if (status == 7) {
         const mailCC = []
-        response.object.createdBy != null &&
-          mailCC.push({ label: response.object.createdBy, value: response.object.createdBy })
         response.object.approvedBy != null &&
           mailCC.push({ label: response.object.approvedBy, value: response.object.approvedBy })
         setSelectedCc(mailCC)
