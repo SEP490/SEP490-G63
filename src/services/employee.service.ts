@@ -24,16 +24,18 @@ interface QueryDataGet {
   department?: string
   permissions?: string[]
   page?: number
-  size?: number,
-  status:string
+  size?: number
+  status: string
 }
 export const createEmployee = async (data: EmployeeData) => {
   const response = await axiosInstance.post('user/register-for-user', { ...data, role: 'USER' })
   return response.data
 }
 
-export const getListEmployee = async ({ size, page, name,status }: QueryDataGet) => {
-  const response = await axiosInstance.get(`user/search?page=${page}&size=${size}&name=${name}&status=${status}`)
+export const getListEmployee = async ({ size, page, name, status, department }: QueryDataGet) => {
+  const response = await axiosInstance.get(
+    `user/search?page=${page}&size=${size}&name=${name}&status=${status}&department=${department}`
+  )
 
   return response.data
 }

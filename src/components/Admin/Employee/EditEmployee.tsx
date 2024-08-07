@@ -28,8 +28,9 @@ interface IProp {
   data: DataEmployee | undefined
   closeModal: () => void
   refetch: any
+  department: any
 }
-const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
+const EditEmployee = ({ data, closeModal, refetch, department }: IProp) => {
   const {
     register,
     handleSubmit,
@@ -107,17 +108,12 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
             style='dark'
           />
         </label>
-        <input
+        <select
           className={`${errors.department ? 'ring-red-600' : ''}  block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-          {...register('department', {
-            required: 'Phòng ban không được bỏ trống',
-            pattern: {
-              value: new RegExp(dataRegex.REGEX_TEXT),
-              message: 'Phòng ban không hợp lệ'
-            }
-          })}
-          placeholder='Phòng ban nhân viên'
-        />
+          {...register('department')}
+        >
+          {department?.object?.content?.map((d: any) => <option value={d.id}>{d.title}</option>)}
+        </select>
         <div className={`text-red-500 absolute text-[12px] ${errors.department ? 'visible' : 'invisible'}`}>
           {errors.department?.message}
         </div>
