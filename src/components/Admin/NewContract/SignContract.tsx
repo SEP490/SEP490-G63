@@ -81,7 +81,6 @@ const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy,
     formData.append('description', statusRequest[customer == '2' ? 8 : 5]?.description)
     try {
       const response = await sendMailPublic(formData)
-      console.log(response)
     } catch (error) {
       errorNotification('Gửi yêu cầu thất bại')
     }
