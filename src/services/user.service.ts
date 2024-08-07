@@ -68,3 +68,7 @@ export const getUserToken = async () => {
   const response = await axiosInstance.post('user/get-user')
   return response.data
 }
+export const activeUser = async (email: string) => {
+  const response = await axiosInstance.post(`user/active-user?mail=${email}`)
+  return response.data
+}

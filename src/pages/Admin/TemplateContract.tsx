@@ -107,7 +107,7 @@ const TemplateContract = () => {
             </div>
             <button
               type='button'
-              onClick={() => navigate('/contract/create')}
+              onClick={() => navigate('/template-contract/create')}
               className='rounded-md flex gap-1 bg-main-color px-4 py-2 text-xs sm:text-sm items-center font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
             >
               <PlusIcon className='h-5 w-5' /> Tạo mới

@@ -3,7 +3,7 @@ import { Stage, Layer, Line } from 'react-konva'
 import { ArrowPathIcon, CheckIcon } from '@heroicons/react/24/outline'
 import { Description, Field, Label, Textarea } from '@headlessui/react'
 import { useForm } from 'react-hook-form'
-import { sendMail } from '~/services/contract.service'
+import { sendMail, sendMailPublic } from '~/services/contract.service'
 import useToast from '~/hooks/useToast'
 import { useMutation } from 'react-query'
 import LoadingIcon from '~/assets/LoadingIcon'
@@ -17,7 +17,7 @@ const RejectSignContract = ({ contract }: any) => {
     handleSubmit,
     formState: { errors }
   } = useForm<FormData>()
-  const sendMailReject = useMutation(sendMail, {
+  const sendMailReject = useMutation(sendMailPublic, {
     onError: () => {
       errorNotification('Gửi yêu cầu thất bại')
     },

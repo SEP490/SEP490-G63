@@ -292,11 +292,13 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             hidden
             className='block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
           >
-            {banks.map((bank: { id: number; code: string; shortName: string; logo: string; bin: string }) => (
-              <option key={bank.id} value={bank.shortName}>
-                {bank.shortName}
-              </option>
-            ))}
+            {banks.map(
+              (bank: { id: number; code: string; shortName: string; logo: string; bin: string; name: string }) => (
+                <option key={bank.id} value={bank.bin}>
+                  {bank.shortName} - {bank.name}
+                </option>
+              )
+            )}
           </select>
           <div className={`text-red-500 absolute text-[12px] ${errors.bankName ? 'visible' : 'invisible'}`}>
             {errors.bankName?.message}
