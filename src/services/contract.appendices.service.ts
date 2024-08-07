@@ -6,11 +6,8 @@ type SignRequest = {
   createdBy: string
   customer: boolean
 }
-export const getAppendicesContactAll = async (id: string, page: number, size: number) => {
-  console.log(id)
-  console.log(page)
-  console.log(size)
-  const response = await axiosInstant.get(`api/contract-appendices/contractId/${id}/${page}/${size}`)
+export const getAppendicesContactAll = async (id: string, page: number, size: number, status: string) => {
+  const response = await axiosInstant.get(`api/contract-appendices/${page}/${size}?contractId=${id}&status=${status}`)
   return response.data
 }
 

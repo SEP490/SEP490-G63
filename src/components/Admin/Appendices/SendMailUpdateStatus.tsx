@@ -11,8 +11,9 @@ import { useQuery } from 'react-query'
 import { getUserByPermission } from '~/services/user.service'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
-type IProps = { id: string | undefined; status: number; closeModal: any; refetch: any; dataC: any,refetchNumber:any }
-const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchNumber }: IProps) => {
+import { sendMailApp } from '~/services/contract.appendices.service'
+type IProps = { id: string | undefined; status: number; closeModal: any; refetch: any; dataC: any }
+const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC }: IProps) => {
   const [selectedFiles, setSelectedFiles] = useState<any[]>([])
   const [previewUrls, setPreviewUrls] = useState<string[]>([])
   const [selectedTo, setSelectedTo] = useState<any[]>([])
@@ -23,23 +24,17 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
   const [open, setOpen] = useState(false)
   const [loadingSubmit, setLoadingSubmit] = useState(false)
   const contractFile = useRef<any>()
-  const { isLoading: loadingSALE, data: dataSale } = useQuery('getUserByRoleSale', () => getUserByPermission('SALE'))
-  const { isLoading: loadingAdmin, data: dataAdmin } = useQuery('getUserByRoleAdmin', () =>
-    getUserByPermission('MANAGER')
-  )
-  const { isLoading: loadingAO, data: dataAO } = useQuery('getUserByRoleAdminOfficer', () =>
-    getUserByPermission('OFFICE_ADMIN')
-  )
   const { isLoading: loading, data: dataContract } = useQuery('getContractDetail', () => getNewContractById(id), {
     onSuccess: async (response) => {
       if (status == 1) {
-        dataC?.rejectedBy != null && setSelectedTo([{ label: dataC?.rejectedBy, value: dataC?.rejectedBy }])
+        dataC?.approvedBy != null && setSelectedTo([{ label: dataC?.approvedBy, value: dataC?.approvedBy }])
       } else if (status == 2 || status == 3) {
         response.object.createdBy != null &&
           setSelectedTo([{ label: response.object.createdBy, value: response.object.createdBy }])
       } else if (status == 4) {
         response.object.createdBy != null &&
           setSelectedCc([{ label: response.object.createdBy, value: response.object.createdBy }])
+        dataC.partyA != null && setSelectedTo([{ label: dataC.partyA?.email, value: dataC.partyA?.email }])
       } else if (status == 6) {
         response.object.createdBy != null &&
           setSelectedTo([{ label: response.object.createdBy, value: response.object.createdBy }])
@@ -47,11 +42,12 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
           setSelectedCc([{ label: response.object.approvedBy, value: response.object.approvedBy }])
       } else if (status == 7) {
         const mailCC = []
+        response.object.createdBy != null &&
+          mailCC.push({ label: response.object.createdBy, value: response.object.createdBy })
         response.object.approvedBy != null &&
           mailCC.push({ label: response.object.approvedBy, value: response.object.approvedBy })
         setSelectedCc(mailCC)
-        response.object.partyB != null &&
-          setSelectedTo([{ label: response.object.partyB.email, value: response.object.partyB.email }])
+        dataC.partyB != null && setSelectedTo([{ label: dataC.partyB?.email, value: dataC.partyB?.email }])
       } else if (status == 9) {
         response.object.createdBy != null &&
           setSelectedTo([{ label: response.object.createdBy, value: response.object.createdBy }])
@@ -64,19 +60,6 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
       contractFile.current = blob
     }
   })
-  const optionTo = useMemo(() => {
-    if (status == 1) return dataAO
-    else if (status == 2 || status == 3 || status == 5 || status == 6) return dataSale
-    else if (status == 4) return dataAdmin
-    else return []
-  }, [status, dataAO, dataAdmin, dataSale])
-
-  const optionCC = useMemo(() => {
-    if (status == 1 || status == 5 || status == 6) return dataAO
-    else if (status == 2 || status == 3) return dataSale
-    else if (status == 4) return dataAdmin
-    else return []
-  }, [status, dataAO, dataAdmin, dataSale])
 
   const handleFileChange = (event: any) => {
     const files = Array.from(event.target.files)
@@ -130,12 +113,11 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
     if (status) formData.append('status', statusRequest[status]?.status)
     formData.append('description', htmlContent)
     try {
-      const response = await sendMail(formData)
+      const response = await sendMailApp(formData)
       if (response) {
         successNotification('Gửi yêu cầu thành công!')
         closeModal()
         refetch()
-        refetchNumber()
       } else {
         errorNotification('Gửi yêu cầu thất bại')
       }
@@ -146,17 +128,17 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
     }
   }
 
-  if (loading || loadingSALE || loadingAO || loadingAdmin || loadingSubmit) return <LoadingPage />
+  if (loading || loadingSubmit) return <LoadingPage />
   return (
     <div className='h-full overflow-auto pb-5'>
       <div className='w-full flex flex-col md:flex-row justify-between border-b-2'>
         <div className='w-full md:w-[46%] py-2 flex items-center z-50'>
           <span className='w-20 font-bold'>Đến</span>
-          <ComboboxMail selected={selectedTo} setSelected={setSelectedTo} option={optionTo} isCreate={status == 7} />
+          <ComboboxMail selected={selectedTo} setSelected={setSelectedTo} option={[]} isDisabled={true} />
         </div>
         <div className='w-full md:w-[46%] py-2  flex items-center z-50'>
           <span className='w-20 font-bold'>CC</span>
-          <ComboboxMail selected={selectedCc} setSelected={setSelectedCc} option={optionCC} isCreate={status == 7} />
+          <ComboboxMail selected={selectedCc} setSelected={setSelectedCc} option={[]} isDisabled={true} />
         </div>
       </div>
 

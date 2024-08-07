@@ -82,20 +82,11 @@ const CreateAppendices = () => {
 
   const createAppendicesQuery = useMutation(createAppendices, {
     onSuccess: async (response) => {
-      console.log(response)
 
       try {
         if (response?.code == '00' && response.object && response.success) {
-          const formData = new FormData()
-          formData.append('to', response?.object?.createdBy)
-          formData.append('subject', statusRequest[10]?.title)
-          formData.append('htmlContent', statusRequest[10]?.description)
-          formData.append('contractId ', response?.object?.id as string)
-          formData.append('status', statusRequest[10]?.status)
-          formData.append('createdBy', 'thangnhhe161517@gmail.com')
-          formData.append('description', statusRequest[10]?.description)
-          await sendMailPublicApp(formData)
           successNotification('Tạo phụ lục thành công!')
+          navigate(`/appendices/${id}`)
         }
       } catch (e) {
         console.log(e)
