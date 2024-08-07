@@ -22,6 +22,7 @@ import LoadingIcon from '~/assets/LoadingIcon'
 import { debounce } from 'lodash'
 import { useAuth } from '~/context/authProvider'
 import { ADMIN } from '~/common/const/role'
+import { activeUser } from '~/services/user.service'
 
 export interface DataEmployee {
   id?: string
@@ -43,6 +44,7 @@ const Employee = () => {
   const [editModal, setEditModal] = useState(false)
   const [resetModal, setResetModal] = useState(false)
   const [deleteModal, setDeleteModal] = useState(false)
+  const [activeModal, setActiveModal] = useState(false)
   const [totalPage, setTotalPage] = useState(1)
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(10)
@@ -57,6 +59,7 @@ const Employee = () => {
     setDeleteModal(false)
     setResetModal(false)
     setEditModal(false)
+    setActiveModal(false)
     setViewDetail(false)
     setSelectedUser(undefined)
   }
@@ -104,8 +107,23 @@ const Employee = () => {
       errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
     }
   })
+  const activeQuery = useMutation(activeUser, {
+    onSuccess: (data) => {
+      if (data?.code == '00') {
+        successNotification('Thành công')
+        refetch()
+        closeAllModal()
+      } else errorNotification('Thất bại')
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
+    }
+  })
   const handleDeleteEmployee = async () => {
     deleteQuery.mutate(selectedUser?.id)
+  }
+  const handleActive = async () => {
+    activeQuery.mutate(selectedUser?.email as string)
   }
   const resetPasswordQuery = useMutation(resetPassword, {
     onSuccess: () => {
@@ -311,7 +329,8 @@ const Employee = () => {
                                         <button
                                           title='Sửa'
                                           onClick={() => {
-                                            errorNotification('Ai cho ấn mà ấn?')
+                                           setActiveModal(true)
+                                           setSelectedUser(d)
                                           }}
                                           className={`${
                                             active ? 'bg-blue-500 text-white' : 'text-gray-900'
@@ -570,6 +589,57 @@ const Employee = () => {
                         onClick={handleResetPassword}
                       >
                         {resetPasswordQuery.isLoading ? <LoadingIcon /> : 'Chắc chắn'}
+                      </button>
+                    </div>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+      <Transition appear show={activeModal} as={Fragment}>
+        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeAllModal}>
+          <Transition.Child
+            as={Fragment}
+            enter='ease-out duration-300'
+            enterFrom='opacity-0'
+            enterTo='opacity-100'
+            leave='ease-in duration-200'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0'
+          >
+            <div className='fixed inset-0 bg-black/25' />
+          </Transition.Child>
+
+          <div className='fixed inset-0 overflow-y-auto'>
+            <div className='flex min-h-full  items-center justify-center p-4 text-center'>
+              <Transition.Child
+                as={Fragment}
+                enter='ease-out duration-300'
+                enterFrom='opacity-0 scale-95'
+                enterTo='opacity-100 scale-100'
+                leave='ease-in duration-200'
+                leaveFrom='opacity-100 scale-100'
+                leaveTo='opacity-0 scale-95'
+              >
+                <Dialog.Panel className='w-[100vw] md:w-[40vw] md:h-fit transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+                  <div className='flex justify-between mb-2'>
+                    <div className='font-bold'>Thông báo</div>
+                    <div className='flex gap-3 items-center'>
+                      <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeAllModal()} />
+                    </div>
+                  </div>
+                  <div>
+                    <div>Nhân viên sẽ được hoạt động trở lại. Bạn có chắc chắn với quyết định của mình?</div>
+                    <div className='w-full flex justify-end mt-6'>
+                      <button
+                        type='button'
+                        className='middle  none center mr-4 rounded-lg bg-red-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#ff00002f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
+                        data-ripple-light='true'
+                        onClick={handleActive}
+                      >
+                        {activeQuery.isLoading ? <LoadingIcon /> : 'Chắc chắn'}
                       </button>
                     </div>
                   </div>
