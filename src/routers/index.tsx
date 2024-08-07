@@ -31,6 +31,7 @@ import Login from '~/components/Login.tsx'
 import ChangePassword from '~/components/ChangePassword.tsx'
 import Department from '~/pages/Admin/Department/Department.tsx'
 import FormProvider from '~/context/formProvider.tsx'
+import CreateTemplateContract from '~/components/Admin/TemplateContract/CreateTemplateContract.tsx'
 
 const Routes = () => {
   const { token, user } = useAuth()
@@ -150,6 +151,14 @@ const Routes = () => {
           element: (
             <AdminLayout>
               <CreateContract />
+            </AdminLayout>
+          )
+        },
+        {
+          path: '/template-contract/create',
+          element: (
+            <AdminLayout>
+              <CreateTemplateContract />
             </AdminLayout>
           )
         },
