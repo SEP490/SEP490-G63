@@ -275,6 +275,16 @@ const Routes = () => {
           )
         },
         {
+          path: '/template-contract/create',
+          element: (
+            <UserLayout>
+              <AdminOfficer>
+                <CreateTemplateContract />
+              </AdminOfficer>
+            </UserLayout>
+          )
+        },
+        {
           path: '/view/:id/sign/:customer',
           element: (
             <UserLayout>
@@ -448,6 +458,16 @@ const Routes = () => {
             <UserLayout>
               <Sale>
                 <TypeContract />
+              </Sale>
+            </UserLayout>
+          )
+        },
+        {
+          path: '/template-contract/create',
+          element: (
+            <UserLayout>
+              <Sale>
+                <CreateTemplateContract />
               </Sale>
             </UserLayout>
           )
