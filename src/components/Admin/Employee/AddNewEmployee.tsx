@@ -10,6 +10,7 @@ import { AxiosError } from 'axios'
 import LoadingIcon from '~/assets/LoadingIcon'
 import moment from 'moment'
 import dataRegex from '../../../regex.json'
+import { validateEmail } from '~/common/utils/checkMail'
 type FromType = {
   password: string
   address: string
@@ -27,15 +28,16 @@ type FromType = {
 interface IProp {
   closeModal: () => void
   refetch: any
+  department: any
 }
-const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
+const AddNewEmployee = ({ closeModal, refetch, department }: IProp) => {
   const {
     register,
     handleSubmit,
     setValue,
     getValues,
     formState: { errors }
-  } = useForm<FromType>({defaultValues:{permissions:"SALE"}})
+  } = useForm<FromType>({ defaultValues: { permissions: 'SALE' } })
   const { successNotification, errorNotification } = useToast()
   const addNewEmployeeQuery = useMutation(createEmployee, {
     onError: (error: AxiosError<{ message: string }>) => {
@@ -55,7 +57,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
   const onSubmit: SubmitHandler<FromType> = async (data) => {
     addNewEmployeeQuery.mutate({
       ...data,
-      dob: data.dob ? moment(data.dob).format('YYYY/MM/DD') : data.dob,
+      dob: data.dob ? moment(data.dob).format('DD/MM/YYYY') : data.dob,
       permissions: [data.permissions]
     })
   }
@@ -102,17 +104,13 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
             style='dark'
           />
         </label>
-        <input
+
+        <select
           className={`${errors.department ? 'ring-red-600' : ''}  block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-          {...register('department', {
-            required: 'Phòng ban không được bỏ trống',
-            pattern: {
-              value: new RegExp(dataRegex.REGEX_TEXT),
-              message: 'Phòng ban không hợp lệ'
-            }
-          })}
-          placeholder='Phòng ban nhân viên'
-        />
+          {...register('department')}
+        >
+          {department?.object?.content?.map((d: any) => <option value={d.id}>{d.title}</option>)}
+        </select>
         <div className={`text-red-500 absolute text-[12px] ${errors.department ? 'visible' : 'invisible'}`}>
           {errors.department?.message}
         </div>
@@ -154,6 +152,9 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
             pattern: {
               value: new RegExp(dataRegex.REGEX_EMAIL, 'i'),
               message: 'Email không hợp lệ'
+            },
+            validate: {
+              checkMail: async (value) => (await validateEmail(value)) || 'Email không tồn tại'
             }
           })}
           placeholder='abc@gmail.com'
@@ -282,7 +283,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
                 name='permissions'
                 className='rounded-lg'
                 value={e.value}
-                defaultChecked={e.value == getValues("permissions")}
+                defaultChecked={e.value == getValues('permissions')}
                 onChange={() => {
                   setValue('permissions', e.value)
                 }}

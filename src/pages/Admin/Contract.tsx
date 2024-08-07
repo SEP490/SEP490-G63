@@ -181,7 +181,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-blue-700',
-      disable: (d: any) => false,
+      disable: (d: any) => d?.status != "SUCCESS",
       callback: (d: any) => {
         navigate(`/appendices/${d.id}`)
       }
@@ -270,7 +270,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-blue-700',
-      disable: (d: any) => false,
+      disable: (d: any) => d?.status != 'SUCCESS',
       callback: (d: any) => {
         navigate(`/appendices/${d.id}`)
       }
@@ -328,7 +328,7 @@ const Contract = () => {
       ),
       color: 'text-orange-700',
       disable: (d: any) =>
-        (!d?.canSign && user?.email == d.createdBy) || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
+        !d?.canSign || user?.email == d.createdBy || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
       callback: (d: any) => {
         setSelectedContract(d)
         setStatus(6)
@@ -343,7 +343,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-blue-700',
-      disable: (d: any) => false,
+      disable: (d: any) => d?.status != 'SUCCESS',
       callback: (d: any) => {
         navigate(`/appendices/${d.id}`)
       }

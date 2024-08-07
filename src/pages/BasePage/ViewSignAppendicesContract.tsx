@@ -20,7 +20,7 @@ type FormType = {
   email: string
   code: number
 }
-const ViewSignContract = () => {
+const ViewSignAppendicesContract = () => {
   const [modalSign, setModalSign] = useState(false)
   const [modalReject, setModalReject] = useState(false)
   const { id, customer } = useParams()
@@ -29,7 +29,7 @@ const ViewSignContract = () => {
   const [checkAuth, setCheckAuth] = useState<any>(() => customer == '2')
   const { successNotification, errorNotification } = useToast()
   const commentRef = useRef<any>('')
-  const { data, refetch, isFetching, isLoading } = useQuery('detail-contract-public', () =>
+  const { data, refetch, isFetching, isLoading } = useQuery('detail-appendices-public', () =>
     getNewContractByIdNotToken(id)
   )
   const {
@@ -265,4 +265,4 @@ const ViewSignContract = () => {
     </div>
   )
 }
-export default ViewSignContract
+export default ViewSignAppendicesContract
