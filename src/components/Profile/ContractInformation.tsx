@@ -32,13 +32,19 @@ const ContractInformation = () => {
   const [selectedModal, setSelectedModal] = useState(null)
   const [bankModal, setBankModal] = useState(false)
   const [bankImage, setBankImage] = useState(null)
+  const [shouldFetch, setShouldFetch] = useState(false) // State mới để kiểm soát khi nào chạy truy vấn
 
   const handleCodeChange = (e: any) => {
     setCode(e.target.value)
   }
 
   const { data, isError, isLoading } = useQuery('get-contract-admin', () => getContractAdmin(user?.email), {
-    enabled: !!user?.email
+    enabled: shouldFetch && !!user?.email,
+    onSuccess: () => {
+      console.log('1')
+
+      setShouldFetch(false)
+    }
   })
 
   const getContractMutation = useMutation(
@@ -60,6 +66,10 @@ const ContractInformation = () => {
     if (user?.email) {
       getContractMutation.mutate({ email: user?.email, code })
     }
+  }
+
+  const handleFetchContract = () => {
+    setShouldFetch(true)
   }
 
   const banContractMutation = useMutation((id: string) => banContract(id), {
@@ -88,6 +98,12 @@ const ContractInformation = () => {
     <>
       {!isSend ? (
         <div className='w-full md:w-[80%] flex flex-col items-center justify-center bg-white rounded-md shadow-md'>
+          <button
+            onClick={handleFetchContract}
+            className='mt-4 px-4 py-2 mb-4 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-300'
+          >
+            Nhận mã
+          </button>
           <h2 className='text-xl font-bold mb-4'>Nhập mã xác minh</h2>
           <form onSubmit={handleSubmit} className='w-full flex flex-col items-center'>
             <input
