@@ -23,6 +23,7 @@ import { debounce } from 'lodash'
 import { useAuth } from '~/context/authProvider'
 import { ADMIN } from '~/common/const/role'
 import { activeUser } from '~/services/user.service'
+import { getListDepartment } from '~/services/department.service'
 
 export interface DataEmployee {
   id?: string
@@ -53,6 +54,7 @@ const Employee = () => {
   const prevPageRef = useRef(page)
   const prevSizeRef = useRef(size)
   const [status, setStatus] = useState('ACTIVE')
+  const [department, setDepartment] = useState("")
   const [selectedUser, setSelectedUser] = useState<DataEmployee | undefined>(undefined)
   const [searchData, setSearchData] = useState('')
   function closeAllModal() {
@@ -77,8 +79,8 @@ const Employee = () => {
     setSearchData(e.target.value)
   }
   const { data, isLoading, refetch, isFetching } = useQuery(
-    ['employee-list', searchData, status],
-    () => getListEmployee({ size: size, page: page, name: searchData, status }),
+    ['employee-list', searchData, status, department],
+    () => getListEmployee({ size: size, page: page, name: searchData, status,department }),
     {
       onSuccess: (result) => {
         setTotalPage(result?.object?.totalPages)
@@ -88,6 +90,7 @@ const Employee = () => {
       }
     }
   )
+  const { data: dataDepartment } = useQuery('list-department', () => getListDepartment(0, 50))
   useEffect(() => {
     if (prevPageRef.current !== page || prevSizeRef.current !== size) {
       prevPageRef.current = page
@@ -177,6 +180,13 @@ const Employee = () => {
                 <option value={'ACTIVE'}>Đang hoạt động</option>
                 <option value={'INACTIVE'}>Không hoạt động</option>
               </select>
+              <select
+                className='shadow-md block p-2 w-fit text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                onChange={(e: any) => setDepartment(e.target.value)}
+              >
+                <option value={""} >Tất cả</option>
+                {dataDepartment?.object?.content?.map((d) => <option value={d.id}>{d.title}</option>)}
+              </select>
             </div>
             {user?.role == ADMIN ? (
               <button
@@ -237,7 +247,11 @@ const Employee = () => {
                         <td className='px-3 py-4' align='center'>
                           {d.phone}
                         </td>
-                        <td className='px-3 py-4'>{d.department}</td>
+                        <td className='px-3 py-4'>
+                          {dataDepartment?.object?.content.find((data: any) => data.id == d.department) != undefined
+                            ? dataDepartment?.object?.content.find((data: any) => data.id == d.department).title
+                            : ''}
+                        </td>
                         <td className='px-3 py-4'>{d.position}</td>
                         <td className='px-3 py-4'>{d.permissions?.slice(1, -1)}</td>
                         <td className='px-3 py-4'>
@@ -329,8 +343,8 @@ const Employee = () => {
                                         <button
                                           title='Sửa'
                                           onClick={() => {
-                                           setActiveModal(true)
-                                           setSelectedUser(d)
+                                            setActiveModal(true)
+                                            setSelectedUser(d)
                                           }}
                                           className={`${
                                             active ? 'bg-blue-500 text-white' : 'text-gray-900'
@@ -409,7 +423,7 @@ const Employee = () => {
                       <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeModal()} />
                     </div>
                   </div>
-                  <AddNewEmployee closeModal={closeModal} refetch={refetch} />
+                  <AddNewEmployee department={dataDepartment} closeModal={closeModal} refetch={refetch} />
                 </Dialog.Panel>
               </Transition.Child>
             </div>
@@ -448,7 +462,7 @@ const Employee = () => {
                       <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeAllModal()} />
                     </div>
                   </div>
-                  <ViewEmployee data={selectedUser} />
+                  <ViewEmployee department={dataDepartment} data={selectedUser} />
                 </Dialog.Panel>
               </Transition.Child>
             </div>
@@ -488,7 +502,12 @@ const Employee = () => {
                     </div>
                   </div>
 
-                  <EditEmployee data={selectedUser} closeModal={closeAllModal} refetch={refetch} />
+                  <EditEmployee
+                    department={dataDepartment}
+                    data={selectedUser}
+                    closeModal={closeAllModal}
+                    refetch={refetch}
+                  />
                 </Dialog.Panel>
               </Transition.Child>
             </div>

@@ -32,6 +32,9 @@ import ChangePassword from '~/components/ChangePassword.tsx'
 import Department from '~/pages/Admin/Department/Department.tsx'
 import FormProvider from '~/context/formProvider.tsx'
 import CreateTemplateContract from '~/components/Admin/TemplateContract/CreateTemplateContract.tsx'
+import ViewSignAppendicesContract from '~/pages/BasePage/ViewSignAppendicesContract.tsx'
+import ViewDetailContract from '~/components/Admin/NewContract/ViewDetailContract.tsx'
+import PaySlipFormula from '~/pages/Admin/Salary/PaySlipFormula.tsx'
 
 const Routes = () => {
   const { token, user } = useAuth()
@@ -79,6 +82,14 @@ const Routes = () => {
           element: (
             <AdminLayout>
               <ViewSignContract />
+            </AdminLayout>
+          )
+        },
+        {
+          path: '/view/:id/sign-appendices/:customer',
+          element: (
+            <AdminLayout>
+              <ViewSignAppendicesContract />
             </AdminLayout>
           )
         },
@@ -143,6 +154,22 @@ const Routes = () => {
           element: (
             <AdminLayout>
               <Contract />
+            </AdminLayout>
+          )
+        },
+        {
+          path: '/pay-slip',
+          element: (
+            <AdminLayout>
+              <PaySlipFormula />
+            </AdminLayout>
+          )
+        },
+        {
+          path: '/contract/detail/:id',
+          element: (
+            <AdminLayout>
+              <ViewDetailContract />
             </AdminLayout>
           )
         },
@@ -275,11 +302,31 @@ const Routes = () => {
           )
         },
         {
+          path: '/template-contract/create',
+          element: (
+            <UserLayout>
+              <AdminOfficer>
+                <CreateTemplateContract />
+              </AdminOfficer>
+            </UserLayout>
+          )
+        },
+        {
           path: '/view/:id/sign/:customer',
           element: (
             <UserLayout>
               <AdminOfficer>
                 <ViewSignContract />
+              </AdminOfficer>
+            </UserLayout>
+          )
+        },
+        {
+          path: '/view/:id/sign-appendices/:customer',
+          element: (
+            <UserLayout>
+              <AdminOfficer>
+                <ViewSignAppendicesContract />
               </AdminOfficer>
             </UserLayout>
           )
@@ -433,6 +480,16 @@ const Routes = () => {
           )
         },
         {
+          path: '/view/:id/sign-appendices/:customer',
+          element: (
+            <UserLayout>
+              <Sale>
+                <ViewSignAppendicesContract />
+              </Sale>
+            </UserLayout>
+          )
+        },
+        {
           path: '/search/:fieldSearch/:searchText',
           element: (
             <UserLayout>
@@ -448,6 +505,16 @@ const Routes = () => {
             <UserLayout>
               <Sale>
                 <TypeContract />
+              </Sale>
+            </UserLayout>
+          )
+        },
+        {
+          path: '/template-contract/create',
+          element: (
+            <UserLayout>
+              <Sale>
+                <CreateTemplateContract />
               </Sale>
             </UserLayout>
           )
@@ -580,6 +647,14 @@ const Routes = () => {
       element: (
         <div className='w-[100vw] h-[100vh]'>
           <ViewSignContract />
+        </div>
+      )
+    },
+    {
+      path: '/view/:id/sign-appendices/:customer',
+      element: (
+        <div className='w-[100vw] h-[100vh]'>
+          <ViewSignAppendicesContract />
         </div>
       )
     },

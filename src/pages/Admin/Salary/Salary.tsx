@@ -29,6 +29,7 @@ import { listMonth, listYear } from '~/common/utils/formatDate'
 import { formatPrice } from '~/common/utils/formatPrice'
 import { useAuth } from '~/context/authProvider'
 import { ADMIN } from '~/common/const/role'
+import { useNavigate } from 'react-router-dom'
 export interface DataEmployee {
   id?: string
   name?: string
@@ -49,36 +50,20 @@ type FormSearch = {
   month: number
 }
 const Salary = () => {
-  const [isOpen, setIsOpen] = useState(false)
-  const [viewDetail, setViewDetail] = useState(false)
-  const [editModal, setEditModal] = useState(false)
-  const [deleteModal, setDeleteModal] = useState(false)
   const [manageModal, setManageModal] = useState(false)
   const [totalPage, setTotalPage] = useState(1)
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(10)
   const { user } = useAuth()
-  const { errorNotification, successNotification } = useToast()
+  const { errorNotification } = useToast()
   const prevPageRef = useRef(page)
   const prevSizeRef = useRef(size)
-  const [selectedUser, setSelectedUser] = useState<DataEmployee | undefined>(undefined)
-  function closeAllModal() {
-    setDeleteModal(false)
-    setEditModal(false)
-    setViewDetail(false)
-    setSelectedUser(undefined)
-  }
+  const navigate = useNavigate()
   const years = listYear()
   const handlePageChange = (page: any) => {
     setPage(page - 1)
   }
-  function closeModal() {
-    setIsOpen(false)
-  }
 
-  function openModal() {
-    setIsOpen(true)
-  }
   const { handleSubmit, register, getValues, watch } = useForm<FormSearch>({
     defaultValues: { year: new Date().getFullYear(), month: new Date().getMonth() + 1 }
   })
@@ -123,22 +108,6 @@ const Salary = () => {
     }
   }, [page, refetch, size])
 
-  const deleteQuery = useMutation(deleteEmployee, {
-    onSuccess: (data) => {
-      if (data?.code == '00') {
-        successNotification('Xóa người dùng thành công!!!')
-        refetch()
-        closeAllModal()
-      } else errorNotification('Xóa người dùng thất bại')
-    },
-    onError: (error: AxiosError<{ message: string }>) => {
-      errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
-    }
-  })
-
-  const handleDeleteEmployee = async () => {
-    deleteQuery.mutate(selectedUser?.id)
-  }
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex flex-wrap'>
@@ -199,13 +168,23 @@ const Salary = () => {
                 </button>
               </form>
             </div>
-            <button
-              type='button'
-              onClick={() => setManageModal(true)}
-              className='rounded-md flex gap-1 bg-main-color px-4 py-2 text-xs sm:text-sm items-center font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
-            >
-              Quản lí
-            </button>
+            {user?.role == ADMIN ? (
+              <button
+                type='button'
+                onClick={() => navigate('/pay-slip')}
+                className='rounded-md flex gap-1 bg-main-color px-4 py-2 text-xs sm:text-sm items-center font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
+              >
+                Quản lí
+              </button>
+            ) : (
+              <button
+                type='button'
+                onClick={() => setManageModal(true)}
+                className='rounded-md flex gap-1 bg-main-color px-4 py-2 text-xs sm:text-sm items-center font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
+              >
+                Công thức
+              </button>
+            )}
           </div>
 
           <div className='overflow-auto'>
@@ -337,45 +316,7 @@ const Salary = () => {
           )}
         </div>
       </div>
-      <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeModal}>
-          <Transition.Child
-            as={Fragment}
-            enter='ease-out duration-300'
-            enterFrom='opacity-0'
-            enterTo='opacity-100'
-            leave='ease-in duration-200'
-            leaveFrom='opacity-100'
-            leaveTo='opacity-0'
-          >
-            <div className='fixed inset-0 bg-black/25' />
-          </Transition.Child>
 
-          <div className='fixed inset-0 overflow-y-auto'>
-            <div className='flex min-h-full  items-center justify-center p-4 text-center'>
-              <Transition.Child
-                as={Fragment}
-                enter='ease-out duration-300'
-                enterFrom='opacity-0 scale-95'
-                enterTo='opacity-100 scale-100'
-                leave='ease-in duration-200'
-                leaveFrom='opacity-100 scale-100'
-                leaveTo='opacity-0 scale-95'
-              >
-                <Dialog.Panel className='w-[100vw] md:w-[80vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
-                  <div className='flex justify-between mb-2'>
-                    <div className='font-bold'>Thêm mới nhân viên</div>
-                    <div className='flex gap-3 items-center'>
-                      <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeModal()} />
-                    </div>
-                  </div>
-                  <AddNewEmployee closeModal={closeModal} refetch={refetch} />
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
       <Transition appear show={manageModal} as={Fragment}>
         <Dialog as='div' className='relative z-50 w-[90vw]' onClose={() => setManageModal(false)}>
           <Transition.Child
@@ -403,142 +344,12 @@ const Salary = () => {
               >
                 <Dialog.Panel className='w-[100vw] md:w-[80vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
                   <div className='flex justify-between mb-2'>
-                    <div className='font-bold'>Quản lí công thức phiếu lương</div>
+                    <div className='font-bold'>Công thức phiếu lương</div>
                     <div className='flex gap-3 items-center'>
                       <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => setManageModal(false)} />
                     </div>
                   </div>
                   <PaySlipFormula />
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
-      <Transition appear show={viewDetail} as={Fragment}>
-        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeAllModal}>
-          <Transition.Child
-            as={Fragment}
-            enter='ease-out duration-300'
-            enterFrom='opacity-0'
-            enterTo='opacity-100'
-            leave='ease-in duration-200'
-            leaveFrom='opacity-100'
-            leaveTo='opacity-0'
-          >
-            <div className='fixed inset-0 bg-black/25' />
-          </Transition.Child>
-
-          <div className='fixed inset-0 overflow-y-auto'>
-            <div className='flex min-h-full  items-center justify-center p-4 text-center'>
-              <Transition.Child
-                as={Fragment}
-                enter='ease-out duration-300'
-                enterFrom='opacity-0 scale-95'
-                enterTo='opacity-100 scale-100'
-                leave='ease-in duration-200'
-                leaveFrom='opacity-100 scale-100'
-                leaveTo='opacity-0 scale-95'
-              >
-                <Dialog.Panel className='w-[100vw] md:w-[80vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
-                  <div className='flex justify-between mb-2'>
-                    <div className='font-bold'>Thông tin chi tiết</div>
-                    <div className='flex gap-3 items-center'>
-                      <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeAllModal()} />
-                    </div>
-                  </div>
-                  <ViewEmployee data={selectedUser} />
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
-      <Transition appear show={editModal} as={Fragment}>
-        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeAllModal}>
-          <Transition.Child
-            as={Fragment}
-            enter='ease-out duration-300'
-            enterFrom='opacity-0'
-            enterTo='opacity-100'
-            leave='ease-in duration-200'
-            leaveFrom='opacity-100'
-            leaveTo='opacity-0'
-          >
-            <div className='fixed inset-0 bg-black/25' />
-          </Transition.Child>
-
-          <div className='fixed inset-0 overflow-y-auto'>
-            <div className='flex min-h-full  items-center justify-center p-4 text-center'>
-              <Transition.Child
-                as={Fragment}
-                enter='ease-out duration-300'
-                enterFrom='opacity-0 scale-95'
-                enterTo='opacity-100 scale-100'
-                leave='ease-in duration-200'
-                leaveFrom='opacity-100 scale-100'
-                leaveTo='opacity-0 scale-95'
-              >
-                <Dialog.Panel className='w-[100vw] md:w-[80vw] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
-                  <div className='flex justify-between mb-2'>
-                    <div className='font-bold'>Chỉnh sửa thông tin</div>
-                    <div className='flex gap-3 items-center'>
-                      <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeAllModal()} />
-                    </div>
-                  </div>
-
-                  <EditEmployee data={selectedUser} closeModal={closeAllModal} refetch={refetch} />
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
-      <Transition appear show={deleteModal} as={Fragment}>
-        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={closeAllModal}>
-          <Transition.Child
-            as={Fragment}
-            enter='ease-out duration-300'
-            enterFrom='opacity-0'
-            enterTo='opacity-100'
-            leave='ease-in duration-200'
-            leaveFrom='opacity-100'
-            leaveTo='opacity-0'
-          >
-            <div className='fixed inset-0 bg-black/25' />
-          </Transition.Child>
-
-          <div className='fixed inset-0 overflow-y-auto'>
-            <div className='flex min-h-full  items-center justify-center p-4 text-center'>
-              <Transition.Child
-                as={Fragment}
-                enter='ease-out duration-300'
-                enterFrom='opacity-0 scale-95'
-                enterTo='opacity-100 scale-100'
-                leave='ease-in duration-200'
-                leaveFrom='opacity-100 scale-100'
-                leaveTo='opacity-0 scale-95'
-              >
-                <Dialog.Panel className='w-[100vw] md:w-[40vw] md:h-fit transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
-                  <div className='flex justify-between mb-2'>
-                    <div className='font-bold'>Thông báo</div>
-                    <div className='flex gap-3 items-center'>
-                      <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeAllModal()} />
-                    </div>
-                  </div>
-                  <div>
-                    <div>Nhân viên sẽ được xóa khỏi hệ thống. Bạn có chắc chắn với quyết định của mình?</div>
-                    <div className='w-full flex justify-end mt-6'>
-                      <button
-                        type='button'
-                        className='middle  none center mr-4 rounded-lg bg-red-500 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#ff00002f] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
-                        data-ripple-light='true'
-                        onClick={handleDeleteEmployee}
-                      >
-                        {deleteQuery.isLoading ? <LoadingIcon /> : 'Xóa'}
-                      </button>
-                    </div>
-                  </div>
                 </Dialog.Panel>
               </Transition.Child>
             </div>

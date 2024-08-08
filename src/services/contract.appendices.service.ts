@@ -6,11 +6,8 @@ type SignRequest = {
   createdBy: string
   customer: boolean
 }
-export const getAppendicesContactAll = async (id: string, page: number, size: number) => {
-  console.log(id)
-  console.log(page)
-  console.log(size)
-  const response = await axiosInstant.get(`api/contract-appendices/contractId/${id}/${page}/${size}`)
+export const getAppendicesContactAll = async (id: string, page: number, size: number, status: string) => {
+  const response = await axiosInstant.get(`api/contract-appendices/${page}/${size}?contractId=${id}&status=${status}`)
   return response.data
 }
 
@@ -36,7 +33,7 @@ export const getNewContractById = async (id: any) => {
   return response.data
 }
 export const getNewContractByIdNotToken = async (id: any) => {
-  const response = await axiosInstant.get(`contract/public/sign-contract/${id}`)
+  const response = await axiosInstant.get(`api/contract-appendices/public/sign-contract-appendices/${id}`)
   return response.data
 }
 
@@ -63,6 +60,6 @@ export const getSearchContract = async ({ fieldSearch, data }: any) => {
   return response.data
 }
 export const signContract = async (data: SignRequest) => {
-  const response = await axiosInstant.post(`contract/public/sign-contract`, data)
+  const response = await axiosInstant.post(`api/contract-appendices/public/sign-contract-appendices`, data)
   return response.data
 }

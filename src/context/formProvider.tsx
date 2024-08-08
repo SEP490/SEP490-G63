@@ -69,7 +69,10 @@ const FormProvider: React.FC<Props> = ({ children }) => {
     }
   })
 
-  const contextValue = useMemo(() => ({ listData: data, addNewData, loading: dataQuery.isLoading }), [data])
+  const contextValue = useMemo(
+    () => ({ listData: data, addNewData, loading: dataQuery.isLoading }),
+    [data, dataQuery.isLoading]
+  )
 
   return (
     <>

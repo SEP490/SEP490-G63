@@ -141,7 +141,7 @@ const Contract = () => {
       errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
     }
   })
- 
+
   const actionSale: ActionType[] = [
     {
       id: 1,
@@ -181,7 +181,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-blue-700',
-      disable: (d: any) => false,
+      disable: (d: any) => d?.status != 'SUCCESS',
       callback: (d: any) => {
         navigate(`/appendices/${d.id}`)
       }
@@ -270,7 +270,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-blue-700',
-      disable: (d: any) => false,
+      disable: (d: any) => d?.status != 'SUCCESS',
       callback: (d: any) => {
         navigate(`/appendices/${d.id}`)
       }
@@ -343,7 +343,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-blue-700',
-      disable: (d: any) => false,
+      disable: (d: any) => d?.status != 'SUCCESS',
       callback: (d: any) => {
         navigate(`/appendices/${d.id}`)
       }
@@ -717,8 +717,9 @@ const Contract = () => {
                           <div
                             className='cursor-pointer text-blue-500 hover:underline'
                             onClick={() => {
-                              setSelectedContract(d)
-                              setOpenModal(true)
+                              // setSelectedContract(d)
+                              // setOpenModal(true)
+                              navigate(`/contract/detail/${d?.id}`)
                             }}
                           >
                             Xem

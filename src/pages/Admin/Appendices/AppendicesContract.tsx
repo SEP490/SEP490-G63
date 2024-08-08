@@ -28,7 +28,6 @@ import { useAuth } from '~/context/authProvider'
 import { permissionObject } from '~/common/const/permissions'
 import { ADMIN } from '~/common/const/role'
 import UrgentIcon from '~/assets/svg/urgentIcon'
-import SendMailUpdateStatus from '~/components/Admin/NewContract/SendMailUpdateSatatus'
 import { Tooltip } from 'flowbite-react'
 import { AiOutlineFileDone } from 'react-icons/ai'
 import { FaClock, FaUserCheck, FaUserClock, FaUserTimes } from 'react-icons/fa'
@@ -37,7 +36,8 @@ import { HiMiniDocumentCheck } from 'react-icons/hi2'
 import LoadingIcon from '~/assets/LoadingIcon'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import ContractHistory from '../ContractHistory'
-import { getNewContractById } from '~/services/contract.appendices.service'
+import { getAppendicesContactAll, getNewContractById } from '~/services/contract.appendices.service'
+import SendMailUpdateStatus from '~/components/Admin/Appendices/SendMailUpdateStatus'
 export interface DataContract {
   id: string
   file: string
@@ -123,8 +123,8 @@ const AppendicesContract = () => {
   }
 
   const { data, isLoading, refetch, isFetching } = useQuery(
-    ['new-contract', user?.id, statusContract?.status],
-    () => getNewContract(page, size, statusContract?.status as string),
+    ['contract-appendices', user?.id, statusContract?.status],
+    () => getAppendicesContactAll(id as string, page, size, statusContract?.status as string),
     {
       onSuccess: (response) => {
         setTotalPage(response?.object?.totalPages)
@@ -167,19 +167,6 @@ const AppendicesContract = () => {
         setSelectedContract(d)
         setStatus(7)
         setChangeStatus(true)
-      }
-    },
-    {
-      id: 3,
-      title: (
-        <>
-          <DocumentPlusIcon className='h-5' /> Phụ lục hợp đồng
-        </>
-      ),
-      color: 'text-blue-700',
-      disable: (d: any) => false,
-      callback: (d: any) => {
-        navigate(`/appendices/${d.id}`)
       }
     },
     {
@@ -259,19 +246,6 @@ const AppendicesContract = () => {
       }
     },
     {
-      id: 3,
-      title: (
-        <>
-          <DocumentPlusIcon className='h-5' /> Phụ lục hợp đồng
-        </>
-      ),
-      color: 'text-blue-700',
-      disable: (d: any) => false,
-      callback: (d: any) => {
-        navigate(`/appendices/${d.id}`)
-      }
-    },
-    {
       id: 5,
       title: (
         <>
@@ -312,7 +286,7 @@ const AppendicesContract = () => {
       disable: (d: any) =>
         (!d?.canSign && user?.email != d.createdBy) || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
       callback: (d: any) => {
-        navigate(`/view/${d?.id}/sign/1`)
+        navigate(`/view/${d?.id}/sign-appendices/1`)
       }
     },
     {
@@ -329,19 +303,6 @@ const AppendicesContract = () => {
         setSelectedContract(d)
         setStatus(6)
         setChangeStatus(true)
-      }
-    },
-    {
-      id: 3,
-      title: (
-        <>
-          <DocumentPlusIcon className='h-5' /> Phụ lục hợp đồng
-        </>
-      ),
-      color: 'text-blue-700',
-      disable: (d: any) => false,
-      callback: (d: any) => {
-        navigate(`/appendices/${d.id}`)
       }
     },
     {
@@ -654,7 +615,7 @@ const AppendicesContract = () => {
                           className={`px-3 py-4 font-semibold ${statusObject[d.statusCurrent]?.color}`}
                           align='center'
                         >
-                          {d.statusCurrent ? statusObject[d.statusCurrent]?.title : ''}
+                          {d.statusCurrent ? statusObject[d.statusCurrent]?.title?.[permissionUser] : ''}
                         </td>
                         <td className='px-3 py-4' align='center'>
                           <div
@@ -772,7 +733,7 @@ const AppendicesContract = () => {
                     status={status}
                     closeModal={handleCloseModal}
                     refetch={refetch}
-                    dataC={selectedContract}
+                    dataC={dataContract?.object}
                   />
                 </Dialog.Panel>
               </Transition.Child>

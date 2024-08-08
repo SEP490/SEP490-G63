@@ -4,11 +4,8 @@ import { Label } from 'react-konva'
 import { useQuery } from 'react-query'
 import { Navigate, useLocation, useParams } from 'react-router-dom'
 import { Fragment } from 'react/jsx-runtime'
-import RejectSignContract from '~/components/Admin/NewContract/RejectSignContract'
-import SignContract from '~/components/Admin/NewContract/SignContract'
 import ViewContract from '~/components/Admin/NewContract/ViewContract'
 import { getOptMail, verifyOtp } from '~/services/auth-sign-contract.service'
-import { getNewContractByIdNotToken } from '~/services/contract.service'
 import logo from '../../assets/svg/Tdocman.svg'
 import { useForm } from 'react-hook-form'
 import useToast from '~/hooks/useToast'
@@ -16,11 +13,14 @@ import { useAuth } from '~/context/authProvider'
 import { ADMIN, USER } from '~/common/const/role'
 import Loading from '~/components/shared/Loading/Loading'
 import { permissionObject } from '~/common/const/permissions'
+import { getNewContractByIdNotToken } from '~/services/contract.appendices.service'
+import SignContract from '~/components/Admin/Appendices/SignContract'
+import RejectSignContract from '~/components/Admin/Appendices/RejectSignContract'
 type FormType = {
   email: string
   code: number
 }
-const ViewSignContract = () => {
+const ViewSignAppendicesContract = () => {
   const [modalSign, setModalSign] = useState(false)
   const [modalReject, setModalReject] = useState(false)
   const { id, customer } = useParams()
@@ -29,7 +29,7 @@ const ViewSignContract = () => {
   const [checkAuth, setCheckAuth] = useState<any>(() => customer == '2')
   const { successNotification, errorNotification } = useToast()
   const commentRef = useRef<any>('')
-  const { data, refetch, isFetching, isLoading } = useQuery('detail-contract-public', () =>
+  const { data, refetch, isFetching, isLoading } = useQuery('detail-appendices-public', () =>
     getNewContractByIdNotToken(id)
   )
   const {
@@ -55,7 +55,7 @@ const ViewSignContract = () => {
     const result = await trigger('email')
     if (result) {
       try {
-        const response = await getOptMail(getValues('email'), id, 'contract')
+        const response = await getOptMail(getValues('email'), id, 'appendices')
         if (response.code == '00') {
           successNotification('Gửi mã thành công, hãy kiểm tra hòm thư!')
         } else errorNotification('Email của bạn không khớp đúng thông tin trong hợp đồng')
@@ -265,4 +265,4 @@ const ViewSignContract = () => {
     </div>
   )
 }
-export default ViewSignContract
+export default ViewSignAppendicesContract
