@@ -28,7 +28,7 @@ const PaySlipFormula = () => {
   const [createModal, setCreateModal] = useState(false)
   const [updateModal, setUpdateModal] = useState(false)
   const [deleteModal, setDeleteModal] = useState(false)
-  const [selected, setSelected] = useState(null)
+  const [selected, setSelected] = useState<any>(null)
   const { errorNotification, successNotification } = useToast()
 
   const { data, isLoading, refetch, isFetching } = useQuery(['pay-slip'], () => getPaySlipFormula())
