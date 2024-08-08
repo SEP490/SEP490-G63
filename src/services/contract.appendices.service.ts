@@ -33,7 +33,7 @@ export const getNewContractById = async (id: any) => {
   return response.data
 }
 export const getNewContractByIdNotToken = async (id: any) => {
-  const response = await axiosInstant.get(`contract/public/sign-contract/${id}`)
+  const response = await axiosInstant.get(`api/contract-appendices/public/sign-contract-appendices/${id}`)
   return response.data
 }
 
@@ -60,6 +60,6 @@ export const getSearchContract = async ({ fieldSearch, data }: any) => {
   return response.data
 }
 export const signContract = async (data: SignRequest) => {
-  const response = await axiosInstant.post(`contract/public/sign-contract`, data)
+  const response = await axiosInstant.post(`api/contract-appendices/public/sign-contract-appendices`, data)
   return response.data
 }

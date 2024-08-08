@@ -286,7 +286,7 @@ const AppendicesContract = () => {
       disable: (d: any) =>
         (!d?.canSign && user?.email != d.createdBy) || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
       callback: (d: any) => {
-        navigate(`/view/${d?.id}/sign/1`)
+        navigate(`/view/${d?.id}/sign-appendices/1`)
       }
     },
     {
