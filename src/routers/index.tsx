@@ -33,6 +33,8 @@ import Department from '~/pages/Admin/Department/Department.tsx'
 import FormProvider from '~/context/formProvider.tsx'
 import CreateTemplateContract from '~/components/Admin/TemplateContract/CreateTemplateContract.tsx'
 import ViewSignAppendicesContract from '~/pages/BasePage/ViewSignAppendicesContract.tsx'
+import ViewDetailContract from '~/components/Admin/NewContract/ViewDetailContract.tsx'
+import PaySlipFormula from '~/pages/Admin/Salary/PaySlipFormula.tsx'
 
 const Routes = () => {
   const { token, user } = useAuth()
@@ -152,6 +154,22 @@ const Routes = () => {
           element: (
             <AdminLayout>
               <Contract />
+            </AdminLayout>
+          )
+        },
+        {
+          path: '/pay-slip',
+          element: (
+            <AdminLayout>
+              <PaySlipFormula />
+            </AdminLayout>
+          )
+        },
+        {
+          path: '/contract/detail/:id',
+          element: (
+            <AdminLayout>
+              <ViewDetailContract />
             </AdminLayout>
           )
         },
