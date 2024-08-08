@@ -103,7 +103,7 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC }: IProps
     const htmlContent = editorData
     formData.append(
       'htmlContent',
-      htmlContent + (status == 7 ? `<a href="${BASE_URL_FE}view/${id}/sign/2">Ký ngay</a>` : '')
+      htmlContent + (status == 7 ? `<a href="${BASE_URL_FE}view/${id}/sign-appendices/2">Ký ngay</a>` : '')
     )
     formData.append('contractId ', id as string)
     formData.append('attachments', contractFile.current, `${dataContract?.object?.name}.pdf`)

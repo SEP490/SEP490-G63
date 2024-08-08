@@ -55,7 +55,7 @@ const ViewSignContract = () => {
     const result = await trigger('email')
     if (result) {
       try {
-        const response = await getOptMail(getValues('email'), id)
+        const response = await getOptMail(getValues('email'), id, 'contract')
         if (response.code == '00') {
           successNotification('Gửi mã thành công, hãy kiểm tra hòm thư!')
         } else errorNotification('Email của bạn không khớp đúng thông tin trong hợp đồng')
