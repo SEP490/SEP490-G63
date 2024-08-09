@@ -136,11 +136,7 @@ const Contract = () => {
     data: dataNumber,
     isLoading: loadingNumber,
     refetch: refetchNumber
-  } = useQuery('number-contract', managerCount, {
-    onError: (error: AxiosError<{ message: string }>) => {
-      errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
-    }
-  })
+  } = useQuery('number-contract', managerCount)
 
   const actionSale: ActionType[] = [
     {
@@ -655,7 +651,8 @@ const Contract = () => {
               className={`cursor-pointer flex justify-between items-center text-xs sm:text-sm md:text-md h-[30px] px-3 py-1 ${statusContract?.id == t.id ? 'bg-main-color text-white' : 'text-black'} hover:bg-hover-main hover:text-white`}
               onClick={() => setStatusContract(t)}
             >
-              {t?.title} {loadingNumber ? <LoadingIcon /> : dataNumber?.object?.[t.number]}
+              {t?.title}{' '}
+              {loadingNumber ? <LoadingIcon /> : dataNumber?.object?.[t.number] ? dataNumber?.object?.[t.number] : 0}
             </div>
           ))}
         </div>
@@ -882,7 +879,7 @@ const Contract = () => {
                             leaveFrom='opacity-100'
                             leaveTo='opacity-0'
                           >
-                            <Listbox.Options className='absolute mt-1 w-[40vw] md:w-[30vw] right-0 bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm'>
+                            <Listbox.Options className='absolute mt-1 w-[40vw] md:w-[40vw] right-0 bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm'>
                               <Listbox.Option
                                 key='history'
                                 className={({ active }) =>

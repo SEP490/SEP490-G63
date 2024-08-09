@@ -541,7 +541,7 @@ const AppendicesContract = () => {
     <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex gap-3 justify-between w-full py-3 h-[60px] px-3'>
         <div className='text-[23px] w-full'>
-          Phụ lúc hợp đồng cho hợp đồng: <span className='font-bold'>{dataContract?.object?.name}</span> số:{' '}
+          Phụ lục hợp đồng cho hợp đồng: <span className='font-bold'>{dataContract?.object?.name}</span> số:{' '}
           <span className='font-bold'>{dataContract?.object?.number}</span>
         </div>
         <button

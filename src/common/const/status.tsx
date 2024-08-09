@@ -94,6 +94,52 @@ export const statusObject = {
     color: 'text-black'
   }
 }
+export const statusObjectHistory = {
+  NEW: {
+    title: 'Tạo mới',
+    color: 'text-blue-500'
+  },
+  WAIT_APPROVE: {
+    title: 'Yêu cầu duyệt',
+    color: 'text-yellow-500'
+  },
+  APPROVED: {
+    title: 'Xác nhận duyệt',
+    color: 'text-yellow-500'
+  },
+  APPROVE_FAIL: {
+    title: 'Từ chối duyệt',
+    color: 'text-red-500'
+  },
+  WAIT_SIGN_A: {
+    title: 'Chờ sếp ký',
+    color: 'text-yellow-500'
+  },
+  SIGN_A: {
+    title: 'Đã ký',
+    color: 'text-green-500'
+  },
+  SIGN_A_FAIL: {
+    title: 'Từ chối ký',
+    color: 'text-red-500'
+  },
+  WAIT_SIGN_B: {
+    title: 'Chờ khách ký',
+    color: 'text-yellow-500'
+  },
+  SIGN_B: {
+    title: 'Đã ký',
+    color: 'text-green-500'
+  },
+  SIGN_B_FAIL: {
+    title: 'Từ chối ký',
+    color: 'text-red-500'
+  },
+  SUCCESS: {
+    title: 'Hoàn thành',
+    color: 'text-black'
+  }
+}
 export const statusRequest: any = {
   1: {
     status: 'WAIT_APPROVE',

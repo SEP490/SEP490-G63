@@ -78,6 +78,7 @@ const CreateTemplateContract = () => {
     onSuccess: (response) => {
       if (response.success && response.code == '00') {
         successNotification('Tạo mẫu hợp đồng thành công')
+        navigate('/template-contract')
       } else errorNotification('Tạo mới mẫu hợp đồng thất bại')
     }
   })
@@ -453,6 +454,7 @@ const CreateTemplateContract = () => {
         <div className='w-full flex justify-end'>
           <button
             type='button'
+            disabled={createTemplateContractQuery?.isLoading}
             onClick={async () => {
               const result = await trigger()
 

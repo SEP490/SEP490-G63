@@ -22,7 +22,8 @@ interface CompanyInfo {
 }
 const CompanyInformation = () => {
   const { successNotification, errorNotification } = useToast()
-  const { register, reset, handleSubmit, formState } = useForm<CompanyInfo>()
+  const { user } = useAuth()
+  const { register, reset, handleSubmit, formState } = useForm<CompanyInfo>({ defaultValues: { email: user?.email } })
   const updateNewParty = useMutation(createParty, {
     onError: (error: AxiosError<{ message: string }>) => {
       errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
