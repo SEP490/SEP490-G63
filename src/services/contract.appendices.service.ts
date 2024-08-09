@@ -29,7 +29,7 @@ export const getNewContract = async (page: number, size: number, statusContract:
   return response.data
 }
 export const getNewContractById = async (id: any) => {
-  const response = await axiosInstant.get(`contract/${id}`)
+  const response = await axiosInstant.get(`api/contract-appendices/${id}`)
   return response.data
 }
 export const getNewContractByIdNotToken = async (id: any) => {

@@ -1,7 +1,6 @@
 import { Fragment, useMemo, useRef, useState } from 'react'
 import ComboboxMail from '~/components/Admin/SendMail/ComboboxMail'
 import uploadIcon from '~/assets/images/uploadpdf.png'
-import { getNewContractById, sendMail } from '~/services/contract.service'
 import useToast from '~/hooks/useToast'
 import { BASE_URL_FE } from '~/common/const'
 import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
@@ -11,7 +10,7 @@ import { useQuery } from 'react-query'
 import { getUserByPermission } from '~/services/user.service'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
-import { sendMailApp } from '~/services/contract.appendices.service'
+import { getNewContractById, sendMailApp } from '~/services/contract.appendices.service'
 type IProps = { id: string | undefined; status: number; closeModal: any; refetch: any; dataC: any }
 const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC }: IProps) => {
   const [selectedFiles, setSelectedFiles] = useState<any[]>([])
@@ -105,7 +104,7 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC }: IProps
       'htmlContent',
       htmlContent + (status == 7 ? `<a href="${BASE_URL_FE}view/${id}/sign-appendices/2">Ký ngay</a>` : '')
     )
-    formData.append('contractId ', id as string)
+    formData.append('contractId', id as string)
     formData.append('attachments', contractFile.current, `${dataContract?.object?.name}.pdf`)
     selectedFiles.forEach((file) => {
       formData.append('attachments', file)

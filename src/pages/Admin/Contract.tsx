@@ -637,13 +637,15 @@ const Contract = () => {
             </button>
           </form>
         </div>
-        <button
-          type='button'
-          onClick={() => navigate('create')}
-          className='rounded-md shadow-md flex gap-1 items-center bg-main-color px-4 py-2 text-xs sm:text-sm font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
-        >
-          <PlusIcon className='h-5 w-5' /> Tạo mới
-        </button>
+        {permissionUser == 'SALE' && (
+          <button
+            type='button'
+            onClick={() => navigate('create')}
+            className='rounded-md shadow-md flex gap-1 items-center bg-main-color px-4 py-2 text-xs sm:text-sm font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
+          >
+            <PlusIcon className='h-5 w-5' /> Tạo mới
+          </button>
+        )}
       </div>
       <div className='flex h-[calc(100%-70px)] flex-col gap-2 md:flex-row justify-start sm:justify-between px-3'>
         <div className='flex gap-2 md:flex-col w-full h-fit md:h-full md:w-[15%] bg-white shadow-md overflow-auto'>
@@ -717,9 +719,9 @@ const Contract = () => {
                           <div
                             className='cursor-pointer text-blue-500 hover:underline'
                             onClick={() => {
-                              // setSelectedContract(d)
-                              // setOpenModal(true)
-                              navigate(`/contract/detail/${d?.id}`)
+                              setSelectedContract(d)
+                              setOpenModal(true)
+                              // navigate(`/contract/detail/${d?.id}`)
                             }}
                           >
                             Xem

@@ -35,6 +35,7 @@ import CreateTemplateContract from '~/components/Admin/TemplateContract/CreateTe
 import ViewSignAppendicesContract from '~/pages/BasePage/ViewSignAppendicesContract.tsx'
 import ViewDetailContract from '~/components/Admin/NewContract/ViewDetailContract.tsx'
 import PaySlipFormula from '~/pages/Admin/Salary/PaySlipFormula.tsx'
+import CompanyInformation from '~/components/Company/CompanyInformation.tsx'
 
 const Routes = () => {
   const { token, user } = useAuth()
@@ -154,6 +155,14 @@ const Routes = () => {
           element: (
             <AdminLayout>
               <Contract />
+            </AdminLayout>
+          )
+        },
+        {
+          path: '/company',
+          element: (
+            <AdminLayout>
+              <CompanyInformation />
             </AdminLayout>
           )
         },

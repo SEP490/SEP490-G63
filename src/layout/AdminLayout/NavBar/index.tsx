@@ -8,7 +8,8 @@ import {
   EllipsisVerticalIcon,
   XMarkIcon,
   KeyIcon,
-  InformationCircleIcon
+  InformationCircleIcon,
+  BuildingOfficeIcon
 } from '@heroicons/react/24/outline'
 import avatar from '../../../assets/images/avatar1.png'
 import useViewport from '~/hooks/useViewport'
@@ -327,7 +328,7 @@ const NavBar = () => {
                       }}
                       title={user?.name}
                     />
-                    <label className='font-bold cursor-pointer flex items-center gap-1 max-w-[120px] truncate ...'>
+                    <label className='font-bold cursor-pointer flex items-center gap-1 max-w-[180px] truncate ...'>
                       {user?.name}
                     </label>
                   </div>
@@ -344,6 +345,19 @@ const NavBar = () => {
                 leaveTo='transform opacity-0 scale-95'
               >
                 <Menu.Items className='absolute right-0  z-50 mt-2 w-[180px] origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
+                  <Menu.Item>
+                    {({ active }) => (
+                      <button
+                        title='Sửa thông tin'
+                        onClick={() => navigate('/company')}
+                        className={`${
+                          active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                        } group flex w-full items-center gap-3 rounded-md px-2 py-1 text-sm `}
+                      >
+                        <BuildingOfficeIcon className='h-5' /> Thông tin công ty
+                      </button>
+                    )}
+                  </Menu.Item>
                   <Menu.Item>
                     {({ active }) => (
                       <button

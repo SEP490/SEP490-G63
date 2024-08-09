@@ -14,7 +14,7 @@ import {
   DocumentPlusIcon
 } from '@heroicons/react/24/outline'
 import { useNavigate, useParams } from 'react-router-dom'
-import { deleteNewContract, getNewContract } from '~/services/contract.service'
+import { deleteNewContract, getNewContract, getNewContractById } from '~/services/contract.service'
 import DocumentIcon from '~/assets/svg/document'
 import Pagination from '~/components/BaseComponent/Pagination/Pagination'
 import Loading from '~/components/shared/Loading/Loading'
@@ -36,7 +36,7 @@ import { HiMiniDocumentCheck } from 'react-icons/hi2'
 import LoadingIcon from '~/assets/LoadingIcon'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import ContractHistory from '../ContractHistory'
-import { getAppendicesContactAll, getNewContractById } from '~/services/contract.appendices.service'
+import { deleteAppendices, getAppendicesContactAll } from '~/services/contract.appendices.service'
 import SendMailUpdateStatus from '~/components/Admin/Appendices/SendMailUpdateStatus'
 export interface DataContract {
   id: string
@@ -298,7 +298,10 @@ const AppendicesContract = () => {
       ),
       color: 'text-orange-700',
       disable: (d: any) =>
-        (!d?.canSign && user?.email == d.createdBy) || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
+        (!d?.canRejectSign && user?.email != d.createdBy) ||
+        (!d?.canSign && user?.email == d.createdBy) ||
+        d?.status == 'SUCCESS' ||
+        d?.statusCurrent == 'SUCCESS',
       callback: (d: any) => {
         setSelectedContract(d)
         setStatus(6)
@@ -512,7 +515,7 @@ const AppendicesContract = () => {
     OFFICE_ADMIN: adminOfficeContract,
     OFFICE_STAFF: []
   }
-  const deleteTemplate = useMutation(deleteNewContract, {
+  const deleteTemplate = useMutation(deleteAppendices, {
     onSuccess: () => {
       successNotification('Xóa thành công!')
       handleCloseModal()
