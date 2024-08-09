@@ -13,12 +13,12 @@ const permissions = [
       'Nhân viên Sale có các chức năng như tạo mới hợp đồng,\n tải lên hợp đồng cũ, gửi hợp đồng cho khách hàng, gửi lên cho hành chính văn phòng yêu cầu duyệt hợp đồng',
     value: 'SALE'
   },
-  {
-    id: 2,
-    title: 'ADMIN CLIENT',
-    tooltip: 'PERMISSION MANAGER',
-    value: 'MANAGER'
-  },
+  // {
+  //   id: 2,
+  //   title: 'ADMIN CLIENT',
+  //   tooltip: 'PERMISSION MANAGER',
+  //   value: 'MANAGER'
+  // },
   {
     id: 3,
     title: 'OFFICER ADMIN',

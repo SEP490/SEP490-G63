@@ -4,12 +4,13 @@ import '../../../styles/suneditor.css'
 import useToast from '~/hooks/useToast'
 import { useNavigate } from 'react-router-dom'
 import { SetStateAction, useEffect, useState } from 'react'
-import { useMutation } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 import { updateTemplateContract } from '~/services/template-contract.service'
 import { AxiosError } from 'axios'
 import { VietQR } from 'vietqr'
 import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
 import LoadingIcon from '~/assets/LoadingIcon'
+import { getParty } from '~/services/party.service'
 interface FormType {
   nameContract: string
   numberContract: string
@@ -24,6 +25,18 @@ interface FormType {
   bankAccOwer: string
   email: string
 }
+interface CompanyInfo {
+  name: string
+  email: string
+  address: string
+  taxNumber: string
+  presenter: string
+  position: string
+  businessNumber: string
+  bankId: string
+  bankName: string
+  bankAccOwer: string
+}
 
 const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: any) => {
   const {
@@ -32,7 +45,7 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
     handleSubmit,
     formState: { errors }
   } = useForm<FormType>({ defaultValues: selectedContract })
-
+  const formInfoPartA = useForm<CompanyInfo>({ mode: 'onBlur' })
   const { successNotification, errorNotification } = useToast()
   const navigate = useNavigate()
   const updateTemplate = useMutation(updateTemplateContract, {
@@ -63,7 +76,13 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
         console.error('Error fetching banks:', err)
       })
   }, [])
-
+  useQuery('party-data', getParty, {
+    onSuccess: (response) => {
+      if (response.object) {
+        formInfoPartA.reset(response.object)
+      }
+    }
+  })
   const onSubmit = async () => {
     const rule: any = document.getElementsByName('rule')[0]
     const term: any = document.getElementsByName('term')[0]
@@ -147,7 +166,7 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             placeholder='Nhập mã số thuế'
             disabled
             hidden
-            {...register('taxNumber', {
+            {...formInfoPartA.register('taxNumber', {
               required: 'Mã số thuế không được để trống'
             })}
           />
@@ -165,7 +184,7 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             placeholder='Nhập tên công ty'
             disabled
             hidden
-            {...register('name', {
+            {...formInfoPartA.register('name', {
               required: 'Tên công ty không được để trống'
             })}
           />
@@ -183,7 +202,7 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             placeholder='Nhập email công ty'
             disabled
             hidden
-            {...register('email', {
+            {...formInfoPartA.register('email', {
               required: 'Email công ty không được để trống'
             })}
           />
@@ -201,7 +220,7 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             placeholder='Nhập địa chỉ công ty'
             disabled
             hidden
-            {...register('address', {
+            {...formInfoPartA.register('address', {
               required: 'Mã số thuế không được để trống'
             })}
           />
@@ -220,7 +239,7 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             placeholder='Nhập tên người đại diện'
             disabled
             hidden
-            {...register('presenter', {
+            {...formInfoPartA.register('presenter', {
               required: 'Người đại diện không được để trống'
             })}
           />
@@ -238,7 +257,7 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             placeholder='Nhập vị trí làm việc'
             disabled
             hidden
-            {...register('position', {
+            {...formInfoPartA.register('position', {
               required: 'Vị trí làm việc không được để trống'
             })}
           />
@@ -256,7 +275,7 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             placeholder='Nhập thông tin'
             disabled
             hidden
-            {...register('businessNumber', {
+            {...formInfoPartA.register('businessNumber', {
               required: 'Giấy phép ĐKKD không được để trống'
             })}
           />
@@ -274,7 +293,7 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             placeholder='Nhập STK'
             disabled
             hidden
-            {...register('bankId', {
+            {...formInfoPartA.register('bankId', {
               required: 'STK không được để trống'
             })}
           />
@@ -287,7 +306,7 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             Tên ngân hàng<sup className='text-red-500'>*</sup>
           </label>
           <select
-            {...register('bankName')}
+            {...formInfoPartA.register('bankName')}
             disabled
             hidden
             className='block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
@@ -314,7 +333,7 @@ const EditTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             disabled
             hidden
             placeholder='Nhập tên tài khoản ngân hàng'
-            {...register('bankAccOwer', {
+            {...formInfoPartA.register('bankAccOwer', {
               required: 'Tên tài khoản không được để trống'
             })}
           />

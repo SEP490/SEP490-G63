@@ -233,8 +233,9 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
             Tên công ty<sup className='text-red-500'>*</sup>
           </label>
           <input
-            className={`${formInfoPartA.formState.errors.name ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            className={`${formInfoPartA.formState.errors.name ? 'ring-red-600' : ''} disabled:bg-gray-200 block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled
             placeholder='Nhập tên công ty'
             {...formInfoPartA.register('name', {
               required: 'Tên công ty không được để trống'
@@ -252,8 +253,9 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
           </label>
           <input
             onInput={(event) => validateEmailDebounced((event.target as HTMLInputElement).value)}
-            className={`${formInfoPartA.formState.errors.email ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            className={`${formInfoPartA.formState.errors.email ? 'ring-red-600' : ''} disabled:bg-gray-200 block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled
             placeholder='Nhập email công ty'
             {...formInfoPartA.register('email', {
               required: 'Email công ty không được để trống'
@@ -270,8 +272,9 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
             Địa chỉ<sup className='text-red-500'>*</sup>
           </label>
           <input
-            className={`${formInfoPartA.formState.errors.address ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            className={`${formInfoPartA.formState.errors.address ? 'ring-red-600' : ''} disabled:bg-gray-200 block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled
             placeholder='Nhập địa chỉ công ty'
             {...formInfoPartA.register('address', {
               required: 'Mã số thuế không được để trống'
@@ -288,8 +291,9 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
             Mã số thuế<sup className='text-red-500'>*</sup>
           </label>
           <input
-            className={`${formInfoPartA.formState.errors.taxNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            className={`${formInfoPartA.formState.errors.taxNumber ? 'ring-red-600' : ''} disabled:bg-gray-200 block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled
             placeholder='Nhập mã số thuế'
             {...formInfoPartA.register('taxNumber', {
               required: 'Mã số thuế không được để trống'
@@ -306,8 +310,9 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
             Người đại diện<sup className='text-red-500'>*</sup>
           </label>
           <input
-            className={`${formInfoPartA.formState.errors.presenter ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            className={`${formInfoPartA.formState.errors.presenter ? 'ring-red-600' : ''} disabled:bg-gray-200 block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled
             placeholder='Nhập tên người đại diện'
             {...formInfoPartA.register('presenter', {
               required: 'Người đại diện không được để trống'
@@ -324,8 +329,9 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
             Chức vụ<sup className='text-red-500'>*</sup>
           </label>
           <input
-            className={`${formInfoPartA.formState.errors.position ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            className={`${formInfoPartA.formState.errors.position ? 'ring-red-600' : ''} disabled:bg-gray-200 block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled
             placeholder='Nhập vị trí làm việc'
             {...formInfoPartA.register('position', {
               required: 'Vị trí làm việc không được để trống'
@@ -342,8 +348,9 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
             Giấy phép đăng ký kinh doanh<sup className='text-red-500'>*</sup>
           </label>
           <input
-            className={`${formInfoPartA.formState.errors.businessNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            className={`${formInfoPartA.formState.errors.businessNumber ? 'ring-red-600' : ''} disabled:bg-gray-200 block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled
             placeholder='Nhập thông tin'
             {...formInfoPartA.register('businessNumber', {
               required: 'Giấy phép ĐKKD không được để trống'
@@ -361,8 +368,9 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
           </label>
           <input
             onInput={(e: any) => setAccountNumberA(e.target.value)}
-            className={`${formInfoPartA.formState.errors.bankId ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            className={`${formInfoPartA.formState.errors.bankId ? 'ring-red-600' : ''} disabled:bg-gray-200 block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled
             placeholder='Nhập STK'
             {...formInfoPartA.register('bankId', {
               required: 'STK không được để trống'
@@ -388,13 +396,16 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
           /> */}
           <select
             {...formInfoPartA.register('bankName')}
-            className='block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+            disabled
+            className='block disabled:bg-gray-200 w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
           >
-            {banks.map((bank: { id: number; code: string; shortName: string; logo: string; bin: string }) => (
-              <option key={bank.id} value={bank.shortName}>
-                {bank.shortName}
-              </option>
-            ))}
+            {banks.map(
+              (bank: { id: number; code: string; shortName: string; logo: string; bin: string; name: string }) => (
+                <option key={bank.id} value={bank.bin}>
+                  {bank.shortName} - {bank.name}
+                </option>
+              )
+            )}
           </select>
           <div
             className={`text-red-500 absolute text-[12px] ${formInfoPartA.formState.errors.bankName ? 'visible' : 'invisible'}`}
@@ -407,8 +418,9 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
             Chủ tài khoản<sup className='text-red-500'>*</sup>
           </label>
           <input
-            className={`${formInfoPartA.formState.errors.bankAccOwer ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            className={`${formInfoPartA.formState.errors.bankAccOwer ? 'ring-red-600' : ''} disabled:bg-gray-200 block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled
             placeholder='Nhập tên tài khoản ngân hàng'
             {...formInfoPartA.register('bankAccOwer', {
               required: 'Tên tài khoản không được để trống'
@@ -427,8 +439,9 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
             Tên công ty<sup className='text-red-500'>*</sup>
           </label>
           <input
-            className={`${formInfoPartB.formState.errors.name ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            className={`${formInfoPartB.formState.errors.name ? 'ring-red-600' : ''} disabled:bg-gray-200 block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled
             placeholder='Nhập tên công ty'
             {...formInfoPartB.register('name', {
               required: 'Tên công ty không được để trống'
@@ -446,8 +459,9 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
           </label>
           <input
             onInput={(event) => validateEmailDebounced((event.target as HTMLInputElement).value)}
-            className={`${formInfoPartB.formState.errors.email ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            className={`${formInfoPartB.formState.errors.email ? 'ring-red-600' : ''} disabled:bg-gray-200 block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled
             placeholder='Nhập email công ty'
             {...formInfoPartB.register('email', {
               required: 'Email công ty không được để trống'
@@ -464,8 +478,9 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
             Địa chỉ<sup className='text-red-500'>*</sup>
           </label>
           <input
-            className={`${formInfoPartB.formState.errors.address ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            className={`${formInfoPartB.formState.errors.address ? 'ring-red-600' : ''} disabled:bg-gray-200 block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled
             placeholder='Nhập địa chỉ công ty'
             {...formInfoPartB.register('address', {
               required: 'Mã số thuế không được để trống'
@@ -482,8 +497,9 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
             Mã số thuế<sup className='text-red-500'>*</sup>
           </label>
           <input
-            className={`${formInfoPartB.formState.errors.taxNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            className={`${formInfoPartB.formState.errors.taxNumber ? 'ring-red-600' : ''} disabled:bg-gray-200 block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled
             placeholder='Nhập mã số thuế'
             {...formInfoPartB.register('taxNumber', {
               required: 'Mã số thuế không được để trống'
@@ -500,8 +516,9 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
             Người đại diện<sup className='text-red-500'>*</sup>
           </label>
           <input
-            className={`${formInfoPartB.formState.errors.presenter ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            className={`${formInfoPartB.formState.errors.presenter ? 'ring-red-600' : ''} disabled:bg-gray-200 block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled
             placeholder='Nhập tên người đại diện'
             {...formInfoPartB.register('presenter', {
               required: 'Người đại diện không được để trống'
@@ -518,8 +535,9 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
             Chức vụ<sup className='text-red-500'>*</sup>
           </label>
           <input
-            className={`${formInfoPartB.formState.errors.position ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            className={`${formInfoPartB.formState.errors.position ? 'ring-red-600' : ''} disabled:bg-gray-200 block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled
             placeholder='Nhập vị trí làm việc'
             {...formInfoPartB.register('position', {
               required: 'Vị trí làm việc không được để trống'
@@ -536,8 +554,9 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
             Giấy phép đăng ký kinh doanh<sup className='text-red-500'>*</sup>
           </label>
           <input
-            className={`${formInfoPartB.formState.errors.businessNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            className={`${formInfoPartB.formState.errors.businessNumber ? 'ring-red-600' : ''} disabled:bg-gray-200 block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled
             placeholder='Nhập thông tin'
             {...formInfoPartB.register('businessNumber', {
               required: 'Giấy phép ĐKKD không được để trống'
@@ -555,8 +574,9 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
           </label>
           <input
             onInput={(e: any) => setAccountNumberB(e.target.value)}
-            className={`${formInfoPartB.formState.errors.bankId ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            className={`${formInfoPartB.formState.errors.bankId ? 'ring-red-600' : ''} disabled:bg-gray-200 block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled
             placeholder='Nhập STK'
             {...formInfoPartB.register('bankId', {
               required: 'STK không được để trống'
@@ -582,13 +602,16 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
           /> */}
           <select
             {...formInfoPartB.register('bankName')}
-            className='block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+            disabled
+            className='block disabled:bg-gray-200 w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
           >
-            {banks.map((bank: { id: number; code: string; shortName: string; logo: string; bin: string }) => (
-              <option key={bank.id} value={bank.shortName}>
-                {bank.shortName}
-              </option>
-            ))}
+            {banks.map(
+              (bank: { id: number; code: string; shortName: string; logo: string; bin: string; name: string }) => (
+                <option key={bank.id} value={bank.bin}>
+                  {bank.shortName} - {bank.name}
+                </option>
+              )
+            )}
           </select>
           <div
             className={`text-red-500 absolute text-[12px] ${formInfoPartB.formState.errors.bankName ? 'visible' : 'invisible'}`}
@@ -601,8 +624,9 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
             Chủ tài khoản<sup className='text-red-500'>*</sup>
           </label>
           <input
-            className={`${formInfoPartB.formState.errors.bankAccOwer ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            className={`${formInfoPartB.formState.errors.bankAccOwer ? 'ring-red-600' : ''} disabled:bg-gray-200 block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            disabled
             placeholder='Nhập tên tài khoản ngân hàng'
             {...formInfoPartB.register('bankAccOwer', {
               required: 'Tên tài khoản không được để trống'

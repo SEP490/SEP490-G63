@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { useQuery } from 'react-query'
 import { getAccessToken, removeAccessToken, setAccessToken } from '~/config/accessToken'
 import { getUserW, removeUserW, setUserW } from '~/config/user'
+import { getParty } from '~/services/party.service'
 import { getUserToken } from '~/services/user.service'
 export type UserInformation = {
   id: string
@@ -17,6 +18,8 @@ type MyContextValue = {
   setToken: (token: string) => void | undefined
   setUser: (user: UserInformation) => void | undefined
   removeToken: () => void | undefined
+  party: any
+  setParty: (user: UserInformation) => void | undefined
 }
 interface Props {
   children: React.ReactNode
@@ -24,14 +27,17 @@ interface Props {
 const AuthContext = createContext<MyContextValue>({
   token: '',
   user: null,
+  party: null,
   setToken: () => {},
   setUser: () => {},
-  removeToken: () => {}
+  removeToken: () => {},
+  setParty: () => {}
 })
 
 const AuthProvider: React.FC<Props> = ({ children }) => {
   const [token, setToken_] = useState<string | undefined>(getAccessToken())
   const [user, setUser_] = useState<UserInformation | null>(getUserW())
+  const [party, setParty] = useState<any>({})
   const setToken = (newToken: string) => {
     setToken_(newToken)
     setAccessToken(newToken)
@@ -46,8 +52,15 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
     setUser_(user)
     setUserW(user)
   }
+  useQuery('party-data', getParty, {
+    onSuccess: (response) => {
+      if (response.object) {
+        setParty(response.object)
+      }
+    }
+  })
 
-  const contextValue = useMemo(() => ({ token, user, setToken, setUser, removeToken }), [token, user])
+  const contextValue = useMemo(() => ({ token, user, setToken, setUser, removeToken, party, setParty }), [token, user])
   // useEffect(() => {
   //   const token = getAccessToken()
   //   const fetchAPI = async () => {

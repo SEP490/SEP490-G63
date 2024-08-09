@@ -328,7 +328,7 @@ const NavBar = () => {
                       }}
                       title={user?.name}
                     />
-                    <label className='font-bold cursor-pointer flex items-center gap-1 max-w-[120px] truncate ...'>
+                    <label className='font-bold cursor-pointer flex items-center gap-1 mr-3 max-w-[180px] truncate ...'>
                       {user?.name}
                     </label>
                   </div>

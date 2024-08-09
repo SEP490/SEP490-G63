@@ -11,7 +11,8 @@ import { useQuery } from 'react-query'
 import { getUserByPermission } from '~/services/user.service'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
-type IProps = { id: string | undefined; status: number; closeModal: any; refetch: any; dataC: any,refetchNumber:any }
+import { getParty } from '~/services/party.service'
+type IProps = { id: string | undefined; status: number; closeModal: any; refetch: any; dataC: any; refetchNumber: any }
 const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchNumber }: IProps) => {
   const [selectedFiles, setSelectedFiles] = useState<any[]>([])
   const [previewUrls, setPreviewUrls] = useState<string[]>([])
@@ -30,6 +31,7 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
   const { isLoading: loadingAO, data: dataAO } = useQuery('getUserByRoleAdminOfficer', () =>
     getUserByPermission('OFFICE_ADMIN')
   )
+  const { data: dataParty } = useQuery('party-data', getParty)
   const { isLoading: loading, data: dataContract } = useQuery('getContractDetail', () => getNewContractById(id), {
     onSuccess: async (response) => {
       if (status == 1) {
@@ -38,6 +40,7 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
         response.object.createdBy != null &&
           setSelectedTo([{ label: response.object.createdBy, value: response.object.createdBy }])
       } else if (status == 4) {
+        setSelectedTo([{ label: dataParty.object.email, value: dataParty.object.email }])
         response.object.createdBy != null &&
           setSelectedCc([{ label: response.object.createdBy, value: response.object.createdBy }])
       } else if (status == 6) {
@@ -174,7 +177,7 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
       <SunEditor
         name='term'
         placeholder='Nội dung'
-        height='60vh'
+        height='40vh'
         setContents={editorData}
         onChange={(data) => setEditorData(data)}
         setOptions={{

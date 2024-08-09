@@ -19,6 +19,7 @@ import ViewTemplateContract from '~/components/Admin/TemplateContract/ViewTempla
 import { AxiosError } from 'axios'
 import LoadingIcon from '~/assets/LoadingIcon'
 import dataRegex from '../../regex.json'
+import { getParty } from '~/services/party.service'
 interface FormType {
   name: string
   number: string
@@ -104,16 +105,7 @@ const CreateContract = () => {
       } else errorNotification('Tạo hợp đồng thất bại')
     }
   })
-  const createTemplateContractQuery = useMutation(createTemplateContract, {
-    onError: (error: AxiosError<{ message: string }>) => {
-      errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
-    },
-    onSuccess: (response) => {
-      if (response.success && response.code == '00') {
-        successNotification('Tạo mẫu hợp đồng thành công')
-      } else errorNotification('Tạo mới mẫu hợp đồng thất bại')
-    }
-  })
+
   const onSubmit = async () => {
     const rule: any = document.getElementsByName('rule')[0]
     const term: any = document.getElementsByName('term')[0]
@@ -127,48 +119,13 @@ const CreateContract = () => {
     createContractQuery.mutate(bodyData)
   }
 
-  const handleAutoFillPartyA = async () => {
-    const result = await formInfoPartA.trigger('taxNumber')
-    if (result) {
-      setLoadingA(true)
-      try {
-        const taxNumber = formInfoPartA.getValues('taxNumber')
-        const response = await getDataByTaxNumber(taxNumber)
-        if (response.success && response.object) {
-          formInfoPartA.reset(response.object)
-          disableFormA.current = true
-        } else {
-          disableFormA.current = false
-          formInfoPartA.reset({
-            name: '',
-            email: '',
-            address: '',
-            presenter: '',
-            position: '',
-            businessNumber: '',
-            bankId: '',
-            bankName: '',
-            bankAccOwer: ''
-          })
-        }
-      } catch (e) {
-        errorNotification('Lỗi hệ thống')
+  useQuery('party-data', getParty, {
+    onSuccess: (response) => {
+      if (response.object) {
+        formInfoPartA.reset(response.object)
       }
-      setLoadingA(false)
     }
-  }
-  const handleCheckMailA = async () => {
-    setLoadingMailA(true)
-    try {
-      const response = await validateEmail(formInfoPartA.getValues('email'))
-      if (!response) {
-        errorNotification('Email không hợp lệ')
-      }
-    } catch (e) {
-      errorNotification('Lỗi')
-    }
-    setLoadingMailA(false)
-  }
+  })
   const handleCheckMailB = async () => {
     setLoadingMailB(true)
     try {
@@ -181,36 +138,6 @@ const CreateContract = () => {
     }
     setLoadingMailB(false)
   }
-  // const handleCheckBankPartyA = async () => {
-  //   setLoadingBankA(true)
-  //   try {
-  //     const response = await handleSubmitBank(formInfoPartA.getValues('bankName'), formInfoPartA.getValues('bankId'))
-  //     if (response.data) {
-  //       formInfoPartA.reset({ bankAccOwer: response?.data?.accountName })
-  //     } else {
-  //       formInfoPartA.reset({ bankAccOwer: '' })
-  //       errorNotification('Số tài khoản không hợp lệ')
-  //     }
-  //   } catch (e) {
-  //     errorNotification('Số tài khoản không hợp lệ')
-  //   }
-  //   setLoadingBankA(false)
-  // }
-  // const handleCheckBankPartyB = async () => {
-  //   setLoadingBankB(true)
-  //   try {
-  //     const response = await handleSubmitBank(formInfoPartB.getValues('bankName'), formInfoPartB.getValues('bankId'))
-  //     if (response.data) {
-  //       formInfoPartB.reset({ bankAccOwer: response?.data?.accountName })
-  //     } else {
-  //       formInfoPartB.reset({ bankAccOwer: '' })
-  //       errorNotification('Số tài khoản không hợp lệ')
-  //     }
-  //   } catch (e) {
-  //     errorNotification('Số tài khoản không hợp lệ')
-  //   }
-  //   setLoadingBankB(false)
-  // }
 
   const handleAutoFillPartyB = async () => {
     const result = await formInfoPartB.trigger('taxNumber')
@@ -242,18 +169,7 @@ const CreateContract = () => {
       setLoadingB(false)
     }
   }
-  const handleCreateContractTemplate = async () => {
-    const rule: any = document.getElementsByName('rule')[0]
-    const term: any = document.getElementsByName('term')[0]
-    const dataTemplate = {
-      nameContract: getValues().name,
-      numberContract: getValues().number,
-      ruleContract: rule.value,
-      termContract: term.value,
-      ...formInfoPartA.getValues()
-    }
-    createTemplateContractQuery.mutate(dataTemplate)
-  }
+
   const handleFillData = async (s: any) => {
     reset({ name: s.nameContract, number: s.numberContract })
     const response = await getDataByTaxNumber(s?.taxNumber as string)
@@ -324,7 +240,7 @@ const CreateContract = () => {
               <LoadingSvgV2 />
             ) : (
               <select
-                {...register('contractTypeId')}
+                {...register('contractTypeId', { required: 'Loại hợp đồng không được để trống' })}
                 disabled={createContractQuery?.isLoading}
                 className={` block w-fit rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
               >
@@ -425,8 +341,7 @@ const CreateContract = () => {
             <input
               className={`${formInfoPartA.formState.errors.taxNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
               type='text'
-              disabled={createContractQuery?.isLoading}
-              onInput={debounce(handleAutoFillPartyA, 500)}
+              disabled
               placeholder='Nhập mã số thuế'
               {...formInfoPartA.register('taxNumber', {
                 required: 'Mã số thuế không được để trống'
@@ -448,7 +363,7 @@ const CreateContract = () => {
           <input
             className={`${formInfoPartA.formState.errors.name ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
             type='text'
-            disabled={createContractQuery?.isLoading || disableFormA.current}
+            disabled
             placeholder='Nhập tên công ty'
             {...formInfoPartA.register('name', {
               required: 'Tên công ty không được để trống'
@@ -466,10 +381,9 @@ const CreateContract = () => {
           </label>
           <div className='relative'>
             <input
-              onInput={debounce(handleCheckMailA, 1000)}
               className={`${formInfoPartA.formState.errors.email ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
               type='text'
-              disabled={createContractQuery?.isLoading || disableFormA.current}
+              disabled
               placeholder='Nhập email công ty'
               {...formInfoPartA.register('email', {
                 required: 'Email công ty không được để trống',
@@ -497,7 +411,7 @@ const CreateContract = () => {
           <input
             className={`${formInfoPartA.formState.errors.address ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
             type='text'
-            disabled={createContractQuery?.isLoading || disableFormA.current}
+            disabled
             placeholder='Nhập địa chỉ công ty'
             {...formInfoPartA.register('address', {
               required: 'Mã số thuế không được để trống'
@@ -517,7 +431,7 @@ const CreateContract = () => {
           <input
             className={`${formInfoPartA.formState.errors.presenter ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
             type='text'
-            disabled={createContractQuery?.isLoading || disableFormA.current}
+            disabled
             placeholder='Nhập tên người đại diện'
             {...formInfoPartA.register('presenter', {
               required: 'Người đại diện không được để trống'
@@ -536,7 +450,7 @@ const CreateContract = () => {
           <input
             className={`${formInfoPartA.formState.errors.position ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
             type='text'
-            disabled={createContractQuery?.isLoading || disableFormA.current}
+            disabled
             placeholder='Nhập vị trí làm việc'
             {...formInfoPartA.register('position', {
               required: 'Vị trí làm việc không được để trống'
@@ -555,7 +469,7 @@ const CreateContract = () => {
           <input
             className={`${formInfoPartA.formState.errors.businessNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
             type='text'
-            disabled={createContractQuery?.isLoading || disableFormA.current}
+            disabled
             placeholder='Nhập thông tin'
             {...formInfoPartA.register('businessNumber', {
               required: 'Giấy phép ĐKKD không được để trống'
@@ -581,7 +495,7 @@ const CreateContract = () => {
           /> */}
           <select
             {...formInfoPartA.register('bankName')}
-            disabled={createContractQuery?.isLoading || disableFormA.current}
+            disabled
             className='block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200'
           >
             <option key={null} value={'Tên ngân hàng'}>
@@ -609,7 +523,7 @@ const CreateContract = () => {
           <input
             className={`${formInfoPartA.formState.errors.bankId ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
             type='text'
-            disabled={createContractQuery?.isLoading || disableFormA.current}
+            disabled
             placeholder='Nhập STK'
             {...formInfoPartA.register('bankId', {
               required: 'STK không được để trống'
@@ -633,7 +547,7 @@ const CreateContract = () => {
           <input
             className={`${formInfoPartA.formState.errors.bankAccOwer ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
             type='text'
-            disabled={createContractQuery?.isLoading || disableFormA.current}
+            disabled
             placeholder='Nhập tên tài khoản ngân hàng'
             {...formInfoPartA.register('bankAccOwer', {
               required: 'Tên tài khoản không được để trống'
@@ -927,9 +841,8 @@ const CreateContract = () => {
             onClick={async () => {
               const result = await trigger()
               const result2 = await formInfoPartB.trigger()
-              const result3 = await formInfoPartA.trigger()
 
-              if (result && result2 && result3) {
+              if (result && result2) {
                 onSubmit()
               }
             }}
