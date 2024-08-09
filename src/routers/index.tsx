@@ -433,7 +433,7 @@ const Routes = () => {
           element: (
             <UserLayout>
               <Sale>
-                <DashboardSale />
+                <SearchPage />
               </Sale>
             </UserLayout>
           )
