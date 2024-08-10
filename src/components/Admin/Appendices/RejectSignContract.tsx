@@ -1,12 +1,9 @@
-import React from 'react'
-import { Stage, Layer, Line } from 'react-konva'
-import { ArrowPathIcon, CheckIcon } from '@heroicons/react/24/outline'
-import { Description, Field, Label, Textarea } from '@headlessui/react'
+import { Field, Label, Textarea } from '@headlessui/react'
 import { useForm } from 'react-hook-form'
-import { sendMail, sendMailPublic } from '~/services/contract.service'
 import useToast from '~/hooks/useToast'
 import { useMutation } from 'react-query'
 import LoadingIcon from '~/assets/LoadingIcon'
+import { sendMailPublicApp } from '~/services/contract.appendices.service'
 type FormData = {
   comment: string
 }
@@ -17,7 +14,7 @@ const RejectSignContract = ({ contract }: any) => {
     handleSubmit,
     formState: { errors }
   } = useForm<FormData>()
-  const sendMailReject = useMutation(sendMailPublic, {
+  const sendMailReject = useMutation(sendMailPublicApp, {
     onError: () => {
       errorNotification('Gửi yêu cầu thất bại')
     },
@@ -32,7 +29,7 @@ const RejectSignContract = ({ contract }: any) => {
     formData.append('subject', 'Hợp đồng cần được xem xét lại')
     const htmlContent = `Hợp đồng <b>${contract?.name}</b> cần được chỉnh sửa lại thông tin theo yêu cầu của đại diện: <b>${contract?.partyB?.presenter}</b> thuộc công ty <b>${contract?.partyB?.name}</b> như sau: <br/> <i>"${data.comment}"</i>`
     formData.append('htmlContent', htmlContent)
-    formData.append('contractId', contract?.id as string)
+    formData.append('contractId ', contract?.id as string)
     formData.append('status', 'SIGN_B_FAIL')
     formData.append('description', data.comment)
 

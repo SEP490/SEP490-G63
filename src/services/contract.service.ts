@@ -72,6 +72,6 @@ export const signContract = async (data: SignRequest) => {
   return response.data
 }
 export const managerCount = async () => {
-  const response = await axiosInstant.get('contract/getNumberContractNoti');
+  const response = await axiosInstant.get('contract/getNumberContractNoti')
   return response.data
 }

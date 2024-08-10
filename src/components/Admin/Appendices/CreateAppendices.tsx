@@ -29,6 +29,7 @@ interface CompanyInfo {
   bankId: string
   bankName: string
   bankAccOwer: string
+  phone: string
 }
 const CreateAppendices = () => {
   const {
@@ -82,7 +83,6 @@ const CreateAppendices = () => {
 
   const createAppendicesQuery = useMutation(createAppendices, {
     onSuccess: async (response) => {
-
       try {
         if (response?.code == '00' && response.object && response.success) {
           successNotification('Tạo phụ lục thành công!')
@@ -239,6 +239,25 @@ const CreateAppendices = () => {
             className={`text-red-500 absolute text-[12px] ${formInfoPartA.formState.errors.name ? 'visible' : 'invisible'}`}
           >
             {formInfoPartA.formState.errors.name?.message}
+          </div>
+        </div>
+        <div className='w-full md:w-[30%] mt-5 relative '>
+          <label className='font-light '>
+            Số điện thoại<sup className='text-red-500'>*</sup>
+          </label>
+          <input
+            className={`${formInfoPartA.formState.errors.phone ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
+            type='text'
+            disabled
+            placeholder='Nhập số điện thoại'
+            {...formInfoPartA.register('phone', {
+              required: 'Số điện thoại không được để trống'
+            })}
+          />
+          <div
+            className={`text-red-500 absolute text-[12px] ${formInfoPartA.formState.errors.phone ? 'visible' : 'invisible'}`}
+          >
+            {formInfoPartA.formState.errors.phone?.message}
           </div>
         </div>
         <div className='w-full md:w-[30%] mt-5 relative '>
@@ -450,6 +469,25 @@ const CreateAppendices = () => {
             className={`text-red-500 absolute text-[12px] ${formInfoPartB.formState.errors.name ? 'visible' : 'invisible'}`}
           >
             {formInfoPartB.formState.errors.name?.message}
+          </div>
+        </div>
+        <div className='w-full md:w-[30%] mt-5 relative '>
+          <label className='font-light '>
+            Số điện thoại<sup className='text-red-500'>*</sup>
+          </label>
+          <input
+            className={`${formInfoPartB.formState.errors.phone ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
+            type='text'
+            disabled
+            placeholder='Nhập số điện thoại'
+            {...formInfoPartB.register('phone', {
+              required: 'Số điện thoại không được để trống'
+            })}
+          />
+          <div
+            className={`text-red-500 absolute text-[12px] ${formInfoPartB.formState.errors.phone ? 'visible' : 'invisible'}`}
+          >
+            {formInfoPartB.formState.errors.phone?.message}
           </div>
         </div>
         <div className='w-full md:w-[30%] mt-5 relative '>

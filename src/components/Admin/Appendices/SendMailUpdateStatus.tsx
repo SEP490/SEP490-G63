@@ -1,7 +1,6 @@
 import { Fragment, useMemo, useRef, useState } from 'react'
 import ComboboxMail from '~/components/Admin/SendMail/ComboboxMail'
 import uploadIcon from '~/assets/images/uploadpdf.png'
-import { getNewContractById, sendMail } from '~/services/contract.service'
 import useToast from '~/hooks/useToast'
 import { BASE_URL_FE } from '~/common/const'
 import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
@@ -11,7 +10,7 @@ import { useQuery } from 'react-query'
 import { getUserByPermission } from '~/services/user.service'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
-import { sendMailApp } from '~/services/contract.appendices.service'
+import { getNewContractById, sendMailApp } from '~/services/contract.appendices.service'
 type IProps = { id: string | undefined; status: number; closeModal: any; refetch: any; dataC: any }
 const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC }: IProps) => {
   const [selectedFiles, setSelectedFiles] = useState<any[]>([])
@@ -103,10 +102,10 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC }: IProps
     const htmlContent = editorData
     formData.append(
       'htmlContent',
-      htmlContent + (status == 7 ? `<a href="${BASE_URL_FE}view/${id}/sign/2">Ký ngay</a>` : '')
+      htmlContent + (status == 7 ? `<a href="${BASE_URL_FE}view/${id}/sign-appendices/2">Ký ngay</a>` : '')
     )
-    formData.append('contractId ', id as string)
-    formData.append('attachments', contractFile.current, `${dataContract?.object?.name}.pdf`)
+    formData.append('contractAppendicesId', id as string)
+    // formData.append('attachments', contractFile.current, `${dataContract?.object?.name}.pdf`)
     selectedFiles.forEach((file) => {
       formData.append('attachments', file)
     })
@@ -176,18 +175,18 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC }: IProps
           imageUploadSizeLimit: 5 * 1024 * 1024
         }}
       />
+      <div className='mt-4 text-center'>
+        <input type='file' id='file-upload' className='hidden' onChange={handleFileChange} multiple />
+        <label htmlFor='file-upload' className='cursor-pointer inline-flex items-center justify-center rounded-full'>
+          <img src={uploadIcon} alt='Upload' className='w-20 h-20' />
+        </label>
+      </div>
       <h2 className=' font-bold my-2'>Tệp đính kèm</h2>
       <div className='w-full flex gap-4 flex-wrap md:justify-normal justify-center'>
         <div className='text-red-500'>{dataContract?.object?.name}.pdf</div>
         <div className='text-blue-500 underline cursor-pointer' onClick={() => setOpen(true)}>
           Xem chi tiết
         </div>
-      </div>
-      <div className='mt-4 text-center'>
-        <input type='file' id='file-upload' className='hidden' onChange={handleFileChange} multiple />
-        <label htmlFor='file-upload' className='cursor-pointer inline-flex items-center justify-center rounded-full'>
-          <img src={uploadIcon} alt='Upload' className='w-20 h-20' />
-        </label>
       </div>
 
       {previewUrls.length > 0 && (

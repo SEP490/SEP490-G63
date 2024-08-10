@@ -2,12 +2,10 @@ import { AxiosError } from 'axios'
 import React from 'react'
 import { Stage, Layer, Line } from 'react-konva'
 import { useMutation } from 'react-query'
-import { useNavigate } from 'react-router-dom'
 import { statusRequest } from '~/common/const/status'
-import Loading from '~/components/shared/Loading/Loading'
 import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
 import useToast from '~/hooks/useToast'
-import { sendMail, sendMailPublic, signContract } from '~/services/contract.service'
+import { sendMailPublicApp, signContract } from '~/services/contract.appendices.service'
 interface IProps {
   id: string | undefined
   customer: string | undefined
@@ -75,12 +73,12 @@ const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy,
     if (cc != null) formData.append('cc', cc)
     formData.append('subject', statusRequest[customer == '2' ? 8 : 5]?.title)
     formData.append('htmlContent', statusRequest[customer == '2' ? 8 : 5]?.description)
-    formData.append('contractId', id as string)
+    formData.append('contractAppendicesId', id as string)
     formData.append('status', statusRequest[customer == '2' ? 8 : 5]?.status)
     formData.append('createdBy', createdBy as string)
     formData.append('description', statusRequest[customer == '2' ? 8 : 5]?.description)
     try {
-      const response = await sendMailPublic(formData)
+      const response = await sendMailPublicApp(formData)
     } catch (error) {
       errorNotification('Gửi yêu cầu thất bại')
     }

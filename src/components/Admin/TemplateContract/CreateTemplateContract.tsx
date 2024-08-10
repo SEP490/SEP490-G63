@@ -9,12 +9,14 @@ import { useState, Fragment, useEffect, SetStateAction, useRef } from 'react'
 import { createTemplateContract } from '~/services/template-contract.service'
 import { validateEmail } from '~/common/utils/checkMail'
 import { VietQR } from 'vietqr'
-import { useMutation } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 import { debounce } from 'lodash'
 import LoadingSvgV2 from '~/assets/svg/loadingsvg'
 import { AxiosError } from 'axios'
 import LoadingIcon from '~/assets/LoadingIcon'
 import dataRegex from '../../../regex.json'
+import { getParty } from '~/services/party.service'
+import moment from 'moment'
 interface FormType {
   name: string
   number: string
@@ -33,6 +35,7 @@ interface CompanyInfo {
   bankId: string
   bankName: string
   bankAccOwer: string
+  phone: string
 }
 const CreateTemplateContract = () => {
   const {
@@ -77,6 +80,7 @@ const CreateTemplateContract = () => {
     onSuccess: (response) => {
       if (response.success && response.code == '00') {
         successNotification('Tạo mẫu hợp đồng thành công')
+        navigate('/template-contract')
       } else errorNotification('Tạo mới mẫu hợp đồng thất bại')
     }
   })
@@ -123,19 +127,14 @@ const CreateTemplateContract = () => {
       setLoadingA(false)
     }
   }
-  const handleCheckMailA = async () => {
-    setLoadingMailA(true)
-    try {
-      const response = await validateEmail(formInfoPartA.getValues('email'))
-      if (!response) {
-        errorNotification('Email không hợp lệ')
-      }
-    } catch (e) {
-      errorNotification('Lỗi')
-    }
-    setLoadingMailA(false)
-  }
 
+  useQuery('party-data', getParty, {
+    onSuccess: (response) => {
+      if (response.object) {
+        formInfoPartA.reset(response.object)
+      }
+    }
+  })
   return (
     <div className='bg-[#e8eaed] h-fit min-h-full flex justify-center py-6'>
       <form
@@ -151,7 +150,7 @@ const CreateTemplateContract = () => {
           </label>
           <input
             className={`${errors.name ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-            placeholder='Nhập tên hợp đồng'
+            placeholder='Ví dụ: Tên công ty-Đối tác-HDKD'
             disabled={createTemplateContractQuery?.isLoading}
             {...register('name', {
               required: 'Tên hợp đồng không được để trống',
@@ -173,7 +172,7 @@ const CreateTemplateContract = () => {
             className={`${errors.number ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
             disabled={createTemplateContractQuery?.isLoading}
-            placeholder='Nhập số hợp đồng'
+            placeholder={`Ví dụ: Tên công ty-Đối tác-${moment(new Date()).format('YYYY-MM-DD')}`}
             {...register('number', {
               required: 'Số hợp đồng không được để trống'
             })}
@@ -216,8 +215,7 @@ const CreateTemplateContract = () => {
             <input
               className={`${formInfoPartA.formState.errors.taxNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
               type='text'
-              disabled={createTemplateContractQuery?.isLoading}
-              onInput={debounce(handleAutoFillPartyA, 500)}
+              disabled
               placeholder='Nhập mã số thuế'
               {...formInfoPartA.register('taxNumber', {
                 required: 'Mã số thuế không được để trống'
@@ -239,7 +237,7 @@ const CreateTemplateContract = () => {
           <input
             className={`${formInfoPartA.formState.errors.name ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
             type='text'
-            disabled={createTemplateContractQuery?.isLoading || disableFormA.current}
+            disabled
             placeholder='Nhập tên công ty'
             {...formInfoPartA.register('name', {
               required: 'Tên công ty không được để trống'
@@ -257,10 +255,9 @@ const CreateTemplateContract = () => {
           </label>
           <div className='relative'>
             <input
-              onInput={debounce(handleCheckMailA, 1000)}
               className={`${formInfoPartA.formState.errors.email ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
               type='text'
-              disabled={createTemplateContractQuery?.isLoading || disableFormA.current}
+              disabled
               placeholder='Nhập email công ty'
               {...formInfoPartA.register('email', {
                 required: 'Email công ty không được để trống',
@@ -283,12 +280,31 @@ const CreateTemplateContract = () => {
         </div>
         <div className='w-full md:w-[30%] mt-5 relative '>
           <label className='font-light '>
+            Số điện thoại<sup className='text-red-500'>*</sup>
+          </label>
+          <input
+            className={`${formInfoPartA.formState.errors.phone ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
+            type='text'
+            disabled
+            placeholder='Nhập số điện thoại'
+            {...formInfoPartA.register('phone', {
+              required: 'Số điện thoại không được để trống'
+            })}
+          />
+          <div
+            className={`text-red-500 absolute text-[12px] ${formInfoPartA.formState.errors.phone ? 'visible' : 'invisible'}`}
+          >
+            {formInfoPartA.formState.errors.phone?.message}
+          </div>
+        </div>
+        <div className='w-full md:w-[30%] mt-5 relative '>
+          <label className='font-light '>
             Địa chỉ<sup className='text-red-500'>*</sup>
           </label>
           <input
             className={`${formInfoPartA.formState.errors.address ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
             type='text'
-            disabled={createTemplateContractQuery?.isLoading || disableFormA.current}
+            disabled
             placeholder='Nhập địa chỉ công ty'
             {...formInfoPartA.register('address', {
               required: 'Mã số thuế không được để trống'
@@ -308,7 +324,7 @@ const CreateTemplateContract = () => {
           <input
             className={`${formInfoPartA.formState.errors.presenter ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
             type='text'
-            disabled={createTemplateContractQuery?.isLoading || disableFormA.current}
+            disabled
             placeholder='Nhập tên người đại diện'
             {...formInfoPartA.register('presenter', {
               required: 'Người đại diện không được để trống'
@@ -327,7 +343,7 @@ const CreateTemplateContract = () => {
           <input
             className={`${formInfoPartA.formState.errors.position ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
             type='text'
-            disabled={createTemplateContractQuery?.isLoading || disableFormA.current}
+            disabled
             placeholder='Nhập vị trí làm việc'
             {...formInfoPartA.register('position', {
               required: 'Vị trí làm việc không được để trống'
@@ -346,7 +362,7 @@ const CreateTemplateContract = () => {
           <input
             className={`${formInfoPartA.formState.errors.businessNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
             type='text'
-            disabled={createTemplateContractQuery?.isLoading || disableFormA.current}
+            disabled
             placeholder='Nhập thông tin'
             {...formInfoPartA.register('businessNumber', {
               required: 'Giấy phép ĐKKD không được để trống'
@@ -364,7 +380,7 @@ const CreateTemplateContract = () => {
           </label>
           <select
             {...formInfoPartA.register('bankName')}
-            disabled={createTemplateContractQuery?.isLoading || disableFormA.current}
+            disabled
             className='block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200'
           >
             <option key={null} value={'Tên ngân hàng'}>
@@ -372,7 +388,7 @@ const CreateTemplateContract = () => {
             </option>
             {banks.map(
               (bank: { id: number; code: string; shortName: string; logo: string; bin: string; name: string }) => (
-                <option key={bank.id} value={bank.bin}>
+                <option key={bank.id} value={bank.name}>
                   {bank.shortName} - {bank.name}
                 </option>
               )
@@ -392,7 +408,7 @@ const CreateTemplateContract = () => {
           <input
             className={`${formInfoPartA.formState.errors.bankId ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
             type='text'
-            disabled={createTemplateContractQuery?.isLoading || disableFormA.current}
+            disabled
             placeholder='Nhập STK'
             {...formInfoPartA.register('bankId', {
               required: 'STK không được để trống'
@@ -416,7 +432,7 @@ const CreateTemplateContract = () => {
           <input
             className={`${formInfoPartA.formState.errors.bankAccOwer ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
             type='text'
-            disabled={createTemplateContractQuery?.isLoading || disableFormA.current}
+            disabled
             placeholder='Nhập tên tài khoản ngân hàng'
             {...formInfoPartA.register('bankAccOwer', {
               required: 'Tên tài khoản không được để trống'
@@ -428,6 +444,7 @@ const CreateTemplateContract = () => {
             {formInfoPartA.formState.errors.bankAccOwer?.message}
           </div>
         </div>
+        <div className='w-full md:w-[30%]'></div>
         <div className='w-full mt-5 font-bold'>Điều khoản hợp đồng</div>
         <div className='w-full mt-3'>
           <SunEditor
@@ -459,11 +476,11 @@ const CreateTemplateContract = () => {
         <div className='w-full flex justify-end'>
           <button
             type='button'
+            disabled={createTemplateContractQuery?.isLoading}
             onClick={async () => {
               const result = await trigger()
-              const result3 = await formInfoPartA.trigger()
 
-              if (result && result3) {
+              if (result) {
                 onSubmit()
               }
             }}

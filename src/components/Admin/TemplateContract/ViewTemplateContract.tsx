@@ -5,10 +5,11 @@ import { createNewContract } from '~/services/contract.service'
 import useToast from '~/hooks/useToast'
 import { useNavigate } from 'react-router-dom'
 import { SetStateAction, useEffect, useState } from 'react'
-import { useMutation } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 import { updateTemplateContract } from '~/services/template-contract.service'
 import { AxiosError } from 'axios'
 import { VietQR } from 'vietqr'
+import { getParty } from '~/services/party.service'
 interface FormType {
   nameContract: string
   numberContract: string
@@ -23,12 +24,26 @@ interface FormType {
   bankAccOwer: string
   email: string
 }
-
+interface CompanyInfo {
+  name: string
+  email: string
+  address: string
+  taxNumber: string
+  presenter: string
+  position: string
+  businessNumber: string
+  bankId: string
+  bankName: string
+  bankAccOwer: string
+  phone: string
+}
 const ViewTemplateContract = ({ selectedContract, handleCloseModal, refetch }: any) => {
   const {
     register,
     formState: { errors }
   } = useForm<FormType>({ defaultValues: selectedContract })
+
+  const formInfoPartA = useForm<CompanyInfo>({ mode: 'onBlur' })
   const [banks, setBanks] = useState([])
   const clientID = '258d5960-4516-48c5-9316-bb95b978424f'
   const apiKey = '5fe49afb-2e07-4079-baf6-ca58356deadd'
@@ -47,6 +62,13 @@ const ViewTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
         console.error('Error fetching banks:', err)
       })
   }, [])
+  useQuery('party-data', getParty, {
+    onSuccess: (response) => {
+      if (response.object) {
+        formInfoPartA.reset(response.object)
+      }
+    }
+  })
   return (
     <div className=' full flex justify-center overflow-auto h-[90%] '>
       <form
@@ -117,7 +139,7 @@ const ViewTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             type='text'
             disabled
             placeholder='Nhập mã số thuế'
-            {...register('taxNumber', {
+            {...formInfoPartA.register('taxNumber', {
               required: 'Mã số thuế không được để trống'
             })}
           />
@@ -134,12 +156,31 @@ const ViewTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             type='text'
             placeholder='Nhập tên công ty'
             disabled
-            {...register('name', {
+            {...formInfoPartA.register('name', {
               required: 'Tên công ty không được để trống'
             })}
           />
           <div className={`text-red-500 absolute text-[12px] ${errors.name ? 'visible' : 'invisible'}`}>
             {errors.name?.message}
+          </div>
+        </div>
+        <div className='w-full md:w-[30%] mt-5 relative '>
+          <label className='font-light '>
+            Số điện thoại<sup className='text-red-500'>*</sup>
+          </label>
+          <input
+            className={`${formInfoPartA.formState.errors.phone ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            type='text'
+            disabled
+            placeholder='Nhập số điện thoại'
+            {...formInfoPartA.register('phone', {
+              required: 'Số điện thoại không được để trống'
+            })}
+          />
+          <div
+            className={`text-red-500 absolute text-[12px] ${formInfoPartA.formState.errors.phone ? 'visible' : 'invisible'}`}
+          >
+            {formInfoPartA.formState.errors.phone?.message}
           </div>
         </div>
         <div className='w-full md:w-[30%] mt-5 relative '>
@@ -151,7 +192,7 @@ const ViewTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             type='text'
             disabled
             placeholder='Nhập email công ty'
-            {...register('email', {
+            {...formInfoPartA.register('email', {
               required: 'Email công ty không được để trống'
             })}
           />
@@ -168,7 +209,7 @@ const ViewTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             type='text'
             disabled
             placeholder='Nhập địa chỉ công ty'
-            {...register('address', {
+            {...formInfoPartA.register('address', {
               required: 'Mã số thuế không được để trống'
             })}
           />
@@ -186,7 +227,7 @@ const ViewTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             type='text'
             placeholder='Nhập tên người đại diện'
             disabled
-            {...register('presenter', {
+            {...formInfoPartA.register('presenter', {
               required: 'Người đại diện không được để trống'
             })}
           />
@@ -203,7 +244,7 @@ const ViewTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             type='text'
             disabled
             placeholder='Nhập vị trí làm việc'
-            {...register('position', {
+            {...formInfoPartA.register('position', {
               required: 'Vị trí làm việc không được để trống'
             })}
           />
@@ -220,7 +261,7 @@ const ViewTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             type='text'
             disabled
             placeholder='Nhập thông tin'
-            {...register('businessNumber', {
+            {...formInfoPartA.register('businessNumber', {
               required: 'Giấy phép ĐKKD không được để trống'
             })}
           />
@@ -237,7 +278,7 @@ const ViewTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             type='text'
             disabled
             placeholder='Nhập STK'
-            {...register('bankId', {
+            {...formInfoPartA.register('bankId', {
               required: 'STK không được để trống'
             })}
           />
@@ -250,7 +291,7 @@ const ViewTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             Tên ngân hàng<sup className='text-red-500'>*</sup>
           </label>
           <select
-            {...register('bankName')}
+            {...formInfoPartA.register('bankName')}
             disabled
             className='block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 '
           >
@@ -259,7 +300,7 @@ const ViewTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             </option>
             {banks.map(
               (bank: { id: number; code: string; shortName: string; logo: string; bin: string; name: string }) => (
-                <option key={bank.id} value={bank.bin}>
+                <option key={bank.id} value={bank.name}>
                   {bank.shortName} - {bank.name}
                 </option>
               )
@@ -278,7 +319,7 @@ const ViewTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             className={`${errors.bankAccOwer ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
             placeholder='Nhập tên tài khoản ngân hàng'
-            {...register('bankAccOwer', {
+            {...formInfoPartA.register('bankAccOwer', {
               required: 'Tên tài khoản không được để trống'
             })}
           />
@@ -286,7 +327,7 @@ const ViewTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             {errors.bankAccOwer?.message}
           </div>
         </div>
-
+        <div className='w-full md:w-[30%]'></div>
         <div className='w-full mt-5 font-bold'>Điều khoản hợp đồng</div>
         <div className='w-full mt-3'>
           <SunEditor

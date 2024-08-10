@@ -14,7 +14,7 @@ import {
   DocumentPlusIcon
 } from '@heroicons/react/24/outline'
 import { useNavigate, useParams } from 'react-router-dom'
-import { deleteNewContract, getNewContract } from '~/services/contract.service'
+import { deleteNewContract, getNewContract, getNewContractById } from '~/services/contract.service'
 import DocumentIcon from '~/assets/svg/document'
 import Pagination from '~/components/BaseComponent/Pagination/Pagination'
 import Loading from '~/components/shared/Loading/Loading'
@@ -36,8 +36,9 @@ import { HiMiniDocumentCheck } from 'react-icons/hi2'
 import LoadingIcon from '~/assets/LoadingIcon'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import ContractHistory from '../ContractHistory'
-import { getAppendicesContactAll, getNewContractById } from '~/services/contract.appendices.service'
+import { deleteAppendices, getAppendicesContactAll } from '~/services/contract.appendices.service'
 import SendMailUpdateStatus from '~/components/Admin/Appendices/SendMailUpdateStatus'
+import { useNotification } from '~/context/notiProvider'
 export interface DataContract {
   id: string
   file: string
@@ -85,6 +86,7 @@ const AppendicesContract = () => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [changeStatus, setChangeStatus] = useState(false)
   const [historyModal, setHistoryModal] = useState(false)
+  const { realReload } = useNotification()
   const [statusContract, setStatusContract] = useState<any>({
     id: 1,
     title: 'Quản lí hợp đồng',
@@ -123,7 +125,7 @@ const AppendicesContract = () => {
   }
 
   const { data, isLoading, refetch, isFetching } = useQuery(
-    ['contract-appendices', user?.id, statusContract?.status],
+    ['contract-appendices', user?.id, statusContract?.status, realReload],
     () => getAppendicesContactAll(id as string, page, size, statusContract?.status as string),
     {
       onSuccess: (response) => {
@@ -286,7 +288,7 @@ const AppendicesContract = () => {
       disable: (d: any) =>
         (!d?.canSign && user?.email != d.createdBy) || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
       callback: (d: any) => {
-        navigate(`/view/${d?.id}/sign/1`)
+        navigate(`/view/${d?.id}/sign-appendices/1`)
       }
     },
     {
@@ -298,7 +300,10 @@ const AppendicesContract = () => {
       ),
       color: 'text-orange-700',
       disable: (d: any) =>
-        (!d?.canSign && user?.email == d.createdBy) || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
+        (!d?.canRejectSign && user?.email != d.createdBy) ||
+        (!d?.canSign && user?.email == d.createdBy) ||
+        d?.status == 'SUCCESS' ||
+        d?.statusCurrent == 'SUCCESS',
       callback: (d: any) => {
         setSelectedContract(d)
         setStatus(6)
@@ -512,7 +517,7 @@ const AppendicesContract = () => {
     OFFICE_ADMIN: adminOfficeContract,
     OFFICE_STAFF: []
   }
-  const deleteTemplate = useMutation(deleteNewContract, {
+  const deleteTemplate = useMutation(deleteAppendices, {
     onSuccess: () => {
       successNotification('Xóa thành công!')
       handleCloseModal()
@@ -538,7 +543,7 @@ const AppendicesContract = () => {
     <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex gap-3 justify-between w-full py-3 h-[60px] px-3'>
         <div className='text-[23px] w-full'>
-          Phụ lúc hợp đồng cho hợp đồng: <span className='font-bold'>{dataContract?.object?.name}</span> số:{' '}
+          Phụ lục hợp đồng cho hợp đồng: <span className='font-bold'>{dataContract?.object?.name}</span> số:{' '}
           <span className='font-bold'>{dataContract?.object?.number}</span>
         </div>
         <button

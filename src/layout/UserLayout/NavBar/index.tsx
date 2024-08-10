@@ -288,7 +288,7 @@ const NavBar = () => {
                             ))}
                             {page.current + 1 != totalPages.current && (
                               <div
-                                className='flex justify-center text-blue-400 hover:underline border-t-2 cursor-pointer'
+                                className='flex py-[10px] justify-center text-blue-400 hover:underline border-t-2 cursor-pointer'
                                 onClick={() => {
                                   viewMoreNotify()
                                 }}
@@ -328,7 +328,7 @@ const NavBar = () => {
                       }}
                       title={user?.name}
                     />
-                    <label className='font-bold cursor-pointer flex items-center gap-1 max-w-[120px] truncate ...'>
+                    <label className='font-bold cursor-pointer flex items-center gap-1 mr-3 max-w-[180px] truncate ...'>
                       {user?.name}
                     </label>
                   </div>

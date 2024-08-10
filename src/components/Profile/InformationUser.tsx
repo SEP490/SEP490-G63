@@ -8,6 +8,7 @@ import Loading from '~/components/shared/Loading/Loading'
 import moment from 'moment'
 import { useQuery } from 'react-query'
 import { AxiosError } from 'axios'
+import LoadingIcon from '~/assets/LoadingIcon'
 export interface UserData {
   id: string
   address: string
@@ -27,7 +28,7 @@ const InformationUser = () => {
   const [imgUpload, setImgUpload] = useState<any>(avatar)
   const inputRef = useRef<any>()
   const { successNotification, errorNotification } = useToast()
-
+  const [loading, setLoading] = useState(false)
   const {
     register,
     handleSubmit,
@@ -85,6 +86,7 @@ const InformationUser = () => {
   }
 
   const onSubmit: SubmitHandler<UserData> = async (data: any) => {
+    setLoading(true)
     try {
       const dataFormat = { ...data, dob: data.dob ? moment(data.dob).format('DD/MM/YYYY') : data.dob }
       const formData = new FormData()
@@ -105,6 +107,8 @@ const InformationUser = () => {
       }
     } catch (e) {
       errorNotification('Chỉnh sửa thông tin người dùng không thành cồng')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -211,6 +215,7 @@ const InformationUser = () => {
                 <input
                   className={`${errors.identificationNumber ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
                   placeholder='CCCD/CMT'
+                  disabled
                   {...register('identificationNumber', {
                     required: 'CCCD/CMT không được để trống'
                   })}
@@ -228,6 +233,7 @@ const InformationUser = () => {
                 <input
                   className={`${errors.phone ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
                   placeholder='Số điện thoại'
+                  disabled
                   {...register('phone', {
                     required: 'SĐT không được để trống'
                   })}
@@ -285,7 +291,7 @@ const InformationUser = () => {
                   className='middle my-6 none center mr-4 text-xs rounded-lg bg-[#0070f4] py-2 px-4 font-sans font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
                   data-ripple-light='true'
                 >
-                  Lưu
+                  {loading ? <LoadingIcon /> : 'Lưu'}{' '}
                 </button>
               </div>
             </div>

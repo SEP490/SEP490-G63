@@ -37,6 +37,7 @@ import { MdEditDocument, MdOutlineDownloadDone } from 'react-icons/md'
 import { HiMiniDocumentCheck } from 'react-icons/hi2'
 import LoadingIcon from '~/assets/LoadingIcon'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { useNotification } from '~/context/notiProvider'
 export interface DataContract {
   id: string
   file: string
@@ -89,6 +90,7 @@ const Contract = () => {
     title: 'Quản lí hợp đồng',
     status: 'MANAGER_CONTRACT'
   })
+  const { realReload } = useNotification()
   const [status, setStatus] = useState<number>(0)
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(10)
@@ -121,7 +123,7 @@ const Contract = () => {
   }
 
   const { data, isLoading, refetch, isFetching } = useQuery(
-    ['new-contract', user?.id, statusContract?.status],
+    ['new-contract', user?.id, statusContract?.status, realReload],
     () => getNewContract(page, size, statusContract?.status as string),
     {
       onSuccess: (response) => {
@@ -136,12 +138,8 @@ const Contract = () => {
     data: dataNumber,
     isLoading: loadingNumber,
     refetch: refetchNumber
-  } = useQuery('number-contract', managerCount, {
-    onError: (error: AxiosError<{ message: string }>) => {
-      errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
-    }
-  })
- 
+  } = useQuery(['number-contract', realReload], managerCount)
+
   const actionSale: ActionType[] = [
     {
       id: 1,
@@ -181,7 +179,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-blue-700',
-      disable: (d: any) => d?.status != "SUCCESS",
+      disable: (d: any) => d?.status != 'SUCCESS',
       callback: (d: any) => {
         navigate(`/appendices/${d.id}`)
       }
@@ -328,7 +326,7 @@ const Contract = () => {
       ),
       color: 'text-orange-700',
       disable: (d: any) =>
-        !d?.canSign || user?.email == d.createdBy || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
+        !d?.canRejectSign || user?.email == d.createdBy || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
       callback: (d: any) => {
         setSelectedContract(d)
         setStatus(6)
@@ -622,8 +620,7 @@ const Contract = () => {
             <input
               type='text'
               id='table-search'
-              {...(register('searchText'),
-              {
+              {...register('searchText', {
                 required: true
               })}
               className='block p-2 ps-10 w-[80%] shadow-md text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
@@ -637,6 +634,7 @@ const Contract = () => {
             </button>
           </form>
         </div>
+
         <button
           type='button'
           onClick={() => navigate('create')}
@@ -653,7 +651,8 @@ const Contract = () => {
               className={`cursor-pointer flex justify-between items-center text-xs sm:text-sm md:text-md h-[30px] px-3 py-1 ${statusContract?.id == t.id ? 'bg-main-color text-white' : 'text-black'} hover:bg-hover-main hover:text-white`}
               onClick={() => setStatusContract(t)}
             >
-              {t?.title} {loadingNumber ? <LoadingIcon /> : dataNumber?.object?.[t.number]}
+              {t?.title}{' '}
+              {loadingNumber ? <LoadingIcon /> : dataNumber?.object?.[t.number] ? dataNumber?.object?.[t.number] : 0}
             </div>
           ))}
         </div>
@@ -719,6 +718,7 @@ const Contract = () => {
                             onClick={() => {
                               setSelectedContract(d)
                               setOpenModal(true)
+                              // navigate(`/contract/detail/${d?.id}`)
                             }}
                           >
                             Xem
@@ -879,7 +879,7 @@ const Contract = () => {
                             leaveFrom='opacity-100'
                             leaveTo='opacity-0'
                           >
-                            <Listbox.Options className='absolute mt-1 w-[40vw] md:w-[30vw] right-0 bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm'>
+                            <Listbox.Options className='absolute mt-1 w-[40vw] md:w-[40vw] right-0 bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm'>
                               <Listbox.Option
                                 key='history'
                                 className={({ active }) =>

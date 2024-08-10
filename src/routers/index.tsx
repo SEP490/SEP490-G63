@@ -32,6 +32,10 @@ import ChangePassword from '~/components/ChangePassword.tsx'
 import Department from '~/pages/Admin/Department/Department.tsx'
 import FormProvider from '~/context/formProvider.tsx'
 import CreateTemplateContract from '~/components/Admin/TemplateContract/CreateTemplateContract.tsx'
+import ViewSignAppendicesContract from '~/pages/BasePage/ViewSignAppendicesContract.tsx'
+import ViewDetailContract from '~/components/Admin/NewContract/ViewDetailContract.tsx'
+import PaySlipFormula from '~/pages/Admin/Salary/PaySlipFormula.tsx'
+import CompanyInformation from '~/components/Company/CompanyInformation.tsx'
 
 const Routes = () => {
   const { token, user } = useAuth()
@@ -79,6 +83,14 @@ const Routes = () => {
           element: (
             <AdminLayout>
               <ViewSignContract />
+            </AdminLayout>
+          )
+        },
+        {
+          path: '/view/:id/sign-appendices/:customer',
+          element: (
+            <AdminLayout>
+              <ViewSignAppendicesContract />
             </AdminLayout>
           )
         },
@@ -143,6 +155,30 @@ const Routes = () => {
           element: (
             <AdminLayout>
               <Contract />
+            </AdminLayout>
+          )
+        },
+        {
+          path: '/company',
+          element: (
+            <AdminLayout>
+              <CompanyInformation />
+            </AdminLayout>
+          )
+        },
+        {
+          path: '/pay-slip',
+          element: (
+            <AdminLayout>
+              <PaySlipFormula />
+            </AdminLayout>
+          )
+        },
+        {
+          path: '/contract/detail/:id',
+          element: (
+            <AdminLayout>
+              <ViewDetailContract />
             </AdminLayout>
           )
         },
@@ -295,6 +331,16 @@ const Routes = () => {
           )
         },
         {
+          path: '/view/:id/sign-appendices/:customer',
+          element: (
+            <UserLayout>
+              <AdminOfficer>
+                <ViewSignAppendicesContract />
+              </AdminOfficer>
+            </UserLayout>
+          )
+        },
+        {
           path: '/employee',
           element: (
             <UserLayout>
@@ -387,7 +433,7 @@ const Routes = () => {
           element: (
             <UserLayout>
               <Sale>
-                <DashboardSale />
+                <SearchPage />
               </Sale>
             </UserLayout>
           )
@@ -438,6 +484,16 @@ const Routes = () => {
             <UserLayout>
               <Sale>
                 <ViewSignContract />
+              </Sale>
+            </UserLayout>
+          )
+        },
+        {
+          path: '/view/:id/sign-appendices/:customer',
+          element: (
+            <UserLayout>
+              <Sale>
+                <ViewSignAppendicesContract />
               </Sale>
             </UserLayout>
           )
@@ -600,6 +656,14 @@ const Routes = () => {
       element: (
         <div className='w-[100vw] h-[100vh]'>
           <ViewSignContract />
+        </div>
+      )
+    },
+    {
+      path: '/view/:id/sign-appendices/:customer',
+      element: (
+        <div className='w-[100vw] h-[100vh]'>
+          <ViewSignAppendicesContract />
         </div>
       )
     },
