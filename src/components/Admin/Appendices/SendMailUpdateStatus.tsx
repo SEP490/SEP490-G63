@@ -104,8 +104,8 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC }: IProps
       'htmlContent',
       htmlContent + (status == 7 ? `<a href="${BASE_URL_FE}view/${id}/sign-appendices/2">Ký ngay</a>` : '')
     )
-    formData.append('contractId', id as string)
-    formData.append('attachments', contractFile.current, `${dataContract?.object?.name}.pdf`)
+    formData.append('contractAppendicesId', id as string)
+    // formData.append('attachments', contractFile.current, `${dataContract?.object?.name}.pdf`)
     selectedFiles.forEach((file) => {
       formData.append('attachments', file)
     })
@@ -175,18 +175,18 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC }: IProps
           imageUploadSizeLimit: 5 * 1024 * 1024
         }}
       />
+      <div className='mt-4 text-center'>
+        <input type='file' id='file-upload' className='hidden' onChange={handleFileChange} multiple />
+        <label htmlFor='file-upload' className='cursor-pointer inline-flex items-center justify-center rounded-full'>
+          <img src={uploadIcon} alt='Upload' className='w-20 h-20' />
+        </label>
+      </div>
       <h2 className=' font-bold my-2'>Tệp đính kèm</h2>
       <div className='w-full flex gap-4 flex-wrap md:justify-normal justify-center'>
         <div className='text-red-500'>{dataContract?.object?.name}.pdf</div>
         <div className='text-blue-500 underline cursor-pointer' onClick={() => setOpen(true)}>
           Xem chi tiết
         </div>
-      </div>
-      <div className='mt-4 text-center'>
-        <input type='file' id='file-upload' className='hidden' onChange={handleFileChange} multiple />
-        <label htmlFor='file-upload' className='cursor-pointer inline-flex items-center justify-center rounded-full'>
-          <img src={uploadIcon} alt='Upload' className='w-20 h-20' />
-        </label>
       </div>
 
       {previewUrls.length > 0 && (

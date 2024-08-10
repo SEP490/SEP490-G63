@@ -35,6 +35,7 @@ interface CompanyInfo {
   bankId: string
   bankName: string
   bankAccOwer: string
+  phone: string
 }
 const ViewTemplateContract = ({ selectedContract, handleCloseModal, refetch }: any) => {
   const {
@@ -165,6 +166,25 @@ const ViewTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
         </div>
         <div className='w-full md:w-[30%] mt-5 relative '>
           <label className='font-light '>
+            Số điện thoại<sup className='text-red-500'>*</sup>
+          </label>
+          <input
+            className={`${formInfoPartA.formState.errors.phone ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            type='text'
+            disabled
+            placeholder='Nhập số điện thoại'
+            {...formInfoPartA.register('phone', {
+              required: 'Số điện thoại không được để trống'
+            })}
+          />
+          <div
+            className={`text-red-500 absolute text-[12px] ${formInfoPartA.formState.errors.phone ? 'visible' : 'invisible'}`}
+          >
+            {formInfoPartA.formState.errors.phone?.message}
+          </div>
+        </div>
+        <div className='w-full md:w-[30%] mt-5 relative '>
+          <label className='font-light '>
             Email<sup className='text-red-500'>*</sup>
           </label>
           <input
@@ -280,7 +300,7 @@ const ViewTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             </option>
             {banks.map(
               (bank: { id: number; code: string; shortName: string; logo: string; bin: string; name: string }) => (
-                <option key={bank.id} value={bank.bin}>
+                <option key={bank.id} value={bank.name}>
                   {bank.shortName} - {bank.name}
                 </option>
               )
@@ -307,7 +327,7 @@ const ViewTemplateContract = ({ selectedContract, handleCloseModal, refetch }: a
             {errors.bankAccOwer?.message}
           </div>
         </div>
-
+        <div className='w-full md:w-[30%]'></div>
         <div className='w-full mt-5 font-bold'>Điều khoản hợp đồng</div>
         <div className='w-full mt-3'>
           <SunEditor

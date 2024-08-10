@@ -37,6 +37,7 @@ import { MdEditDocument, MdOutlineDownloadDone } from 'react-icons/md'
 import { HiMiniDocumentCheck } from 'react-icons/hi2'
 import LoadingIcon from '~/assets/LoadingIcon'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { useNotification } from '~/context/notiProvider'
 export interface DataContract {
   id: string
   file: string
@@ -89,6 +90,7 @@ const Contract = () => {
     title: 'Quản lí hợp đồng',
     status: 'MANAGER_CONTRACT'
   })
+  const { realReload } = useNotification()
   const [status, setStatus] = useState<number>(0)
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(10)
@@ -121,7 +123,7 @@ const Contract = () => {
   }
 
   const { data, isLoading, refetch, isFetching } = useQuery(
-    ['new-contract', user?.id, statusContract?.status],
+    ['new-contract', user?.id, statusContract?.status, realReload],
     () => getNewContract(page, size, statusContract?.status as string),
     {
       onSuccess: (response) => {
@@ -136,7 +138,7 @@ const Contract = () => {
     data: dataNumber,
     isLoading: loadingNumber,
     refetch: refetchNumber
-  } = useQuery('number-contract', managerCount)
+  } = useQuery(['number-contract', realReload], managerCount)
 
   const actionSale: ActionType[] = [
     {
@@ -324,7 +326,7 @@ const Contract = () => {
       ),
       color: 'text-orange-700',
       disable: (d: any) =>
-        !d?.canSign || user?.email == d.createdBy || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
+        !d?.canRejectSign || user?.email == d.createdBy || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
       callback: (d: any) => {
         setSelectedContract(d)
         setStatus(6)
@@ -618,8 +620,7 @@ const Contract = () => {
             <input
               type='text'
               id='table-search'
-              {...(register('searchText'),
-              {
+              {...register('searchText', {
                 required: true
               })}
               className='block p-2 ps-10 w-[80%] shadow-md text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
@@ -633,15 +634,14 @@ const Contract = () => {
             </button>
           </form>
         </div>
-        {permissionUser == 'SALE' && (
-          <button
-            type='button'
-            onClick={() => navigate('create')}
-            className='rounded-md shadow-md flex gap-1 items-center bg-main-color px-4 py-2 text-xs sm:text-sm font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
-          >
-            <PlusIcon className='h-5 w-5' /> Tạo mới
-          </button>
-        )}
+
+        <button
+          type='button'
+          onClick={() => navigate('create')}
+          className='rounded-md shadow-md flex gap-1 items-center bg-main-color px-4 py-2 text-xs sm:text-sm font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
+        >
+          <PlusIcon className='h-5 w-5' /> Tạo mới
+        </button>
       </div>
       <div className='flex h-[calc(100%-70px)] flex-col gap-2 md:flex-row justify-start sm:justify-between px-3'>
         <div className='flex gap-2 md:flex-col w-full h-fit md:h-full md:w-[15%] bg-white shadow-md overflow-auto'>

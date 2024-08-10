@@ -19,6 +19,7 @@ interface CompanyInfo {
   bankId: string
   bankName: string
   bankAccOwer: string
+  phone: string
 }
 const CompanyInformation = () => {
   const { successNotification, errorNotification } = useToast()
@@ -105,6 +106,23 @@ const CompanyInformation = () => {
           />
           <div className={`text-red-500 absolute text-[12px] ${formState.errors.name ? 'visible' : 'invisible'}`}>
             {formState.errors.name?.message}
+          </div>
+        </div>
+        <div className='w-full md:w-[30%] mt-5 relative '>
+          <label className='font-light '>
+            Số điện thoại<sup className='text-red-500'>*</sup>
+          </label>
+          <input
+            className={`${formState.errors.phone ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
+            type='text'
+            disabled={updateNewParty?.isLoading}
+            placeholder='Nhập số điện thoại'
+            {...register('phone', {
+              required: 'Số điện thoại không được để trống'
+            })}
+          />
+          <div className={`text-red-500 absolute text-[12px] ${formState.errors.phone ? 'visible' : 'invisible'}`}>
+            {formState.errors.phone?.message}
           </div>
         </div>
         <div className='w-full md:w-[30%] mt-5 relative '>
@@ -220,7 +238,7 @@ const CompanyInformation = () => {
             </option>
             {banks.map(
               (bank: { id: number; code: string; shortName: string; logo: string; bin: string; name: string }) => (
-                <option key={bank.id} value={bank.bin}>
+                <option key={bank.id} value={bank.name}>
                   {bank.shortName} - {bank.name}
                 </option>
               )
@@ -272,6 +290,7 @@ const CompanyInformation = () => {
             {formState.errors.bankAccOwer?.message}
           </div>
         </div>
+        <div className='w-full md:w-[30%]'></div>
         <div className='w-full flex justify-end'>
           <button
             type='submit'

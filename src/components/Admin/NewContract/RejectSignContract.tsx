@@ -32,7 +32,7 @@ const RejectSignContract = ({ contract }: any) => {
     formData.append('subject', 'Hợp đồng cần được xem xét lại')
     const htmlContent = `Hợp đồng <b>${contract?.name}</b> cần được chỉnh sửa lại thông tin theo yêu cầu của đại diện: <b>${contract?.partyB?.presenter}</b> thuộc công ty <b>${contract?.partyB?.name}</b> như sau: <br/> <i>"${data.comment}"</i>`
     formData.append('htmlContent', htmlContent)
-    formData.append('contractId ', contract?.id as string)
+    formData.append('contractId', contract?.id as string)
     formData.append('status', 'SIGN_B_FAIL')
     formData.append('description', data.comment)
 
