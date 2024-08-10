@@ -7,7 +7,7 @@ import { Fragment } from 'react/jsx-runtime'
 import RejectSignContract from '~/components/Admin/NewContract/RejectSignContract'
 import SignContract from '~/components/Admin/NewContract/SignContract'
 import ViewContract from '~/components/Admin/NewContract/ViewContract'
-import { getOptMail, verifyOtp } from '~/services/auth-sign-contract.service'
+import { getOptMail, getSMSCode, verifyOtp } from '~/services/auth-sign-contract.service'
 import { getNewContractByIdNotToken } from '~/services/contract.service'
 import logo from '../../assets/svg/Tdocman.svg'
 import { useForm } from 'react-hook-form'
@@ -23,6 +23,7 @@ type FormType = {
 const ViewSignContract = () => {
   const [modalSign, setModalSign] = useState(false)
   const [modalReject, setModalReject] = useState(false)
+  const [checkSms, setCheckSms] = useState(false)
   const { id, customer } = useParams()
   const { user } = useAuth()
   const location = useLocation()
@@ -46,6 +47,17 @@ const ViewSignContract = () => {
         successNotification('Xác thực người dùng thành công!')
         setCheckAuth(false)
       } else errorNotification('OTP không chính xác')
+    } catch (e) {
+      console.log(e)
+      errorNotification('Lỗi hệ thống!!')
+    }
+  }
+  const handleGetSMSCode = async () => {
+    try {
+      const response = await getSMSCode()
+      if (response.code == '00') {
+        successNotification('Gửi mã thành công, hãy kiểm tra hòm thư!')
+      } else errorNotification('Email của bạn không khớp đúng thông tin trong hợp đồng')
     } catch (e) {
       console.log(e)
       errorNotification('Lỗi hệ thống!!')
