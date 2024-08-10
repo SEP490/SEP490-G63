@@ -38,6 +38,7 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import ContractHistory from '../ContractHistory'
 import { deleteAppendices, getAppendicesContactAll } from '~/services/contract.appendices.service'
 import SendMailUpdateStatus from '~/components/Admin/Appendices/SendMailUpdateStatus'
+import { useNotification } from '~/context/notiProvider'
 export interface DataContract {
   id: string
   file: string
@@ -85,6 +86,7 @@ const AppendicesContract = () => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [changeStatus, setChangeStatus] = useState(false)
   const [historyModal, setHistoryModal] = useState(false)
+  const { realReload } = useNotification()
   const [statusContract, setStatusContract] = useState<any>({
     id: 1,
     title: 'Quản lí hợp đồng',
@@ -123,7 +125,7 @@ const AppendicesContract = () => {
   }
 
   const { data, isLoading, refetch, isFetching } = useQuery(
-    ['contract-appendices', user?.id, statusContract?.status],
+    ['contract-appendices', user?.id, statusContract?.status, realReload],
     () => getAppendicesContactAll(id as string, page, size, statusContract?.status as string),
     {
       onSuccess: (response) => {

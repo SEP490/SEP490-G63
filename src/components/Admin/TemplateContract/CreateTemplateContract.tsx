@@ -16,6 +16,7 @@ import { AxiosError } from 'axios'
 import LoadingIcon from '~/assets/LoadingIcon'
 import dataRegex from '../../../regex.json'
 import { getParty } from '~/services/party.service'
+import moment from 'moment'
 interface FormType {
   name: string
   number: string
@@ -34,6 +35,7 @@ interface CompanyInfo {
   bankId: string
   bankName: string
   bankAccOwer: string
+  phone: string
 }
 const CreateTemplateContract = () => {
   const {
@@ -148,7 +150,7 @@ const CreateTemplateContract = () => {
           </label>
           <input
             className={`${errors.name ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-            placeholder='Nhập tên hợp đồng'
+            placeholder='Ví dụ: Tên công ty-Đối tác-HDKD'
             disabled={createTemplateContractQuery?.isLoading}
             {...register('name', {
               required: 'Tên hợp đồng không được để trống',
@@ -170,7 +172,7 @@ const CreateTemplateContract = () => {
             className={`${errors.number ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
             disabled={createTemplateContractQuery?.isLoading}
-            placeholder='Nhập số hợp đồng'
+            placeholder={`Ví dụ: Tên công ty-Đối tác-${moment(new Date()).format('YYYY-MM-DD')}`}
             {...register('number', {
               required: 'Số hợp đồng không được để trống'
             })}
@@ -278,6 +280,25 @@ const CreateTemplateContract = () => {
         </div>
         <div className='w-full md:w-[30%] mt-5 relative '>
           <label className='font-light '>
+            Số điện thoại<sup className='text-red-500'>*</sup>
+          </label>
+          <input
+            className={`${formInfoPartA.formState.errors.phone ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
+            type='text'
+            disabled
+            placeholder='Nhập số điện thoại'
+            {...formInfoPartA.register('phone', {
+              required: 'Số điện thoại không được để trống'
+            })}
+          />
+          <div
+            className={`text-red-500 absolute text-[12px] ${formInfoPartA.formState.errors.phone ? 'visible' : 'invisible'}`}
+          >
+            {formInfoPartA.formState.errors.phone?.message}
+          </div>
+        </div>
+        <div className='w-full md:w-[30%] mt-5 relative '>
+          <label className='font-light '>
             Địa chỉ<sup className='text-red-500'>*</sup>
           </label>
           <input
@@ -367,7 +388,7 @@ const CreateTemplateContract = () => {
             </option>
             {banks.map(
               (bank: { id: number; code: string; shortName: string; logo: string; bin: string; name: string }) => (
-                <option key={bank.id} value={bank.bin}>
+                <option key={bank.id} value={bank.name}>
                   {bank.shortName} - {bank.name}
                 </option>
               )
@@ -423,6 +444,7 @@ const CreateTemplateContract = () => {
             {formInfoPartA.formState.errors.bankAccOwer?.message}
           </div>
         </div>
+        <div className='w-full md:w-[30%]'></div>
         <div className='w-full mt-5 font-bold'>Điều khoản hợp đồng</div>
         <div className='w-full mt-3'>
           <SunEditor

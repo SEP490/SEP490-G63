@@ -32,6 +32,7 @@ type MyContextValue = {
   setNotifications: any
   setTotalNotRead: any
   loading: boolean
+  realReload: any
 }
 interface Props {
   children: React.ReactNode
@@ -46,7 +47,8 @@ const NotifyContext = createContext<MyContextValue>({
   viewMoreNotify: () => {},
   setNotifications: () => {},
   setTotalNotRead: () => {},
-  loading: false
+  loading: false,
+  realReload: new Date()
 })
 
 const NotifyProvider: React.FC<Props> = ({ children }) => {
@@ -56,7 +58,7 @@ const NotifyProvider: React.FC<Props> = ({ children }) => {
   const totalPages = useRef<number>(0)
   const { user } = useAuth()
   const { inforNotification } = useToast()
-
+  const [realReload, setRealReload] = useState(new Date())
   const readNotifyQuery = useMutation(readNotify)
   const getNotifyDataQuery = useMutation(getNotification, {
     onSuccess: (response) => {
@@ -108,6 +110,7 @@ const NotifyProvider: React.FC<Props> = ({ children }) => {
       stompClient.subscribe(`/topic/notifications/${user?.email}`, (message) => {
         if (message.body) {
           setTotalNotRead((totalNotRead) => totalNotRead + 1)
+          setRealReload(new Date())
           setNotifications((prevNotifications) => [JSON.parse(message.body), ...prevNotifications])
           inforNotification('📣 Bạn có một thông báo mới')
           const audio = document.getElementById('notification-sound') as HTMLAudioElement
@@ -135,9 +138,10 @@ const NotifyProvider: React.FC<Props> = ({ children }) => {
       setNotifications,
       loading,
       page,
-      totalPages
+      totalPages,
+      realReload
     }),
-    [notifications, totalNotRead, loading, page, totalPages]
+    [notifications, totalNotRead, loading, page, totalPages, realReload]
   )
 
   return (
