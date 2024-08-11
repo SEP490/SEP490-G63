@@ -20,7 +20,7 @@ interface FormType {
   name: string
   number: string
   urgent: boolean
-  value: number
+  value: string
   contractTypeId: string
 }
 interface CompanyInfo {
@@ -143,7 +143,18 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
     //   setLoading(false)
     // }
   }
-
+  const handleInputValue = (e: any) => {
+    const isNum = /^[\d,]+$/.test(e.target.value)
+    if (isNum) {
+      const number = parseFloat(e.target.value.replace(/,/g, ''))
+      reset({
+        value: number.toLocaleString()
+      })
+    } else
+      reset({
+        value: e.target.value.replace(/[^0-9,]/g, '')
+      })
+  }
   if (loading || loadingTypeContract) return <LoadingPage />
 
   return (
@@ -199,6 +210,7 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
           <input
             className={`${errors.value ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            onInput={handleInputValue}
             disabled={updateContract?.isLoading}
             placeholder='Giá trị hợp đồng'
             {...register('value', {

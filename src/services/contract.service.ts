@@ -29,7 +29,7 @@ export const sendMailPublic = async (formData: any) => {
 }
 
 export const createNewContract = async (data: any) => {
-  const response = await axiosInstant.post(`contract`, data)
+  const response = await axiosInstant.post(`contract`, { ...data, value: data.value.replace(/,/g, '') })
   return response.data
 }
 export const getNewContract = async (page: number, size: number, statusContract: string) => {
@@ -46,7 +46,7 @@ export const getNewContractByIdNotToken = async (id: any) => {
 }
 
 export const updateNewContract = async (data: any) => {
-  const response = await axiosInstant.post(`contract`, data)
+  const response = await axiosInstant.post(`contract`, { ...data, value: data.value.replace(/,/g, '') })
   return response.data
 }
 
