@@ -37,31 +37,27 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
   const { isLoading: loading, data: dataContract } = useQuery('getContractDetail', () => getNewContractById(id), {
     onSuccess: async (response) => {
       if (status == 1) {
-        dataC?.rejectedBy != null && setSelectedTo([{ label: dataC?.rejectedBy, value: dataC?.rejectedBy }])
+        dataC?.rejectedBy != null &&
+          setSelectedTo([{ label: dataC?.rejectedBy + '(ADMIN OFFICER)', value: dataC?.rejectedBy }])
       } else if (status == 2 || status == 3) {
         response.object.createdBy != null &&
-          setSelectedTo([{ label: response.object.createdBy, value: response.object.createdBy }])
+          setSelectedTo([{ label: response.object.createdBy + '(SALE)', value: response.object.createdBy }])
       } else if (status == 4) {
-        setSelectedTo([{ label: dataParty.object.email, value: dataParty.object.email }])
+        setSelectedTo([{ label: dataParty.object.email + '(ADMIN)', value: dataParty.object.email }])
         response.object.createdBy != null &&
-          setSelectedCc([{ label: response.object.createdBy, value: response.object.createdBy }])
+          setSelectedCc([{ label: response.object.createdBy + '(SALE)', value: response.object.createdBy }])
       } else if (status == 6) {
         response.object.createdBy != null &&
-          setSelectedTo([{ label: response.object.createdBy, value: response.object.createdBy }])
+          setSelectedTo([{ label: response.object.createdBy + '(SALE)', value: response.object.createdBy }])
         response.object.approvedBy != null &&
-          setSelectedCc([{ label: response.object.approvedBy, value: response.object.approvedBy }])
+          setSelectedCc([{ label: response.object.approvedBy + '(ADMIN OFFICER)', value: response.object.approvedBy }])
       } else if (status == 7) {
         const mailCC = []
         response.object.approvedBy != null &&
-          mailCC.push({ label: response.object.approvedBy, value: response.object.approvedBy })
+          mailCC.push({ label: response.object.approvedBy + '(ADMIN OFFICER)', value: response.object.approvedBy })
         setSelectedCc(mailCC)
         response.object.partyB != null &&
-          setSelectedTo([{ label: response.object.partyB.email, value: response.object.partyB.email }])
-      } else if (status == 9) {
-        response.object.createdBy != null &&
-          setSelectedTo([{ label: response.object.createdBy, value: response.object.createdBy }])
-        response.object.approvedBy != null &&
-          setSelectedCc([{ label: response.object.approvedBy, value: response.object.approvedBy }])
+          setSelectedTo([{ label: response.object.partyB.email + '(Khách hàng)', value: response.object.partyB.email }])
       }
       const fileUrl = response.object.file
       const fileData = await fetch(fileUrl)
