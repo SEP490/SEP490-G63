@@ -54,6 +54,7 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
     getValues,
     trigger,
     reset,
+    setFocus,
     formState: { errors }
   } = useForm<FormType>()
 
@@ -731,12 +732,10 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
             type='button'
             onClick={async () => {
               const result = await trigger()
-              const result2 = await formInfoPartB.trigger()
-              const result3 = await formInfoPartA.trigger()
 
-              if (result && result2 && result3) {
-                onSubmit()
-              }
+              if (!result) {
+                setFocus(Object.keys(errors)?.[0])
+              } else onSubmit()
             }}
             className='middle my-3 none center mr-4 rounded-lg bg-[#0070f4] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
             data-ripple-light='true'
