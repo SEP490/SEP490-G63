@@ -244,7 +244,6 @@ const Contract = () => {
         setChangeStatus(true)
       }
     },
-
     {
       id: 4,
       title: (
@@ -257,6 +256,21 @@ const Contract = () => {
       callback: (d: any) => {
         setSelectedContract(d)
         setStatus(3)
+        setChangeStatus(true)
+      }
+    },
+    {
+      id: 7,
+      title: (
+        <>
+          <PaperAirplaneIcon className='h-5' /> Gửi khách hàng
+        </>
+      ),
+      color: 'text-teal-700',
+      disable: (d: any) => false,
+      callback: (d: any) => {
+        setSelectedContract(d)
+        setStatus(7)
         setChangeStatus(true)
       }
     },
@@ -330,6 +344,21 @@ const Contract = () => {
       callback: (d: any) => {
         setSelectedContract(d)
         setStatus(6)
+        setChangeStatus(true)
+      }
+    },
+    {
+      id: 6,
+      title: (
+        <>
+          <PaperAirplaneIcon className='h-5' /> Gửi khách hàng
+        </>
+      ),
+      color: 'text-teal-700',
+      disable: (d: any) => false,
+      callback: (d: any) => {
+        setSelectedContract(d)
+        setStatus(7)
         setChangeStatus(true)
       }
     },
