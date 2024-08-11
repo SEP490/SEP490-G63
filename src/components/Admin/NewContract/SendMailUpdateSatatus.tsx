@@ -15,7 +15,6 @@ import { getParty } from '~/services/party.service'
 import pdfIcon from '../../../assets/images/pdf-icon.jpg'
 type IProps = { id: string | undefined; status: number; closeModal: any; refetch: any; dataC: any; refetchNumber: any }
 const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchNumber }: IProps) => {
-  const [selectedFiles, setSelectedFiles] = useState<any[]>([])
   const [previewUrls, setPreviewUrls] = useState<string[]>([])
   const [selectedTo, setSelectedTo] = useState<any[]>([])
   const [selectedCc, setSelectedCc] = useState<any[]>([])
@@ -25,6 +24,8 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
   const [open, setOpen] = useState(false)
   const [loadingSubmit, setLoadingSubmit] = useState(false)
   const contractFile = useRef<any>()
+  const [files, setFiles] = useState([])
+  const [selectedURL, setSelectedURL] = useState('')
   const { isLoading: loadingSALE, data: dataSale } = useQuery('getUserByRoleSale', () => getUserByPermission('SALE'))
   const { isLoading: loadingAdmin, data: dataAdmin } = useQuery('getUserByRoleAdmin', () =>
     getUserByPermission('MANAGER')
@@ -84,19 +85,15 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
 
   const handleFileChange = (event: any) => {
     const files = Array.from(event.target.files)
-    const newPreviewUrls: string[] = []
-    files.forEach((file: any) => {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        newPreviewUrls.push(reader.result as string)
-        if (newPreviewUrls.length === files.length) {
-          setPreviewUrls(newPreviewUrls)
-        }
+    const newFiles = files.map((file: any) => {
+      const url = URL.createObjectURL(file)
+      return {
+        url,
+        file
       }
-      reader.readAsDataURL(file)
     })
 
-    setSelectedFiles(files)
+    setFiles(newFiles)
   }
 
   const handleSubmit = async () => {
@@ -128,8 +125,8 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
     )
     formData.append('contractId', id as string)
     formData.append('attachments', contractFile.current, `${dataContract?.object?.name}.pdf`)
-    selectedFiles.forEach((file) => {
-      formData.append('attachments', file)
+    files.forEach((file: any) => {
+      formData.append('attachments', file.file)
     })
     if (status) formData.append('status', statusRequest[status]?.status)
     formData.append('description', htmlContent)
@@ -149,16 +146,15 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
       setLoadingSubmit(false)
     }
   }
-
   if (loading || loadingSALE || loadingAO || loadingAdmin || loadingSubmit) return <LoadingPage />
   return (
     <div className='h-full overflow-auto pb-5'>
-      <div className='w-full flex flex-col md:flex-row justify-between border-b-2'>
-        <div className='w-full md:w-[46%] py-2 flex items-center z-50'>
+      <div className='w-full flex flex-col justify-between border-b-2'>
+        <div className='w-full md:w-full py-2 flex items-center z-50'>
           <span className='w-20 font-bold'>Đến</span>
           <ComboboxMail selected={selectedTo} setSelected={setSelectedTo} option={optionTo} isCreate={status == 7} />
         </div>
-        <div className='w-full md:w-[46%] py-2  flex items-center z-50'>
+        <div className='w-full md:w-full py-2  flex items-center z-50'>
           <span className='w-20 font-bold'>CC</span>
           <ComboboxMail selected={selectedCc} setSelected={setSelectedCc} option={optionCC} isCreate={status == 7} />
         </div>
@@ -202,26 +198,46 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
       <h2 className=' font-bold my-2'>Tệp đính kèm</h2>
       <div className='w-full flex justify-start gap-3'>
         <div
-          className='border-2 flex flex-col w-[200px] justify-center items-center rounded-md cursor-pointer'
-          onClick={() => setOpen(true)}
+          className='border-2 flex flex-col w-[120px] justify-center items-center rounded-md cursor-pointer'
+          onClick={() => {
+            setOpen(true)
+            setSelectedURL(dataContract?.object?.file)
+          }}
         >
           <div className=' object-contain'>
             <img src={pdfIcon} className='w-full h-full' />
           </div>
           <div
-            className='text-red-500 w-[180px] mb-5 hover:underline truncate ...'
+            className='text-red-500 w-[100px] mb-5 hover:underline truncate ...'
             title={`${dataContract?.object?.name}.pdf`}
           >
             {dataContract?.object?.name}.pdf
           </div>
         </div>
+        {files?.map((file: any) => (
+          <div
+            key={file.url}
+            className='border-2 flex flex-col w-[120px] justify-center items-center rounded-md cursor-pointer'
+            onClick={() => {
+              setOpen(true)
+              setSelectedURL(file.url)
+            }}
+          >
+            <div className=' object-contain'>
+              <img src={pdfIcon} className='w-full h-full' />
+            </div>
+            <div className='text-red-500 w-[100px] mb-5 hover:underline truncate ...' title={`${file?.file?.name}.pdf`}>
+              {file?.file?.name}.pdf
+            </div>
+          </div>
+        ))}
         <div className='text-center flex items-center justify-center'>
-          <input type='file' id='file-upload' className='hidden' onChange={handleFileChange} multiple />
+          <input type='file' id='file-upload' className='hidden' onChange={handleFileChange} multiple accept='.pdf' />
           <label
             htmlFor='file-upload'
             className='cursor-pointer inline-flex items-center justify-center rounded-full border'
           >
-            <PlusIcon className='w-[100px] h-[100px]' />
+            <PlusIcon className='w-[60px] h-[60px]' />
           </label>
         </div>
       </div>
@@ -241,7 +257,14 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
         Gửi
       </button>
       <Transition appear show={open} as={Fragment}>
-        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={() => setOpen(false)}>
+        <Dialog
+          as='div'
+          className='relative z-50 w-[90vw]'
+          onClose={() => {
+            setOpen(false)
+            setSelectedURL('')
+          }}
+        >
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'
@@ -268,9 +291,15 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
                 <Dialog.Panel className='w-[90vw] md:w-[90vw] h-[96vh] transform overflow-hidden rounded-md bg-white p-5 text-left align-middle shadow-xl transition-all'>
                   <div className='flex justify-between'>
                     <div></div>
-                    <XMarkIcon className='h-5 w-5 mr-3 mb-3 cursor-pointer' onClick={() => setOpen(false)} />
+                    <XMarkIcon
+                      className='h-5 w-5 mr-3 mb-3 cursor-pointer'
+                      onClick={() => {
+                        setOpen(false)
+                        setSelectedURL('')
+                      }}
+                    />
                   </div>
-                  <iframe src={dataContract?.object?.file} width='100%' height='100%' />
+                  <iframe src={selectedURL} width='100%' height='100%' />
                 </Dialog.Panel>
               </Transition.Child>
             </div>
