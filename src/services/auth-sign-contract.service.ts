@@ -13,6 +13,6 @@ export const getSMSCode = async (phone: string) => {
   return response
 }
 export const verifySMSCode = async (data: any) => {
-  const response = await axiosInstant.get(`public/otp/verify-for-sign-with-sms`, data)
+  const response = await axiosInstant.post(`public/otp/verify-for-sign-with-sms`, data)
   return response
 }

@@ -54,7 +54,7 @@ const ViewSignContract = () => {
   }
   const handleGetSMSCode = async () => {
     try {
-      const response = await getSMSCode()
+      const response = await getSMSCode('0854898556')
       if (response.code == '00') {
         successNotification('Gửi mã thành công, hãy kiểm tra hòm thư!')
       } else errorNotification('Email của bạn không khớp đúng thông tin trong hợp đồng')
