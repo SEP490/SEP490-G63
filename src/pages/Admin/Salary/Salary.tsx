@@ -1,35 +1,22 @@
-import { Dialog, Menu, Transition } from '@headlessui/react'
+import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
-import AddNewEmployee from '~/components/Admin/Employee/AddNewEmployee'
-import {
-  Cog6ToothIcon,
-  EllipsisVerticalIcon,
-  NoSymbolIcon,
-  PlusIcon,
-  UserIcon,
-  XMarkIcon
-} from '@heroicons/react/24/outline'
-import ViewEmployee from '~/components/Admin/Employee/ViewEmployee'
-import { deleteEmployee, getListEmployee } from '~/services/employee.service'
-import EditEmployee from '~/components/Admin/Employee/EditEmployee'
+import { UserIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Pagination from '~/components/BaseComponent/Pagination/Pagination'
 import Loading from '~/components/shared/Loading/Loading'
-import { useMutation, useQuery } from 'react-query'
+import { useQuery } from 'react-query'
 import { AxiosError } from 'axios'
 import useToast from '~/hooks/useToast'
-import LoadingIcon from '~/assets/LoadingIcon'
-import { debounce } from 'lodash'
 import PaySlipFormula from '~/components/Admin/Salary/PaySlipFormula'
 import { getSalaryAll, getSalaryByMail } from '~/services/salary.service'
-import { Controller, SubmitHandler, useForm } from 'react-hook-form'
-import DatePicker from 'react-datepicker'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import 'react-datepicker/dist/react-datepicker.css'
-import { months } from '~/common/const'
 import { listMonth, listYear } from '~/common/utils/formatDate'
 import { formatPrice } from '~/common/utils/formatPrice'
 import { useAuth } from '~/context/authProvider'
 import { ADMIN } from '~/common/const/role'
 import { useNavigate } from 'react-router-dom'
+import { DownloadTableExcel } from 'react-export-table-to-excel'
+
 export interface DataEmployee {
   id?: string
   name?: string
@@ -63,6 +50,7 @@ const Salary = () => {
   const handlePageChange = (page: any) => {
     setPage(page - 1)
   }
+  const tableRef = useRef(null)
 
   const { handleSubmit, register, getValues, watch } = useForm<FormSearch>({
     defaultValues: { year: new Date().getFullYear(), month: new Date().getMonth() + 1 }
@@ -93,6 +81,8 @@ const Salary = () => {
     },
     {
       onSuccess: (result) => {
+        console.log(result)
+
         setTotalPage(result?.object?.totalPages)
       },
       onError: (error: AxiosError<{ message: string }>) => {
@@ -168,28 +158,51 @@ const Salary = () => {
                 </button>
               </form>
             </div>
+
             {user?.role == ADMIN ? (
-              <button
-                type='button'
-                onClick={() => navigate('/pay-slip')}
-                className='rounded-md flex gap-1 bg-main-color px-4 py-2 text-xs sm:text-sm items-center font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
-              >
-                Quản lí
-              </button>
+              <div className='flex gap-3'>
+                <DownloadTableExcel filename='Bảng lương' sheet='users' currentTableRef={tableRef.current}>
+                  <button
+                    type='button'
+                    onClick={() => console.log('export')}
+                    className='rounded-md  bg-main-color px-4 py-2 text-xs sm:text-sm items-center font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
+                  >
+                    Xuất ra Excel
+                  </button>
+                </DownloadTableExcel>
+                <button
+                  type='button'
+                  onClick={() => navigate('/pay-slip')}
+                  className='rounded-md flex gap-1 bg-main-color px-4 py-2 text-xs sm:text-sm items-center font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
+                >
+                  Quản lí
+                </button>
+              </div>
             ) : (
-              <button
-                type='button'
-                onClick={() => setManageModal(true)}
-                className='rounded-md flex gap-1 bg-main-color px-4 py-2 text-xs sm:text-sm items-center font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
-              >
-                Công thức
-              </button>
+              <div className='flex gap-3'>
+                <DownloadTableExcel filename='users table' sheet='users' currentTableRef={tableRef.current}>
+                  <button
+                    type='button'
+                    onClick={() => console.log('export')}
+                    className='rounded-md  bg-main-color px-4 py-2 text-xs sm:text-sm items-center font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
+                  >
+                    Xuất ra Excel
+                  </button>
+                </DownloadTableExcel>
+                <button
+                  type='button'
+                  onClick={() => setManageModal(true)}
+                  className='rounded-md  bg-main-color px-4 py-2 text-xs sm:text-sm items-center font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
+                >
+                  Công thức
+                </button>
+              </div>
             )}
           </div>
 
           <div className='overflow-auto'>
             <div className='shadow-md sm:rounded-lg h-fit'>
-              <table className='w-full text-sm text-left rtl:text-right text-black dark:text-gray-400 '>
+              <table ref={tableRef} className='w-full text-sm text-left rtl:text-right text-black dark:text-gray-400 '>
                 <thead className='text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
                   <tr>
                     <th className='px-3 py-3 w-[30px]' align='center'>
@@ -197,16 +210,31 @@ const Salary = () => {
                     </th>
                     <th className='px-3 py-3 '>Email</th>
                     <th className='px-3 py-3 ' align='center'>
-                      Lương cơ bản(VND)
+                      Tổng DS(VND)
                     </th>
                     <th className='px-3 py-3 ' align='center'>
-                      Tổng DS(VND)
+                      Lương cứng(VND)
                     </th>
                     {/* <th className='px-6 py-3 '>Vị trí</th> */}
                     <th className='px-6 py-3 ' align='center'>
+                      % DS
+                    </th>
+                    <th className='px-6 py-3 ' align='center'>
+                      % Triển khai KH
+                    </th>
+
+                    <th className='px-6 py-3 ' align='center'>
+                      Thưởng đạt ngưỡng(VND)
+                    </th>
+                    <th className='px-6 py-3 ' align='center'>
+                      Trợ cấp ăn(VND)
+                    </th>
+                    <th className='px-6 py-3 ' align='center'>
+                      Phụ cấp(VND)
+                    </th>
+                    <th className='px-6 py-3 ' align='center'>
                       Tiền lương(VND)
                     </th>
-                    {/* <th className='px-3 py-3'></th> */}
                   </tr>
                 </thead>
 
@@ -221,15 +249,28 @@ const Salary = () => {
                         <td className='px-3 py-3 w-[30px]' align='center'>
                           {page * size + index + 1 < 10 ? `0${page * size + index + 1}` : page * size + index + 1}
                         </td>
-
                         <td className='px-3 py-4'>{d.email}</td>
+                        <td className='px-3 py-4' align='center'>
+                          {formatPrice(d.totalValueContract)}
+                        </td>
                         <td className='px-3 py-4' align='center'>
                           {formatPrice(d.baseSalary)}
                         </td>
                         <td className='px-3 py-4' align='center'>
-                          {formatPrice(d.totalValueContract)}
+                          {d.commissionPercentage}(%)
                         </td>
-                        {/* <td className='px-3 py-4'>{d.position}</td> */}
+                        <td className='px-3 py-4' align='center'>
+                          {d.clientDeploymentPercentage}(%)
+                        </td>
+                        <td className='px-3 py-4' align='center'>
+                          {formatPrice(d.bonusReachesThreshold)}
+                        </td>{' '}
+                        <td className='px-3 py-4' align='center'>
+                          {formatPrice(d.foodAllowance)}
+                        </td>{' '}
+                        <td className='px-3 py-4' align='center'>
+                          {formatPrice(d.transportationOrPhoneAllowance)}
+                        </td>
                         <td className='px-3 py-4' align='center'>
                           {formatPrice(d.totalSalary)}
                         </td>
