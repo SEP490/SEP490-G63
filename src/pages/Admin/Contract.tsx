@@ -677,14 +677,20 @@ const Contract = () => {
       </div>
       <div className='flex h-[calc(100%-70px)] flex-col gap-2 md:flex-row justify-start sm:justify-between px-3'>
         <div className='flex gap-2 md:flex-col w-full h-fit md:h-full md:w-[15%] bg-white shadow-md overflow-auto'>
+          <div className={`flex justify-between items-center text-xs sm:text-sm md:text-md h-[30px] px-2`}>
+            <span className='font-bold'>Trạng thái</span>
+            <span className='font-bold'>SL</span>
+          </div>
           {menuContract[permissionUser]?.map((t: any) => (
             <div
               key={t.id}
-              className={`cursor-pointer flex justify-between items-center text-xs sm:text-sm md:text-md h-[30px] px-3 py-1 ${statusContract?.id == t.id ? 'bg-main-color text-white' : 'text-black'} hover:bg-hover-main hover:text-white`}
+              className={`cursor-pointer flex justify-between items-center text-xs sm:text-sm md:text-md h-[30px] px-1 py-1 ${statusContract?.id == t.id ? 'bg-main-color text-white' : 'text-black'} hover:bg-hover-main hover:text-white`}
               onClick={() => setStatusContract(t)}
             >
-              {t?.title}{' '}
-              {loadingNumber ? <LoadingIcon /> : dataNumber?.object?.[t.number] ? dataNumber?.object?.[t.number] : 0}
+              {t?.title}
+              <span class='bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300'>
+                {loadingNumber ? <LoadingIcon /> : dataNumber?.object?.[t.number] ? dataNumber?.object?.[t.number] : 0}
+              </span>
             </div>
           ))}
         </div>
