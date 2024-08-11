@@ -1,13 +1,13 @@
 import { Dialog, Field, Textarea, Transition } from '@headlessui/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Label } from 'react-konva'
-import { useQuery } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 import { Navigate, useLocation, useParams } from 'react-router-dom'
 import { Fragment } from 'react/jsx-runtime'
 import RejectSignContract from '~/components/Admin/NewContract/RejectSignContract'
 import SignContract from '~/components/Admin/NewContract/SignContract'
 import ViewContract from '~/components/Admin/NewContract/ViewContract'
-import { getOptMail, getSMSCode, verifyOtp } from '~/services/auth-sign-contract.service'
+import { getOptMail, getSMSCode, verifyOtp, verifySMSCode } from '~/services/auth-sign-contract.service'
 import { getNewContractByIdNotToken } from '~/services/contract.service'
 import logo from '../../assets/svg/Tdocman.svg'
 import { useForm } from 'react-hook-form'
@@ -20,10 +20,13 @@ type FormType = {
   email: string
   code: number
 }
+type FormTypeSMS = {
+  code: number
+}
 const ViewSignContract = () => {
   const [modalSign, setModalSign] = useState(false)
   const [modalReject, setModalReject] = useState(false)
-  const [checkSms, setCheckSms] = useState(false)
+  const [checkSms, setCheckSms] = useState(true)
   const { id, customer } = useParams()
   const { user } = useAuth()
   const location = useLocation()
@@ -33,6 +36,11 @@ const ViewSignContract = () => {
   const { data, refetch, isFetching, isLoading } = useQuery('detail-contract-public', () =>
     getNewContractByIdNotToken(id)
   )
+  const phoneVerify = useMemo(() => {
+    if (customer == '1') {
+      return data?.object?.partyA?.phone
+    } else return data?.object?.partyB?.phone
+  }, [data, customer])
   const {
     register,
     handleSubmit,
@@ -40,6 +48,7 @@ const ViewSignContract = () => {
     getValues,
     formState: { errors }
   } = useForm<FormType>()
+  const formSMS = useForm<FormTypeSMS>()
   const onSubmit = async (data: any) => {
     try {
       const response = await verifyOtp(data)
@@ -52,17 +61,20 @@ const ViewSignContract = () => {
       errorNotification('Lỗi hệ thống!!')
     }
   }
-  const handleGetSMSCode = async () => {
+  const onSubmitSMS = async (data: any) => {
     try {
-      const response = await getSMSCode('0854898556')
+      const response = await verifySMSCode({ phone: phoneVerify, code: data.code })
       if (response.code == '00') {
-        successNotification('Gửi mã thành công, hãy kiểm tra hòm thư!')
-      } else errorNotification('Email của bạn không khớp đúng thông tin trong hợp đồng')
+        successNotification('Xác thực người dùng thành công!')
+        setCheckSms(false)
+      } else errorNotification('OTP không chính xác')
     } catch (e) {
       console.log(e)
       errorNotification('Lỗi hệ thống!!')
     }
   }
+  const getSMSQuery = useMutation(getSMSCode)
+
   const handleGetOpt = async () => {
     const result = await trigger('email')
     if (result) {
@@ -183,7 +195,10 @@ const ViewSignContract = () => {
               disabled={(customer == '1' && data?.object?.signA != null) || (customer == '2' && data?.object?.signB)}
               className=' my-3 none center mr-4 rounded-lg bg-[#0070f4] px-2 py-2 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
               data-ripple-light='true'
-              onClick={() => setModalSign(true)}
+              onClick={() => {
+                setModalSign(true)
+                if (phoneVerify) getSMSQuery.mutate(phoneVerify)
+              }}
             >
               Ký hợp đồng
             </button>
@@ -222,16 +237,49 @@ const ViewSignContract = () => {
                   <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
                     Ký hợp đồng
                   </Dialog.Title>
-                  <SignContract
-                    id={id}
-                    createdBy={customer == '1' ? user?.email : getValues('email')}
-                    customer={customer}
-                    comment={commentRef.current?.value}
-                    refetch={refetch}
-                    to={data?.object?.createdBy}
-                    cc={data?.object?.approvedBy}
-                    setModalSign={setModalSign}
-                  />
+                  {checkSms ? (
+                    <form onSubmit={formSMS.handleSubmit(onSubmitSMS)}>
+                      <div className='w-full'>
+                        Chúng tôi đã gửi mã xác thực về số điện thoại: {phoneVerify}. Hãy kiểm tra vè xác thực người
+                        dùng.
+                      </div>
+                      <div className='w-full mt-5 relative'>
+                        <label className='font-light '>
+                          Mã xác thực<sup className='text-red-500'>*</sup>
+                        </label>
+                        <div className='flex justify-between'>
+                          <input
+                            className={`${errors.code ? 'ring-red-600' : ''} block w-[calc(100%-130px)] rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+                            placeholder='Nhập mã xác thực'
+                            {...formSMS.register('code', {
+                              required: 'Mã xác thực không hợp lệ'
+                            })}
+                          />
+                          <button
+                            type='submit'
+                            className='w-[120px] block bg-red-500 hover:bg-red-500 uppercase text-white font-bold rounded-md border-0 py-1.5 px-5 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                          >
+                            Xác thực
+                          </button>
+                        </div>
+
+                        <div className={`text-red-500 absolute text-[12px]  ${errors.code ? 'visible' : 'invisible'}`}>
+                          {errors.code?.message}
+                        </div>
+                      </div>
+                    </form>
+                  ) : (
+                    <SignContract
+                      id={id}
+                      createdBy={customer == '1' ? user?.email : getValues('email')}
+                      customer={customer}
+                      comment={commentRef.current?.value}
+                      refetch={refetch}
+                      to={data?.object?.createdBy}
+                      cc={data?.object?.approvedBy}
+                      setModalSign={setModalSign}
+                    />
+                  )}
                 </Dialog.Panel>
               </Transition.Child>
             </div>

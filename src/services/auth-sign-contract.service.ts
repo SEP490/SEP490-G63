@@ -10,9 +10,9 @@ export const verifyOtp = async (data: any) => {
 }
 export const getSMSCode = async (phone: string) => {
   const response = await axiosInstant.get(`public/otp/${phone}`)
-  return response
+  return response.data
 }
 export const verifySMSCode = async (data: any) => {
   const response = await axiosInstant.post(`public/otp/verify-for-sign-with-sms`, data)
-  return response
+  return response.data
 }
