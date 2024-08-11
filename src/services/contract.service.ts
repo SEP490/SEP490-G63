@@ -1,4 +1,6 @@
+import { BASE_URL } from '~/common/const/index.ts'
 import axiosInstant, { axiosInstanceFormData } from '../config/axiosConfig.ts'
+import axios from 'axios'
 type SignRequest = {
   contractId: string
   signImage: string
@@ -41,7 +43,7 @@ export const getNewContractById = async (id: any) => {
   return response.data
 }
 export const getNewContractByIdNotToken = async (id: any) => {
-  const response = await axiosInstant.get(`contract/public/sign-contract/${id}`)
+  const response = await axios.get(`${BASE_URL}contract/public/sign-contract/${id}`)
   return response.data
 }
 
@@ -68,7 +70,7 @@ export const getSearchContract = async ({ fieldSearch, data }: any) => {
   return response.data
 }
 export const signContract = async (data: SignRequest) => {
-  const response = await axiosInstant.post(`contract/public/sign-contract`, data)
+  const response = await axios.post(`${BASE_URL}contract/public/sign-contract`, data)
   return response.data
 }
 export const managerCount = async () => {

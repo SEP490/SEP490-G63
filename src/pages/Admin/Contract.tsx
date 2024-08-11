@@ -64,6 +64,9 @@ export interface DataContract {
   canUpdate: boolean
   approved: boolean
   createdDate: string
+  draft: boolean
+  user: any
+  numberContract: string
 }
 type ActionType = {
   id: number
@@ -696,8 +699,9 @@ const Contract = () => {
                     <th className='px-3 py-3 w-[5%]' align='center'>
                       STT
                     </th>
-                    <th className='px-3 py-3 w-[40%]'>Tên hợp đồng</th>
-                    <th className='px-3 py-3 w-[20%]'>Người tạo</th>
+                    <th className='px-3 py-3 w-[30%]'>Tên hợp đồng</th>
+                    <th className='px-3 py-3'>Số hợp đồng</th>
+                    <th className='px-3 py-3 w-[10%]'>Người tạo</th>
                     <th scope='col' className='px-3 py-3' align='center'>
                       Ngày tạo
                     </th>
@@ -723,7 +727,7 @@ const Contract = () => {
                         </td>
                         <td className={`px-3 py-4`}>
                           <div className='flex items-center gap-4'>
-                            {d.name}
+                            {d.name} {d.draft && '(Bản nháp)'}
                             {d.status != 'SUCCESS' && d.urgent && (
                               <Tooltip content='Cấp bách'>
                                 <UrgentIcon className='w-6 h-6' />
@@ -731,7 +735,10 @@ const Contract = () => {
                             )}
                           </div>
                         </td>
-                        <td className='px-3 py-4'>{d.createdBy}</td>
+                        <td className='px-3 py-4'>{d.numberContract}</td>
+                        <td className='px-3 py-4'>
+                          {d.user.name} - {d.user.phone} - {d.user.email}
+                        </td>
                         <td className='px-3 py-4' align='center'>
                           {d?.createdDate ? moment(d?.createdDate).format('DD/MM/YYYY') : d?.createdDate}
                         </td>

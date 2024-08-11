@@ -1,5 +1,7 @@
 import { NotificationData } from '~/context/notiProvider.tsx'
 import axiosInstance, { adminInstance, axiosInstanceFormData } from '../config/axiosConfig.ts'
+import axios from 'axios'
+import { BASE_URL } from '~/common/const/index.ts'
 interface LoginData {
   email: string
   password: string
@@ -13,12 +15,8 @@ interface RegisterData {
   planpriceId: string
 }
 export const login = async ({ email, password }: LoginData) => {
-  try {
-    const response = await axiosInstance.post('public/auth/login', { email, password })
-    return response.data
-  } catch (error) {
-    console.log(error)
-  }
+  const response = await axios.post(`${BASE_URL}public/auth/login`, { email, password })
+  return response.data
 }
 export const updateProfile = async ({ id, formData }: any) => {
   const response = await axiosInstanceFormData.put(`user/${id}`, formData)
