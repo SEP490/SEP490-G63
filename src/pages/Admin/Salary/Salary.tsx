@@ -161,7 +161,7 @@ const Salary = () => {
 
             {user?.role == ADMIN ? (
               <div className='flex gap-3'>
-                <DownloadTableExcel filename='Bảng lương' sheet='users' currentTableRef={tableRef.current}>
+                <DownloadTableExcel filename={`Bảng lương`} sheet='Lương' currentTableRef={tableRef.current}>
                   <button
                     type='button'
                     onClick={() => console.log('export')}
@@ -180,7 +180,7 @@ const Salary = () => {
               </div>
             ) : (
               <div className='flex gap-3'>
-                <DownloadTableExcel filename='users table' sheet='users' currentTableRef={tableRef.current}>
+                <DownloadTableExcel filename={`Bảng lương`} sheet='Lương' currentTableRef={tableRef.current}>
                   <button
                     type='button'
                     onClick={() => console.log('export')}
@@ -208,7 +208,8 @@ const Salary = () => {
                     <th className='px-3 py-3 w-[30px]' align='center'>
                       STT
                     </th>
-                    <th className='px-3 py-3 '>Email</th>
+                    <th className='px-3 py-3 w-[150px]'>Tên nhân viên</th>
+                    <th className='px-3 py-3'> Email</th>
                     <th className='px-3 py-3 ' align='center'>
                       Tổng DS(VND)
                     </th>
@@ -249,6 +250,7 @@ const Salary = () => {
                         <td className='px-3 py-3 w-[30px]' align='center'>
                           {page * size + index + 1 < 10 ? `0${page * size + index + 1}` : page * size + index + 1}
                         </td>
+                        <td className='px-3 py-4'>{d?.user?.name}</td>
                         <td className='px-3 py-4'>{d.email}</td>
                         <td className='px-3 py-4' align='center'>
                           {formatPrice(d.totalValueContract)}
@@ -257,14 +259,14 @@ const Salary = () => {
                           {formatPrice(d.baseSalary)}
                         </td>
                         <td className='px-3 py-4' align='center'>
-                          {d.commissionPercentage}(%)
+                          {formatPrice(d.commissionPercentage)}
                         </td>
                         <td className='px-3 py-4' align='center'>
-                          {d.clientDeploymentPercentage}(%)
+                          {formatPrice(d.clientDeploymentPercentage)}
                         </td>
                         <td className='px-3 py-4' align='center'>
                           {formatPrice(d.bonusReachesThreshold)}
-                        </td>{' '}
+                        </td>
                         <td className='px-3 py-4' align='center'>
                           {formatPrice(d.foodAllowance)}
                         </td>{' '}

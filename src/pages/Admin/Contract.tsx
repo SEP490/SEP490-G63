@@ -182,7 +182,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-blue-700',
-      disable: (d: any) => d?.status != 'SUCCESS',
+      disable: (d: any) => d?.status != 'SUCCESS' || d?.statusCurrent != 'SUCCESS',
       callback: (d: any) => {
         navigate(`/appendices/${d.id}`)
       }
@@ -270,7 +270,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-teal-700',
-      disable: (d: any) => false,
+      disable: (d: any) => !d.canSendForCustomer,
       callback: (d: any) => {
         setSelectedContract(d)
         setStatus(7)
@@ -285,7 +285,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-blue-700',
-      disable: (d: any) => d?.status != 'SUCCESS',
+      disable: (d: any) => d?.status != 'SUCCESS' || d?.statusCurrent != 'SUCCESS',
       callback: (d: any) => {
         navigate(`/appendices/${d.id}`)
       }
@@ -358,7 +358,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-teal-700',
-      disable: (d: any) => false,
+      disable: (d: any) => !d.canSendForCustomer,
       callback: (d: any) => {
         setSelectedContract(d)
         setStatus(7)
@@ -373,7 +373,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-blue-700',
-      disable: (d: any) => d?.status != 'SUCCESS',
+      disable: (d: any) => d?.status != 'SUCCESS' || d?.statusCurrent != 'SUCCESS',
       callback: (d: any) => {
         navigate(`/appendices/${d.id}`)
       }
