@@ -915,7 +915,7 @@ const Contract = () => {
                             leaveFrom='opacity-100'
                             leaveTo='opacity-0'
                           >
-                            <Listbox.Options className='absolute mt-1 w-[40vw] md:w-[40vw] right-0 bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm'>
+                            <Listbox.Options className='absolute mt-1 w-[60vw] md:w-[60vw] right-0 bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm'>
                               <Listbox.Option
                                 key='history'
                                 className={({ active }) =>
@@ -1010,7 +1010,7 @@ const Contract = () => {
                 leaveFrom='opacity-100 scale-100'
                 leaveTo='opacity-0 scale-95'
               >
-                <Dialog.Panel className=' w-[50vw] md:w-[40vw] md:h-[30vh] transform overflow-y-auto rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all'>
+                <Dialog.Panel className='w-[80vw] md:w-[60%] md:h-[40vh] transform overflow-y-auto rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all'>
                   <div className='flex justify-between mb-2'>
                     <p className='font-semibold'>Lịch sử hợp đồng</p>
                     <XMarkIcon className='h-5 w-5 mr-3 mb-3 cursor-pointer' onClick={handleCloseHistoryModal} />
