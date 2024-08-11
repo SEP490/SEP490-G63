@@ -84,7 +84,7 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
           const response = await getNewContractById(selectedContract.id)
           if (response.object) {
             setDetailContract(response.object)
-            reset(response.object)
+            reset({ ...response.object, value: response.object.value.toLocaleString() })
             if (response.object.partyA) {
               formInfoPartA.reset(response.object.partyA)
             }
@@ -161,10 +161,10 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
   return (
     <div className='full flex justify-center overflow-auto h-[90%] mb-6'>
       <form
-        className='justify-center sm:justify-between w-full rounded-md flex flex-wrap  h-full bg-white my=5'
+        className='justify-center sm:justify-between w-full rounded-md flex flex-wrap  h-full bg-white'
         autoComplete='on'
       >
-        <div className='w-full mt-5 flex gap-6 items-center'>
+        <div className='w-full flex gap-6 items-center'>
           <div className='font-bold'>Thông tin cơ bản</div>
           <select
             {...register('contractTypeId')}
@@ -466,6 +466,7 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
             {formInfoPartA.formState.errors.bankAccOwer?.message}
           </div>
         </div>
+        <div className='w-full md:w-[30%] '></div>
         {/* Thông tin công ty B */}
         <div className='w-full mt-5 font-bold'>Thông tin bên B</div>
         <div className='w-full md:w-[30%] mt-5 relative '>
@@ -691,6 +692,7 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
             {formInfoPartB.formState.errors.bankAccOwer?.message}
           </div>
         </div>
+        <div className='w-full md:w-[30%] '></div>
         <div className='w-full md:w-[30%]'></div>
         <div className='w-full mt-5 font-bold'>Điều khoản hợp đồng</div>
         <div className='w-full mt-3'>
