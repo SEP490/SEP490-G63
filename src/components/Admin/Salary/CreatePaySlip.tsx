@@ -131,6 +131,7 @@ const CreatePaySlip = ({ initialValue, closeModal, refetch }: any) => {
         <input
           type='number'
           min={0}
+          step={0.1}
           className={`${errors.commissionPercentage ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
           {...register('commissionPercentage', {
             required: '% DS không được để trống'
@@ -155,6 +156,7 @@ const CreatePaySlip = ({ initialValue, closeModal, refetch }: any) => {
         <input
           type='number'
           min={0}
+          step={0.1}
           className={`${errors.commissionPercentage ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
           {...register('clientDeploymentPercentage', {
             required: '% triển khai khách hàng không được để trống'
