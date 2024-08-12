@@ -90,16 +90,16 @@ const SearchPage = () => {
       <div className='flex flex-col items-center'>
         <div className='flex gap-5 text-[14px]'>
           <a href='#' className='text-blue-600 hover:underline font-semibold'>
-            About TDocman
+            Về TDocman
           </a>
           <a href='#' className='text-blue-600 hover:underline font-semibold'>
-            Contact us
+            Liên hệ
           </a>
           <a href='#' className='text-blue-600 hover:underline font-semibold'>
-            About us
+            Chính sách
           </a>
           <a href='#' className='text-blue-600 hover:underline font-semibold'>
-            Privacy
+            Điều khoản & Bảo mật
           </a>
         </div>
         <div className='text-[12px] text-[gray]'>@ 2024 TDocman.id</div>

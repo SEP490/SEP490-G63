@@ -54,7 +54,7 @@ const Employee = () => {
   const prevPageRef = useRef(page)
   const prevSizeRef = useRef(size)
   const [status, setStatus] = useState('ACTIVE')
-  const [department, setDepartment] = useState("")
+  const [department, setDepartment] = useState('')
   const [selectedUser, setSelectedUser] = useState<DataEmployee | undefined>(undefined)
   const [searchData, setSearchData] = useState('')
   function closeAllModal() {
@@ -80,7 +80,7 @@ const Employee = () => {
   }
   const { data, isLoading, refetch, isFetching } = useQuery(
     ['employee-list', searchData, status, department],
-    () => getListEmployee({ size: size, page: page, name: searchData, status,department }),
+    () => getListEmployee({ size: size, page: page, name: searchData, status, department }),
     {
       onSuccess: (result) => {
         setTotalPage(result?.object?.totalPages)
@@ -184,7 +184,7 @@ const Employee = () => {
                 className='shadow-md block p-2 w-fit text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
                 onChange={(e: any) => setDepartment(e.target.value)}
               >
-                <option value={""} >Tất cả</option>
+                <option value={''}>Tất cả</option>
                 {dataDepartment?.object?.content?.map((d) => <option value={d.id}>{d.title}</option>)}
               </select>
             </div>
