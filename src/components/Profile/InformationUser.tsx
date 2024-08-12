@@ -9,6 +9,8 @@ import moment from 'moment'
 import { useQuery } from 'react-query'
 import { AxiosError } from 'axios'
 import LoadingIcon from '~/assets/LoadingIcon'
+import { IoSaveSharp } from 'react-icons/io5'
+
 export interface UserData {
   id: string
   address: string
@@ -291,7 +293,14 @@ const InformationUser = () => {
                   className='middle my-6 none center mr-4 text-xs rounded-lg bg-[#0070f4] py-2 px-4 font-sans font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
                   data-ripple-light='true'
                 >
-                  {loading ? <LoadingIcon /> : 'Lưu'}{' '}
+                  {loading ? (
+                    <LoadingIcon />
+                  ) : (
+                    <div className='flex items-center'>
+                      <IoSaveSharp className='mr-1' />
+                      Lưu
+                    </div>
+                  )}
                 </button>
               </div>
             </div>
