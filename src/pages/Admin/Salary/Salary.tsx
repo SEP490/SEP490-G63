@@ -16,6 +16,9 @@ import { useAuth } from '~/context/authProvider'
 import { ADMIN } from '~/common/const/role'
 import { useNavigate } from 'react-router-dom'
 import { DownloadTableExcel } from 'react-export-table-to-excel'
+import { SiMicrosoftexcel } from 'react-icons/si'
+import { FaSearch } from 'react-icons/fa'
+import { FaMoneyBillTransfer } from 'react-icons/fa6'
 
 export interface DataEmployee {
   id?: string
@@ -152,8 +155,9 @@ const Salary = () => {
                 </select>
                 <button
                   type='submit'
-                  className='rounded-md w-[150px] shadow-md bg-main-color px-2 py-1 text-xs sm:text-sm font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
+                  className=' items-center justify-center rounded-md w-[150px] shadow-md bg-main-color px-2 py-1 text-xs sm:text-sm font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
                 >
+                  <FaSearch className='float-left mt-1 ml-3 mr-[-10px]' />
                   Tìm kiếm
                 </button>
               </form>
@@ -165,8 +169,9 @@ const Salary = () => {
                   <button
                     type='button'
                     onClick={() => console.log('export')}
-                    className='rounded-md  bg-main-color px-4 py-2 text-xs sm:text-sm items-center font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
+                    className='rounded-md  bg-green-600 px-4 py-2 text-xs sm:text-sm items-center font-medium text-white hover:bg-green-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
                   >
+                    <SiMicrosoftexcel className='float-left mt-1 mr-1' />
                     Xuất ra Excel
                   </button>
                 </DownloadTableExcel>
@@ -175,6 +180,7 @@ const Salary = () => {
                   onClick={() => navigate('/pay-slip')}
                   className='rounded-md flex gap-1 bg-main-color px-4 py-2 text-xs sm:text-sm items-center font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
                 >
+                  <FaMoneyBillTransfer className='text-lg mt-[2px]' />
                   Quản lí
                 </button>
               </div>
