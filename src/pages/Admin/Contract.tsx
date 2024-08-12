@@ -38,6 +38,8 @@ import { HiMiniDocumentCheck } from 'react-icons/hi2'
 import LoadingIcon from '~/assets/LoadingIcon'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useNotification } from '~/context/notiProvider'
+import { FaSearch } from 'react-icons/fa'
+
 export interface DataContract {
   id: string
   file: string
@@ -662,6 +664,7 @@ const Contract = () => {
               type='submit'
               className='rounded-md shadow-md w-fit bg-main-color px-2 py-1 text-xs sm:text-sm font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
             >
+              <FaSearch className='float-left mt-1 mr-1' />
               Tìm kiếm
             </button>
           </form>

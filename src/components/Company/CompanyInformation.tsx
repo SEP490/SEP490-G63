@@ -8,6 +8,8 @@ import useToast from '~/hooks/useToast'
 import { VietQR } from 'vietqr'
 import { SetStateAction, useEffect, useState } from 'react'
 import { createParty, getParty } from '~/services/party.service'
+import { GrUpdate } from 'react-icons/gr'
+
 interface CompanyInfo {
   name: string
   email: string
@@ -298,7 +300,13 @@ const CompanyInformation = () => {
             className='middle my-3 none center mr-4 rounded-lg bg-[#0070f4] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
             data-ripple-light='true'
           >
-            {updateNewParty.isLoading ? <LoadingIcon /> : 'Sửa'}
+            {updateNewParty.isLoading ? (
+              <LoadingIcon />
+            ) : (
+              <div className='flex items-center'>
+                <GrUpdate className='mr-1' /> Sửa
+              </div>
+            )}
           </button>
         </div>
       </form>

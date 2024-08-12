@@ -4,6 +4,7 @@ import { AxiosError } from 'axios'
 import moment from 'moment'
 import { Fragment, useEffect, useRef, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { FaSearch } from 'react-icons/fa'
 import { useMutation, useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import LoadingIcon from '~/assets/LoadingIcon'
@@ -81,7 +82,7 @@ const OldContract = () => {
   )
   const { handleSubmit, register } = useForm<FormSearch>()
   const onSubmit: SubmitHandler<FormSearch> = async (data) => {
-     navigate(`/search/old-contract/${data.searchText}`)
+    navigate(`/search/old-contract/${data.searchText}`)
   }
 
   useEffect(() => {
@@ -124,6 +125,7 @@ const OldContract = () => {
               type='submit'
               className='rounded-md shadow-md w-fit bg-main-color px-2 py-1 text-xs sm:text-sm font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
             >
+              <FaSearch className='float-left mt-1 mr-1' />
               Tìm kiếm
             </button>
           </form>
