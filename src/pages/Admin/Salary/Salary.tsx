@@ -90,6 +90,12 @@ const Salary = () => {
       }
     }
   )
+  const totalMoney = useMemo(() => {
+    return data?.object?.content?.reduce((total: number, d: any) => {
+      total += d.totalSalary
+      return total
+    }, 0)
+  }, [data])
   useEffect(() => {
     if (prevPageRef.current !== page || prevSizeRef.current !== size) {
       prevPageRef.current = page
@@ -199,7 +205,7 @@ const Salary = () => {
               </div>
             )}
           </div>
-
+          <div className='w-full text-right -ml-4 font-bold text-[20px]'> Đơn vị tính: VND</div>
           <div className='overflow-auto'>
             <div className='shadow-md sm:rounded-lg h-fit'>
               <table ref={tableRef} className='w-full text-sm text-left rtl:text-right text-black dark:text-gray-400 '>
@@ -211,10 +217,10 @@ const Salary = () => {
                     <th className='px-3 py-3 w-[150px]'>Tên nhân viên</th>
                     <th className='px-3 py-3'> Email</th>
                     <th className='px-3 py-3 ' align='center'>
-                      Tổng DS(VND)
+                      Tổng DS
                     </th>
                     <th className='px-3 py-3 ' align='center'>
-                      Lương cứng(VND)
+                      Lương cứng
                     </th>
                     {/* <th className='px-6 py-3 '>Vị trí</th> */}
                     <th className='px-6 py-3 ' align='center'>
@@ -225,16 +231,16 @@ const Salary = () => {
                     </th>
 
                     <th className='px-6 py-3 ' align='center'>
-                      Thưởng đạt ngưỡng(VND)
+                      Thưởng đạt ngưỡng
                     </th>
                     <th className='px-6 py-3 ' align='center'>
-                      Trợ cấp ăn(VND)
+                      Trợ cấp ăn
                     </th>
                     <th className='px-6 py-3 ' align='center'>
-                      Phụ cấp(VND)
+                      Phụ cấp
                     </th>
                     <th className='px-6 py-3 ' align='center'>
-                      Tiền lương(VND)
+                      Tiền lương
                     </th>
                   </tr>
                 </thead>
@@ -330,6 +336,22 @@ const Salary = () => {
                         </td> */}
                       </tr>
                     ))}
+                  {data?.object && (
+                    <tr className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '>
+                      <td className='px-3 py-3 w-[30px]' align='center'></td>
+                      <td className='px-3 py-4'></td>
+                      <td className='px-3 py-4'></td>
+                      <td className='px-3 py-4' align='center'></td>
+                      <td className='px-3 py-4' align='center'></td>
+                      <td className='px-3 py-4' align='center'></td>
+                      <td className='px-3 py-4' align='center'></td>
+                      <td className='px-3 py-4' align='center'></td>
+                      <td className='px-3 py-4' align='center'></td> <td className='px-3 py-4' align='center'></td>
+                      <td className='px-3 py-4  w-[200px]' align='center'>
+                        Tổng : {formatPrice(totalMoney)}
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
               {(isLoading || isFetching) && (

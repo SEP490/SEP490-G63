@@ -32,10 +32,8 @@ export const createEmployee = async (data: EmployeeData) => {
   return response.data
 }
 
-export const getListEmployee = async ({ size, page, name, status, department }: QueryDataGet) => {
-  const response = await axiosInstance.get(
-    `user/search?page=${page}&size=${size}&name=${name}&status=${status}&department=${department}`
-  )
+export const getListEmployee = async ({ size, page, name, status }: QueryDataGet) => {
+  const response = await axiosInstance.get(`user/search?page=${page}&size=${size}&name=${name}&status=${status}`)
 
   return response.data
 }

@@ -11,6 +11,7 @@ import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
 import { statusRequest } from '~/common/const/status'
 import LoadingIcon from '~/assets/LoadingIcon'
 import { createAppendices, sendMailPublicApp } from '~/services/contract.appendices.service'
+import moment from 'moment'
 interface FormType {
   name: string
   number: string
@@ -136,7 +137,7 @@ const CreateAppendices = () => {
           </label>
           <input
             className={`${errors.name ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-            placeholder='Hợp đồng bổ sung...'
+            placeholder='Ví dụ: Tên công ty-Đối tác-PLHD'
             {...register('name', {
               required: 'Tên hợp đồng không được để trống'
             })}
@@ -152,7 +153,7 @@ const CreateAppendices = () => {
           <input
             className={`${errors.number ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
-            placeholder='Số...'
+            placeholder={`Ví dụ: Tên công ty-Đối tác-${moment(new Date()).format('YYYY-MM-DD')}`}
             {...register('number', {
               required: 'Số hợp đồng không được để trống'
             })}
