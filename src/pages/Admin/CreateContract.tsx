@@ -21,6 +21,7 @@ import LoadingIcon from '~/assets/LoadingIcon'
 import dataRegex from '../../regex.json'
 import { getParty } from '~/services/party.service'
 import moment from 'moment'
+import { validateMail, validatePhone } from '~/services/auth-sign-contract.service'
 interface FormType {
   name: string
   number: string
@@ -64,6 +65,7 @@ const CreateContract = () => {
   const [loadingB, setLoadingB] = useState(false)
   const [loadingMailA, setLoadingMailA] = useState(false)
   const [loadingMailB, setLoadingMailB] = useState(false)
+  const [loadingPhoneB, setLoadingPhoneB] = useState(false)
   const disableFormA = useRef(false)
   const disableFormB = useRef(false)
   const resultQuery = useQueries([
@@ -129,12 +131,29 @@ const CreateContract = () => {
       }
     }
   })
+  const handleCheckPhoneB = async () => {
+    setLoadingPhoneB(true)
+    try {
+      const response = await validatePhone(formInfoPartB.getValues('phone'))
+      if (response) {
+        errorNotification('Số điện thoại đã tồn tại')
+        formInfoPartB.setError('phone', { message: 'Số điện thoại đã tồn tại' })
+      }
+    } catch (e) {
+      errorNotification('Lỗi')
+    }
+    setLoadingPhoneB(false)
+  }
   const handleCheckMailB = async () => {
     setLoadingMailB(true)
     try {
       const response = await validateEmail(formInfoPartB.getValues('email'))
+      const response1 = await validateMail(formInfoPartB.getValues('email'))
       if (!response) {
         errorNotification('Email không hợp lệ')
+      }
+      if (response1) {
+        errorNotification('Email đã tồn tại')
       }
     } catch (e) {
       errorNotification('Lỗi')
@@ -395,6 +414,24 @@ const CreateContract = () => {
           <label className='font-light '>
             Số điện thoại<sup className='text-red-500'>*</sup>
           </label>
+          <div className='relative'>
+            <input
+              className={`${formInfoPartA.formState.errors.email ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
+              type='text'
+              disabled
+              placeholder='Nhập email công ty'
+              {...formInfoPartA.register('email', {
+                required: 'Email công ty không được để trống',
+                pattern: {
+                  value: new RegExp(dataRegex.REGEX_EMAIL, 'i'),
+                  message: 'Email không đúng định dạng'
+                }
+              })}
+            />
+            <div className='absolute z-10 right-1 top-0 h-full flex items-center'>
+              {loadingMailA && <LoadingSvgV2 />}
+            </div>
+          </div>
           <input
             className={`${formInfoPartA.formState.errors.phone ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
             type='text'
@@ -657,19 +694,26 @@ const CreateContract = () => {
           <label className='font-light '>
             Số điện thoại<sup className='text-red-500'>*</sup>
           </label>
-          <input
-            className={`${formInfoPartB.formState.errors.phone ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
-            type='text'
-            disabled={createContractQuery?.isLoading || disableFormB.current}
-            placeholder='Nhập số điện thoại'
-            {...formInfoPartB.register('phone', {
-              required: 'Số điện thoại không được để trống',
-              pattern: {
-                value: new RegExp(dataRegex.REGEX_PHONE),
-                message: 'Số điện thoại không hợp lệ'
-              }
-            })}
-          />
+          <div className='relative'>
+            <input
+              className={`${formInfoPartB.formState.errors.phone ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
+              type='text'
+              disabled={createContractQuery?.isLoading || disableFormB.current}
+              placeholder='Nhập số điện thoại'
+              onInput={debounce(handleCheckPhoneB, 1000)}
+              {...formInfoPartB.register('phone', {
+                required: 'Số điện thoại không được để trống',
+                pattern: {
+                  value: new RegExp(dataRegex.REGEX_PHONE),
+                  message: 'Số điện thoại không hợp lệ'
+                }
+              })}
+            />
+            <div className='absolute z-10 right-1 top-0 h-full flex items-center'>
+              {loadingPhoneB && <LoadingSvgV2 />}
+            </div>
+          </div>
+
           <div
             className={`text-red-500 absolute text-[12px] ${formInfoPartB.formState.errors.phone ? 'visible' : 'invisible'}`}
           >
@@ -696,7 +740,7 @@ const CreateContract = () => {
               })}
             />
             <div className='absolute z-10 right-1 top-0 h-full flex items-center'>
-              {loadingMailA && <LoadingSvgV2 />}
+              {loadingMailB && <LoadingSvgV2 />}
             </div>
           </div>
           <div

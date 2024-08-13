@@ -18,3 +18,11 @@ export const verifySMSCode = async (data: any) => {
   const response = await axios.post(`${BASE_URL}public/otp/verify-for-sign-with-sms`, data)
   return response.data
 }
+export const validatePhone = async (phone: any) => {
+  const response = await axiosInstant.get(`contract/check-duplicate?tableName=party&columnName=phone&value=${phone}`)
+  return response.data
+}
+export const validateMail = async (email: any) => {
+  const response = await axiosInstant.get(`contract/check-duplicate?tableName=party&columnName=email&value=${email}`)
+  return response.data
+}
