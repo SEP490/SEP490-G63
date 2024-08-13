@@ -287,7 +287,7 @@ const ContractInformation = () => {
                           <Menu.Button>
                             <button
                               className='flex justify-center items-center gap-3 cursor-pointer hover:text-blue-500'
-                              onClick={() => setIsOpen(true)}
+                              // onClick={() => setIsOpen(true)}
                             >
                               <RxDotsVertical className='h-5 w-5' title='Hành động' />
                             </button>
@@ -303,7 +303,7 @@ const ContractInformation = () => {
                             leaveTo='transform opacity-0 scale-95'
                           >
                             <Menu.Items className='absolute right-8 top-[-100%] z-50 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
-                              {data1?.status == 'INUSE' ? (
+                              {d?.status == 'APRROVED' ? (
                                 <>
                                   <Menu.Item>
                                     {({ active }) => (
@@ -323,7 +323,7 @@ const ContractInformation = () => {
                                       <button
                                         title='Gia hạn'
                                         onClick={() => {
-                                          // setSelectedModal(data?.id)
+                                          setSelectedModal(dataContractCompany?.id)
                                           setExtendModal(true)
                                         }}
                                         className={`${
@@ -335,14 +335,13 @@ const ContractInformation = () => {
                                     )}
                                   </Menu.Item>
 
-                                  {data1?.status != 'LOCKED' && data1?.status != 'EXPIRED' && (
+                                  {d?.status != 'LOCKED' && d?.status != 'EXPIRED' && (
                                     <Menu.Item>
                                       {({ active }) => (
                                         <button
                                           title='Chặn'
                                           onClick={() => {
-                                            // setSelectedCustomer(d)
-                                            // setBanModal(true)
+                                            setDeleteModal(true)
                                           }}
                                           className={`${
                                             active ? 'bg-green-500 text-white' : 'text-gray-900'
@@ -358,16 +357,13 @@ const ContractInformation = () => {
                                 <Menu.Item>
                                   {({ active }) => (
                                     <button
-                                      title='Xác nhận'
-                                      onClick={() => {
-                                        // setSelectedCustomer(d)
-                                        // setApproveModal(true)
-                                      }}
+                                      onClick={() => setIsOpen(true)}
+                                      title='Xem'
                                       className={`${
                                         active ? 'bg-green-500 text-white' : 'text-gray-900'
                                       } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
                                     >
-                                      <LockOpenIcon className='h-5' /> Kích hoạt
+                                      <EyeIcon className='h-5' /> Xem hợp đồng
                                     </button>
                                   )}
                                 </Menu.Item>
