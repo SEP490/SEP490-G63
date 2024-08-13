@@ -8,7 +8,8 @@ import {
   XMarkIcon,
   KeyIcon,
   InformationCircleIcon,
-  BuildingOfficeIcon
+  BuildingOfficeIcon,
+  Cog8ToothIcon
 } from '@heroicons/react/24/outline'
 import avatar from '../../../assets/images/avatar1.png'
 import useViewport from '~/hooks/useViewport'
@@ -366,6 +367,19 @@ const NavBar = () => {
                         } group flex w-full items-center gap-3 rounded-md px-2 py-1 text-sm `}
                       >
                         <BuildingOfficeIcon className='h-5' /> Thông tin công ty
+                      </button>
+                    )}
+                  </Menu.Item>
+                  <Menu.Item>
+                    {({ active }) => (
+                      <button
+                        title='Sửa thông tin'
+                        onClick={() => navigate('/manage-reason')}
+                        className={`${
+                          active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                        } group flex w-full items-center gap-3 rounded-md px-2 py-1 text-sm `}
+                      >
+                        <Cog8ToothIcon className='h-5' /> Quản lý
                       </button>
                     )}
                   </Menu.Item>
