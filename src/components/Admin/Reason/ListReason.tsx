@@ -18,7 +18,7 @@ import { AxiosError } from 'axios'
 import useToast from '~/hooks/useToast'
 import LoadingIcon from '~/assets/LoadingIcon'
 import { getListDepartment } from '~/services/department.service'
-import { getListReason } from '~/services/reason.service'
+import { deleteReason, getListReason } from '~/services/reason.service'
 import AddReason from './AddReason'
 import EditReason from './EditReason'
 
@@ -46,13 +46,11 @@ const ListReason = () => {
   const { data, isLoading, refetch, isFetching } = useQuery(['employee-list'], () => getListReason(0, 50))
   const { data: dataDepartment } = useQuery('list-department', () => getListDepartment(0, 50))
 
-  const deleteQuery = useMutation(deleteEmployee, {
-    onSuccess: (data) => {
-      if (data?.code == '00') {
-        successNotification('Xóa thành công!!!')
-        refetch()
-        closeAllModal()
-      } else errorNotification('Xóa thất bại')
+  const deleteQuery = useMutation(deleteReason, {
+    onSuccess: () => {
+      successNotification('Xóa thành công!!!')
+      refetch()
+      closeAllModal()
     },
     onError: (error: AxiosError<{ message: string }>) => {
       errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
@@ -67,7 +65,7 @@ const ListReason = () => {
     <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex flex-wrap'>
         <div className='w-full px-3'>
-          <div className='flex gap-3 justify-between w-full py-3 h-[60px]'>
+          <div className='flex gap-3 justify-end w-full py-3 h-[60px]'>
             <button
               type='button'
               onClick={openModal}
@@ -94,7 +92,7 @@ const ListReason = () => {
                 <tbody className='w-full '>
                   {!isLoading &&
                     !isFetching &&
-                    data?.object?.content?.map((d: any, index: number) => (
+                    data?.content?.map((d: any, index: number) => (
                       <tr
                         key={d.id}
                         className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
@@ -103,9 +101,7 @@ const ListReason = () => {
                           {index + 1 < 10 ? `0${index + 1}` : index + 1}
                         </td>
                         <td className='px-3 py-4 w-[250px]'>{d.title}</td>
-                        <td className='px-3 py-4' align='center'>
-                          {d.description}
-                        </td>
+                        <td className='px-3 py-4'>{d.description}</td>
 
                         <td className='px-3 py-4 text-right'>
                           <Menu as='div' className='relative inline-block text-left '>
@@ -122,8 +118,41 @@ const ListReason = () => {
                               leaveTo='transform opacity-0 scale-95'
                             >
                               <Menu.Items
-                                className={`absolute right-8 ${d.status == 'ACTIVE' ? 'top-[-100%]' : 'top-[-50%]'} z-50 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none`}
-                              ></Menu.Items>
+                                className={`absolute right-8 z-50 -mt-8 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none`}
+                              >
+                                <Menu.Item>
+                                  {({ active }) => (
+                                    <button
+                                      title='Sửa'
+                                      onClick={() => {
+                                        setEditModal(true)
+                                        setSelected(d)
+                                      }}
+                                      className={`${
+                                        active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                      } group flex w-full items-center  gap-3 rounded-md px-2 py-1 text-sm `}
+                                    >
+                                      <Cog6ToothIcon className='h-5' /> Sửa
+                                    </button>
+                                  )}
+                                </Menu.Item>
+                                <Menu.Item>
+                                  {({ active }) => (
+                                    <button
+                                      title='Xóa'
+                                      onClick={() => {
+                                        setDeleteModal(true)
+                                        setSelected(d)
+                                      }}
+                                      className={`${
+                                        active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                      } group flex w-full items-center gap-3 rounded-md px-2 py-1 text-sm `}
+                                    >
+                                      <NoSymbolIcon className='h-5' /> Xóa
+                                    </button>
+                                  )}
+                                </Menu.Item>
+                              </Menu.Items>
                             </Transition>
                           </Menu>
                         </td>
@@ -136,7 +165,7 @@ const ListReason = () => {
                   <div className='w-full min-h-[60vh] opacity-75 bg-gray-50 flex items-center justify-center'></div>
                 </Loading>
               )}
-              {!isLoading && !isFetching && (data?.object == null || data?.object?.content?.length == 0) && (
+              {!isLoading && !isFetching && (data == null || data?.content?.length == 0) && (
                 <div className='w-full min-h-[60vh] opacity-75 bg-gray-50 flex items-center justify-center'>
                   <div className='flex flex-col justify-center items-center opacity-60'>
                     <UserIcon width={50} height={50} />

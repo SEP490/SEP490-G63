@@ -33,7 +33,7 @@ const AddReason = ({ closeModal, refetch }: IProp) => {
       errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
     },
     onSuccess: (response) => {
-      if (response.code == '00') {
+      if (response) {
         successNotification('Tạo mới thành công')
         closeModal()
         refetch()
