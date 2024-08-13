@@ -2,7 +2,7 @@ import { AxiosError } from 'axios'
 import React, { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Stage, Layer, Line } from 'react-konva'
-import { useMutation } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import { statusRequest } from '~/common/const/status'
 import Loading from '~/components/shared/Loading/Loading'
@@ -10,6 +10,7 @@ import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
 import useToast from '~/hooks/useToast'
 import { getSMSCode, verifySMSCode } from '~/services/auth-sign-contract.service'
 import { sendMail, sendMailPublic, signContract } from '~/services/contract.service'
+import { getListReason } from '~/services/reason.service'
 interface IProps {
   id: string | undefined
   customer: string | undefined
@@ -33,7 +34,6 @@ const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy,
   const formSMS = useForm<FormTypeSMS>()
   const uri = useRef('')
   const getSMSQuery = useMutation(getSMSCode)
-
   const handleMouseDown = (e: any) => {
     isDrawing.current = true
     const pos = e.target.getStage().getPointerPosition()

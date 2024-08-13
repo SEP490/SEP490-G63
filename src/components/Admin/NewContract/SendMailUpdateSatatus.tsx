@@ -13,6 +13,7 @@ import { Dialog, Transition } from '@headlessui/react'
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { getParty } from '~/services/party.service'
 import pdfIcon from '../../../assets/images/pdf-icon.jpg'
+import { getListReason } from '~/services/reason.service'
 type IProps = { id: string | undefined; status: number; closeModal: any; refetch: any; dataC: any; refetchNumber: any }
 const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchNumber }: IProps) => {
   const [previewUrls, setPreviewUrls] = useState<string[]>([])
@@ -24,16 +25,18 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
   const [open, setOpen] = useState(false)
   const [loadingSubmit, setLoadingSubmit] = useState(false)
   const contractFile = useRef<any>()
-  const [files, setFiles] = useState([])
+  const [files, setFiles] = useState<any>([])
   const [selectedURL, setSelectedURL] = useState('')
   const { isLoading: loadingSALE, data: dataSale } = useQuery('getUserByRoleSale', () => getUserByPermission('SALE'))
   const { isLoading: loadingAdmin, data: dataAdmin } = useQuery('getUserByRoleAdmin', () =>
     getUserByPermission('MANAGER')
   )
+  const reason = useRef(null)
   const { isLoading: loadingAO, data: dataAO } = useQuery('getUserByRoleAdminOfficer', () =>
     getUserByPermission('OFFICE_ADMIN')
   )
   const { data: dataParty } = useQuery('party-data', getParty)
+  const { data: dataReason } = useQuery('reason-data', () => getListReason(0, 50))
   const { isLoading: loading, data: dataContract } = useQuery('getContractDetail', () => getNewContractById(id), {
     onSuccess: async (response) => {
       if (status == 1) {
@@ -88,7 +91,6 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
         file
       }
     })
-
     setFiles(newFiles)
   }
 
@@ -117,9 +119,15 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
     const htmlContent = editorData
     formData.append(
       'htmlContent',
-      htmlContent + (status == 7 ? `<a href="${BASE_URL_FE}view/${id}/sign/2">Ký ngay</a>` : '')
+      htmlContent +
+        (status == 4
+          ? `<a href="${BASE_URL_FE}view/${id}/sign/1">Ký ngay</a>`
+          : status == 7
+            ? `<a href="${BASE_URL_FE}view/${id}/sign/2">Ký ngay</a>`
+            : '')
     )
     formData.append('contractId', id as string)
+    formData.append('reasonId', status == 3 || status == 6 || status == 9 ? reason.current?.value : '')
     formData.append('attachments', contractFile.current, `${dataContract?.object?.name}.pdf`)
     files.forEach((file: any) => {
       formData.append('attachments', file.file)
@@ -147,25 +155,34 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
     <div className='h-full overflow-auto pb-5'>
       <div className='w-full flex flex-col justify-between border-b-2'>
         <div className='w-full md:w-full py-2 flex items-center z-50'>
-          <span className='w-20 font-bold'>Đến</span>
+          <span className='w-40  font-bold'>Đến</span>
           <ComboboxMail selected={selectedTo} setSelected={setSelectedTo} option={optionTo} isCreate={status == 7} />
         </div>
         <div className='w-full md:w-full py-2  flex items-center z-50'>
-          <span className='w-20 font-bold'>CC</span>
+          <span className='w-40  font-bold'>CC</span>
           <ComboboxMail selected={selectedCc} setSelected={setSelectedCc} option={optionCC} isCreate={status == 7} />
         </div>
       </div>
 
       <div className='py-2 border-b-2 border-slate-200 flex items-center z-10'>
-        <span className='w-20 font-bold'>Tiêu đề</span>
+        <span className='w-40 font-bold'>Tiêu đề</span>
         <input
           type='text'
-          className=' w-full rounded h-8'
+          className=' w-full rounded'
           placeholder=''
           value={subject}
           onChange={(e) => setSubject(e.target.value)}
         />
       </div>
+      {(status == 3 || status == 6 || status == 9) && (
+        <div className='py-2 border-b-2 border-slate-200 flex items-center z-10'>
+          <span className='w-40 font-bold'>Nguyên nhân</span>
+          <select className=' w-full rounded' ref={reason}>
+            {dataReason?.content.map((data: any) => <option value={data.id}>{data.title}</option>)}
+          </select>
+        </div>
+      )}
+
       <h2 className=' font-bold my-2'>Nội dung</h2>
       <SunEditor
         name='term'

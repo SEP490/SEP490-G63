@@ -5,13 +5,15 @@ import { Description, Field, Label, Textarea } from '@headlessui/react'
 import { useForm } from 'react-hook-form'
 import { sendMail, sendMailPublic } from '~/services/contract.service'
 import useToast from '~/hooks/useToast'
-import { useMutation } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 import LoadingIcon from '~/assets/LoadingIcon'
+import { getListReason } from '~/services/reason.service'
 type FormData = {
-  comment: string
+  reasonId: string
 }
-const RejectSignContract = ({ contract }: any) => {
+const RejectSignContract = ({ contract, comment }: any) => {
   const { errorNotification, successNotification } = useToast()
+  const { data: dataReason } = useQuery('reason-data', () => getListReason(0, 50))
   const {
     register,
     handleSubmit,
@@ -34,30 +36,26 @@ const RejectSignContract = ({ contract }: any) => {
     formData.append('htmlContent', htmlContent)
     formData.append('contractId', contract?.id as string)
     formData.append('status', 'SIGN_B_FAIL')
-    formData.append('description', data.comment)
+    formData.append('description', comment)
+    formData.append('reasonId', data.reasonId)
 
     sendMailReject.mutate(formData)
   }
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className='w-full mt-5'>
-        <Field>
-          <Label className='text-sm/6 font-medium text-black'>
-            Lí do<sup className='text-red-700'>*</sup>
-          </Label>
-          <Textarea
-            {...register('comment', {
-              required: 'Lí do đưa ra không được để trống'
-            })}
-            disabled={sendMailReject.isLoading}
-            placeholder='Đưa ra một số lí do khiến bạn không hài lòng với bản hợp đồng'
-            className={` mt-3 block w-full resize-none rounded-lg border-none bg-black/5 py-1.5 px-3 text-sm/6 text-black focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25`}
-            rows={5}
-          />
-          <div className={`text-red-500 absolute text-[12px] ${errors.comment ? 'visible' : 'invisible'}`}>
-            {errors.comment?.message}
-          </div>
-        </Field>
+      <div className='w-full mt-5 relative'>
+        <div className='py-2 border-b-2 border-slate-200 flex items-center z-10'>
+          <span className='w-40 font-bold'>Nguyên nhân</span>
+          <select
+            className=' w-full rounded'
+            {...register('reasonId', { required: 'Nguyên nhân không được để trống' })}
+          >
+            {dataReason?.content.map((data: any) => <option value={data.id}>{data.title}</option>)}
+          </select>
+        </div>
+        <div className={`text-red-500 absolute text-[12px]  ${errors.reasonId ? 'visible' : 'invisible'}`}>
+          {errors.reasonId?.message}
+        </div>
       </div>
 
       <div className='w-full flex justify-end'>
