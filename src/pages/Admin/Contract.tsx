@@ -227,7 +227,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-blue-950',
-      disable: (d: any) => !d?.canSendForMng,
+      disable: (d: any) => !d?.canSend,
       callback: (d: any) => {
         setSelectedContract(d)
         setStatus(4)
