@@ -88,6 +88,7 @@ const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy,
     formData.append('contractId', id as string)
     formData.append('status', statusRequest[customer == '2' ? 8 : 5]?.status)
     formData.append('createdBy', createdBy as string)
+    formData.append('reasonId', '')
     formData.append('description', statusRequest[customer == '2' ? 8 : 5]?.description)
     try {
       const response = await sendMailPublic(formData)
