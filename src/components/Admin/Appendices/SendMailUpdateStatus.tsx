@@ -99,6 +99,7 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC }: IProps
       formData.append('cc', email.value)
     })
     formData.append('subject', subject)
+    formData.append('reasonId', '')
     const htmlContent = editorData
     formData.append(
       'htmlContent',

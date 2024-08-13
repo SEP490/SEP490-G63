@@ -123,7 +123,8 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
       rule: rule.value,
       term: term.value,
       partyA: formInfoPartA.getValues(),
-      partyB: formInfoPartB.getValues()
+      partyB: formInfoPartB.getValues(),
+      createdBy: detailContract?.createdBy
     }
 
     updateContract.mutate(bodyData)
