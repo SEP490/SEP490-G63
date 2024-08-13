@@ -9,12 +9,12 @@ type FormData = {
   pricePlan: string
 }
 
-const Expried = ({ closeModal, selectedCustomer, bankModal, setBankModal, bankImage, setBankImage }: any) => {
+const Expried = ({ closeModal, selectedCustomer, bankModal, setBankModal, bankImage, setBankImage, refetch }: any) => {
   const { errorNotification, successNotification } = useToast()
   const [isConfirm, setIsConfirm] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState<any>()
   const [extendData, setExtendData] = useState<any>()
-  const queryClient = useQueryClient()
+  console.log('selectedCustomer: ', selectedCustomer)
 
   const {
     register,
@@ -28,6 +28,8 @@ const Expried = ({ closeModal, selectedCustomer, bankModal, setBankModal, bankIm
     (params: { companyId: string; pricePlanId: string; payed: boolean }) => extendService(params),
     {
       onSuccess: (response) => {
+        console.log('as: ', response.object)
+
         setExtendData(response?.object)
         setIsConfirm(true)
       },
@@ -41,9 +43,11 @@ const Expried = ({ closeModal, selectedCustomer, bankModal, setBankModal, bankIm
     (params: { orderId: string; amount: number }) => handleBankTransaction(params),
     {
       onSuccess: (response) => {
+        console.log('vm: ', response)
+
         setBankImage(response.object.data.qrDataURL)
         successNotification('Vui lòng quét mã QR để thanh toán!')
-        queryClient.invalidateQueries('get-contract-admin')
+        refetch()
       },
       onError: () => {
         errorNotification('Gia hạn dịch vụ không thành công')
@@ -52,9 +56,9 @@ const Expried = ({ closeModal, selectedCustomer, bankModal, setBankModal, bankIm
   )
 
   const onSubmit: SubmitHandler<FormData> = async () => {
-    if (selectedCustomer?.id && selectedPlan?.id) {
+    if (selectedCustomer?.companyId && selectedPlan?.id) {
       extendServiceMutation.mutate({
-        companyId: selectedCustomer?.id,
+        companyId: selectedCustomer?.companyId,
         pricePlanId: selectedPlan?.id,
         payed: false
       })
@@ -64,8 +68,11 @@ const Expried = ({ closeModal, selectedCustomer, bankModal, setBankModal, bankIm
   }
 
   const handleBankTransfer = () => {
+    console.log('extendData: ', extendData)
+
     closeModal()
     setBankModal(true)
+
     if (extendData?.id) {
       handleBankTransferMutation.mutate({
         orderId: extendData?.id,
@@ -81,7 +88,8 @@ const Expried = ({ closeModal, selectedCustomer, bankModal, setBankModal, bankIm
   }
 
   const handleCash = () => {
-    successNotification('Đi trả tiền đi bạn ơi!')
+    successNotification('Vui lòng thanh toán tại trực tiếp tại văn phòng công ty!')
+    refetch()
     closeModal()
   }
 
@@ -89,16 +97,11 @@ const Expried = ({ closeModal, selectedCustomer, bankModal, setBankModal, bankIm
     return <Loading />
   }
 
-  if (isError) {
-    errorNotification('Có lỗi xảy ra trong quá trình gia hạn dịch vụ!')
-    return <h1>Có lỗi xảy ra trong quá trình gia hạn dịch vụ!</h1>
-  }
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       {!isConfirm ? (
         <>
-          <div>Hãy lựa chọn gói dịch vụ sẽ được kích hoạt với công ty {selectedCustomer?.companyName}.</div>
+          <div>Hãy lựa chọn gói dịch vụ sẽ được gia hạn.</div>
           <select
             {...register('pricePlan', {
               required: 'Gói được để trống'
@@ -150,15 +153,6 @@ const Expried = ({ closeModal, selectedCustomer, bankModal, setBankModal, bankIm
               disabled={extendServiceMutation.isLoading}
             >
               {extendServiceMutation.isLoading ? 'Đang xử lý...' : 'Chấp nhận'}
-            </button>
-            <button
-              type='button'
-              className='middle none center mr-4 rounded-lg bg-[#49484d] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#49484d] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
-              data-ripple-light='true'
-              onClick={closeModal}
-              disabled={extendServiceMutation.isLoading}
-            >
-              Hủy
             </button>
           </div>
         </>

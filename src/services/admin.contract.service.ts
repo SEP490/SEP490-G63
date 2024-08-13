@@ -10,6 +10,8 @@ export const getContractAdmin = async (email: string | undefined) => {
 }
 
 export const getContract = async (email: string | undefined, code: string) => {
+  console.log(email, code)
+
   try {
     const response = await adminInstance.post(`/public/getContract/get-contract`, { email: email, code: code })
     return response.data
@@ -18,12 +20,23 @@ export const getContract = async (email: string | undefined, code: string) => {
   }
 }
 
-export const extendService = async (data: any) => {
+export const getCompanyContract = async (page: any, size: any, companyId: any) => {
   try {
-    const response = await adminInstance.post(`manager/queueExtend`, data)
+    const response = await adminInstance.get(`manager/queueExtend/public/${page}/${size}/${companyId}`)
     return response.data
   } catch (error) {
     console.log(error)
+  }
+}
+
+export const extendService = async (data: any) => {
+  console.log('vn: ', data)
+
+  try {
+    const response = await adminInstance.post(`manager/queueExtend/public`, data)
+    return response.data
+  } catch (error) {
+    console.log('loi api extend', error)
   }
 }
 
