@@ -414,24 +414,6 @@ const CreateContract = () => {
           <label className='font-light '>
             Số điện thoại<sup className='text-red-500'>*</sup>
           </label>
-          <div className='relative'>
-            <input
-              className={`${formInfoPartA.formState.errors.email ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
-              type='text'
-              disabled
-              placeholder='Nhập email công ty'
-              {...formInfoPartA.register('email', {
-                required: 'Email công ty không được để trống',
-                pattern: {
-                  value: new RegExp(dataRegex.REGEX_EMAIL, 'i'),
-                  message: 'Email không đúng định dạng'
-                }
-              })}
-            />
-            <div className='absolute z-10 right-1 top-0 h-full flex items-center'>
-              {loadingMailA && <LoadingSvgV2 />}
-            </div>
-          </div>
           <input
             className={`${formInfoPartA.formState.errors.phone ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
             type='text'

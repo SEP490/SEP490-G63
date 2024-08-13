@@ -31,7 +31,7 @@ export const sendMailPublic = async (formData: any) => {
 }
 
 export const createNewContract = async (data: any) => {
-  const response = await axiosInstant.post(`contract`, { ...data, value: data.value.replace(/,/g, '') })
+  const response = await axiosInstant.post(`contract`, { ...data, value: data.value.replace(/,/g, '').replace(/./g, '') })
   return response.data
 }
 export const getNewContract = async (page: number, size: number, statusContract: string) => {
