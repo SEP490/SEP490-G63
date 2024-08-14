@@ -12,6 +12,7 @@ import { statusRequest } from '~/common/const/status'
 import LoadingIcon from '~/assets/LoadingIcon'
 import { createAppendices, sendMailPublicApp } from '~/services/contract.appendices.service'
 import moment from 'moment'
+import dataRegex from '../../../regex.json'
 interface FormType {
   name: string
   number: string
@@ -139,7 +140,11 @@ const CreateAppendices = () => {
             className={`${errors.name ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             placeholder='Ví dụ: Tên công ty-Đối tác-PLHD'
             {...register('name', {
-              required: 'Tên hợp đồng không được để trống'
+              required: 'Tên hợp đồng không được để trống',
+              pattern: {
+                value: new RegExp(dataRegex.REGEX_CONTRACT_NAME),
+                message: 'Tên hợp đồng không hợp lệ'
+              }
             })}
           />
           <div className={`text-red-500 absolute text-[12px]  ${errors.name ? 'visible' : 'invisible'}`}>
