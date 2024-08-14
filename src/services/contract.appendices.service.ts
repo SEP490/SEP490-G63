@@ -23,14 +23,17 @@ export const sendMailPublicApp = async (formData: any) => {
 }
 
 export const createAppendices = async (data: any) => {
-  const response = await axiosInstant.post(`api/contract-appendices`, data)
+  const response = await axiosInstant.post(`api/contract-appendices`, {
+    ...data,
+    value: data.value.replace(/,/g, '').replace(/\./g, '')
+  })
   return response.data
 }
 export const getNewContract = async (page: number, size: number, statusContract: string) => {
   const response = await axiosInstant.get(`contract/${page}/${size}?status=${statusContract}`)
   return response.data
 }
-export const getNewContractById = async (id: any) => {
+export const getAppendicesContractById = async (id: any) => {
   const response = await axiosInstant.get(`api/contract-appendices/${id}`)
   return response.data
 }
@@ -40,7 +43,10 @@ export const getNewContractByIdNotToken = async (id: any) => {
 }
 
 export const updateNewContract = async (data: any) => {
-  const response = await axiosInstant.post(`contract`, data)
+  const response = await axiosInstant.post(`contract`, {
+    ...data,
+    value: data.value.replace(/,/g, '').replace(/\./g, '')
+  })
   return response.data
 }
 

@@ -11,7 +11,7 @@ import { getListReason } from '~/services/reason.service'
 type FormData = {
   reasonId: string
 }
-const RejectSignContract = ({ contract, comment }: any) => {
+const RejectSignContract = ({ contract, comment, createdBy }: any) => {
   const { errorNotification, successNotification } = useToast()
   const { data: dataReason } = useQuery('reason-data', () => getListReason(0, 50))
   const {
@@ -37,6 +37,7 @@ const RejectSignContract = ({ contract, comment }: any) => {
     formData.append('contractId', contract?.id as string)
     formData.append('status', 'SIGN_B_FAIL')
     formData.append('description', comment)
+    formData.append('createdBy', createdBy as string)
     formData.append('reasonId', data.reasonId)
 
     sendMailReject.mutate(formData)
