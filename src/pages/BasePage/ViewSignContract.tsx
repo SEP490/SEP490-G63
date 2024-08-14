@@ -55,6 +55,7 @@ const ViewSignContract = () => {
       errorNotification('Lỗi hệ thống!!')
     }
   }
+  console.log(data)
 
   const handleGetOpt = async () => {
     const result = await trigger('email')
@@ -151,7 +152,7 @@ const ViewSignContract = () => {
             <Field>
               <Label className='text-sm/6 font-medium text-black'>Nhận xét:</Label>
               <Textarea
-                disabled={(customer == '1' && data?.object?.signA != null) || (customer == '2' && data?.object?.signB)}
+                disabled={data?.object?.statusCurrent != 'WAIT_SIGN_A' && data?.object?.statusCurrent != 'WAIT_SIGN_B'}
                 ref={commentRef}
                 placeholder='Đưa ra một số nhận xét về bản hợp đồng'
                 className={`mt-3 w-full resize-none rounded-lg border-none bg-black/5 py-1.5 px-3 text-sm/6 text-black focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25`}
@@ -173,7 +174,7 @@ const ViewSignContract = () => {
             )}
             <button
               type='button'
-              disabled={(customer == '1' && data?.object?.signA != null) || (customer == '2' && data?.object?.signB)}
+              disabled={data?.object?.statusCurrent != 'WAIT_SIGN_A' && data?.object?.statusCurrent != 'WAIT_SIGN_B'}
               className=' my-3 none center mr-4 rounded-lg bg-[#0070f4] px-2 py-2 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
               data-ripple-light='true'
               onClick={() => {
