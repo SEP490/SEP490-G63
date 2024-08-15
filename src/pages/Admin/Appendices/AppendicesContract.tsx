@@ -39,6 +39,7 @@ import ContractHistory from '../ContractHistory'
 import { deleteAppendices, getAppendicesContactAll } from '~/services/contract.appendices.service'
 import SendMailUpdateStatus from '~/components/Admin/Appendices/SendMailUpdateStatus'
 import { useNotification } from '~/context/notiProvider'
+import EditAppendicesContract from '~/components/Admin/Appendices/EditAppendicesContract'
 export interface DataContract {
   id: string
   file: string
@@ -845,7 +846,7 @@ const AppendicesContract = () => {
                     <div className='font-semibold'>Chỉnh sửa</div>
                     <XMarkIcon className='h-5 w-5 mr-3 mb-3 cursor-pointer' onClick={handleCloseModal} />
                   </div>
-                  <EditNewContract
+                  <EditAppendicesContract
                     selectedContract={selectedContract}
                     handleCloseModal={handleCloseModal}
                     refetch={refetch}

@@ -50,7 +50,7 @@ const CreateContract = () => {
     reset,
     setFocus,
     formState: { errors }
-  } = useForm<FormType>()
+  } = useForm<FormType>({ mode: 'onBlur' })
   const formInfoPartA = useForm<CompanyInfo>({ mode: 'onBlur' })
   const formInfoPartB = useForm<CompanyInfo>({ mode: 'onBlur' })
   const { successNotification, errorNotification } = useToast()
@@ -298,7 +298,7 @@ const CreateContract = () => {
             {...register('name', {
               required: 'Tên hợp đồng không được để trống',
               pattern: {
-                value: new RegExp(dataRegex.REGEX_TEXT),
+                value: new RegExp(dataRegex.REGEX_CONTRACT_NAME),
                 message: 'Tên hợp đồng không hợp lệ'
               }
             })}
@@ -379,7 +379,11 @@ const CreateContract = () => {
               disabled
               placeholder='Nhập mã số thuế'
               {...formInfoPartA.register('taxNumber', {
-                required: 'Mã số thuế không được để trống'
+                required: 'Mã số thuế không được để trống',
+                pattern: {
+                  value: new RegExp(dataRegex.REGEX_TAX_NUMBER),
+                  message: 'Mã số thuế không hợp lệ'
+                }
               })}
             />
             <div className='absolute z-10 right-1 top-0 h-full flex items-center'>{loadingA && <LoadingSvgV2 />}</div>
@@ -642,7 +646,11 @@ const CreateContract = () => {
               onInput={debounce(handleAutoFillPartyB, 500)}
               placeholder='Nhập mã số thuế'
               {...formInfoPartB.register('taxNumber', {
-                required: 'Mã số thuế không được để trống'
+                required: 'Mã số thuế không được để trống',
+                pattern: {
+                  value: new RegExp(dataRegex.REGEX_TAX_NUMBER),
+                  message: 'Mã số thuế không hợp lệ'
+                }
               })}
             />
             <div className='absolute z-10 right-1 top-0 h-full flex items-center'>{loadingB && <LoadingSvgV2 />}</div>
@@ -682,13 +690,14 @@ const CreateContract = () => {
               type='text'
               disabled={createContractQuery?.isLoading || disableFormB.current}
               placeholder='Nhập số điện thoại'
-              onInput={debounce(handleCheckPhoneB, 1000)}
+              // onInput={debounce(handleCheckPhoneB, 1000)}
               {...formInfoPartB.register('phone', {
                 required: 'Số điện thoại không được để trống',
                 pattern: {
                   value: new RegExp(dataRegex.REGEX_PHONE),
                   message: 'Số điện thoại không hợp lệ'
-                }
+                },
+                onBlur: handleCheckPhoneB
               })}
             />
             <div className='absolute z-10 right-1 top-0 h-full flex items-center'>

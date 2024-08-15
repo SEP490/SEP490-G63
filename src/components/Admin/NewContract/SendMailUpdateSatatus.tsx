@@ -166,7 +166,7 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
           <span className='w-40  font-bold'>Đến</span>
           <ComboboxMail selected={selectedTo} setSelected={setSelectedTo} option={optionTo} isCreate={status == 7} />
         </div>
-        <div className='w-full md:w-full py-2  flex items-center z-50'>
+        <div className='w-full md:w-full py-2  flex items-center z-40'>
           <span className='w-40  font-bold'>CC</span>
           <ComboboxMail selected={selectedCc} setSelected={setSelectedCc} option={optionCC} isCreate={status == 7} />
         </div>
