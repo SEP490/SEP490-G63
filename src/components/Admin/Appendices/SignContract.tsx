@@ -27,7 +27,7 @@ const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy,
   const isDrawing = React.useRef(false)
   const stageRef = React.useRef<any>(null)
   const { successNotification, errorNotification } = useToast()
-  const [checkSms, setCheckSms] = useState(true)
+  const [checkSms, setCheckSms] = useState(false)
   const formSMS = useForm<FormTypeSMS>()
   const uri = useRef('')
   const getSMSQuery = useMutation(getSMSCode)
@@ -191,7 +191,7 @@ const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy,
               data-ripple-light='true'
               onClick={() => {
                 uri.current = stageRef.current.toDataURL()
-                setCheckSms(true)
+                // setCheckSms(true)
                 // getSMSQuery.mutate(phoneVerify)
               }}
             >
