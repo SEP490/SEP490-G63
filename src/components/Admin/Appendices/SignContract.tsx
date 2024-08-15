@@ -191,6 +191,7 @@ const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy,
               data-ripple-light='true'
               onClick={() => {
                 uri.current = stageRef.current.toDataURL()
+                handleExport()
                 // setCheckSms(true)
                 // getSMSQuery.mutate(phoneVerify)
               }}
