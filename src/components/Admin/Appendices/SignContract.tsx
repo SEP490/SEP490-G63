@@ -27,7 +27,7 @@ const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy,
   const isDrawing = React.useRef(false)
   const stageRef = React.useRef<any>(null)
   const { successNotification, errorNotification } = useToast()
-  const [checkSms, setCheckSms] = useState(false)
+  const [checkSms, setCheckSms] = useState(true)
   const formSMS = useForm<FormTypeSMS>()
   const uri = useRef('')
   const getSMSQuery = useMutation(getSMSCode)
@@ -66,6 +66,7 @@ const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy,
       errorNotification(error.response?.data.message || '')
     }
   })
+
   const handleExport = async () => {
     const dataRequest = {
       contractId: id as string,
@@ -191,7 +192,7 @@ const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy,
               onClick={() => {
                 uri.current = stageRef.current.toDataURL()
                 setCheckSms(true)
-                getSMSQuery.mutate(phoneVerify)
+                // getSMSQuery.mutate(phoneVerify)
               }}
             >
               Xác nhận
