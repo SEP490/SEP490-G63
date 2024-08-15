@@ -55,7 +55,6 @@ const ViewSignContract = () => {
       errorNotification('Lỗi hệ thống!!')
     }
   }
-  console.log(data)
 
   const handleGetOpt = async () => {
     const result = await trigger('email')

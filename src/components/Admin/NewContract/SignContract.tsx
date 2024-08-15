@@ -28,7 +28,7 @@ type FormTypeSMS = {
 const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy, to, cc, phoneVerify }: IProps) => {
   const [lines, setLines] = React.useState<any>([])
   const isDrawing = React.useRef(false)
-  const [checkSms, setCheckSms] = useState(false)
+  const [checkSms, setCheckSms] = useState(true)
   const stageRef = React.useRef<any>(null)
   const { successNotification, errorNotification } = useToast()
   const formSMS = useForm<FormTypeSMS>()
@@ -108,8 +108,8 @@ const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy,
       errorNotification('OTP không chính xác')
     }
   }
-  if (signQuery.isLoading) return <LoadingPage />
 
+  if (signQuery.isLoading) return <LoadingPage />
   return (
     <>
       {checkSms ? (
@@ -196,7 +196,7 @@ const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy,
               onClick={() => {
                 uri.current = stageRef.current.toDataURL()
                 setCheckSms(true)
-                getSMSQuery.mutate(phoneVerify)
+                // getSMSQuery.mutate(phoneVerify)
               }}
             >
               Xác nhận
