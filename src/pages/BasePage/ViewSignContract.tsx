@@ -13,7 +13,7 @@ import logo from '../../assets/svg/Tdocman.svg'
 import { useForm } from 'react-hook-form'
 import useToast from '~/hooks/useToast'
 import { useAuth } from '~/context/authProvider'
-import { USER } from '~/common/const/role'
+import { ADMIN, USER } from '~/common/const/role'
 import Loading from '~/components/shared/Loading/Loading'
 import { permissionObject } from '~/common/const/permissions'
 type FormType = {
@@ -163,7 +163,7 @@ const ViewSignContract = () => {
             {customer == '2' && (
               <button
                 type='button'
-                disabled={customer == '2' && data?.object?.signB}
+                disabled={data?.object?.currentStatus != 'WAIT_SIGN_B'}
                 className=' my-3 none center mr-4 rounded-lg bg-red-500 px-2 py-2 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#ad649191] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
                 data-ripple-light='true'
                 onClick={() => setModalReject(true)}
@@ -173,7 +173,11 @@ const ViewSignContract = () => {
             )}
             <button
               type='button'
-              disabled={data?.object?.statusCurrent != 'WAIT_SIGN_A' && data?.object?.statusCurrent != 'WAIT_SIGN_B'}
+              disabled={
+                data?.object?.statusCurrent != 'WAIT_SIGN_A' &&
+                data?.object?.statusCurrent != 'WAIT_SIGN_B' &&
+                data?.object?.statusCurrent != 'NEW'
+              }
               className=' my-3 none center mr-4 rounded-lg bg-[#0070f4] px-2 py-2 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
               data-ripple-light='true'
               onClick={() => {

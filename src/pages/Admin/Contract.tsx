@@ -330,8 +330,10 @@ const Contract = () => {
         </>
       ),
       color: 'text-green-700',
-      disable: (d: any) =>
-        (!d?.canSign && user?.email != d.createdBy) || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
+      disable: (d: any) => {
+        const statusPL = user?.email == d.createdBy ? ['NEW'] : ['WAIT_SIGN_A']
+        return !statusPL.includes(d?.statusCurrent)
+      },
       callback: (d: any) => {
         navigate(`/view/${d?.id}/sign/1`)
       }
@@ -344,8 +346,10 @@ const Contract = () => {
         </>
       ),
       color: 'text-orange-700',
-      disable: (d: any) =>
-        !d?.canRejectSign || user?.email == d.createdBy || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
+      disable: (d: any) => {
+        const statusPL = user?.email == d.createdBy ? [] : ['WAIT_SIGN_A']
+        return !statusPL.includes(d?.statusCurrent)
+      },
       callback: (d: any) => {
         setSelectedContract(d)
         setStatus(6)
