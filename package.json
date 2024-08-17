@@ -49,6 +49,7 @@
     "react-select": "^5.8.0",
     "react-slick": "^0.30.2",
     "react-toastify": "^10.0.5",
+    "react-type-animation": "^3.2.0",
     "sockjs-client": "^1.6.1",
     "suneditor": "^2.46.3",
     "suneditor-react": "^3.6.1",
