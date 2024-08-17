@@ -13,7 +13,7 @@ export const routerAdmin = [
   {
     id: 1,
     title: 'Tổng quan',
-    slug: '/dashboard',
+    slug: '/',
     icon: <EyeIcon className='h-4 w-4' />
   },
   {
@@ -57,7 +57,7 @@ export const routerAdminOfficer = [
   {
     id: 1,
     title: 'Tổng quan',
-    slug: '/dashboard',
+    slug: '/',
     icon: <EyeIcon className='h-4 w-4' />
   },
 

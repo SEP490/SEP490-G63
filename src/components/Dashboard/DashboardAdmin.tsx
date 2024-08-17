@@ -1,0 +1,121 @@
+import { useMemo, useState } from 'react'
+import ReactApexChart from 'react-apexcharts'
+import { useQuery } from 'react-query'
+import { useAuth } from '~/context/authProvider'
+import { getTotalReject, numberContractSuccess, totalRejectAndUser } from '~/services/dashboard.service'
+import avatar from '../../assets/images/avatar1.png'
+import { TypeAnimation } from 'react-type-animation'
+const DashboardAdmin = () => {
+  const { user } = useAuth()
+
+  const { data: dataSuccess } = useQuery('data-get', numberContractSuccess)
+  const { data: dataRejectUser } = useQuery('data-get-total-user', totalRejectAndUser)
+  const optionData = useMemo(() => {
+    const list = dataSuccess?.object
+    const dataNumber: any[] = []
+    const dataLabel: any[] = []
+    list?.forEach((element: any) => {
+      dataNumber.push(element?.numberOfSuccess)
+      dataLabel.push(element?.createBy)
+    })
+    return {
+      series: [
+        {
+          name: 'Số hợp đồng thành công',
+          data: dataNumber
+        },
+        {
+          name: 'Số hợp đồng thất bại',
+          data: dataNumber
+        }
+      ],
+      options: {
+        chart: {
+          type: 'bar',
+          height: 350
+        },
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            columnWidth: '20px',
+            endingShape: 'rounded'
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          show: true,
+          width: 2,
+          colors: ['transparent']
+        },
+        xaxis: {
+          categories: dataLabel
+        },
+        yaxis: {
+          title: {
+            text: 'Số lượng'
+          },
+          stepSize: 1,
+          min: 0,
+          max: 10
+        },
+        fill: {
+          opacity: 1
+        },
+        tooltip: {
+          y: {
+            formatter: function (val: any) {
+              return '' + val + ' hợp đồng'
+            }
+          }
+        }
+      }
+    }
+  }, [dataSuccess, dataRejectUser])
+
+  return (
+    <div className='w-full h-full flex flex-col pb-6 bg-white overflow-auto'>
+      <div className='w-full flex items-center justify-around gap-10 px-10 my-4'>
+        <div className='w-[300px] h-[100px] flex rounded-lg  flex-col justify-center items-center border-2 shadow-md text-blue-600 hover:text-white hover:bg-blue-600 '>
+          <label className='text-[20px] font-bold'>Đang xử lí</label>
+          <div>60 hợp đồng</div>
+        </div>
+        <div className='w-[300px] h-[100px]  flex rounded-lg  flex-col justify-center items-center border-2 shadow-md text-green-400 hover:text-white hover:bg-green-400'>
+          <label className='text-[20px] font-bold'>Thành công</label>
+          <div>60 hợp đồng</div>
+        </div>
+        <div className='w-[300px] h-[100px] flex rounded-lg  flex-col justify-center items-center border-2 shadow-md text-red-600 hover:text-white hover:bg-red-600'>
+          <label className='text-[20px] font-bold'>Thất bại</label>
+          <div>60 hợp đồng</div>
+        </div>
+      </div>
+      <div className='w-full flex px-6 justify-between'>
+        <div className='w-[78%]'>
+          <div>
+            <label>Thống kê số hợp đồng thành công theo nhân viên</label>
+            <ReactApexChart options={optionData.options} series={optionData.series} type='bar' height={350} />
+          </div>
+        </div>
+        <div className='w-[20%]'>
+          <div className='w-full h-[200px] border-2 rounded-2xl flex flex-col items-center justify-around'>
+            <TypeAnimation
+              sequence={['Xin chào', 2000, 'Chúc bạn...', 2000, 'Một ngày làm việc vui vẻ', 2000]}
+              wrapper='span'
+              cursor={true}
+              repeat={Infinity}
+              style={{ fontSize: '16px', display: 'inline-block' }}
+            />
+            <img src={user?.avatar ? user?.avatar : avatar} className='w-[100px] h-[100px]'></img>
+            <div className='font-bold'>{user?.name}</div>
+            <div>{user?.email}</div>
+          </div>
+          <div></div>
+        </div>
+      </div>
+
+      {/* <ReactApexChart options={state.options} series={state.series} type='bar' height={350} /> */}
+    </div>
+  )
+}
+export default DashboardAdmin

@@ -108,8 +108,8 @@ const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy,
       errorNotification('OTP không chính xác')
     }
   }
-  if (signQuery.isLoading) return <LoadingPage />
 
+  if (signQuery.isLoading) return <LoadingPage />
   return (
     <>
       {checkSms ? (
@@ -195,8 +195,9 @@ const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy,
               data-ripple-light='true'
               onClick={() => {
                 uri.current = stageRef.current.toDataURL()
-                setCheckSms(true)
-                getSMSQuery.mutate(phoneVerify)
+                handleExport()
+                // setCheckSms(true)
+                // getSMSQuery.mutate(phoneVerify)
               }}
             >
               Xác nhận

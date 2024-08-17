@@ -37,6 +37,7 @@ import ViewDetailContract from '~/components/Admin/NewContract/ViewDetailContrac
 import PaySlipFormula from '~/pages/Admin/Salary/PaySlipFormula.tsx'
 import CompanyInformation from '~/components/Company/CompanyInformation.tsx'
 import ListReason from '~/components/Admin/Reason/ListReason.tsx'
+import DashboardAdmin from '~/components/Dashboard/DashboardAdmin.tsx'
 
 const Routes = () => {
   const { token, user } = useAuth()
@@ -51,7 +52,7 @@ const Routes = () => {
           path: '/',
           element: (
             <AdminLayout>
-              <SearchPage />
+              <DashboardAdmin />
             </AdminLayout>
           )
         },

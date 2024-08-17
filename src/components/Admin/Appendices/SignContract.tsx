@@ -66,6 +66,7 @@ const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy,
       errorNotification(error.response?.data.message || '')
     }
   })
+
   const handleExport = async () => {
     const dataRequest = {
       contractId: id as string,
@@ -190,8 +191,9 @@ const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy,
               data-ripple-light='true'
               onClick={() => {
                 uri.current = stageRef.current.toDataURL()
-                setCheckSms(true)
-                getSMSQuery.mutate(phoneVerify)
+                handleExport()
+                // setCheckSms(true)
+                // getSMSQuery.mutate(phoneVerify)
               }}
             >
               Xác nhận

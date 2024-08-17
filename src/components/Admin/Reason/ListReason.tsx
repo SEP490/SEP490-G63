@@ -65,7 +65,11 @@ const ListReason = () => {
     <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex flex-wrap'>
         <div className='w-full px-3'>
-          <div className='flex gap-3 justify-end w-full py-3 h-[60px]'>
+          <div className='flex gap-3 justify-between w-full py-3 h-[60px] my-2'>
+            <div className=''>
+              <div className='font-bold'>Quản lí nguyên nhân</div>
+              <div>Một số nguyên nhân chính dẫn đến hợp đồng bị từ chối bởi khách hàng</div>
+            </div>
             <button
               type='button'
               onClick={openModal}

@@ -7,26 +7,26 @@ import useToast from '~/hooks/useToast'
 import { createPaySlipFormula } from '~/services/pay.formula.service'
 
 type FormData = {
-  fromValueContract: number
-  toValueContract: number
+  fromValueContract: string
+  toValueContract: string
   commissionPercentage: number
-  baseSalary: number
+  baseSalary: string
   clientDeploymentPercentage: number
-  bonusReachesThreshold: number
-  foodAllowance: number
-  transportationOrPhoneAllowance: number
-  bonusAfter1Year: number
+  bonusReachesThreshold: string
+  foodAllowance: string
+  transportationOrPhoneAllowance: string
 }
-const CreatePaySlip = ({ initialValue, closeModal, refetch }: any) => {
+const CreatePaySlip = ({ closeModal, refetch }: any) => {
   const {
     handleSubmit,
     register,
+    reset,
     formState: { errors }
-  } = useForm<FormData>({ defaultValues: initialValue })
+  } = useForm<FormData>()
   const { successNotification, errorNotification } = useToast()
   const addNewPaySlipQuery = useMutation(createPaySlipFormula, {
     onError: (error: AxiosError<{ message: string }>) => {
-      errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
+      errorNotification(error.response?.data?.message || 'Tạo mới thất bại')
     },
     onSuccess: (response) => {
       if (response.code == '00') {
@@ -34,14 +34,31 @@ const CreatePaySlip = ({ initialValue, closeModal, refetch }: any) => {
         closeModal()
         refetch()
       } else {
-        errorNotification('Tạo thất bại')
+        errorNotification('Tạo mới thất bại')
       }
     }
   })
-
+  const handleInputValue = (e: any, field: any) => {
+    const isNum = /^[\d,]+$/.test(e.target.value)
+    if (isNum) {
+      const number = parseFloat(e.target.value.replace(/,/g, ''))
+      reset({
+        [field]: number.toLocaleString()
+      })
+    } else
+      reset({
+        [field]: e.target.value.replace(/[^0-9,]/g, '')
+      })
+  }
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     addNewPaySlipQuery.mutate({
       ...data,
+      fromValueContract: data.fromValueContract.replace(/,/g, '').replace(/\./g, ''),
+      toValueContract: data.toValueContract.replace(/,/g, '').replace(/\./g, ''),
+      baseSalary: data.baseSalary.replace(/,/g, '').replace(/\./g, ''),
+      bonusReachesThreshold: data.bonusReachesThreshold.replace(/,/g, '').replace(/\./g, ''),
+      foodAllowance: data.foodAllowance.replace(/,/g, '').replace(/\./g, ''),
+      transportationOrPhoneAllowance: data.transportationOrPhoneAllowance.replace(/,/g, '').replace(/\./g, ''),
       type: 'SALE'
     })
   }
@@ -66,35 +83,37 @@ const CreatePaySlip = ({ initialValue, closeModal, refetch }: any) => {
           <input
             className={`${errors.fromValueContract ? 'ring-red-600' : ''} block w-[48%] rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             placeholder='Từ'
-            type='number'
-            min={0}
-            defaultValue={0}
+            type='text'
+            onInput={(e) => handleInputValue(e, 'fromValueContract')}
             {...register('fromValueContract', {
-              required: 'Dữ liệu không được bỏ trống'
-              // pattern: {
-              //   value: new RegExp(dataRegex.REGEX_NAME),
-              //   message: 'Tên nhân viên không hợp lệ'
-              // }
+              required: 'Dữ liệu không được bỏ trống',
+              validate: {
+                positive: (v, formValues) =>
+                  v.replace(/,/g, '').replace(/\./g, '') <
+                    formValues.toValueContract.replace(/,/g, '').replace(/\./g, '') || 'Dữ liệu không hợp lệ'
+              }
             })}
           />
           <input
             className={`${errors.toValueContract ? 'ring-red-600' : ''} block w-[48%] rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             placeholder='Đến'
-            type='number'
-            min={0}
-            defaultValue={0}
+            type='text'
+            onInput={(e) => handleInputValue(e, 'toValueContract')}
             {...register('toValueContract', {
-              required: 'Dữ liệu không được bỏ trống'
-              // pattern: {
-              //   value: new RegExp(dataRegex.REGEX_NAME),
-              //   message: 'Tên nhân viên không hợp lệ'
-              // }
+              required: 'Dữ liệu không được bỏ trống',
+              validate: {
+                positive: (v, formValues) =>
+                  v.replace(/,/g, '').replace(/\./g, '') >
+                    formValues.fromValueContract.replace(/,/g, '').replace(/\./g, '') || 'Dữ liệu không hợp lệ'
+              }
             })}
           />
         </div>
 
-        <div className={`text-red-500 absolute text-[12px] ${errors.fromValueContract ? 'visible' : 'invisible'}`}>
-          {errors.fromValueContract?.message}
+        <div
+          className={`text-red-500 absolute text-[12px] ${errors.fromValueContract || errors.toValueContract ? 'visible' : 'invisible'}`}
+        >
+          {errors.fromValueContract?.message || errors.toValueContract?.message}
         </div>
       </div>
 
@@ -105,8 +124,8 @@ const CreatePaySlip = ({ initialValue, closeModal, refetch }: any) => {
           </div>
         </label>
         <input
-          type='number'
-          min={0}
+          type='text'
+          onInput={(e) => handleInputValue(e, 'baseSalary')}
           className={`${errors.baseSalary ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
           {...register('baseSalary', {
             required: 'Lương cơ bản không được để trống'
@@ -131,6 +150,7 @@ const CreatePaySlip = ({ initialValue, closeModal, refetch }: any) => {
         <input
           type='number'
           min={0}
+          max={100}
           step={0.1}
           className={`${errors.commissionPercentage ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
           {...register('commissionPercentage', {
@@ -156,6 +176,7 @@ const CreatePaySlip = ({ initialValue, closeModal, refetch }: any) => {
         <input
           type='number'
           min={0}
+          max={100}
           step={0.1}
           className={`${errors.commissionPercentage ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
           {...register('clientDeploymentPercentage', {
@@ -180,8 +201,8 @@ const CreatePaySlip = ({ initialValue, closeModal, refetch }: any) => {
           </div>
         </label>
         <input
-          type='number'
-          min={0}
+          type='text'
+          onInput={(e) => handleInputValue(e, 'bonusReachesThreshold')}
           className={`${errors.bonusReachesThreshold ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
           {...register('bonusReachesThreshold', {
             required: 'Thưởng đạt ngưỡng không được để trống'
@@ -203,8 +224,8 @@ const CreatePaySlip = ({ initialValue, closeModal, refetch }: any) => {
           </div>
         </label>
         <input
-          type='number'
-          min={0}
+          type='text'
+          onInput={(e) => handleInputValue(e, 'foodAllowance')}
           className={`${errors.foodAllowance ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
           {...register('foodAllowance', {
             required: 'Dữ liệu không được để trống'
@@ -227,8 +248,8 @@ const CreatePaySlip = ({ initialValue, closeModal, refetch }: any) => {
           </div>
         </label>
         <input
-          type='number'
-          min={0}
+          type='text'
+          onInput={(e) => handleInputValue(e, 'transportationOrPhoneAllowance')}
           className={`${errors.transportationOrPhoneAllowance ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
           {...register('transportationOrPhoneAllowance', {
             required: 'Dữ liệu không được để trống'
