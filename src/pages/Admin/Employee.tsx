@@ -54,7 +54,6 @@ const Employee = () => {
   const prevPageRef = useRef(page)
   const prevSizeRef = useRef(size)
   const [status, setStatus] = useState('ACTIVE')
-  const [department, setDepartment] = useState("")
   const [selectedUser, setSelectedUser] = useState<DataEmployee | undefined>(undefined)
   const [searchData, setSearchData] = useState('')
   function closeAllModal() {
@@ -79,8 +78,8 @@ const Employee = () => {
     setSearchData(e.target.value)
   }
   const { data, isLoading, refetch, isFetching } = useQuery(
-    ['employee-list', searchData, status, department],
-    () => getListEmployee({ size: size, page: page, name: searchData, status,department }),
+    ['employee-list', searchData, status],
+    () => getListEmployee({ size: size, page: page, name: searchData, status }),
     {
       onSuccess: (result) => {
         setTotalPage(result?.object?.totalPages)
@@ -180,13 +179,6 @@ const Employee = () => {
                 <option value={'ACTIVE'}>Đang hoạt động</option>
                 <option value={'INACTIVE'}>Không hoạt động</option>
               </select>
-              <select
-                className='shadow-md block p-2 w-fit text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                onChange={(e: any) => setDepartment(e.target.value)}
-              >
-                <option value={""} >Tất cả</option>
-                {dataDepartment?.object?.content?.map((d) => <option value={d.id}>{d.title}</option>)}
-              </select>
             </div>
             {user?.role == ADMIN ? (
               <button
@@ -214,7 +206,6 @@ const Employee = () => {
                     <th className='px-3 py-3 ' align='center'>
                       Số điện thoại
                     </th>
-                    <th className='px-3 py-3 '>Phòng ban</th>
                     <th className='px-3 py-3 '>Vị trí</th>
                     <th className='px-3 py-3 '>Quyền</th>
                     <th className='px-3 py-3 '>Trạng thái</th>
@@ -247,11 +238,7 @@ const Employee = () => {
                         <td className='px-3 py-4' align='center'>
                           {d.phone}
                         </td>
-                        <td className='px-3 py-4'>
-                          {dataDepartment?.object?.content.find((data: any) => data.id == d.department) != undefined
-                            ? dataDepartment?.object?.content.find((data: any) => data.id == d.department).title
-                            : ''}
-                        </td>
+
                         <td className='px-3 py-4'>{d.position}</td>
                         <td className='px-3 py-4'>{d.permissions?.slice(1, -1)}</td>
                         <td className='px-3 py-4'>

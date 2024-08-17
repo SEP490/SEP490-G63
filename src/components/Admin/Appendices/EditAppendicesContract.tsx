@@ -15,6 +15,7 @@ import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
 import { getContractType } from '~/services/type-contract.service'
 import LoadingIcon from '~/assets/LoadingIcon'
 import moment from 'moment'
+import { getAppendicesContractById } from '~/services/contract.appendices.service'
 
 interface FormType {
   name: string
@@ -37,7 +38,7 @@ interface CompanyInfo {
   phone: string
 }
 
-const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) => {
+const EditAppendicesContract = ({ selectedContract, handleCloseModal, refetch }: any) => {
   const { successNotification, errorNotification } = useToast()
   const formInfoPartA = useForm<CompanyInfo>()
   const formInfoPartB = useForm<CompanyInfo>()
@@ -81,7 +82,7 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
     async function fetchAPI() {
       try {
         if (selectedContract?.id) {
-          const response = await getNewContractById(selectedContract.id)
+          const response = await getAppendicesContractById(selectedContract.id)
           if (response.object) {
             setDetailContract(response.object)
             reset({ ...response.object, value: response.object.value.toLocaleString() })
@@ -438,7 +439,7 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
             })}
           /> */}
           <select
-            {...formInfoPartA.register('bankName', { required: 'Tên ngân hàng không được để trống.' })}
+            {...formInfoPartA.register('bankName', { required: 'Tên ngân hàng không được để trống' })}
             disabled
             className='block disabled:bg-gray-200 w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
           >
@@ -664,7 +665,7 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
             })}
           /> */}
           <select
-            {...formInfoPartB.register('bankName', { required: 'Tên ngân hàng không được để trống.' })}
+            {...formInfoPartB.register('bankName', { required: 'Tên ngân hàng không được để trống' })}
             disabled
             className='block disabled:bg-gray-200 w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
           >
@@ -758,4 +759,4 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
     </div>
   )
 }
-export default EditNewContract
+export default EditAppendicesContract

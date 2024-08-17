@@ -8,6 +8,8 @@ import useToast from '~/hooks/useToast'
 import { VietQR } from 'vietqr'
 import { SetStateAction, useEffect, useState } from 'react'
 import { createParty, getParty } from '~/services/party.service'
+import { GrUpdate } from 'react-icons/gr'
+
 interface CompanyInfo {
   name: string
   email: string
@@ -71,6 +73,9 @@ const CompanyInformation = () => {
         onSubmit={handleSubmit(debounce(onSubmit, 300))}
         className='items-center w-[80%] rounded-lg mt-2 p-4 flex flex-wrap justify-between h-fit bg-white z-10 '
       >
+        <div className='w-full'>
+          <div className='font-bold'>Thông tin công ty</div>
+        </div>
         <div className='w-full md:w-[30%] mt-5 relative '>
           <label className='font-light '>
             Mã số thuế<sup className='text-red-500'>*</sup>
@@ -229,7 +234,7 @@ const CompanyInformation = () => {
             })}
           /> */}
           <select
-            {...register('bankName')}
+            {...register('bankName', { required: 'Tên ngân hàng không được để trống' })}
             disabled={updateNewParty?.isLoading}
             className='block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200'
           >
@@ -298,7 +303,13 @@ const CompanyInformation = () => {
             className='middle my-3 none center mr-4 rounded-lg bg-[#0070f4] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
             data-ripple-light='true'
           >
-            {updateNewParty.isLoading ? <LoadingIcon /> : 'Sửa'}
+            {updateNewParty.isLoading ? (
+              <LoadingIcon />
+            ) : (
+              <div className='flex items-center'>
+                <GrUpdate className='mr-1' /> Sửa
+              </div>
+            )}
           </button>
         </div>
       </form>

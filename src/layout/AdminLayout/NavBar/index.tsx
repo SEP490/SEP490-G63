@@ -5,11 +5,11 @@ import {
   UserIcon,
   ArrowRightStartOnRectangleIcon,
   BellAlertIcon,
-  EllipsisVerticalIcon,
   XMarkIcon,
   KeyIcon,
   InformationCircleIcon,
-  BuildingOfficeIcon
+  BuildingOfficeIcon,
+  Cog8ToothIcon
 } from '@heroicons/react/24/outline'
 import avatar from '../../../assets/images/avatar1.png'
 import useViewport from '~/hooks/useViewport'
@@ -47,16 +47,23 @@ const NavBar = () => {
     page,
     totalPages
   } = useNotification()
-  const handleReadNotify = (id: any, markRead: boolean) => {
-    if (!markRead) {
+  const handleReadNotify = (noti: any) => {
+    console.log('nodi: ', noti)
+    if (noti?.typeNotification == 'CONTRACT') {
+      navigate('/contract')
+    } else if (noti?.typeNotification == 'APPENDICES CONTRACT') {
+      navigate(`/appendices/${noti?.contractId}`)
+    }
+
+    if (!noti.markRead) {
       setTotalNotRead((totalNotRead: any) => totalNotRead - 1)
       setNotifications(
         notifications.map((n) => {
-          if (n.id == id) return { ...n, markRead: true }
+          if (n.id == noti.id) return { ...n, markRead: true }
           else return n
         })
       )
-      isReadNotify(id)
+      isReadNotify(noti.id)
     }
   }
   const handleDeleteNotify = (id: any) => {
@@ -188,7 +195,7 @@ const NavBar = () => {
 
         <div className='flex items-center gap-4 '>
           <Popover className='relative'>
-            {({ open }) => (
+            {({ open, close }) => (
               <>
                 <Popover.Button
                   className={`
@@ -220,7 +227,9 @@ const NavBar = () => {
                       <div className='font-bold text-[20px] pl-4 my-2'>Thông báo</div>
                       <button
                         className={`px-4 py-2 rounded-3xl ml-3 text-blue-600 font-semibold ${activeButton === 'all' ? 'bg-blue-100' : ''}`}
-                        onClick={() => handleButtonClick('all')}
+                        onClick={() => {
+                          handleButtonClick('all')
+                        }}
                       >
                         Tất cả
                       </button>
@@ -262,7 +271,10 @@ const NavBar = () => {
                                   className={`flex flex-col w-[80%] pr-8 py-1 rounded-md transition-colors delay-[200] ${
                                     n.markRead ? 'opacity-60' : ''
                                   }`}
-                                  onClick={() => handleReadNotify(n.id, n.markRead)}
+                                  onClick={() => {
+                                    handleReadNotify(n)
+                                    close()
+                                  }}
                                 >
                                   <div className='font-semibold text-[16px]'>{n.title}</div>
                                   <div className='text-[12px]'>{n.message}</div>
@@ -355,6 +367,19 @@ const NavBar = () => {
                         } group flex w-full items-center gap-3 rounded-md px-2 py-1 text-sm `}
                       >
                         <BuildingOfficeIcon className='h-5' /> Thông tin công ty
+                      </button>
+                    )}
+                  </Menu.Item>
+                  <Menu.Item>
+                    {({ active }) => (
+                      <button
+                        title='Sửa thông tin'
+                        onClick={() => navigate('/manage-reason')}
+                        className={`${
+                          active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                        } group flex w-full items-center gap-3 rounded-md px-2 py-1 text-sm `}
+                      >
+                        <Cog8ToothIcon className='h-5' /> Quản lý
                       </button>
                     )}
                   </Menu.Item>

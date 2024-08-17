@@ -22,21 +22,22 @@ const permissions = [
   {
     id: 3,
     title: 'OFFICER ADMIN',
-    tooltip: 'PERMISSION OFFICE ADMIN',
+    tooltip:
+      'Hành chính văn phòng có các chức năng như tạo mới hợp đồng,\n tải lên hợp đồng cũ, gửi hợp đồng cho khách hàng, duyệt hợp đồng cho SALE, trình lên cho sếp ký',
     value: 'OFFICE_ADMIN'
   },
   {
     id: 4,
     title: 'OFFICE STAFF',
-    tooltip: 'PERMISSION OFFICE STAFF',
+    tooltip: 'Nhân viên có các chức năng cơ bản của một nhân viên trong công ty(Sắp ra mắt)',
     value: 'OFFICE_STAFF'
-  },
-  {
-    id: 5,
-    title: 'LEADER SALE',
-    tooltip: 'PERMISSION LEADER SALE',
-    value: 'LEADER_SALE'
   }
+  // {
+  //   id: 5,
+  //   title: 'LEADER SALE',
+  //   tooltip: 'PERMISSION LEADER SALE',
+  //   value: 'LEADER_SALE'
+  // }
 ]
 
 export default permissions

@@ -38,6 +38,8 @@ import { HiMiniDocumentCheck } from 'react-icons/hi2'
 import LoadingIcon from '~/assets/LoadingIcon'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useNotification } from '~/context/notiProvider'
+import { FaSearch } from 'react-icons/fa'
+
 export interface DataContract {
   id: string
   file: string
@@ -64,6 +66,9 @@ export interface DataContract {
   canUpdate: boolean
   approved: boolean
   createdDate: string
+  draft: boolean
+  user: any
+  numberContract: string
 }
 type ActionType = {
   id: number
@@ -179,7 +184,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-blue-700',
-      disable: (d: any) => d?.status != 'SUCCESS',
+      disable: (d: any) => d?.status != 'SUCCESS' || d?.statusCurrent != 'SUCCESS',
       callback: (d: any) => {
         navigate(`/appendices/${d.id}`)
       }
@@ -244,7 +249,6 @@ const Contract = () => {
         setChangeStatus(true)
       }
     },
-
     {
       id: 4,
       title: (
@@ -261,6 +265,21 @@ const Contract = () => {
       }
     },
     {
+      id: 7,
+      title: (
+        <>
+          <PaperAirplaneIcon className='h-5' /> Gửi khách hàng
+        </>
+      ),
+      color: 'text-teal-700',
+      disable: (d: any) => !d.canSendForCustomer,
+      callback: (d: any) => {
+        setSelectedContract(d)
+        setStatus(7)
+        setChangeStatus(true)
+      }
+    },
+    {
       id: 3,
       title: (
         <>
@@ -268,7 +287,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-blue-700',
-      disable: (d: any) => d?.status != 'SUCCESS',
+      disable: (d: any) => d?.status != 'SUCCESS' || d?.statusCurrent != 'SUCCESS',
       callback: (d: any) => {
         navigate(`/appendices/${d.id}`)
       }
@@ -311,8 +330,10 @@ const Contract = () => {
         </>
       ),
       color: 'text-green-700',
-      disable: (d: any) =>
-        (!d?.canSign && user?.email != d.createdBy) || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
+      disable: (d: any) => {
+        const statusPL = user?.email == d.createdBy ? ['NEW'] : ['WAIT_SIGN_A']
+        return !statusPL.includes(d?.statusCurrent)
+      },
       callback: (d: any) => {
         navigate(`/view/${d?.id}/sign/1`)
       }
@@ -325,11 +346,28 @@ const Contract = () => {
         </>
       ),
       color: 'text-orange-700',
-      disable: (d: any) =>
-        !d?.canRejectSign || user?.email == d.createdBy || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
+      disable: (d: any) => {
+        const statusPL = user?.email == d.createdBy ? [] : ['WAIT_SIGN_A']
+        return !statusPL.includes(d?.statusCurrent)
+      },
       callback: (d: any) => {
         setSelectedContract(d)
         setStatus(6)
+        setChangeStatus(true)
+      }
+    },
+    {
+      id: 6,
+      title: (
+        <>
+          <PaperAirplaneIcon className='h-5' /> Gửi khách hàng
+        </>
+      ),
+      color: 'text-teal-700',
+      disable: (d: any) => !d.canSendForCustomer,
+      callback: (d: any) => {
+        setSelectedContract(d)
+        setStatus(7)
         setChangeStatus(true)
       }
     },
@@ -341,7 +379,7 @@ const Contract = () => {
         </>
       ),
       color: 'text-blue-700',
-      disable: (d: any) => d?.status != 'SUCCESS',
+      disable: (d: any) => d?.status != 'SUCCESS' || d?.statusCurrent != 'SUCCESS',
       callback: (d: any) => {
         navigate(`/appendices/${d.id}`)
       }
@@ -630,6 +668,7 @@ const Contract = () => {
               type='submit'
               className='rounded-md shadow-md w-fit bg-main-color px-2 py-1 text-xs sm:text-sm font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
             >
+              <FaSearch className='float-left mt-1 mr-1' />
               Tìm kiếm
             </button>
           </form>
@@ -645,14 +684,20 @@ const Contract = () => {
       </div>
       <div className='flex h-[calc(100%-70px)] flex-col gap-2 md:flex-row justify-start sm:justify-between px-3'>
         <div className='flex gap-2 md:flex-col w-full h-fit md:h-full md:w-[15%] bg-white shadow-md overflow-auto'>
+          <div className={`hidden md:flex justify-between items-center text-xs sm:text-sm md:text-md h-[30px] px-2`}>
+            <span className='font-bold'>Trạng thái</span>
+            <span className='font-bold'>SL</span>
+          </div>
           {menuContract[permissionUser]?.map((t: any) => (
             <div
               key={t.id}
-              className={`cursor-pointer flex justify-between items-center text-xs sm:text-sm md:text-md h-[30px] px-3 py-1 ${statusContract?.id == t.id ? 'bg-main-color text-white' : 'text-black'} hover:bg-hover-main hover:text-white`}
+              className={`cursor-pointer flex justify-between items-center text-xs sm:text-sm md:text-md h-[30px] px-1 py-1 ${statusContract?.id == t.id ? 'bg-main-color text-white' : 'text-black'} hover:bg-hover-main hover:text-white`}
               onClick={() => setStatusContract(t)}
             >
-              {t?.title}{' '}
-              {loadingNumber ? <LoadingIcon /> : dataNumber?.object?.[t.number] ? dataNumber?.object?.[t.number] : 0}
+              {t?.title}
+              <span className='bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300'>
+                {loadingNumber ? <LoadingIcon /> : dataNumber?.object?.[t.number] ? dataNumber?.object?.[t.number] : 0}
+              </span>
             </div>
           ))}
         </div>
@@ -667,8 +712,9 @@ const Contract = () => {
                     <th className='px-3 py-3 w-[5%]' align='center'>
                       STT
                     </th>
-                    <th className='px-3 py-3 w-[40%]'>Tên hợp đồng</th>
-                    <th className='px-3 py-3 w-[20%]'>Người tạo</th>
+                    <th className='px-3 py-3 w-[30%]'>Tên hợp đồng</th>
+                    <th className='px-3 py-3'>Số hợp đồng</th>
+                    <th className='px-3 py-3 w-[10%]'>Người tạo</th>
                     <th scope='col' className='px-3 py-3' align='center'>
                       Ngày tạo
                     </th>
@@ -694,7 +740,7 @@ const Contract = () => {
                         </td>
                         <td className={`px-3 py-4`}>
                           <div className='flex items-center gap-4'>
-                            {d.name}
+                            {d.name} {d.draft && '(Bản nháp)'}
                             {d.status != 'SUCCESS' && d.urgent && (
                               <Tooltip content='Cấp bách'>
                                 <UrgentIcon className='w-6 h-6' />
@@ -702,7 +748,10 @@ const Contract = () => {
                             )}
                           </div>
                         </td>
-                        <td className='px-3 py-4'>{d.createdBy}</td>
+                        <td className='px-3 py-4'>{d.numberContract}</td>
+                        <td className='px-3 py-4'>
+                          {d.user.name} - {d.user.phone} - {d.user.email}
+                        </td>
                         <td className='px-3 py-4' align='center'>
                           {d?.createdDate ? moment(d?.createdDate).format('DD/MM/YYYY') : d?.createdDate}
                         </td>
@@ -817,7 +866,7 @@ const Contract = () => {
                 leaveFrom='opacity-100 scale-100'
                 leaveTo='opacity-0 scale-95'
               >
-                <Dialog.Panel className='w-[100vw] md:w-[90vw] md:h-[94vh] transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all'>
+                <Dialog.Panel className='w-[100vw] md:w-[60vw] md:h-[94vh] transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all'>
                   <div className='flex justify-between mb-2'>
                     <div className='font-semibold'>{statusRequest[status]?.title}</div>
                     <div className='flex gap-3 items-center'>
@@ -879,7 +928,7 @@ const Contract = () => {
                             leaveFrom='opacity-100'
                             leaveTo='opacity-0'
                           >
-                            <Listbox.Options className='absolute mt-1 w-[40vw] md:w-[40vw] right-0 bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm'>
+                            <Listbox.Options className='absolute mt-1 w-[60vw] md:w-[60vw] right-0 bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm'>
                               <Listbox.Option
                                 key='history'
                                 className={({ active }) =>
@@ -974,7 +1023,7 @@ const Contract = () => {
                 leaveFrom='opacity-100 scale-100'
                 leaveTo='opacity-0 scale-95'
               >
-                <Dialog.Panel className=' w-[50vw] md:w-[40vw] md:h-[30vh] transform overflow-y-auto rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all'>
+                <Dialog.Panel className='w-[80vw] md:w-[60%] md:h-[40vh] transform overflow-y-auto rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all'>
                   <div className='flex justify-between mb-2'>
                     <p className='font-semibold'>Lịch sử hợp đồng</p>
                     <XMarkIcon className='h-5 w-5 mr-3 mb-3 cursor-pointer' onClick={handleCloseHistoryModal} />

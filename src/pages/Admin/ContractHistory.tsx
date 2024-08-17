@@ -10,7 +10,6 @@ import { useAuth } from '~/context/authProvider'
 import { ADMIN } from '~/common/const/role'
 import { permissionObject } from '~/common/const/permissions'
 import { statusObjectHistory } from '~/common/const/status'
-
 export default function ContractHistory({ selectedContract }: any) {
   const { errorNotification } = useToast()
   const [history, setHistory] = useState<any>([])
@@ -52,12 +51,10 @@ export default function ContractHistory({ selectedContract }: any) {
       </div>
     )
   if (error) return <div>Lỗi hiển thị lịch sử</div>
-  console.log(data)
-
   return (
-    <div className='shadow-md sm:rounded-lg my-3'>
+    <div className='shadow-md sm:rounded-lg my-3 w-full'>
       {/* <h1 className='text-2xl font-semibold mb-4'>Lịch sử hợp đồng</h1> */}
-      <div className='overflow-y-auto rounded-xl'>
+      <div className='overflow-y-auto rounded-xl w-full'>
         <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400'>
           <thead className='text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
             <tr className='bg-gray-100'>
@@ -68,6 +65,7 @@ export default function ContractHistory({ selectedContract }: any) {
               <th className='px-4 py-3 border'>Người tạo</th>
               {/* <th className='px-4 py-3 border'>Thời gian</th> */}
               <th className='px-4 py-3 border'>Trạng thái</th>
+              <th className='px-4 py-3 border'>Bình luận</th>
               <th className='px-4 py-3 border'>Thời gian</th>
             </tr>
           </thead>
@@ -86,6 +84,8 @@ export default function ContractHistory({ selectedContract }: any) {
                 <td className={`px-4 py-3 border ${statusObjectHistory[item.status]?.color}`}>
                   {statusObjectHistory[item.status]?.title}
                 </td>
+                <td className='px-4 py-3 border'>{item.comment ? item.comment.replace(/<[^>]*>?/gm, '') : ''}</td>
+
                 <td className='px-4 py-3 border'>{item.time ? moment(item.time).format('DD-MM-YYYY HH:mm:ss') : ''}</td>
               </tr>
             ))}

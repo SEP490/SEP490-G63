@@ -20,7 +20,7 @@ interface IProp {
   data: DataEmployee | undefined
   department: any
 }
-const ViewEmployee = ({ data, department }: IProp) => {
+const ViewEmployee = ({ data }: IProp) => {
   const {
     register,
     formState: { errors }
@@ -51,31 +51,7 @@ const ViewEmployee = ({ data, department }: IProp) => {
           {errors.name?.message}
         </div>
       </div>
-      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 sm:mt-0 relative'>
-        <label>
-          Phòng ban<sup className='text-red-500'>*</sup>
-        </label>
-        <select
-          className={`${errors.department ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-          {...register('department')}
-          disabled
-        >
-          {department?.object?.content?.map((d: any) => <option value={d.id}>{d.title}</option>)}
-        </select>
-      </div>
-      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 md:mt-0 relative'>
-        <label>
-          Vị trí<sup className='text-red-500'>*</sup>
-        </label>
-        <input
-          className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-          {...register('position')}
-          placeholder='Vị trí'
-          disabled
-          hidden
-        />
-      </div>
-      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
+      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-0 relative'>
         <label>
           Email<sup className='text-red-500'>*</sup>
         </label>
@@ -93,7 +69,7 @@ const ViewEmployee = ({ data, department }: IProp) => {
         </div>
       </div>
 
-      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
+      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-0 relative'>
         <label>
           CCCD/CMT <sup className='text-red-500'>*</sup>
         </label>

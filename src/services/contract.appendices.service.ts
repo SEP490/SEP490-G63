@@ -1,4 +1,6 @@
+import axios from 'axios'
 import axiosInstant, { axiosInstanceFormData } from '../config/axiosConfig.ts'
+import { BASE_URL } from '~/common/const/index.ts'
 type SignRequest = {
   contractId: string
   signImage: string
@@ -21,24 +23,30 @@ export const sendMailPublicApp = async (formData: any) => {
 }
 
 export const createAppendices = async (data: any) => {
-  const response = await axiosInstant.post(`api/contract-appendices`, data)
+  const response = await axiosInstant.post(`api/contract-appendices`, {
+    ...data,
+    value: data.value.replace(/,/g, '').replace(/\./g, '')
+  })
   return response.data
 }
 export const getNewContract = async (page: number, size: number, statusContract: string) => {
   const response = await axiosInstant.get(`contract/${page}/${size}?status=${statusContract}`)
   return response.data
 }
-export const getNewContractById = async (id: any) => {
+export const getAppendicesContractById = async (id: any) => {
   const response = await axiosInstant.get(`api/contract-appendices/${id}`)
   return response.data
 }
 export const getNewContractByIdNotToken = async (id: any) => {
-  const response = await axiosInstant.get(`api/contract-appendices/public/sign-contract-appendices/${id}`)
+  const response = await axios.get(`${BASE_URL}api/contract-appendices/public/sign-contract-appendices/${id}`)
   return response.data
 }
 
 export const updateNewContract = async (data: any) => {
-  const response = await axiosInstant.post(`contract`, data)
+  const response = await axiosInstant.post(`contract`, {
+    ...data,
+    value: data.value.replace(/,/g, '').replace(/\./g, '')
+  })
   return response.data
 }
 
@@ -60,6 +68,6 @@ export const getSearchContract = async ({ fieldSearch, data }: any) => {
   return response.data
 }
 export const signContract = async (data: SignRequest) => {
-  const response = await axiosInstant.post(`api/contract-appendices/public/sign-contract-appendices`, data)
+  const response = await axios.post(`${BASE_URL}api/contract-appendices/public/sign-contract-appendices`, data)
   return response.data
 }

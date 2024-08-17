@@ -116,7 +116,7 @@ export const statusObjectHistory = {
     color: 'text-yellow-500'
   },
   SIGN_A: {
-    title: 'Đã ký',
+    title: 'Sếp đã ký',
     color: 'text-green-500'
   },
   SIGN_A_FAIL: {
@@ -127,8 +127,8 @@ export const statusObjectHistory = {
     title: 'Chờ khách ký',
     color: 'text-yellow-500'
   },
-  SIGN_B: {
-    title: 'Đã ký',
+  SIGN_B_OK: {
+    title: 'Khách đã ký',
     color: 'text-green-500'
   },
   SIGN_B_FAIL: {
@@ -167,6 +167,6 @@ export const statusContract: any = [
   },
   { status: 'WAIT_APPROVE', title: 'Chờ duyệt' },
   { status: 'WAIT_SIGN_A', title: 'Chờ ký' },
-  { status: 'WAIT_SIGN_B', title: 'Gửi khách hàng' },
+  { status: 'SIGN_B_OK', title: 'Khách ký thành công' },
   { sttaus: 'SUCCESS', title: 'Hoàn thành' }
 ]

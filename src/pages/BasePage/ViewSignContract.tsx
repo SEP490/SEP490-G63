@@ -1,5 +1,5 @@
 import { Dialog, Field, Textarea, Transition } from '@headlessui/react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { Label } from 'react-konva'
 import { useQuery } from 'react-query'
 import { Navigate, useLocation, useParams } from 'react-router-dom'
@@ -20,9 +20,11 @@ type FormType = {
   email: string
   code: number
 }
+
 const ViewSignContract = () => {
   const [modalSign, setModalSign] = useState(false)
   const [modalReject, setModalReject] = useState(false)
+
   const { id, customer } = useParams()
   const { user } = useAuth()
   const location = useLocation()
@@ -32,6 +34,7 @@ const ViewSignContract = () => {
   const { data, refetch, isFetching, isLoading } = useQuery('detail-contract-public', () =>
     getNewContractByIdNotToken(id)
   )
+
   const {
     register,
     handleSubmit,
@@ -39,6 +42,7 @@ const ViewSignContract = () => {
     getValues,
     formState: { errors }
   } = useForm<FormType>()
+
   const onSubmit = async (data: any) => {
     try {
       const response = await verifyOtp(data)
@@ -51,6 +55,7 @@ const ViewSignContract = () => {
       errorNotification('Lỗi hệ thống!!')
     }
   }
+
   const handleGetOpt = async () => {
     const result = await trigger('email')
     if (result) {
@@ -146,7 +151,7 @@ const ViewSignContract = () => {
             <Field>
               <Label className='text-sm/6 font-medium text-black'>Nhận xét:</Label>
               <Textarea
-                disabled={(customer == '1' && data?.object?.signA != null) || (customer == '2' && data?.object?.signB)}
+                disabled={data?.object?.statusCurrent != 'WAIT_SIGN_A' && data?.object?.statusCurrent != 'WAIT_SIGN_B'}
                 ref={commentRef}
                 placeholder='Đưa ra một số nhận xét về bản hợp đồng'
                 className={`mt-3 w-full resize-none rounded-lg border-none bg-black/5 py-1.5 px-3 text-sm/6 text-black focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25`}
@@ -158,7 +163,7 @@ const ViewSignContract = () => {
             {customer == '2' && (
               <button
                 type='button'
-                disabled={customer == '2' && data?.object?.signB}
+                disabled={data?.object?.currentStatus != 'WAIT_SIGN_B'}
                 className=' my-3 none center mr-4 rounded-lg bg-red-500 px-2 py-2 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#ad649191] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
                 data-ripple-light='true'
                 onClick={() => setModalReject(true)}
@@ -168,10 +173,16 @@ const ViewSignContract = () => {
             )}
             <button
               type='button'
-              disabled={(customer == '1' && data?.object?.signA != null) || (customer == '2' && data?.object?.signB)}
+              disabled={
+                data?.object?.statusCurrent != 'WAIT_SIGN_A' &&
+                data?.object?.statusCurrent != 'WAIT_SIGN_B' &&
+                data?.object?.statusCurrent != 'NEW'
+              }
               className=' my-3 none center mr-4 rounded-lg bg-[#0070f4] px-2 py-2 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
               data-ripple-light='true'
-              onClick={() => setModalSign(true)}
+              onClick={() => {
+                setModalSign(true)
+              }}
             >
               Ký hợp đồng
             </button>
@@ -219,6 +230,7 @@ const ViewSignContract = () => {
                     to={data?.object?.createdBy}
                     cc={data?.object?.approvedBy}
                     setModalSign={setModalSign}
+                    phoneVerify={customer == '1' ? data?.object?.partyA?.phone : data?.object?.partyB?.phone}
                   />
                 </Dialog.Panel>
               </Transition.Child>
@@ -255,7 +267,11 @@ const ViewSignContract = () => {
                   <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
                     Từ chối ký hợp đồng
                   </Dialog.Title>
-                  <RejectSignContract contract={data.object} />
+                  <RejectSignContract
+                    contract={data?.object}
+                    comment={commentRef.current?.value}
+                    createdBy={customer == '1' ? user?.email : getValues('email')}
+                  />
                 </Dialog.Panel>
               </Transition.Child>
             </div>

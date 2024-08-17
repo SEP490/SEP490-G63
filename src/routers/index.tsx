@@ -36,6 +36,8 @@ import ViewSignAppendicesContract from '~/pages/BasePage/ViewSignAppendicesContr
 import ViewDetailContract from '~/components/Admin/NewContract/ViewDetailContract.tsx'
 import PaySlipFormula from '~/pages/Admin/Salary/PaySlipFormula.tsx'
 import CompanyInformation from '~/components/Company/CompanyInformation.tsx'
+import ListReason from '~/components/Admin/Reason/ListReason.tsx'
+import DashboardAdmin from '~/components/Dashboard/DashboardAdmin.tsx'
 
 const Routes = () => {
   const { token, user } = useAuth()
@@ -50,7 +52,7 @@ const Routes = () => {
           path: '/',
           element: (
             <AdminLayout>
-              <SearchPage />
+              <DashboardAdmin />
             </AdminLayout>
           )
         },
@@ -67,6 +69,14 @@ const Routes = () => {
           element: (
             <AdminLayout>
               <AppendicesContract />
+            </AdminLayout>
+          )
+        },
+        {
+          path: '/manage-reason',
+          element: (
+            <AdminLayout>
+              <ListReason />
             </AdminLayout>
           )
         },
@@ -434,6 +444,16 @@ const Routes = () => {
             <UserLayout>
               <Sale>
                 <SearchPage />
+              </Sale>
+            </UserLayout>
+          )
+        },
+        {
+          path: '/dashboard',
+          element: (
+            <UserLayout>
+              <Sale>
+                <DashboardSale />
               </Sale>
             </UserLayout>
           )

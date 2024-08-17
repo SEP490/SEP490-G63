@@ -11,6 +11,8 @@ import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
 import { statusRequest } from '~/common/const/status'
 import LoadingIcon from '~/assets/LoadingIcon'
 import { createAppendices, sendMailPublicApp } from '~/services/contract.appendices.service'
+import moment from 'moment'
+import dataRegex from '../../../regex.json'
 interface FormType {
   name: string
   number: string
@@ -36,6 +38,8 @@ const CreateAppendices = () => {
     register,
     getValues,
     trigger,
+    setFocus,
+    reset,
     formState: { errors }
   } = useForm<FormType>()
   const formInfoPartA = useForm<CompanyInfo>()
@@ -97,6 +101,14 @@ const CreateAppendices = () => {
   const onSubmit = async () => {
     const rule: any = document.getElementsByName('rule')[0]
     const term: any = document.getElementsByName('term')[0]
+    if (rule.value.replace(/<[^>]*>?/gm, '') == '') {
+      errorNotification('Điều khoản thông tin không được để trống')
+      return
+    }
+    if (term.value.replace(/<[^>]*>?/gm, '') == '') {
+      errorNotification('Điều khoản hợp đồng không được để trống')
+      return
+    }
     const bodyData = {
       ...getValues(),
       rule: rule.value,
@@ -105,7 +117,18 @@ const CreateAppendices = () => {
     }
     createAppendicesQuery.mutate(bodyData)
   }
-
+  const handleInputValue = (e: any) => {
+    const isNum = /^[\d,]+$/.test(e.target.value)
+    if (isNum) {
+      const number = parseFloat(e.target.value.replace(/,/g, ''))
+      reset({
+        value: number.toLocaleString()
+      })
+    } else
+      reset({
+        value: e.target.value.replace(/[^0-9,]/g, '')
+      })
+  }
   if (isLoading) return <LoadingPage />
   return (
     <div className='bg-[#e8eaed] h-fit min-h-full flex justify-center py-6'>
@@ -136,9 +159,13 @@ const CreateAppendices = () => {
           </label>
           <input
             className={`${errors.name ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-            placeholder='Hợp đồng bổ sung...'
+            placeholder='Ví dụ: Tên công ty-Đối tác-PLHD'
             {...register('name', {
-              required: 'Tên hợp đồng không được để trống'
+              required: 'Tên hợp đồng không được để trống',
+              pattern: {
+                value: new RegExp(dataRegex.REGEX_CONTRACT_NAME),
+                message: 'Tên hợp đồng không hợp lệ'
+              }
             })}
           />
           <div className={`text-red-500 absolute text-[12px]  ${errors.name ? 'visible' : 'invisible'}`}>
@@ -152,7 +179,7 @@ const CreateAppendices = () => {
           <input
             className={`${errors.number ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
-            placeholder='Số...'
+            placeholder={`Ví dụ: Tên công ty-Đối tác-${moment(new Date()).format('YYYY-MM-DD')}`}
             {...register('number', {
               required: 'Số hợp đồng không được để trống'
             })}
@@ -168,6 +195,7 @@ const CreateAppendices = () => {
           <input
             className={`${errors.value ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
             type='text'
+            onInput={handleInputValue}
             placeholder='Giá trị'
             {...register('value', {
               required: 'Giá trị không được để trống'
@@ -387,7 +415,7 @@ const CreateAppendices = () => {
             Tên ngân hàng<sup className='text-red-500'>*</sup>
           </label>
           <select
-            {...formInfoPartA.register('bankName')}
+            {...formInfoPartA.register('bankName', { required: 'Tên ngân hàng không được để trống' })}
             disabled
             hidden
             className='block disabled:bg-gray-200 w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
@@ -395,11 +423,13 @@ const CreateAppendices = () => {
             <option key={null} value={'Tên ngân hàng'}>
               Tên ngân hàng
             </option>
-            {banks.map((bank: { id: number; code: string; shortName: string; logo: string; bin: string }) => (
-              <option key={bank.id} value={bank.shortName}>
-                {bank.shortName}
-              </option>
-            ))}
+            {banks.map(
+              (bank: { id: number; code: string; shortName: string; logo: string; bin: string; name: string }) => (
+                <option key={bank.id} value={bank.name}>
+                  {bank.shortName} - {bank.name}
+                </option>
+              )
+            )}
           </select>
           <div
             className={`text-red-500 absolute text-[12px] ${formInfoPartA.formState.errors.bankName ? 'visible' : 'invisible'}`}
@@ -617,7 +647,7 @@ const CreateAppendices = () => {
             Tên ngân hàng<sup className='text-red-500'>*</sup>
           </label>
           <select
-            {...formInfoPartB.register('bankName')}
+            {...formInfoPartB.register('bankName', { required: 'Tên ngân hàng không được để trống' })}
             disabled
             hidden
             className='block disabled:bg-gray-200 w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
@@ -625,11 +655,13 @@ const CreateAppendices = () => {
             <option key={null} value={'Tên ngân hàng'}>
               Tên ngân hàng
             </option>
-            {banks.map((bank: { id: number; code: string; shortName: string; logo: string; bin: string }) => (
-              <option key={bank.id} value={bank.shortName}>
-                {bank.shortName}
-              </option>
-            ))}
+            {banks.map(
+              (bank: { id: number; code: string; shortName: string; logo: string; bin: string; name: string }) => (
+                <option key={bank.id} value={bank.name}>
+                  {bank.shortName} - {bank.name}
+                </option>
+              )
+            )}
           </select>
           <div
             className={`text-red-500 absolute text-[12px] ${formInfoPartB.formState.errors.bankName ? 'visible' : 'invisible'}`}
@@ -697,9 +729,9 @@ const CreateAppendices = () => {
             disabled={createAppendicesQuery?.isLoading}
             onClick={async () => {
               const result = await trigger()
-              if (result) {
-                onSubmit()
-              }
+              if (!result) {
+                setFocus(Object.keys(errors)?.[0])
+              } else onSubmit()
             }}
             className='middle my-3 none center mr-4 rounded-lg bg-[#0070f4] py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
             data-ripple-light='true'

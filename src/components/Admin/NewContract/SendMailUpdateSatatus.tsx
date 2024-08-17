@@ -13,9 +13,9 @@ import { Dialog, Transition } from '@headlessui/react'
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { getParty } from '~/services/party.service'
 import pdfIcon from '../../../assets/images/pdf-icon.jpg'
+import { getListReason } from '~/services/reason.service'
 type IProps = { id: string | undefined; status: number; closeModal: any; refetch: any; dataC: any; refetchNumber: any }
 const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchNumber }: IProps) => {
-  const [selectedFiles, setSelectedFiles] = useState<any[]>([])
   const [previewUrls, setPreviewUrls] = useState<string[]>([])
   const [selectedTo, setSelectedTo] = useState<any[]>([])
   const [selectedCc, setSelectedCc] = useState<any[]>([])
@@ -25,42 +25,42 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
   const [open, setOpen] = useState(false)
   const [loadingSubmit, setLoadingSubmit] = useState(false)
   const contractFile = useRef<any>()
+  const [files, setFiles] = useState<any>([])
+  const [selectedURL, setSelectedURL] = useState('')
   const { isLoading: loadingSALE, data: dataSale } = useQuery('getUserByRoleSale', () => getUserByPermission('SALE'))
   const { isLoading: loadingAdmin, data: dataAdmin } = useQuery('getUserByRoleAdmin', () =>
     getUserByPermission('MANAGER')
   )
+  const reason = useRef(null)
   const { isLoading: loadingAO, data: dataAO } = useQuery('getUserByRoleAdminOfficer', () =>
     getUserByPermission('OFFICE_ADMIN')
   )
   const { data: dataParty } = useQuery('party-data', getParty)
+  const { data: dataReason } = useQuery('reason-data', () => getListReason(0, 50))
   const { isLoading: loading, data: dataContract } = useQuery('getContractDetail', () => getNewContractById(id), {
     onSuccess: async (response) => {
       if (status == 1) {
-        dataC?.rejectedBy != null && setSelectedTo([{ label: dataC?.rejectedBy, value: dataC?.rejectedBy }])
+        dataC?.rejectedBy != null &&
+          setSelectedTo([{ label: dataC?.rejectedBy + '(ADMIN OFFICER)', value: dataC?.rejectedBy }])
       } else if (status == 2 || status == 3) {
         response.object.createdBy != null &&
-          setSelectedTo([{ label: response.object.createdBy, value: response.object.createdBy }])
+          setSelectedTo([{ label: response.object.createdBy + '(SALE)', value: response.object.createdBy }])
       } else if (status == 4) {
-        setSelectedTo([{ label: dataParty.object.email, value: dataParty.object.email }])
+        setSelectedTo([{ label: dataParty.object.email + '(ADMIN)', value: dataParty.object.email }])
         response.object.createdBy != null &&
-          setSelectedCc([{ label: response.object.createdBy, value: response.object.createdBy }])
+          setSelectedCc([{ label: response.object.createdBy + '(SALE)', value: response.object.createdBy }])
       } else if (status == 6) {
         response.object.createdBy != null &&
-          setSelectedTo([{ label: response.object.createdBy, value: response.object.createdBy }])
+          setSelectedTo([{ label: response.object.createdBy + '(SALE)', value: response.object.createdBy }])
         response.object.approvedBy != null &&
-          setSelectedCc([{ label: response.object.approvedBy, value: response.object.approvedBy }])
+          setSelectedCc([{ label: response.object.approvedBy + '(ADMIN OFFICER)', value: response.object.approvedBy }])
       } else if (status == 7) {
         const mailCC = []
         response.object.approvedBy != null &&
-          mailCC.push({ label: response.object.approvedBy, value: response.object.approvedBy })
+          mailCC.push({ label: response.object.approvedBy + '(ADMIN OFFICER)', value: response.object.approvedBy })
         setSelectedCc(mailCC)
         response.object.partyB != null &&
-          setSelectedTo([{ label: response.object.partyB.email, value: response.object.partyB.email }])
-      } else if (status == 9) {
-        response.object.createdBy != null &&
-          setSelectedTo([{ label: response.object.createdBy, value: response.object.createdBy }])
-        response.object.approvedBy != null &&
-          setSelectedCc([{ label: response.object.approvedBy, value: response.object.approvedBy }])
+          setSelectedTo([{ label: response.object.partyB.email + '(Khách hàng)', value: response.object.partyB.email }])
       }
       const fileUrl = response.object.file
       const fileData = await fetch(fileUrl)
@@ -84,19 +84,14 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
 
   const handleFileChange = (event: any) => {
     const files = Array.from(event.target.files)
-    const newPreviewUrls: string[] = []
-    files.forEach((file: any) => {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        newPreviewUrls.push(reader.result as string)
-        if (newPreviewUrls.length === files.length) {
-          setPreviewUrls(newPreviewUrls)
-        }
+    const newFiles = files.map((file: any) => {
+      const url = URL.createObjectURL(file)
+      return {
+        url,
+        file
       }
-      reader.readAsDataURL(file)
     })
-
-    setSelectedFiles(files)
+    setFiles(newFiles)
   }
 
   const handleSubmit = async () => {
@@ -124,12 +119,18 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
     const htmlContent = editorData
     formData.append(
       'htmlContent',
-      htmlContent + (status == 7 ? `<a href="${BASE_URL_FE}view/${id}/sign/2">Ký ngay</a>` : '')
+      htmlContent +
+        (status == 4
+          ? `<a href="${BASE_URL_FE}view/${id}/sign/1">Ký ngay</a>`
+          : status == 7
+            ? `<a href="${BASE_URL_FE}view/${id}/sign/2">Ký ngay</a>`
+            : '')
     )
     formData.append('contractId', id as string)
+    formData.append('reasonId', status == 3 || status == 6 || status == 9 ? reason.current?.value : '')
     formData.append('attachments', contractFile.current, `${dataContract?.object?.name}.pdf`)
-    selectedFiles.forEach((file) => {
-      formData.append('attachments', file)
+    files.forEach((file: any) => {
+      formData.append('attachments', file.file)
     })
     if (status) formData.append('status', statusRequest[status]?.status)
     formData.append('description', htmlContent)
@@ -149,31 +150,39 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
       setLoadingSubmit(false)
     }
   }
-
   if (loading || loadingSALE || loadingAO || loadingAdmin || loadingSubmit) return <LoadingPage />
   return (
     <div className='h-full overflow-auto pb-5'>
-      <div className='w-full flex flex-col md:flex-row justify-between border-b-2'>
-        <div className='w-full md:w-[46%] py-2 flex items-center z-50'>
-          <span className='w-20 font-bold'>Đến</span>
+      <div className='w-full flex flex-col justify-between border-b-2'>
+        <div className='w-full md:w-full py-2 flex items-center z-50'>
+          <span className='w-40  font-bold'>Đến</span>
           <ComboboxMail selected={selectedTo} setSelected={setSelectedTo} option={optionTo} isCreate={status == 7} />
         </div>
-        <div className='w-full md:w-[46%] py-2  flex items-center z-50'>
-          <span className='w-20 font-bold'>CC</span>
+        <div className='w-full md:w-full py-2  flex items-center z-40'>
+          <span className='w-40  font-bold'>CC</span>
           <ComboboxMail selected={selectedCc} setSelected={setSelectedCc} option={optionCC} isCreate={status == 7} />
         </div>
       </div>
 
       <div className='py-2 border-b-2 border-slate-200 flex items-center z-10'>
-        <span className='w-20 font-bold'>Tiêu đề</span>
+        <span className='w-40 font-bold'>Tiêu đề</span>
         <input
           type='text'
-          className=' w-full rounded h-8'
+          className=' w-full rounded'
           placeholder=''
           value={subject}
           onChange={(e) => setSubject(e.target.value)}
         />
       </div>
+      {(status == 3 || status == 6 || status == 9) && (
+        <div className='py-2 border-b-2 border-slate-200 flex items-center z-10'>
+          <span className='w-40 font-bold'>Nguyên nhân</span>
+          <select className=' w-full rounded' ref={reason}>
+            {dataReason?.content.map((data: any) => <option value={data.id}>{data.title}</option>)}
+          </select>
+        </div>
+      )}
+
       <h2 className=' font-bold my-2'>Nội dung</h2>
       <SunEditor
         name='term'
@@ -202,26 +211,46 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
       <h2 className=' font-bold my-2'>Tệp đính kèm</h2>
       <div className='w-full flex justify-start gap-3'>
         <div
-          className='border-2 flex flex-col w-[200px] justify-center items-center rounded-md cursor-pointer'
-          onClick={() => setOpen(true)}
+          className='border-2 flex flex-col w-[120px] justify-center items-center rounded-md cursor-pointer'
+          onClick={() => {
+            setOpen(true)
+            setSelectedURL(dataContract?.object?.file)
+          }}
         >
           <div className=' object-contain'>
             <img src={pdfIcon} className='w-full h-full' />
           </div>
           <div
-            className='text-red-500 w-[180px] mb-5 hover:underline truncate ...'
+            className='text-red-500 w-[100px] mb-5 hover:underline truncate ...'
             title={`${dataContract?.object?.name}.pdf`}
           >
             {dataContract?.object?.name}.pdf
           </div>
         </div>
+        {files?.map((file: any) => (
+          <div
+            key={file.url}
+            className='border-2 flex flex-col w-[120px] justify-center items-center rounded-md cursor-pointer'
+            onClick={() => {
+              setOpen(true)
+              setSelectedURL(file.url)
+            }}
+          >
+            <div className=' object-contain'>
+              <img src={pdfIcon} className='w-full h-full' />
+            </div>
+            <div className='text-red-500 w-[100px] mb-5 hover:underline truncate ...' title={`${file?.file?.name}.pdf`}>
+              {file?.file?.name}.pdf
+            </div>
+          </div>
+        ))}
         <div className='text-center flex items-center justify-center'>
-          <input type='file' id='file-upload' className='hidden' onChange={handleFileChange} multiple />
+          <input type='file' id='file-upload' className='hidden' onChange={handleFileChange} multiple accept='.pdf' />
           <label
             htmlFor='file-upload'
             className='cursor-pointer inline-flex items-center justify-center rounded-full border'
           >
-            <PlusIcon className='w-[100px] h-[100px]' />
+            <PlusIcon className='w-[60px] h-[60px]' />
           </label>
         </div>
       </div>
@@ -241,7 +270,14 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
         Gửi
       </button>
       <Transition appear show={open} as={Fragment}>
-        <Dialog as='div' className='relative z-50 w-[90vw]' onClose={() => setOpen(false)}>
+        <Dialog
+          as='div'
+          className='relative z-50 w-[90vw]'
+          onClose={() => {
+            setOpen(false)
+            setSelectedURL('')
+          }}
+        >
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'
@@ -268,9 +304,15 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
                 <Dialog.Panel className='w-[90vw] md:w-[90vw] h-[96vh] transform overflow-hidden rounded-md bg-white p-5 text-left align-middle shadow-xl transition-all'>
                   <div className='flex justify-between'>
                     <div></div>
-                    <XMarkIcon className='h-5 w-5 mr-3 mb-3 cursor-pointer' onClick={() => setOpen(false)} />
+                    <XMarkIcon
+                      className='h-5 w-5 mr-3 mb-3 cursor-pointer'
+                      onClick={() => {
+                        setOpen(false)
+                        setSelectedURL('')
+                      }}
+                    />
                   </div>
-                  <iframe src={dataContract?.object?.file} width='100%' height='100%' />
+                  <iframe src={selectedURL} width='100%' height='100%' />
                 </Dialog.Panel>
               </Transition.Child>
             </div>

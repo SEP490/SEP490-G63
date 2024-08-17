@@ -1,35 +1,25 @@
-import { Dialog, Menu, Transition } from '@headlessui/react'
+import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
-import AddNewEmployee from '~/components/Admin/Employee/AddNewEmployee'
-import {
-  Cog6ToothIcon,
-  EllipsisVerticalIcon,
-  NoSymbolIcon,
-  PlusIcon,
-  UserIcon,
-  XMarkIcon
-} from '@heroicons/react/24/outline'
-import ViewEmployee from '~/components/Admin/Employee/ViewEmployee'
-import { deleteEmployee, getListEmployee } from '~/services/employee.service'
-import EditEmployee from '~/components/Admin/Employee/EditEmployee'
+import { UserIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Pagination from '~/components/BaseComponent/Pagination/Pagination'
 import Loading from '~/components/shared/Loading/Loading'
-import { useMutation, useQuery } from 'react-query'
+import { useQuery } from 'react-query'
 import { AxiosError } from 'axios'
 import useToast from '~/hooks/useToast'
-import LoadingIcon from '~/assets/LoadingIcon'
-import { debounce } from 'lodash'
 import PaySlipFormula from '~/components/Admin/Salary/PaySlipFormula'
 import { getSalaryAll, getSalaryByMail } from '~/services/salary.service'
-import { Controller, SubmitHandler, useForm } from 'react-hook-form'
-import DatePicker from 'react-datepicker'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import 'react-datepicker/dist/react-datepicker.css'
-import { months } from '~/common/const'
 import { listMonth, listYear } from '~/common/utils/formatDate'
 import { formatPrice } from '~/common/utils/formatPrice'
 import { useAuth } from '~/context/authProvider'
 import { ADMIN } from '~/common/const/role'
 import { useNavigate } from 'react-router-dom'
+import { DownloadTableExcel } from 'react-export-table-to-excel'
+import { SiMicrosoftexcel } from 'react-icons/si'
+import { FaSearch } from 'react-icons/fa'
+import { FaMoneyBillTransfer } from 'react-icons/fa6'
+
 export interface DataEmployee {
   id?: string
   name?: string
@@ -63,6 +53,7 @@ const Salary = () => {
   const handlePageChange = (page: any) => {
     setPage(page - 1)
   }
+  const tableRef = useRef(null)
 
   const { handleSubmit, register, getValues, watch } = useForm<FormSearch>({
     defaultValues: { year: new Date().getFullYear(), month: new Date().getMonth() + 1 }
@@ -93,6 +84,8 @@ const Salary = () => {
     },
     {
       onSuccess: (result) => {
+        console.log(result)
+
         setTotalPage(result?.object?.totalPages)
       },
       onError: (error: AxiosError<{ message: string }>) => {
@@ -100,6 +93,12 @@ const Salary = () => {
       }
     }
   )
+  const totalMoney = useMemo(() => {
+    return data?.object?.content?.reduce((total: number, d: any) => {
+      total += d.totalSalary
+      return total
+    }, 0)
+  }, [data])
   useEffect(() => {
     if (prevPageRef.current !== page || prevSizeRef.current !== size) {
       prevPageRef.current = page
@@ -162,51 +161,96 @@ const Salary = () => {
                 </select>
                 <button
                   type='submit'
-                  className='rounded-md w-[150px] shadow-md bg-main-color px-2 py-1 text-xs sm:text-sm font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
+                  className=' items-center justify-center rounded-md w-[150px] shadow-md bg-main-color px-2 py-1 text-xs sm:text-sm font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
                 >
+                  <FaSearch className='float-left mt-1 ml-3 mr-[-10px]' />
                   Tìm kiếm
                 </button>
               </form>
             </div>
+
             {user?.role == ADMIN ? (
-              <button
-                type='button'
-                onClick={() => navigate('/pay-slip')}
-                className='rounded-md flex gap-1 bg-main-color px-4 py-2 text-xs sm:text-sm items-center font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
-              >
-                Quản lí
-              </button>
+              <div className='flex gap-3'>
+                <DownloadTableExcel filename={`Bảng lương`} sheet='Lương' currentTableRef={tableRef.current}>
+                  <button
+                    type='button'
+                    onClick={() => console.log('export')}
+                    className='rounded-md  bg-green-600 px-4 py-2 text-xs sm:text-sm items-center font-medium text-white hover:bg-green-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
+                  >
+                    <SiMicrosoftexcel className='float-left mt-1 mr-1' />
+                    Xuất ra Excel
+                  </button>
+                </DownloadTableExcel>
+                <button
+                  type='button'
+                  onClick={() => navigate('/pay-slip')}
+                  className='rounded-md flex gap-1 bg-main-color px-4 py-2 text-xs sm:text-sm items-center font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
+                >
+                  <FaMoneyBillTransfer className='text-lg mt-[2px]' />
+                  Quản lí
+                </button>
+              </div>
             ) : (
-              <button
-                type='button'
-                onClick={() => setManageModal(true)}
-                className='rounded-md flex gap-1 bg-main-color px-4 py-2 text-xs sm:text-sm items-center font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
-              >
-                Công thức
-              </button>
+              <div className='flex gap-3'>
+                <DownloadTableExcel filename={`Bảng lương`} sheet='Lương' currentTableRef={tableRef.current}>
+                  <button
+                    type='button'
+                    onClick={() => console.log('export')}
+                    className='rounded-md  bg-main-color px-4 py-2 text-xs sm:text-sm items-center font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
+                  >
+                    Xuất ra Excel
+                  </button>
+                </DownloadTableExcel>
+                <button
+                  type='button'
+                  onClick={() => setManageModal(true)}
+                  className='rounded-md  bg-main-color px-4 py-2 text-xs sm:text-sm items-center font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
+                >
+                  Công thức
+                </button>
+              </div>
             )}
           </div>
-
+          <div className='w-full flex justify-between items-center my-2'>
+            <div className='text-[18px] font-bold'>Lương doanh số nhân viên</div>
+            <div className='font-semibold text-[16px]'> Đơn vị tính: VND</div>
+          </div>
           <div className='overflow-auto'>
             <div className='shadow-md sm:rounded-lg h-fit'>
-              <table className='w-full text-sm text-left rtl:text-right text-black dark:text-gray-400 '>
+              <table ref={tableRef} className='w-full text-sm text-left rtl:text-right text-black dark:text-gray-400 '>
                 <thead className='text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 '>
                   <tr>
                     <th className='px-3 py-3 w-[30px]' align='center'>
                       STT
                     </th>
-                    <th className='px-3 py-3 '>Email</th>
+                    <th className='px-3 py-3 w-[150px]'>Tên nhân viên</th>
+                    <th className='px-3 py-3'> Email</th>
                     <th className='px-3 py-3 ' align='center'>
-                      Lương cơ bản(VND)
+                      Tổng DS
                     </th>
                     <th className='px-3 py-3 ' align='center'>
-                      Tổng DS(VND)
+                      Lương cứng
                     </th>
                     {/* <th className='px-6 py-3 '>Vị trí</th> */}
                     <th className='px-6 py-3 ' align='center'>
-                      Tiền lương(VND)
+                      % DS
                     </th>
-                    {/* <th className='px-3 py-3'></th> */}
+                    <th className='px-6 py-3 ' align='center'>
+                      % Triển khai KH
+                    </th>
+
+                    <th className='px-6 py-3 ' align='center'>
+                      Thưởng đạt ngưỡng
+                    </th>
+                    <th className='px-6 py-3 ' align='center'>
+                      Trợ cấp ăn
+                    </th>
+                    <th className='px-6 py-3 ' align='center'>
+                      Phụ cấp
+                    </th>
+                    <th className='px-6 py-3 ' align='center'>
+                      Tiền lương
+                    </th>
                   </tr>
                 </thead>
 
@@ -221,15 +265,29 @@ const Salary = () => {
                         <td className='px-3 py-3 w-[30px]' align='center'>
                           {page * size + index + 1 < 10 ? `0${page * size + index + 1}` : page * size + index + 1}
                         </td>
-
+                        <td className='px-3 py-4'>{d?.user?.name}</td>
                         <td className='px-3 py-4'>{d.email}</td>
+                        <td className='px-3 py-4' align='center'>
+                          {formatPrice(d.totalValueContract)}
+                        </td>
                         <td className='px-3 py-4' align='center'>
                           {formatPrice(d.baseSalary)}
                         </td>
                         <td className='px-3 py-4' align='center'>
-                          {formatPrice(d.totalValueContract)}
+                          {formatPrice(d.commissionPercentage)}
                         </td>
-                        {/* <td className='px-3 py-4'>{d.position}</td> */}
+                        <td className='px-3 py-4' align='center'>
+                          {formatPrice(d.clientDeploymentPercentage)}
+                        </td>
+                        <td className='px-3 py-4' align='center'>
+                          {formatPrice(d.bonusReachesThreshold)}
+                        </td>
+                        <td className='px-3 py-4' align='center'>
+                          {formatPrice(d.foodAllowance)}
+                        </td>{' '}
+                        <td className='px-3 py-4' align='center'>
+                          {formatPrice(d.transportationOrPhoneAllowance)}
+                        </td>
                         <td className='px-3 py-4' align='center'>
                           {formatPrice(d.totalSalary)}
                         </td>
@@ -287,6 +345,22 @@ const Salary = () => {
                         </td> */}
                       </tr>
                     ))}
+                  {!isLoading && !isFetching && data?.object && (
+                    <tr className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '>
+                      <td className='px-3 py-3 w-[30px]' align='center'></td>
+                      <td className='px-3 py-4'></td>
+                      <td className='px-3 py-4'></td>
+                      <td className='px-3 py-4' align='center'></td>
+                      <td className='px-3 py-4' align='center'></td>
+                      <td className='px-3 py-4' align='center'></td>
+                      <td className='px-3 py-4' align='center'></td>
+                      <td className='px-3 py-4' align='center'></td>
+                      <td className='px-3 py-4' align='center'></td> <td className='px-3 py-4' align='center'></td>
+                      <td className='px-3 py-4  w-[200px]' align='center'>
+                        Tổng : {formatPrice(totalMoney)}
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
               {(isLoading || isFetching) && (

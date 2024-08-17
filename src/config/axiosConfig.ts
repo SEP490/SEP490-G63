@@ -34,9 +34,9 @@ axiosInstance.interceptors.request.use(
     const accessToken = getAccessToken()
     if (accessToken) {
       config.headers['Authorization'] = 'Bearer ' + accessToken
+      return config
     }
-
-    return config
+    return Promise.reject()
   },
   (error) => {
     return Promise.reject(error)
@@ -68,8 +68,8 @@ axiosInstanceFormData.interceptors.request.use(
     const accessToken = getAccessToken()
     if (accessToken) {
       config.headers['Authorization'] = 'Bearer ' + accessToken
+      return config
     }
-
     return config
   },
   (error) => {
@@ -82,17 +82,6 @@ axiosInstanceFormData.interceptors.response.use(
     return response
   },
   (error) => {
-    switch (error?.response?.status) {
-      case UNAUTHORIZED:
-        removeAccessToken()
-        window.location.href = '/'
-        break
-
-      case NOT_FOUND:
-        window.location.href = '/not-found'
-        break
-    }
-
     return Promise.reject(error)
   }
 )

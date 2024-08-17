@@ -30,7 +30,7 @@ interface IProp {
   refetch: any
   department: any
 }
-const EditEmployee = ({ data, closeModal, refetch, department }: IProp) => {
+const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
   const {
     register,
     handleSubmit,
@@ -97,54 +97,7 @@ const EditEmployee = ({ data, closeModal, refetch, department }: IProp) => {
           {errors.name?.message}
         </div>
       </div>
-      <div className='w-[100%] sm:w-[48%] md:w-[29%] relative'>
-        <label className=' flex items-center'>
-          <div>
-            Phòng ban<sup className='text-red-500'>*</sup>
-          </div>
-          <TooltipComponent
-            content='Chỉ chứa kí tự chữ cái,khoảng trống, tối thiểu 2 và tối đa 30 kí tự'
-            className='w-4 h-4 cursor-pointer'
-            style='dark'
-          />
-        </label>
-        <select
-          className={`${errors.department ? 'ring-red-600' : ''}  block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-          {...register('department')}
-        >
-          {department?.object?.content?.map((d: any) => <option value={d.id}>{d.title}</option>)}
-        </select>
-        <div className={`text-red-500 absolute text-[12px] ${errors.department ? 'visible' : 'invisible'}`}>
-          {errors.department?.message}
-        </div>
-      </div>
-      <div className='w-[100%] sm:w-[48%] md:w-[29%] relative'>
-        <label className=' flex items-center'>
-          <div>
-            Vị trí <sup className='text-red-500'>*</sup>
-          </div>
-          <TooltipComponent
-            content='Chỉ chứa kí tự chữ cái,khoảng trống, tối thiểu 2 và tối đa 30 kí tự'
-            className='w-4 h-4 cursor-pointer'
-            style='dark'
-          />
-        </label>
-        <input
-          className={`${errors.position ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-          {...register('position', {
-            required: 'Vị trí không được bỏ trống',
-            pattern: {
-              value: new RegExp(dataRegex.REGEX_TEXT),
-              message: 'Vị trí không hợp lệ'
-            }
-          })}
-          placeholder='Nhập vị trí nhân viên'
-        />
-        <div className={`text-red-500 absolute text-[12px] ${errors.position ? 'visible' : 'invisible'}`}>
-          {errors.position?.message}
-        </div>
-      </div>
-      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
+      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-0 relative'>
         <label>
           Email<sup className='text-red-500'>*</sup>
         </label>
@@ -165,7 +118,7 @@ const EditEmployee = ({ data, closeModal, refetch, department }: IProp) => {
         </div>
       </div>
 
-      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
+      <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-0 relative'>
         <label className=' flex items-center'>
           <div>
             CCCD/CMT <sup className='text-red-500'>*</sup>
