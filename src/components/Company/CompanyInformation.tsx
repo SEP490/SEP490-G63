@@ -6,9 +6,11 @@ import LoadingIcon from '~/assets/LoadingIcon'
 import { useAuth } from '~/context/authProvider'
 import useToast from '~/hooks/useToast'
 import { VietQR } from 'vietqr'
-import { SetStateAction, useEffect, useState } from 'react'
+import { SetStateAction, useEffect, useRef, useState } from 'react'
 import { createParty, getParty } from '~/services/party.service'
 import { GrUpdate } from 'react-icons/gr'
+import { validatePhone } from '~/services/auth-sign-contract.service'
+import LoadingSvgV2 from '~/assets/svg/loadingsvg'
 
 interface CompanyInfo {
   name: string
@@ -26,7 +28,11 @@ interface CompanyInfo {
 const CompanyInformation = () => {
   const { successNotification, errorNotification } = useToast()
   const { user } = useAuth()
-  const { register, reset, handleSubmit, formState } = useForm<CompanyInfo>({ defaultValues: { email: user?.email } })
+  const [loadingPhone, setLoadingPhone] = useState(false)
+  const { register, reset, getValues, setError, handleSubmit, formState } = useForm<CompanyInfo>({
+    defaultValues: { email: user?.email }
+  })
+  const currentPhone = useRef('')
   const updateNewParty = useMutation(createParty, {
     onError: (error: AxiosError<{ message: string }>) => {
       errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
@@ -60,9 +66,25 @@ const CompanyInformation = () => {
         console.error('Error fetching banks:', err)
       })
   }, [])
+  const handleCheckPhone = async () => {
+    if (currentPhone.current != getValues('phone').trim()) {
+      setLoadingPhone(true)
+      try {
+        const response = await validatePhone(getValues('phone').trim())
+        if (response) {
+          errorNotification('Số điện thoại đã tồn tại')
+          setError('phone', { message: 'Số điện thoại đã tồn tại' })
+        }
+      } catch (e) {
+        errorNotification('Lỗi')
+      }
+      setLoadingPhone(false)
+    }
+  }
   useQuery('party-data', getParty, {
     onSuccess: (response) => {
       if (response.object) {
+        currentPhone.current = response.object.phone
         reset(response.object)
       }
     }
@@ -117,15 +139,21 @@ const CompanyInformation = () => {
           <label className='font-light '>
             Số điện thoại<sup className='text-red-500'>*</sup>
           </label>
-          <input
-            className={`${formState.errors.phone ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
-            type='text'
-            disabled={updateNewParty?.isLoading}
-            placeholder='Nhập số điện thoại'
-            {...register('phone', {
-              required: 'Số điện thoại không được để trống'
-            })}
-          />
+          <div className='relative'>
+            <input
+              className={`${formState.errors.phone ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200`}
+              type='text'
+              disabled={updateNewParty?.isLoading}
+              placeholder='Nhập số điện thoại'
+              {...register('phone', {
+                required: 'Số điện thoại không được để trống',
+                onBlur: handleCheckPhone
+              })}
+            />{' '}
+            <div className='absolute z-10 right-1 top-0 h-full flex items-center'>
+              {loadingPhone && <LoadingSvgV2 />}
+            </div>
+          </div>
           <div className={`text-red-500 absolute text-[12px] ${formState.errors.phone ? 'visible' : 'invisible'}`}>
             {formState.errors.phone?.message}
           </div>
