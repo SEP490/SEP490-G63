@@ -192,15 +192,6 @@ const Salary = () => {
               </div>
             ) : (
               <div className='flex gap-3'>
-                <DownloadTableExcel filename={`Bảng lương`} sheet='Lương' currentTableRef={tableRef.current}>
-                  <button
-                    type='button'
-                    onClick={() => console.log('export')}
-                    className='rounded-md  bg-main-color px-4 py-2 text-xs sm:text-sm items-center font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
-                  >
-                    Xuất ra Excel
-                  </button>
-                </DownloadTableExcel>
                 <button
                   type='button'
                   onClick={() => setManageModal(true)}
@@ -212,7 +203,7 @@ const Salary = () => {
             )}
           </div>
           <div className='w-full flex justify-between items-center my-2'>
-            <div className='text-[18px] font-bold'>Lương doanh số nhân viên</div>
+            <div className='text-[18px] font-bold'>Lương doanh số {user?.role == ADMIN ? 'nhân viên' : ''}</div>
             <div className='font-semibold text-[16px]'> Đơn vị tính: VND</div>
           </div>
           <div className='overflow-auto'>
@@ -372,7 +363,7 @@ const Salary = () => {
                 <div className='w-full min-h-[60vh] opacity-75 bg-gray-50 flex items-center justify-center'>
                   <div className='flex flex-col justify-center items-center opacity-60'>
                     <UserIcon width={50} height={50} />
-                    Chưa có nhân viên
+                    Chưa có thông tin
                   </div>
                 </div>
               )}
