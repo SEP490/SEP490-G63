@@ -115,7 +115,7 @@ export const statusObjectHistory = {
     title: 'Chờ sếp ký',
     color: 'text-yellow-500'
   },
-  SIGN_A: {
+  SIGN_A_OK: {
     title: 'Sếp đã ký',
     color: 'text-green-500'
   },
