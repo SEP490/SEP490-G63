@@ -286,8 +286,7 @@ const AppendicesContract = () => {
         </>
       ),
       color: 'text-green-700',
-      disable: (d: any) =>
-        (!d?.canSign && user?.email != d.createdBy) || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
+      disable: (d: any) => !d.canSign,
       callback: (d: any) => {
         navigate(`/view/${d?.id}/sign-appendices/1`)
       }
@@ -300,11 +299,7 @@ const AppendicesContract = () => {
         </>
       ),
       color: 'text-orange-700',
-      disable: (d: any) =>
-        (!d?.canRejectSign && user?.email != d.createdBy) ||
-        (!d?.canSign && user?.email == d.createdBy) ||
-        d?.status == 'SUCCESS' ||
-        d?.statusCurrent == 'SUCCESS',
+      disable: (d: any) => !d?.canRejectSign,
       callback: (d: any) => {
         setSelectedContract(d)
         setStatus(6)
