@@ -112,91 +112,93 @@ const PaySlipFormula = () => {
                 </thead>
                 <tbody className='w-full '>
                   {!isLoading && !isFetching ? (
-                    data?.object?.content?.map((d: any, index: number) => (
-                      <tr
-                        key={d.id}
-                        className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
-                      >
-                        <td className='px-3 py-3 w-[30px]' align='center'>
-                          {index + 1 < 10 ? `0${index + 1}` : index + 1}
-                        </td>
-                        <td className='px-3 py-4' align='center'>
-                          {formatPrice(d.fromValueContract) == 0 && formatPrice(d.toValueContract) != 0
-                            ? `< ${formatPrice(d.toValueContract)}`
-                            : `${formatPrice(d.fromValueContract)} - ${formatPrice(d.toValueContract)}`}
-                        </td>
-                        <td className='px-3 py-4' align='center'>
-                          {formatPrice(d.baseSalary)}
-                        </td>
-                        <td className='px-3 py-4' align='center'>
-                          {d.commissionPercentage}(%)
-                        </td>
-                        <td className='px-3 py-4' align='center'>
-                          {d.clientDeploymentPercentage}(%)
-                        </td>
-                        <td className='px-3 py-4' align='center'>
-                          {formatPrice(d.bonusReachesThreshold)}
-                        </td>{' '}
-                        <td className='px-3 py-4' align='center'>
-                          {formatPrice(d.foodAllowance)}
-                        </td>{' '}
-                        <td className='px-3 py-4' align='center'>
-                          {formatPrice(d.transportationOrPhoneAllowance)}
-                        </td>
-                        <td className='px-3 py-4 text-right'>
-                          <Menu as='div' className='relative inline-block text-left '>
-                            <Menu.Button className='flex justify-center items-center gap-3 cursor-pointer hover:text-blue-500'>
-                              <EllipsisVerticalIcon className='h-7 w-7' title='Hành động' />
-                            </Menu.Button>
+                    data?.object?.content
+                      ?.sort((a, b) => a.fromValueContract - b.fromValueContract)
+                      .map((d: any, index: number) => (
+                        <tr
+                          key={d.id}
+                          className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '
+                        >
+                          <td className='px-3 py-3 w-[30px]' align='center'>
+                            {index + 1 < 10 ? `0${index + 1}` : index + 1}
+                          </td>
+                          <td className='px-3 py-4' align='center'>
+                            {formatPrice(d.fromValueContract) == 0 && formatPrice(d.toValueContract) != 0
+                              ? `< ${formatPrice(d.toValueContract)}`
+                              : `${formatPrice(d.fromValueContract)} - ${formatPrice(d.toValueContract)}`}
+                          </td>
+                          <td className='px-3 py-4' align='center'>
+                            {formatPrice(d.baseSalary)}
+                          </td>
+                          <td className='px-3 py-4' align='center'>
+                            {d.commissionPercentage}(%)
+                          </td>
+                          <td className='px-3 py-4' align='center'>
+                            {d.clientDeploymentPercentage}(%)
+                          </td>
+                          <td className='px-3 py-4' align='center'>
+                            {formatPrice(d.bonusReachesThreshold)}
+                          </td>{' '}
+                          <td className='px-3 py-4' align='center'>
+                            {formatPrice(d.foodAllowance)}
+                          </td>{' '}
+                          <td className='px-3 py-4' align='center'>
+                            {formatPrice(d.transportationOrPhoneAllowance)}
+                          </td>
+                          <td className='px-3 py-4 text-right'>
+                            <Menu as='div' className='relative inline-block text-left '>
+                              <Menu.Button className='flex justify-center items-center gap-3 cursor-pointer hover:text-blue-500'>
+                                <EllipsisVerticalIcon className='h-7 w-7' title='Hành động' />
+                              </Menu.Button>
 
-                            <Transition
-                              as={Fragment}
-                              enter='transition ease-out duration-100'
-                              enterFrom='transform opacity-0 scale-95'
-                              enterTo='transform opacity-100 scale-100'
-                              leave='transition ease-in duration-75'
-                              leaveFrom='transform opacity-100 scale-100'
-                              leaveTo='transform opacity-0 scale-95'
-                            >
-                              <Menu.Items className='absolute right-8 top-[-100%] z-50 mt-2 w-24 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
-                                <Menu.Item>
-                                  {({ active }) => (
-                                    <button
-                                      title='Sửa'
-                                      onClick={() => {
-                                        setUpdateModal(true)
-                                        setSelected(d)
-                                      }}
-                                      className={`${
-                                        active ? 'bg-blue-500 text-white' : 'text-gray-900'
-                                      } group flex w-full items-center  gap-3 rounded-md px-2 py-1 text-sm `}
-                                    >
-                                      <Cog6ToothIcon className='h-5' /> Sửa
-                                    </button>
-                                  )}
-                                </Menu.Item>
-                                <Menu.Item>
-                                  {({ active }) => (
-                                    <button
-                                      title='Xóa'
-                                      onClick={() => {
-                                        setDeleteModal(true)
-                                        setSelected(d)
-                                      }}
-                                      className={`${
-                                        active ? 'bg-blue-500 text-white' : 'text-gray-900'
-                                      } group flex w-full items-center gap-3 rounded-md px-2 py-1 text-sm `}
-                                    >
-                                      <NoSymbolIcon className='h-5' /> Xóa
-                                    </button>
-                                  )}
-                                </Menu.Item>
-                              </Menu.Items>
-                            </Transition>
-                          </Menu>
-                        </td>
-                      </tr>
-                    ))
+                              <Transition
+                                as={Fragment}
+                                enter='transition ease-out duration-100'
+                                enterFrom='transform opacity-0 scale-95'
+                                enterTo='transform opacity-100 scale-100'
+                                leave='transition ease-in duration-75'
+                                leaveFrom='transform opacity-100 scale-100'
+                                leaveTo='transform opacity-0 scale-95'
+                              >
+                                <Menu.Items className='absolute right-8 top-[-100%] z-50 mt-2 w-24 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
+                                  <Menu.Item>
+                                    {({ active }) => (
+                                      <button
+                                        title='Sửa'
+                                        onClick={() => {
+                                          setUpdateModal(true)
+                                          setSelected(d)
+                                        }}
+                                        className={`${
+                                          active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                        } group flex w-full items-center  gap-3 rounded-md px-2 py-1 text-sm `}
+                                      >
+                                        <Cog6ToothIcon className='h-5' /> Sửa
+                                      </button>
+                                    )}
+                                  </Menu.Item>
+                                  <Menu.Item>
+                                    {({ active }) => (
+                                      <button
+                                        title='Xóa'
+                                        onClick={() => {
+                                          setDeleteModal(true)
+                                          setSelected(d)
+                                        }}
+                                        className={`${
+                                          active ? 'bg-blue-500 text-white' : 'text-gray-900'
+                                        } group flex w-full items-center gap-3 rounded-md px-2 py-1 text-sm `}
+                                      >
+                                        <NoSymbolIcon className='h-5' /> Xóa
+                                      </button>
+                                    )}
+                                  </Menu.Item>
+                                </Menu.Items>
+                              </Transition>
+                            </Menu>
+                          </td>
+                        </tr>
+                      ))
                   ) : (
                     <></>
                   )}
@@ -252,7 +254,7 @@ const PaySlipFormula = () => {
                       <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeModal()} />
                     </div>
                   </div>
-                  <CreatePaySlip initialValue={{}} closeModal={closeModal} refetch={refetch} />
+                  <CreatePaySlip closeModal={closeModal} refetch={refetch} />
                 </Dialog.Panel>
               </Transition.Child>
             </div>

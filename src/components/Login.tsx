@@ -27,22 +27,22 @@ const Login = () => {
   const { successNotification, errorNotification } = useToast()
   const loginQuery = useMutation(login, {
     onError: (error: AxiosError<{ message: string }>) => {
-      errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
+      errorNotification(error.response?.data?.message || 'Đăng nhập thất bại. Kiểm tra lại tài khoản và mật khẩu')
     },
     onSuccess: (response) => {
-      if (response) {
-        setToken(response?.access_token)
+      if (response?.code == '00') {
+        setToken(response?.object?.access_token)
         setUser({
-          id: response.user.id,
-          name: response.user.name,
-          role: response.user.role,
-          email: response.user.email,
-          avatar: response.user.avatar,
-          permissions: response.user.permissions
+          id: response?.object?.user?.id,
+          name: response?.object?.user?.name,
+          role: response?.object?.user?.role,
+          email: response?.object?.user?.email,
+          avatar: response?.object?.user?.avatar,
+          permissions: response?.object?.user?.permissions
         })
         successNotification('Đăng nhập thành công')
         navigate('/')
-      } else errorNotification('Đăng nhập thất bại')
+      } else errorNotification('Đăng nhập thất bại. Kiểm tra lại tài khoản và mật khẩu')
     }
   })
 

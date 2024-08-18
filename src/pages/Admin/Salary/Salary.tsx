@@ -211,7 +211,10 @@ const Salary = () => {
               </div>
             )}
           </div>
-          <div className='w-full text-right -ml-4 font-bold text-[20px]'> Đơn vị tính: VND</div>
+          <div className='w-full flex justify-between items-center my-2'>
+            <div className='text-[18px] font-bold'>Lương doanh số nhân viên</div>
+            <div className='font-semibold text-[16px]'> Đơn vị tính: VND</div>
+          </div>
           <div className='overflow-auto'>
             <div className='shadow-md sm:rounded-lg h-fit'>
               <table ref={tableRef} className='w-full text-sm text-left rtl:text-right text-black dark:text-gray-400 '>
@@ -342,7 +345,7 @@ const Salary = () => {
                         </td> */}
                       </tr>
                     ))}
-                  {data?.object && (
+                  {!isLoading && !isFetching && data?.object && (
                     <tr className='w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 '>
                       <td className='px-3 py-3 w-[30px]' align='center'></td>
                       <td className='px-3 py-4'></td>

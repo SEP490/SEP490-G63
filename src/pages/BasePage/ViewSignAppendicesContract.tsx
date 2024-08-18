@@ -158,7 +158,7 @@ const ViewSignAppendicesContract = () => {
             {customer == '2' && (
               <button
                 type='button'
-                disabled={data?.object?.currentStatus != 'WAIT_SIGN_A' && data?.object?.currentStatus != 'WAIT_SIGN_B'}
+                disabled={data?.object?.currentStatus != 'WAIT_SIGN_B'}
                 className=' my-3 none center mr-4 rounded-lg bg-red-500 px-2 py-2 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#ad649191] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
                 data-ripple-light='true'
                 onClick={() => setModalReject(true)}
@@ -168,7 +168,11 @@ const ViewSignAppendicesContract = () => {
             )}
             <button
               type='button'
-              disabled={data?.object?.currentStatus != 'WAIT_SIGN_A' && data?.object?.currentStatus != 'WAIT_SIGN_B'}
+              disabled={
+                data?.object?.currentStatus != 'WAIT_SIGN_A' &&
+                data?.object?.currentStatus != 'WAIT_SIGN_B' &&
+                data?.object?.statusCurrent != 'NEW'
+              }
               className=' my-3 none center mr-4 rounded-lg bg-[#0070f4] px-2 py-2 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
               data-ripple-light='true'
               onClick={() => setModalSign(true)}

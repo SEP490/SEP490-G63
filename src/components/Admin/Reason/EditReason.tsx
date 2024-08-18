@@ -57,13 +57,8 @@ const EditReason = ({ data, closeModal, refetch }: IProp) => {
       <div className='w-[100%] mt-0 relative'>
         <label className=' flex items-center'>
           <div>
-            Tên phòng ban <sup className='text-red-500'>*</sup>
+            Tên nguyên nhân<sup className='text-red-500'>*</sup>
           </div>
-          <TooltipComponent
-            content='Chỉ chứa kí tự chữ cái,khoảng trống, tối thiểu 8 và tối đa 30 kí tự'
-            className='w-4 h-4 cursor-pointer'
-            style='dark'
-          />
         </label>
         <input
           className={`${errors.title ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}

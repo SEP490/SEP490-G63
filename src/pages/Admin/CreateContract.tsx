@@ -92,7 +92,7 @@ const CreateContract = () => {
   // const sendMailQuery = useMutation(sendMailPublic)
   const createContractQuery = useMutation(createNewContract, {
     onError: (error: AxiosError<{ message: string }>) => {
-      errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
+      errorNotification(error.response?.data?.message || 'Tạo hợp đồng thất bại')
     },
     onSuccess: (response) => {
       if (response?.code == '00' && response?.object) {
@@ -114,6 +114,14 @@ const CreateContract = () => {
   const onSubmit = async () => {
     const rule: any = document.getElementsByName('rule')[0]
     const term: any = document.getElementsByName('term')[0]
+    if (rule.value.replace(/<[^>]*>?/gm, '') == '') {
+      errorNotification('Điều khoản thông tin không được để trống')
+      return
+    }
+    if (term.value.replace(/<[^>]*>?/gm, '') == '') {
+      errorNotification('Điều khoản hợp đồng không được để trống')
+      return
+    }
     const bodyData = {
       ...getValues(),
       rule: rule.value,
@@ -556,7 +564,9 @@ const CreateContract = () => {
             })}
           /> */}
           <select
-            {...formInfoPartA.register('bankName')}
+            {...formInfoPartA.register('bankName', {
+              required: 'Tên ngân hàng không được để trống'
+            })}
             disabled
             className='block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200'
           >
@@ -831,7 +841,7 @@ const CreateContract = () => {
           /> */}
           <select
             disabled={createContractQuery?.isLoading || disableFormB.current}
-            {...formInfoPartB.register('bankName')}
+            {...formInfoPartB.register('bankName', { required: 'Tên ngân hàng không được để trống' })}
             onChange={() => formInfoPartB.reset({ bankId: '' })}
             className='block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200'
           >

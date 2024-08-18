@@ -117,6 +117,14 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
   const onSubmit = async () => {
     const rule: any = document.getElementsByName('rule')[0]
     const term: any = document.getElementsByName('term')[0]
+    if (rule.value.replace(/<[^>]*>?/gm, '') == '') {
+      errorNotification('Điều khoản thông tin không được để trống')
+      return
+    }
+    if (term.value.replace(/<[^>]*>?/gm, '') == '') {
+      errorNotification('Điều khoản hợp đồng không được để trống')
+      return
+    }
     const bodyData = {
       ...getValues(),
       id: detailContract?.id,
@@ -430,7 +438,7 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
             })}
           /> */}
           <select
-            {...formInfoPartA.register('bankName')}
+            {...formInfoPartA.register('bankName', { required: 'Tên ngân hàng không được để trống.' })}
             disabled
             className='block disabled:bg-gray-200 w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
           >
@@ -656,7 +664,7 @@ const EditNewContract = ({ selectedContract, handleCloseModal, refetch }: any) =
             })}
           /> */}
           <select
-            {...formInfoPartB.register('bankName')}
+            {...formInfoPartB.register('bankName', { required: 'Tên ngân hàng không được để trống.' })}
             disabled
             className='block disabled:bg-gray-200 w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
           >
