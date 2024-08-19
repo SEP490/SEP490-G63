@@ -364,7 +364,10 @@ const Contract = () => {
         </>
       ),
       color: 'text-teal-700',
-      disable: (d: any) => !d.canSendForCustomer,
+      disable: (d: any) => {
+        const statusPL = user?.email == d.createdBy ? ['SIGN_A_OK'] : ['']
+        return !statusPL.includes(d?.statusCurrent)
+      },
       callback: (d: any) => {
         setSelectedContract(d)
         setStatus(7)
@@ -392,7 +395,10 @@ const Contract = () => {
         </>
       ),
       color: 'text-violet-700',
-      disable: (d: any) => !d.canUpdate,
+      disable: (d: any) => {
+        const statusPL = user?.email == d.createdBy ? ['NEW', 'SIGN_B_FAIL'] : ['SIGN_A_FAIL']
+        return !statusPL.includes(d?.statusCurrent)
+      },
       callback: (d: any) => {
         setEditModal(true)
         setSelectedContract(d)
@@ -406,7 +412,10 @@ const Contract = () => {
         </>
       ),
       color: 'text-red-700',
-      disable: (d: any) => !d.canDelete,
+      disable: (d: any) => {
+        const statusPL = user?.email == d.createdBy ? ['NEW', 'SIGN_B_FAIL'] : ['SIGN_A_FAIL']
+        return !statusPL.includes(d?.statusCurrent)
+      },
       callback: (d: any) => {
         setDeleteModal(true)
         setSelectedContract(d)
@@ -765,9 +774,9 @@ const Contract = () => {
                           <div
                             className='cursor-pointer text-blue-500 hover:underline'
                             onClick={() => {
-                              setSelectedContract(d)
-                              setOpenModal(true)
-                              // navigate(`/contract/detail/${d?.id}`)
+                              // setSelectedContract(d)
+                              // setOpenModal(true)
+                              navigate(`/contract/detail/${d?.id}`)
                             }}
                           >
                             Xem
