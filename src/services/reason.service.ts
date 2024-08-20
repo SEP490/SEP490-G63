@@ -1,7 +1,9 @@
+import axios from 'axios'
+import { BASE_URL } from '~/common/const'
 import axiosInstance from '~/config/axiosConfig'
 
 export const getListReason = async (page: number, size: number) => {
-  const response = await axiosInstance.get(`reason/public?page=${page}&size=${size}`)
+  const response = await axios.get(`${BASE_URL}reason/public?page=${page}&size=${size}`)
   return response.data
 }
 export const createReason = async (data: any) => {

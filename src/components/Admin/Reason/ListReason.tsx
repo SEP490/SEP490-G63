@@ -44,7 +44,7 @@ const ListReason = () => {
   }
 
   const { data, isLoading, refetch, isFetching } = useQuery(['employee-list'], () => getListReason(0, 50))
-  const { data: dataDepartment } = useQuery('list-department', () => getListDepartment(0, 50))
+  // const { data: dataDepartment } = useQuery('list-department', () => getListDepartment(0, 50))
 
   const deleteQuery = useMutation(deleteReason, {
     onSuccess: () => {
@@ -301,7 +301,7 @@ const ListReason = () => {
                         data-ripple-light='true'
                         onClick={handleDeleteReason}
                       >
-                        {deleteQuery.isLoading ? <LoadingIcon /> : 'Xóa'}
+                        {deleteQuery.isLoading ? <LoadingIcon /> : 'Xác nhận'}
                       </button>
                     </div>
                   </div>
