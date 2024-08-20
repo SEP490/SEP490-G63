@@ -468,7 +468,7 @@ const ContractInformation = () => {
                         data-ripple-light='true'
                         onClick={handleBanCompany}
                       >
-                        Chấp nhận
+                        Xác nhận
                       </button>
                       <button
                         type='button'

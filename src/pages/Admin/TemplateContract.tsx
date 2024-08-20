@@ -286,7 +286,7 @@ const TemplateContract = () => {
                         data-ripple-light='true'
                         onClick={() => handleDelete()}
                       >
-                        {deleteTemplate.isLoading ? <LoadingIcon /> : 'Đồng ý'}
+                        {deleteTemplate.isLoading ? <LoadingIcon /> : 'Xác nhận'}
                       </button>
                     </div>
                   </div>

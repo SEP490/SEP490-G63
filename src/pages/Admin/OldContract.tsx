@@ -318,7 +318,7 @@ const OldContract = () => {
                         data-ripple-light='true'
                         onClick={() => handleDelete()}
                       >
-                        {deleteContractQuery.isLoading ? <LoadingIcon /> : 'Chắc chắn'}
+                        {deleteContractQuery.isLoading ? <LoadingIcon /> : 'Xác nhận'}
                       </button>
                     </div>
                   </div>

@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import SunEditor from 'suneditor-react'
 import '../../styles/suneditor.css'
 import { createNewContract, getDataByTaxNumber, sendMailPublic } from '~/services/contract.service'
@@ -9,6 +9,7 @@ import { useState, Fragment, useEffect, SetStateAction, useRef } from 'react'
 import { createTemplateContract, getTemplateContract } from '~/services/template-contract.service'
 import { handleSubmitBank, validateEmail, validateEmailDebounced } from '~/common/utils/checkMail'
 import { VietQR } from 'vietqr'
+import AsyncCreatableSelect from 'react-select/async-creatable'
 import { useMutation, useQueries, useQuery } from 'react-query'
 import { debounce } from 'lodash'
 import LoadingSvgV2 from '~/assets/svg/loadingsvg'
@@ -22,6 +23,7 @@ import dataRegex from '../../regex.json'
 import { getParty } from '~/services/party.service'
 import moment from 'moment'
 import { validateMail, validatePhone } from '~/services/auth-sign-contract.service'
+import { getAllParty } from '~/services/user.service'
 interface FormType {
   name: string
   number: string
@@ -66,13 +68,22 @@ const CreateContract = () => {
   const [loadingMailA, setLoadingMailA] = useState(false)
   const [loadingMailB, setLoadingMailB] = useState(false)
   const [loadingPhoneB, setLoadingPhoneB] = useState(false)
+  const [taxList, setTaxList] = useState([])
   const disableFormA = useRef(false)
   const disableFormB = useRef(false)
   const resultQuery = useQueries([
     { queryKey: 'template-contract', queryFn: () => getTemplateContract(0, 100, '') },
     { queryKey: 'type-contract', queryFn: () => getContractType({ page: 0, size: 100, title: '' }) }
   ])
-
+  const { data: dataParty } = useQuery('get-party', getAllParty, {
+    onSuccess: (data) => {
+      setTaxList(
+        data?.object.map((d: any) => {
+          return { label: d.taxNumber + ' - ' + d.name, value: d.taxNumber }
+        })
+      )
+    }
+  })
   useEffect(() => {
     const vietQR = new VietQR({
       clientID,
@@ -110,7 +121,30 @@ const CreateContract = () => {
       } else errorNotification('Tạo hợp đồng thất bại')
     }
   })
+  const filterColors = (inputValue: string) => {
+    return taxList?.filter((i: any) => i.label.toLowerCase().includes(inputValue.toLowerCase()))
+  }
 
+  const promiseOptions = (inputValue: string) =>
+    new Promise<any[]>((resolve) => {
+      setTimeout(() => {
+        resolve(filterColors(inputValue))
+      }, 300)
+    })
+  const customStyles = {
+    input: (provided: any) => ({
+      ...provided,
+      boxShadow: 'none',
+      '& input': {
+        boxShadow: 'none !important',
+        border: 'none !important',
+        '&:focus': {
+          boxShadow: 'none !important',
+          border: 'none !important'
+        }
+      }
+    })
+  }
   const onSubmit = async () => {
     const rule: any = document.getElementsByName('rule')[0]
     const term: any = document.getElementsByName('term')[0]
@@ -168,7 +202,6 @@ const CreateContract = () => {
     }
     setLoadingMailB(false)
   }
-
   const handleAutoFillPartyB = async () => {
     const result = await formInfoPartB.trigger('taxNumber')
     if (result) {
@@ -190,7 +223,8 @@ const CreateContract = () => {
             businessNumber: '',
             bankId: '',
             bankName: '',
-            bankAccOwer: ''
+            bankAccOwer: '',
+            phone: ''
           })
         }
       } catch (e) {
@@ -644,7 +678,7 @@ const CreateContract = () => {
             Tự động điền theo mã số thuế
           </button> */}
         </div>
-        <div className='w-full md:w-[30%] mt-5 relative '>
+        {/* <div className='w-full md:w-[30%] mt-5 relative '>
           <label className='font-light '>
             Mã số thuế<sup className='text-red-500'>*</sup>
           </label>
@@ -664,6 +698,46 @@ const CreateContract = () => {
               })}
             />
             <div className='absolute z-10 right-1 top-0 h-full flex items-center'>{loadingB && <LoadingSvgV2 />}</div>
+          </div>
+          <div
+            className={`text-red-500 absolute text-[12px] ${formInfoPartB.formState.errors.taxNumber ? 'visible' : 'invisible'}`}
+          >
+            {formInfoPartB.formState.errors.taxNumber?.message}
+          </div>
+        </div> */}
+        <div className='w-full md:w-[30%] mt-5 relative '>
+          <label className='font-light '>
+            Mã số thuế<sup className='text-red-500'>*</sup>
+          </label>
+          <div className='relative'>
+            <Controller
+              name='taxNumber'
+              control={formInfoPartB.control}
+              rules={{
+                required: 'Mã số thuế không được để trống',
+                pattern: {
+                  value: new RegExp(dataRegex.REGEX_TAX_NUMBER),
+                  message: 'Mã số thuế không hợp lệ'
+                }
+              }}
+              render={({ field }) => (
+                <AsyncCreatableSelect
+                  cacheOptions
+                  className='block w-full disabled:bg-gray-200  rounded-md border-0 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 z-30'
+                  loadOptions={promiseOptions}
+                  defaultOptions={taxList}
+                  styles={customStyles}
+                  placeholder='Mã số thuế'
+                  selected={field.value}
+                  onChange={async (data) => {
+                    field.onChange(data.value)
+
+                    await handleAutoFillPartyB()
+                  }}
+                />
+              )}
+            />
+            <div className='absolute z-50 right-12 top-0 h-full flex items-center'>{loadingB && <LoadingSvgV2 />}</div>
           </div>
           <div
             className={`text-red-500 absolute text-[12px] ${formInfoPartB.formState.errors.taxNumber ? 'visible' : 'invisible'}`}
@@ -760,7 +834,7 @@ const CreateContract = () => {
             disabled={createContractQuery?.isLoading || disableFormB.current}
             placeholder='Nhập địa chỉ công ty'
             {...formInfoPartB.register('address', {
-              required: 'Mã số thuế không được để trống'
+              required: 'Địa chỉ không được để trống'
             })}
           />
           <div

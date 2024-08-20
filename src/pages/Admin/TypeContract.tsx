@@ -299,7 +299,7 @@ const TypeContract = () => {
                         data-ripple-light='true'
                         onClick={() => handleDelete()}
                       >
-                        {deleteType.isLoading ? <LoadingIcon /> : 'Đồng ý'}
+                        {deleteType.isLoading ? <LoadingIcon /> : 'Xác nhận'}
                       </button>
                     </div>
                   </div>

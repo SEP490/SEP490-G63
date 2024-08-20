@@ -38,6 +38,7 @@ import PaySlipFormula from '~/pages/Admin/Salary/PaySlipFormula.tsx'
 import CompanyInformation from '~/components/Company/CompanyInformation.tsx'
 import ListReason from '~/components/Admin/Reason/ListReason.tsx'
 import DashboardAdmin from '~/components/Dashboard/DashboardAdmin.tsx'
+import SelectAutoComplete from '~/components/BaseComponent/SelectAutoComplete.tsx'
 
 const Routes = () => {
   const { token, user } = useAuth()
@@ -50,6 +51,14 @@ const Routes = () => {
       children: [
         {
           path: '/',
+          element: (
+            <AdminLayout>
+              <SearchPage />
+            </AdminLayout>
+          )
+        },
+        {
+          path: '/dashboard',
           element: (
             <AdminLayout>
               <DashboardAdmin />
@@ -676,6 +685,14 @@ const Routes = () => {
       element: (
         <div className='w-[100vw] h-[100vh]'>
           <ViewSignContract />
+        </div>
+      )
+    },
+    {
+      path: '/example',
+      element: (
+        <div className='w-[100vw] h-[100vh]'>
+          <SelectAutoComplete />
         </div>
       )
     },

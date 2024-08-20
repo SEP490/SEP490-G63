@@ -11,14 +11,17 @@ type FormData = {
 const SearchPage = () => {
   const navigate = useNavigate()
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    navigate(`/search/${fieldSearch}/${data.searchText}`)
+    navigate(`/search/${fieldSearch}/${data.searchText.replace('/', '').replace('\\', '')}`)
   }
-  const { data: typeData } = useQuery('type-contract', () => getContractType({ page: 0, size: 100, title: '' }), {
-    onSuccess: (res) => console.log(res),
-    onError: (err) => console.log(err)
-  })
+
   const [fieldSearch, setFieldSearch] = useState('contract')
-  const { register, handleSubmit } = useForm<FormData>()
+  const { register, reset, handleSubmit } = useForm<FormData>()
+  const handleInputValue = (e: any) => {
+    const inp = e.target.value.replace('/', '').replace('\\', '')
+    reset({
+      searchText: inp
+    })
+  }
   return (
     <div className='w-full h-full flex flex-col justify-between pb-6 bg-white'>
       <div className='w-full'>
@@ -51,6 +54,7 @@ const SearchPage = () => {
               </div>
             </div>
             <input
+              onInput={handleInputValue}
               {...register('searchText', { required: true })}
               className='border rounded-3xl shadow-lg px-10 py-2 w-[90%] md:w-[50%]'
               placeholder='Tìm kiếm'
@@ -69,26 +73,12 @@ const SearchPage = () => {
             >
               Hợp đồng cũ
             </div>
-            {/* {resultQuery.isLoading ? (
-              <LoadingSvgV2 />
-            ) : ( */}
-            <select
-              // {...register('')}
-              className={` block w-fit rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-            >
-              {typeData?.content?.map((d: any) => (
-                <option value={d.id} className='w-[300px] truncate ...'>
-                  {d.title}
-                </option>
-              ))}
-            </select>
-            {/* )} */}
           </div>
         </form>
       </div>
 
       <div className='flex flex-col items-center'>
-        <div className='flex gap-5 text-[14px]'>
+        {/* <div className='flex gap-5 text-[14px]'>
           <a href='#' className='text-blue-600 hover:underline font-semibold'>
             Về TDocman
           </a>
@@ -101,7 +91,7 @@ const SearchPage = () => {
           <a href='#' className='text-blue-600 hover:underline font-semibold'>
             Điều khoản & Bảo mật
           </a>
-        </div>
+        </div> */}
         <div className='text-[12px] text-[gray]'>@ 2024 TDocman.id</div>
       </div>
     </div>

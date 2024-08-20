@@ -12,8 +12,8 @@ import {
 export const routerAdmin = [
   {
     id: 1,
-    title: 'Tổng quan',
-    slug: '/',
+    title: 'Trang chủ',
+    slug: '/dashboard',
     icon: <EyeIcon className='h-4 w-4' />
   },
   {
@@ -95,7 +95,7 @@ export const routerAdminOfficer = [
 export const routerSale = [
   {
     id: 1,
-    title: 'Tổng quan',
+    title: 'Trang chủ',
     slug: '/dashboard',
     icon: <EyeIcon className='h-4 w-4' />
   },

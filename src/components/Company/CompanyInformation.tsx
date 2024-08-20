@@ -335,7 +335,7 @@ const CompanyInformation = () => {
               <LoadingIcon />
             ) : (
               <div className='flex items-center'>
-                <GrUpdate className='mr-1' /> Sửa
+                <GrUpdate className='mr-1' /> Lưu
               </div>
             )}
           </button>

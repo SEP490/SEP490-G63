@@ -343,7 +343,7 @@ const PaySlipFormula = () => {
                         data-ripple-light='true'
                         onClick={handleDelete}
                       >
-                        {deleteQuery.isLoading ? <LoadingIcon /> : 'Xóa'}
+                        {deleteQuery.isLoading ? <LoadingIcon /> : 'Xác nhận'}
                       </button>
                     </div>
                   </div>
