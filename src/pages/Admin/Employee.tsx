@@ -89,7 +89,7 @@ const Employee = () => {
       }
     }
   )
-  const { data: dataDepartment } = useQuery('list-department', () => getListDepartment(0, 50))
+  // const { data: dataDepartment } = useQuery('list-department', () => getListDepartment(0, 50))
   useEffect(() => {
     if (prevPageRef.current !== page || prevSizeRef.current !== size) {
       prevPageRef.current = page
@@ -410,7 +410,7 @@ const Employee = () => {
                       <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeModal()} />
                     </div>
                   </div>
-                  <AddNewEmployee department={dataDepartment} closeModal={closeModal} refetch={refetch} />
+                  <AddNewEmployee closeModal={closeModal} refetch={refetch} />
                 </Dialog.Panel>
               </Transition.Child>
             </div>
@@ -449,7 +449,7 @@ const Employee = () => {
                       <XMarkIcon className='h-5 w-5 cursor-pointer' onClick={() => closeAllModal()} />
                     </div>
                   </div>
-                  <ViewEmployee department={dataDepartment} data={selectedUser} />
+                  <ViewEmployee data={selectedUser} />
                 </Dialog.Panel>
               </Transition.Child>
             </div>
@@ -489,12 +489,7 @@ const Employee = () => {
                     </div>
                   </div>
 
-                  <EditEmployee
-                    department={dataDepartment}
-                    data={selectedUser}
-                    closeModal={closeAllModal}
-                    refetch={refetch}
-                  />
+                  <EditEmployee data={selectedUser} closeModal={closeAllModal} refetch={refetch} />
                 </Dialog.Panel>
               </Transition.Child>
             </div>
@@ -542,7 +537,7 @@ const Employee = () => {
                         data-ripple-light='true'
                         onClick={handleDeleteEmployee}
                       >
-                        {deleteQuery.isLoading ? <LoadingIcon /> : 'Xóa'}
+                        {deleteQuery.isLoading ? <LoadingIcon /> : 'Xác nhận'}
                       </button>
                     </div>
                   </div>
@@ -594,7 +589,7 @@ const Employee = () => {
                         disabled={resetPasswordQuery.isLoading}
                         onClick={handleResetPassword}
                       >
-                        {resetPasswordQuery.isLoading ? <LoadingIcon /> : 'Chắc chắn'}
+                        {resetPasswordQuery.isLoading ? <LoadingIcon /> : 'Xác nhận'}
                       </button>
                     </div>
                   </div>
@@ -645,7 +640,7 @@ const Employee = () => {
                         data-ripple-light='true'
                         onClick={handleActive}
                       >
-                        {activeQuery.isLoading ? <LoadingIcon /> : 'Chắc chắn'}
+                        {activeQuery.isLoading ? <LoadingIcon /> : 'Xác nhận'}
                       </button>
                     </div>
                   </div>

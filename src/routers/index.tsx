@@ -52,6 +52,14 @@ const Routes = () => {
           path: '/',
           element: (
             <AdminLayout>
+              <SearchPage />
+            </AdminLayout>
+          )
+        },
+        {
+          path: '/dashboard',
+          element: (
+            <AdminLayout>
               <DashboardAdmin />
             </AdminLayout>
           )

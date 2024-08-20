@@ -159,16 +159,6 @@ const ChangePassword = () => {
               Xác nhận
             </button>
           </div>
-          <div className='w-full  flex justify-center'>
-            <div
-              onClick={() => {
-                navigate('/')
-              }}
-              className='cursor-pointer text-blue-500 hover:underline w-fit'
-            >
-              Đăng nhập
-            </div>
-          </div>
         </form>
       </div>
     </div>
