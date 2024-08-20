@@ -32,6 +32,13 @@ const ViewSignAppendicesContract = () => {
   const { data, refetch, isFetching, isLoading } = useQuery('detail-appendices-public', () =>
     getNewContractByIdNotToken(id)
   )
+  const disabled = useMemo(() => {
+    return (
+      (data?.object?.currentStatus == 'WAIT_SIGN_A' && customer == '1') ||
+      (data?.object?.currentStatus == 'WAIT_SIGN_B' && customer == '2') ||
+      (data?.object?.currentStatus == 'NEW' && data?.object?.createdBy == user?.email && user?.role == ADMIN)
+    )
+  }, [user, data])
   const {
     register,
     handleSubmit,
@@ -168,11 +175,7 @@ const ViewSignAppendicesContract = () => {
             )}
             <button
               type='button'
-              disabled={
-                data?.object?.currentStatus != 'WAIT_SIGN_A' &&
-                data?.object?.currentStatus != 'WAIT_SIGN_B' &&
-                data?.object?.statusCurrent != 'NEW'
-              }
+              disabled={!disabled}
               className=' my-3 none center mr-4 rounded-lg bg-[#0070f4] px-2 py-2 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-[#0072f491] focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none'
               data-ripple-light='true'
               onClick={() => setModalSign(true)}

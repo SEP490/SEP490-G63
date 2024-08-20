@@ -16,61 +16,75 @@ const PaySlipFormula = () => {
           <table className='w-full text-sm text-left rtl:text-right text-black dark:text-gray-400 '>
             <tr className='bg-white dark:bg-gray-800'>
               <td className='px-1 py-2 font-bold'>Giá trị hợp đồng(VND)</td>
-              {data?.object?.content?.map((d: any) => (
-                <td className='px-1 py-2 border-l' key={d.id} align='center'>
-                  {formatPrice(d.fromValueContract) == 0 && formatPrice(d.toValueContract) != 0
-                    ? `< ${formatPrice(d.toValueContract)}`
-                    : `${formatPrice(d.fromValueContract)} - ${formatPrice(d.toValueContract)}`}
-                </td>
-              ))}
+              {data?.object?.content
+                ?.sort((a, b) => a.fromValueContract - b.fromValueContract)
+                .map((d: any) => (
+                  <td className='px-1 py-2 border-l' key={d.id} align='center'>
+                    {formatPrice(d.fromValueContract) == 0 && formatPrice(d.toValueContract) != 0
+                      ? `< ${formatPrice(d.toValueContract)}`
+                      : `${formatPrice(d.fromValueContract)} - ${formatPrice(d.toValueContract)}`}
+                  </td>
+                ))}
             </tr>
             <tr className='bg-white dark:bg-gray-800'>
               <td className='px-1 py-2 font-bold'>Lương cứng(VND)</td>
-              {data?.object?.content?.map((d: any) => (
-                <td className='px-1 py-2 border-l' key={d.id} align='center'>
-                  {formatPrice(d.baseSalary)}
-                </td>
-              ))}
+              {data?.object?.content
+                ?.sort((a, b) => a.fromValueContract - b.fromValueContract)
+                .map((d: any) => (
+                  <td className='px-1 py-2 border-l' key={d.id} align='center'>
+                    {formatPrice(d.baseSalary)}
+                  </td>
+                ))}
             </tr>
             <tr className='bg-white dark:bg-gray-800'>
               <td className='px-1 py-2 font-bold'>% doanh số</td>
-              {data?.object?.content?.map((d: any) => (
-                <td className='px-1 py-2 border-l' key={d.id} align='center'>
-                  {d.commissionPercentage}(%)
-                </td>
-              ))}
+              {data?.object?.content
+                ?.sort((a, b) => a.fromValueContract - b.fromValueContract)
+                .map((d: any) => (
+                  <td className='px-1 py-2 border-l' key={d.id} align='center'>
+                    {d.commissionPercentage}(%)
+                  </td>
+                ))}
             </tr>
             <tr className='bg-white dark:bg-gray-800'>
               <td className='px-1 py-2 font-bold'>% triển khai KH</td>
-              {data?.object?.content?.map((d: any) => (
-                <td className='px-1 py-2 border-l' key={d.id} align='center'>
-                  {d.clientDeploymentPercentage}(%)
-                </td>
-              ))}
+              {data?.object?.content
+                ?.sort((a, b) => a.fromValueContract - b.fromValueContract)
+                .map((d: any) => (
+                  <td className='px-1 py-2 border-l' key={d.id} align='center'>
+                    {d.clientDeploymentPercentage}(%)
+                  </td>
+                ))}
             </tr>
             <tr className='bg-white dark:bg-gray-800'>
               <td className='px-1 py-2 font-bold'>Thưởng đạt ngưỡng(VND)</td>
-              {data?.object?.content?.map((d: any) => (
-                <td className='px-1 py-2 border-l' key={d.id} align='center'>
-                  {formatPrice(d.bonusReachesThreshold)}
-                </td>
-              ))}
+              {data?.object?.content
+                ?.sort((a, b) => a.fromValueContract - b.fromValueContract)
+                .map((d: any) => (
+                  <td className='px-1 py-2 border-l' key={d.id} align='center'>
+                    {formatPrice(d.bonusReachesThreshold)}
+                  </td>
+                ))}
             </tr>
             <tr className='bg-white dark:bg-gray-800'>
               <td className='px-1 py-2 font-bold'>Trợ cấp ăn(VND)</td>
-              {data?.object?.content?.map((d: any) => (
-                <td className='px-1 py-2 border-l' key={d.id} align='center'>
-                  {formatPrice(d.foodAllowance)}
-                </td>
-              ))}
+              {data?.object?.content
+                ?.sort((a, b) => a.fromValueContract - b.fromValueContract)
+                .map((d: any) => (
+                  <td className='px-1 py-2 border-l' key={d.id} align='center'>
+                    {formatPrice(d.foodAllowance)}
+                  </td>
+                ))}
             </tr>
             <tr className='bg-white dark:bg-gray-800'>
               <td className='px-1 py-2 font-bold'>Phụ cấp xăng xe,điện thoại(VND)</td>
-              {data?.object?.content?.map((d: any) => (
-                <td className='px-1 py-2 border-l' key={d.id} align='center'>
-                  {formatPrice(d.transportationOrPhoneAllowance)}
-                </td>
-              ))}
+              {data?.object?.content
+                ?.sort((a, b) => a.fromValueContract - b.fromValueContract)
+                .map((d: any) => (
+                  <td className='px-1 py-2 border-l' key={d.id} align='center'>
+                    {formatPrice(d.transportationOrPhoneAllowance)}
+                  </td>
+                ))}
             </tr>
           </table>
         </>

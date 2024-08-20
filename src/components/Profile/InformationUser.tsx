@@ -169,36 +169,7 @@ const InformationUser = () => {
                   {errors.name?.message}
                 </div>
               </div>
-              <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-                <label className='font-semibold text-xs'>
-                  Phòng ban<sup className='text-red-500'>*</sup>
-                </label>
-                <input
-                  className={`${errors.department ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-                  placeholder='Phòng ban'
-                  {...register('department', {
-                    required: 'Phòng ban không được để trống'
-                  })}
-                />
-                <div className={`text-red-500 absolute text-[12px] ${errors.department ? 'visible' : 'invisible'}`}>
-                  {errors.department?.message}
-                </div>
-              </div>
-              <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
-                <label className='font-semibold text-xs'>
-                  Vị trí<sup className='text-red-500'>*</sup>
-                </label>
-                <input
-                  className={`${errors.position ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-                  placeholder='Nhập vị trí của nhân viên'
-                  {...register('position', {
-                    required: 'Vị trí không được để trống'
-                  })}
-                />
-                <div className={`text-red-500 absolute text-[12px] ${errors.position ? 'visible' : 'invisible'}`}>
-                  {errors.position?.message}
-                </div>
-              </div>
+
               <div className='w-[100%] sm:w-[48%] md:w-[29%] mt-5 relative'>
                 <label className='font-semibold text-xs'>
                   Email<sup className='text-red-500'>*</sup>

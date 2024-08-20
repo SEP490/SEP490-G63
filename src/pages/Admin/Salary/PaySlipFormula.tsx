@@ -44,7 +44,7 @@ const PaySlipFormula = () => {
         successNotification('Xóa thành công!!!')
         refetch()
         closeModal()
-      } else errorNotification('Xóathất bại')
+      } else errorNotification('Xóa thất bại')
     },
     onError: (error: AxiosError<{ message: string }>) => {
       errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
