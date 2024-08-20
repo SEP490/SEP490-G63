@@ -63,7 +63,6 @@ const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy,
     onSuccess: () => {
       setModalSign(false)
       refetch()
-
       successNotification('Ký hợp đồng thành công')
     },
     onError: (error: AxiosError<{ message: string }>) => {
