@@ -38,7 +38,6 @@ export default function ContractHistory({ selectedContract }: any) {
       //   }
       // },
       onError: (e) => {
-        console.log(e)
         errorNotification('Lỗi khi lấy dữ liệu lịch sử hợp đồng')
       }
     }

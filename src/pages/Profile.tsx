@@ -7,8 +7,6 @@ import { useAuth } from '~/context/authProvider'
 const Profile = () => {
   const [tab, setTab] = useState(1)
   const { user } = useAuth()
-  console.log(user)
-
   return (
     <div className='bg-[#e8eaed] h-full overflow-auto'>
       <div className='flex flex-col md:flex-row mt-3 justify-center md:justify-between'>

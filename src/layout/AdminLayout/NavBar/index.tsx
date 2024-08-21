@@ -48,7 +48,6 @@ const NavBar = () => {
     totalPages
   } = useNotification()
   const handleReadNotify = (noti: any) => {
-    console.log('nodi: ', noti)
     if (noti?.typeNotification == 'CONTRACT') {
       navigate(`/contract/detail/${noti?.contractId}`)
     } else if (noti?.typeNotification == 'APPENDICES CONTRACT') {
@@ -95,8 +94,6 @@ const NavBar = () => {
     return moment(time).fromNow()
   }
   const handleButtonClick = (buttonType: string) => {
-    console.log(buttonType)
-
     setActiveButton(buttonType)
   }
 
