@@ -52,16 +52,22 @@ const NavBar = () => {
       ? routerSale
       : routerAdmin
 
-  const handleReadNotify = (id: any, markRead: boolean) => {
-    if (!markRead) {
+  const handleReadNotify = (noti: any) => {
+    console.log('nodi: ', noti)
+    if (noti?.typeNotification == 'CONTRACT') {
+      navigate(`/contract/detail/${noti?.contractId}`)
+    } else if (noti?.typeNotification == 'APPENDICES CONTRACT') {
+      navigate(`/appendices/${noti?.contractId}`)
+    }
+    if (!noti.markRead) {
       setTotalNotRead((totalNotRead: any) => totalNotRead - 1)
       setNotifications(
         notifications?.map((n) => {
-          if (n.id == id) return { ...n, markRead: true }
+          if (n.id == noti.id) return { ...n, markRead: true }
           else return n
         })
       )
-      isReadNotify(id)
+      isReadNotify(noti.id)
     }
   }
   const handleDeleteNotify = (id: any) => {
@@ -262,7 +268,10 @@ const NavBar = () => {
                                   className={`flex flex-col w-[80%] pr-8 py-1 rounded-md transition-colors delay-[200] ${
                                     n.markRead ? 'opacity-60' : ''
                                   }`}
-                                  onClick={() => handleReadNotify(n.id, n.markRead)}
+                                  onClick={() => {
+                                    handleReadNotify(n)
+                                    close()
+                                  }}
                                 >
                                   <div className='font-semibold text-[16px]'>{n.title}</div>
                                   <div className='text-[12px]'>{n.message}</div>

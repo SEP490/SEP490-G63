@@ -262,7 +262,7 @@ const ContractInformation = () => {
                   </tr>
                 </thead>
                 <tbody className='w-full'>
-                  {dataContractCompany?.object.content.map((d: any, index: number) => (
+                  {dataContractCompany?.object?.content?.map((d: any, index: number) => (
                     <tr className=' w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'>
                       {/* <td className='px-2 py-2 text-center'>{data1?.id}</td> */}
                       <td className='px-2 py-2 text-center'>{d.companyName || '___'}</td>
@@ -468,7 +468,7 @@ const ContractInformation = () => {
                         data-ripple-light='true'
                         onClick={handleBanCompany}
                       >
-                        Chấp nhận
+                        Xác nhận
                       </button>
                       <button
                         type='button'

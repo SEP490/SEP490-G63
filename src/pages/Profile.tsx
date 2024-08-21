@@ -20,15 +20,15 @@ const Profile = () => {
             >
               <UserIcon className='h-5 w-5' /> Thông tin cá nhân
             </li>
-            {/* {user?.role === 'ADMIN' && ( */}
-            <li
-              onClick={() => setTab(2)}
-              className={`flex gap-4 justify-start px-3 py-1 cursor-pointer ${tab == 2 ? 'bg-main-color text-white' : 'text-black'} hover:bg-main-color hover:text-white rounded-3xl`}
-            >
-              <DocumentCheckIcon className='h-5 w-5' />
-              Thông tin hợp đồng
-            </li>
-            {/* )} */}
+            {user?.role === 'ADMIN' && (
+              <li
+                onClick={() => setTab(2)}
+                className={`flex gap-4 justify-start px-3 py-1 cursor-pointer ${tab == 2 ? 'bg-main-color text-white' : 'text-black'} hover:bg-main-color hover:text-white rounded-3xl`}
+              >
+                <DocumentCheckIcon className='h-5 w-5' />
+                Thông tin hợp đồng
+              </li>
+            )}
           </ul>
         </div>
         {tab === 1 ? <InformationUser /> : <ContractInformation />}

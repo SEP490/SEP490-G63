@@ -16,6 +16,8 @@ import pdfIcon from '../../../assets/images/pdf-icon.jpg'
 import { getListReason } from '~/services/reason.service'
 type IProps = { id: string | undefined; status: number; closeModal: any; refetch: any; dataC: any; refetchNumber: any }
 const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchNumber }: IProps) => {
+  console.log('dataC', dataC)
+
   const [previewUrls, setPreviewUrls] = useState<string[]>([])
   const [selectedTo, setSelectedTo] = useState<any[]>([])
   const [selectedCc, setSelectedCc] = useState<any[]>([])
@@ -27,13 +29,19 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
   const contractFile = useRef<any>()
   const [files, setFiles] = useState<any>([])
   const [selectedURL, setSelectedURL] = useState('')
-  const { isLoading: loadingSALE, data: dataSale } = useQuery('getUserByRoleSale', () => getUserByPermission('SALE'))
-  const { isLoading: loadingAdmin, data: dataAdmin } = useQuery('getUserByRoleAdmin', () =>
-    getUserByPermission('MANAGER')
+  const { isLoading: loadingSALE, data: dataSale } = useQuery('getUserByRoleSale', () => getUserByPermission('SALE'), {
+    onSuccess: (data) => console.log('dmSale', data)
+  })
+  const { isLoading: loadingAdmin, data: dataAdmin } = useQuery(
+    'getUserByRoleAdmin',
+    () => getUserByPermission('MANAGER'),
+    { onSuccess: (data) => console.log('dmAdmin', data) }
   )
   const reason = useRef(null)
-  const { isLoading: loadingAO, data: dataAO } = useQuery('getUserByRoleAdminOfficer', () =>
-    getUserByPermission('OFFICE_ADMIN')
+  const { isLoading: loadingAO, data: dataAO } = useQuery(
+    'getUserByRoleAdminOfficer',
+    () => getUserByPermission('OFFICE_ADMIN'),
+    { onSuccess: (data) => console.log('dmAO', data) }
   )
   const { data: dataParty } = useQuery('party-data', getParty)
   const { data: dataReason } = useQuery('reason-data', () => getListReason(0, 50))

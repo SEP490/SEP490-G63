@@ -63,7 +63,6 @@ const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy,
     onSuccess: () => {
       setModalSign(false)
       refetch()
-
       successNotification('Ký hợp đồng thành công')
     },
     onError: (error: AxiosError<{ message: string }>) => {
@@ -195,9 +194,9 @@ const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy,
               data-ripple-light='true'
               onClick={() => {
                 uri.current = stageRef.current.toDataURL()
-                handleExport()
-                // setCheckSms(true)
-                // getSMSQuery.mutate(phoneVerify)
+                // handleExport()
+                setCheckSms(true)
+                getSMSQuery.mutate(phoneVerify)
               }}
             >
               Xác nhận

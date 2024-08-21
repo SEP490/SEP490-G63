@@ -28,13 +28,8 @@ const SearchPageResult = () => {
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(10)
   const [data, setData] = useState<any>()
-  const { register, handleSubmit, getValues, setValue } = useForm<FormData>({
+  const { register, handleSubmit, getValues, reset, setValue } = useForm<FormData>({
     defaultValues: { fieldSearch, searchText }
-  })
-
-  const { data: typeData } = useQuery('type-contract', () => getContractType({ page: 0, size: 100, title: '' }), {
-    onSuccess: (res) => console.log(res),
-    onError: (err) => console.log(err)
   })
 
   useEffect(() => {
@@ -46,8 +41,14 @@ const SearchPageResult = () => {
       setTotalPage(result?.object?.totalPages)
     }
   })
+  const handleInputValue = (e: any) => {
+    const inp = e.target.value.replace('/', '').replace('\\', '')
+    reset({
+      searchText: inp
+    })
+  }
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    navigate(`../search/${data.fieldSearch}/${data.searchText}`, { replace: true })
+    navigate(`../search/${data.fieldSearch}/${data.searchText.replace('/', '').replace('\\', '')}`, { replace: true })
     searchQuery.mutate({ fieldSearch: getValues('fieldSearch'), data: { page, size, key: getValues('searchText') } })
   }
   const handlePageChange = (page: any) => {
@@ -90,6 +91,7 @@ const SearchPageResult = () => {
               </div>
             </div>
             <input
+              onInput={handleInputValue}
               {...register('searchText', { required: true })}
               className='border rounded-3xl px-10 py-2 w-[70vw] md:w-[50vw] shadow-sm'
               placeholder='Tìm kiếm'
@@ -115,21 +117,6 @@ const SearchPageResult = () => {
             >
               Hợp đồng cũ
             </div>
-            {searchQuery.isLoading ? (
-              <LoadingSvgV2 />
-            ) : (
-              <select
-                // {...register('')}
-                disabled={searchQuery?.isLoading}
-                className={` block w-[150px] truncate ... rounded-md border-0 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-              >
-                {typeData?.content?.map((d: any) => (
-                  <option value={d.id} className='w-[200px] truncate ...'>
-                    {d.title}
-                  </option>
-                ))}
-              </select>
-            )}
           </div>
           <button type='submit' className='hidden' ref={refForm}></button>
         </form>
@@ -137,7 +124,8 @@ const SearchPageResult = () => {
 
       <div className='h-[calc(100%-100px)] overflow-auto bg-white'>
         <div className='pl-5 text-sky-800 mt-2 rounded-3xl py-1'>
-          👉 Hiển thị {data?.totalElements} kết quả cho "<strong>{getValues('searchText')}</strong>" của
+          👉 Hiển thị {data?.totalElements} kết quả cho "<strong>{getValues('searchText').replace('/', '')}</strong>"
+          của
           {fieldSearch == 'contract' ? ' Hợp đồng mới' : ' Hợp đồng cũ'}
         </div>
         <div className='flex flex-wrap gap-5 px-6 lg:px-52 mt-4'>

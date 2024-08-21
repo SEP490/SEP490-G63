@@ -44,7 +44,7 @@ const PaySlipFormula = () => {
         successNotification('Xóa thành công!!!')
         refetch()
         closeModal()
-      } else errorNotification('Xóathất bại')
+      } else errorNotification('Xóa thất bại')
     },
     onError: (error: AxiosError<{ message: string }>) => {
       errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
@@ -343,7 +343,7 @@ const PaySlipFormula = () => {
                         data-ripple-light='true'
                         onClick={handleDelete}
                       >
-                        {deleteQuery.isLoading ? <LoadingIcon /> : 'Xóa'}
+                        {deleteQuery.isLoading ? <LoadingIcon /> : 'Xác nhận'}
                       </button>
                     </div>
                   </div>

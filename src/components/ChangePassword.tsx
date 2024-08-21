@@ -32,8 +32,10 @@ const ChangePassword = () => {
     onSuccess: (response) => {
       if (response.code == '03') {
         errorNotification('Không tìm thấy người dùng')
-      } else {
+      } else if (response.code == '00') {
         successNotification('Thay đổi mật khẩu thành công')
+      } else {
+        errorNotification('Đổi mật khẩu thất bại')
       }
     }
   })
@@ -158,16 +160,6 @@ const ChangePassword = () => {
             >
               Xác nhận
             </button>
-          </div>
-          <div className='w-full  flex justify-center'>
-            <div
-              onClick={() => {
-                navigate('/')
-              }}
-              className='cursor-pointer text-blue-500 hover:underline w-fit'
-            >
-              Đăng nhập
-            </div>
           </div>
         </form>
       </div>

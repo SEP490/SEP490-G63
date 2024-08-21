@@ -297,7 +297,7 @@ const Department = () => {
                         disabled={deleteDepartmentContract.isLoading}
                         onClick={handleDeleteEmployee}
                       >
-                        {deleteDepartmentContract.isLoading ? <LoadingIcon /> : 'Xóa'}
+                        {deleteDepartmentContract.isLoading ? <LoadingIcon /> : 'Xác nhận'}
                       </button>
                     </div>
                   </div>

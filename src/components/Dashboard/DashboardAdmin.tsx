@@ -10,6 +10,12 @@ const DashboardAdmin = () => {
 
   const { data: dataSuccess } = useQuery('data-get', numberContractSuccess)
   const { data: dataRejectUser } = useQuery('data-get-total-user', totalRejectAndUser)
+  const totalSuccess = useMemo(() => {
+    return dataSuccess?.object.reduce((total: number, e) => {
+      total += parseInt(e.numberOfSuccess)
+      return total
+    }, 0)
+  }, [dataSuccess])
   const optionData = useMemo(() => {
     const list = dataSuccess?.object
     const dataNumber: any[] = []
@@ -22,10 +28,6 @@ const DashboardAdmin = () => {
       series: [
         {
           name: 'Số hợp đồng thành công',
-          data: dataNumber
-        },
-        {
-          name: 'Số hợp đồng thất bại',
           data: dataNumber
         }
       ],
@@ -76,8 +78,8 @@ const DashboardAdmin = () => {
 
   return (
     <div className='w-full h-full flex flex-col pb-6 bg-white overflow-auto'>
-      <div className='w-full flex items-center justify-around gap-10 px-10 my-4'>
-        <div className='w-[300px] h-[100px] flex rounded-lg  flex-col justify-center items-center border-2 shadow-md text-blue-600 hover:text-white hover:bg-blue-600 '>
+      <div className='w-full flex items-center justify-start gap-10 px-10 my-4'>
+        {/* <div className='w-[300px] h-[100px] flex rounded-lg  flex-col justify-center items-center border-2 shadow-md text-blue-600 hover:text-white hover:bg-blue-600 '>
           <label className='text-[20px] font-bold'>Đang xử lí</label>
           <div>60 hợp đồng</div>
         </div>
@@ -88,13 +90,17 @@ const DashboardAdmin = () => {
         <div className='w-[300px] h-[100px] flex rounded-lg  flex-col justify-center items-center border-2 shadow-md text-red-600 hover:text-white hover:bg-red-600'>
           <label className='text-[20px] font-bold'>Thất bại</label>
           <div>60 hợp đồng</div>
-        </div>
+        </div> */}
+        Tổng số hợp đồng thành công: {totalSuccess}
       </div>
       <div className='w-full flex px-6 justify-between'>
         <div className='w-[78%]'>
-          <div>
+          <div className='flex flex-col items-center'>
+            <div className='w-full'>
+              <ReactApexChart options={optionData.options} series={optionData.series} type='bar' height={350} />
+            </div>
+
             <label>Thống kê số hợp đồng thành công theo nhân viên</label>
-            <ReactApexChart options={optionData.options} series={optionData.series} type='bar' height={350} />
           </div>
         </div>
         <div className='w-[20%]'>
