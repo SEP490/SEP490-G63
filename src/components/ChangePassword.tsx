@@ -32,6 +32,8 @@ const ChangePassword = () => {
     onSuccess: (response) => {
       if (response.code == '03') {
         errorNotification('Không tìm thấy người dùng')
+      } else if (response.code == '01') {
+        errorNotification('Mật khẩu cũ không chính xác')
       } else {
         successNotification('Thay đổi mật khẩu thành công')
       }
