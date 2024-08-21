@@ -29,10 +29,6 @@ const DashboardAdmin = () => {
         {
           name: 'Số hợp đồng thành công',
           data: dataNumber
-        },
-        {
-          name: 'Số hợp đồng thất bại',
-          data: dataNumber
         }
       ],
       options: {
@@ -99,9 +95,12 @@ const DashboardAdmin = () => {
       </div>
       <div className='w-full flex px-6 justify-between'>
         <div className='w-[78%]'>
-          <div>
+          <div className='flex flex-col items-center'>
+            <div className='w-full'>
+              <ReactApexChart options={optionData.options} series={optionData.series} type='bar' height={350} />
+            </div>
+
             <label>Thống kê số hợp đồng thành công theo nhân viên</label>
-            <ReactApexChart options={optionData.options} series={optionData.series} type='bar' height={350} />
           </div>
         </div>
         <div className='w-[20%]'>
