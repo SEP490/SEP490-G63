@@ -249,6 +249,21 @@ const AppendicesContract = () => {
       }
     },
     {
+      id: 7,
+      title: (
+        <>
+          <PaperAirplaneIcon className='h-5' /> Gửi khách hàng
+        </>
+      ),
+      color: 'text-teal-700',
+      disable: (d: any) => !d.canSendForCustomer,
+      callback: (d: any) => {
+        setSelectedContract(d)
+        setStatus(7)
+        setChangeStatus(true)
+      }
+    },
+    {
       id: 5,
       title: (
         <>
@@ -286,7 +301,10 @@ const AppendicesContract = () => {
         </>
       ),
       color: 'text-green-700',
-      disable: (d: any) => !d.canSign,
+      disable: (d: any) => {
+        const statusPL = user?.email == d.createdBy ? ['NEW'] : ['WAIT_SIGN_A']
+        return !statusPL.includes(d?.statusCurrent)
+      },
       callback: (d: any) => {
         navigate(`/view/${d?.id}/sign-appendices/1`)
       }
@@ -299,10 +317,31 @@ const AppendicesContract = () => {
         </>
       ),
       color: 'text-orange-700',
-      disable: (d: any) => !d?.canRejectSign,
+      disable: (d: any) => {
+        const statusPL = user?.email == d.createdBy ? [] : ['WAIT_SIGN_A']
+        return !statusPL.includes(d?.statusCurrent)
+      },
       callback: (d: any) => {
         setSelectedContract(d)
         setStatus(6)
+        setChangeStatus(true)
+      }
+    },
+    {
+      id: 6,
+      title: (
+        <>
+          <PaperAirplaneIcon className='h-5' /> Gửi khách hàng
+        </>
+      ),
+      color: 'text-teal-700',
+      disable: (d: any) => {
+        const statusPL = user?.email == d.createdBy ? ['SIGN_A_OK'] : ['']
+        return !statusPL.includes(d?.statusCurrent)
+      },
+      callback: (d: any) => {
+        setSelectedContract(d)
+        setStatus(7)
         setChangeStatus(true)
       }
     },
@@ -314,7 +353,10 @@ const AppendicesContract = () => {
         </>
       ),
       color: 'text-violet-700',
-      disable: (d: any) => !d.canUpdate,
+      disable: (d: any) => {
+        const statusPL = user?.email == d.createdBy ? ['NEW', 'SIGN_B_FAIL'] : ['SIGN_A_FAIL']
+        return !statusPL.includes(d?.statusCurrent)
+      },
       callback: (d: any) => {
         setEditModal(true)
         setSelectedContract(d)
@@ -328,7 +370,10 @@ const AppendicesContract = () => {
         </>
       ),
       color: 'text-red-700',
-      disable: (d: any) => !d.canDelete,
+      disable: (d: any) => {
+        const statusPL = user?.email == d.createdBy ? ['NEW', 'SIGN_B_FAIL'] : ['SIGN_A_FAIL']
+        return !statusPL.includes(d?.statusCurrent)
+      },
       callback: (d: any) => {
         setDeleteModal(true)
         setSelectedContract(d)

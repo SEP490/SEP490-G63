@@ -419,7 +419,7 @@ const ViewDetailContract = () => {
             <div className='w-full'>Người duyệt: {detailContract?.approvedBy}</div>
             <div className='w-full'>
               Trạng thái:
-              <span className={`font-semibold ${statusObject[detailContract?.statusCurrent]?.color}`}>
+              <span className={`font-semibold ml-1 ${statusObject[detailContract?.statusCurrent]?.color}`}>
                 {detailContract?.statusCurrent
                   ? statusObject[detailContract?.statusCurrent]?.title?.[permissionUser]
                   : ''}

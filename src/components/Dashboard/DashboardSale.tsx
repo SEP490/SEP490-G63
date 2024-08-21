@@ -18,13 +18,15 @@ const DashboardSale = () => {
     const dataNumber: any[] = []
     const dataLabel: any[] = []
     list?.forEach((element: any) => {
-      dataNumber.push(element?.numberOfSuccess)
-      dataLabel.push(element?.createBy)
+      if (element?.reasonTitle != null && element?.reasonTitle != 'null') {
+        dataNumber.push(element?.numberOfRejected)
+        dataLabel.push(element?.reasonTitle)
+      }
     })
     return {
       series: [
         {
-          name: 'Nguyên nhân',
+          name: 'Số lượng',
           data: dataNumber
         }
       ],
@@ -79,13 +81,15 @@ const DashboardSale = () => {
         <StepProgressBar status={statusContract} />
       </div>
       <div className='w-full flex px-6 justify-between'>
-        <div className='w-[78%]'>
-          <div>
-            <label>Thống kê số hợp đồng thành công theo nhân viên</label>
-            <ReactApexChart options={optionData.options} series={optionData.series} type='bar' height={350} />
+        <div className='md:w-[78%] w-full'>
+          <div className='flex flex-col items-center'>
+            <div className='w-full'>
+              <ReactApexChart options={optionData.options} series={optionData.series} type='bar' height={350} />
+            </div>
+            <label>Thống kê nguyên nhân bị từ chối hợp đồng</label>
           </div>
         </div>
-        <div className='w-[20%]'>
+        <div className='w-[20%] md:visible invisible'>
           <div className='w-full h-[200px] border-2 rounded-2xl flex flex-col items-center justify-around'>
             <TypeAnimation
               sequence={['Xin chào', 2000, 'Chúc bạn...', 2000, 'Một ngày làm việc vui vẻ', 2000]}
