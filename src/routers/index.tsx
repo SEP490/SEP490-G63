@@ -390,6 +390,16 @@ const Routes = () => {
           )
         },
         {
+          path: '/contract/detail/:id',
+          element: (
+            <UserLayout>
+              <AdminOfficer>
+                <ViewDetailContract />
+              </AdminOfficer>
+            </UserLayout>
+          )
+        },
+        {
           path: '/contract',
           element: (
             <UserLayout>
@@ -523,6 +533,16 @@ const Routes = () => {
             <UserLayout>
               <Sale>
                 <ViewSignAppendicesContract />
+              </Sale>
+            </UserLayout>
+          )
+        },
+        {
+          path: '/contract/detail/:id',
+          element: (
+            <UserLayout>
+              <Sale>
+                <ViewDetailContract />
               </Sale>
             </UserLayout>
           )
@@ -685,14 +705,6 @@ const Routes = () => {
       element: (
         <div className='w-[100vw] h-[100vh]'>
           <ViewSignContract />
-        </div>
-      )
-    },
-    {
-      path: '/example',
-      element: (
-        <div className='w-[100vw] h-[100vh]'>
-          <SelectAutoComplete />
         </div>
       )
     },
