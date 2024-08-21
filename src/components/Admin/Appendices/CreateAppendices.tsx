@@ -93,7 +93,6 @@ const CreateAppendices = () => {
           navigate(`/appendices/${id}`)
         }
       } catch (e) {
-        console.log(e)
         errorNotification('Tạo phụ lúc thất bại')
       }
     }

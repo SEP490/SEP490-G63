@@ -43,8 +43,6 @@ const ContractInformation = () => {
   const { data, isError, isLoading } = useQuery('get-contract-admin', () => getContractAdmin(user?.email), {
     enabled: shouldFetch && !!user?.email,
     onSuccess: () => {
-      console.log('lll: ', user?.email)
-
       successNotification('Gửi mail thành công')
       setShouldFetch(false)
     },
@@ -58,10 +56,7 @@ const ContractInformation = () => {
     (emailAndCode: { email: string; code: string }) => getContract(emailAndCode.email, emailAndCode.code),
     {
       onSuccess: (response) => {
-        console.log('dm: ' + JSON.stringify(response))
-
         if (response.code == '00') {
-          console.log('dmk: ' + JSON.stringify(response.object))
           setIsSend(true)
           setData1(response.object)
           successNotification('Xác minh thành công')
@@ -89,7 +84,6 @@ const ContractInformation = () => {
     {
       enabled: canFetchContractCompany && !!user?.email,
       onSuccess: (response) => {
-        console.log('kk: ', response)
         setTotalPage(response?.object?.totalPages)
       },
       onError: () => {}

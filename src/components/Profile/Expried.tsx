@@ -14,7 +14,6 @@ const Expried = ({ closeModal, selectedCustomer, bankModal, setBankModal, bankIm
   const [isConfirm, setIsConfirm] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState<any>()
   const [extendData, setExtendData] = useState<any>()
-  console.log('selectedCustomer: ', selectedCustomer)
 
   const {
     register,
@@ -28,8 +27,6 @@ const Expried = ({ closeModal, selectedCustomer, bankModal, setBankModal, bankIm
     (params: { companyId: string; pricePlanId: string; payed: boolean }) => extendService(params),
     {
       onSuccess: (response) => {
-        console.log('as: ', response.object)
-
         setExtendData(response?.object)
         setIsConfirm(true)
       },
@@ -43,8 +40,6 @@ const Expried = ({ closeModal, selectedCustomer, bankModal, setBankModal, bankIm
     (params: { orderId: string; amount: number }) => handleBankTransaction(params),
     {
       onSuccess: (response) => {
-        console.log('vm: ', response)
-
         setBankImage(response.object.data.qrDataURL)
         successNotification('Vui lòng quét mã QR để thanh toán!')
         refetch()
@@ -68,8 +63,6 @@ const Expried = ({ closeModal, selectedCustomer, bankModal, setBankModal, bankIm
   }
 
   const handleBankTransfer = () => {
-    console.log('extendData: ', extendData)
-
     closeModal()
     setBankModal(true)
 
