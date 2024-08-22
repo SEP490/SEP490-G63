@@ -173,6 +173,8 @@ const CreateContract = () => {
       }
     }
   })
+  console.log(formInfoPartB.watch('taxNumber'))
+
   const handleCheckPhoneB = async () => {
     setLoadingPhoneB(true)
     try {
@@ -730,9 +732,8 @@ const CreateContract = () => {
                   placeholder='Mã số thuế'
                   selected={field.value}
                   onChange={async (data) => {
-                    field.onChange(data.value)
-
                     await handleAutoFillPartyB()
+                    field.onChange(data.value)
                   }}
                 />
               )}
