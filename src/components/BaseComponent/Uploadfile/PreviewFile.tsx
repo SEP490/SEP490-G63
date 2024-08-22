@@ -112,7 +112,6 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
             return text
           }
           const dataScrip = await Promise.all(listUrl.map(async (d: any) => doOCR(d.file)))
-          console.log(dataScrip)
 
           formData.append(
             'content',
@@ -246,7 +245,6 @@ const PreviewFile = ({ files, handleCloseModal, inputFileRef, inputPdfRef, fileT
                   onChange={(date) => field.onChange(date)}
                   disabled={submitOldContract?.isLoading}
                   selected={field.value}
-                 
                 />
               )}
             />

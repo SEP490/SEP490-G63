@@ -53,7 +53,6 @@ const NavBar = () => {
       : routerAdmin
 
   const handleReadNotify = (noti: any) => {
-    console.log('nodi: ', noti)
     if (noti?.typeNotification == 'CONTRACT') {
       navigate(`/contract/detail/${noti?.contractId}`)
     } else if (noti?.typeNotification == 'APPENDICES CONTRACT') {
