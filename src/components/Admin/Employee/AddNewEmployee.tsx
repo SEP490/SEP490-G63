@@ -17,7 +17,7 @@ type FromType = {
   department: string
   dob: string
   email: string
-  gender: number
+  gender: boolean
   identificationNumber: string
   name: string
   phone: string
@@ -218,8 +218,8 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
           className={` block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
           {...register('gender')}
         >
-          <option value={0}>Nam</option>
-          <option value={1}>Nữ</option>
+          <option value={'false'}>Nam</option>
+          <option value={'true'}>Nữ</option>
         </select>
       </div>
       <div className='w-[100%] mt-5 relative'>

@@ -9,7 +9,7 @@ type FromType = {
   department: string
   dob: string
   email: string
-  gender: number
+  gender: boolean
   identificationNumber: string
   name: string
   phone: string
@@ -137,8 +137,8 @@ const ViewEmployee = ({ data }: IProp) => {
           disabled
           hidden
         >
-          <option value={0}>Nam</option>
-          <option value={1}>Nữ</option>
+          <option value={'false'}>Nam</option>
+          <option value={'true'}>Nữ</option>
         </select>
       </div>
       <div className='w-[100%] mt-5 relative'>
