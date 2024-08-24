@@ -34,6 +34,8 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
     register,
     handleSubmit,
     getValues,
+    setValue,
+    watch,
     formState: { errors }
   } = useForm<FromType>({
     defaultValues: {
@@ -42,6 +44,7 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
       dob: data?.dob != null ? moment(data?.dob).format('YYYY-MM-DD') : data?.dob
     }
   })
+  console.log(watch('permissions'))
   const { successNotification, errorNotification } = useToast()
   const editEmployee = useMutation(updateProfile, {
     onSuccess: (response) => {
@@ -233,15 +236,21 @@ const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
         </label>
         <div className='flex flex-wrap w-[70%] justify-between'>
           {permissionsList?.map((e) => (
-            <div className='flex w-[100%] md:w-[48%] gap-4 items-center' key={e.id}>
+            <div className='relative flex w-[100%] md:w-[48%] gap-4 items-center' key={e.id}>
               <input
                 type='radio'
+                name='permissions'
                 className='rounded-lg'
-                {...register('permissions')}
-                defaultChecked={e.value == getValues('permissions')}
                 value={e.value}
+                defaultChecked={e.value == getValues('permissions')}
+                onChange={() => {
+                  setValue('permissions', e.value)
+                }}
               />
-              <label>{e.title}</label>
+              <label className='flex items-center gap-1'>
+                {e.title}
+                <TooltipComponent content={<div>{e.tooltip}</div>} className='w-4 h-4 cursor-pointer' style='dark' />
+              </label>
             </div>
           ))}
         </div>

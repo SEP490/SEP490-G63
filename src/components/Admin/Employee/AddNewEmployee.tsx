@@ -35,6 +35,7 @@ const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
     handleSubmit,
     setValue,
     getValues,
+    watch,
     formState: { errors }
   } = useForm<FromType>({ defaultValues: { permissions: 'SALE' } })
   const { successNotification, errorNotification } = useToast()
