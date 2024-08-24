@@ -125,7 +125,9 @@ const PaySlipFormula = () => {
                           <td className='px-3 py-4' align='center'>
                             {formatPrice(d.fromValueContract) == 0 && formatPrice(d.toValueContract) != 0
                               ? `< ${formatPrice(d.toValueContract)}`
-                              : `${formatPrice(d.fromValueContract)} - ${formatPrice(d.toValueContract)}`}
+                              : index + 1 == data?.object?.content?.length
+                                ? `${formatPrice(d.fromValueContract)} <`
+                                : `${formatPrice(d.fromValueContract)} - ${formatPrice(d.toValueContract)}`}
                           </td>
                           <td className='px-3 py-4' align='center'>
                             {formatPrice(d.baseSalary)}
