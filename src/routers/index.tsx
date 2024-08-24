@@ -39,6 +39,7 @@ import CompanyInformation from '~/components/Company/CompanyInformation.tsx'
 import ListReason from '~/components/Admin/Reason/ListReason.tsx'
 import DashboardAdmin from '~/components/Dashboard/DashboardAdmin.tsx'
 import SelectAutoComplete from '~/components/BaseComponent/SelectAutoComplete.tsx'
+import NotifyProvider from '~/context/notiProvider.tsx'
 
 const Routes = () => {
   const { token, user } = useAuth()
@@ -52,203 +53,253 @@ const Routes = () => {
         {
           path: '/',
           element: (
-            <AdminLayout>
-              <SearchPage />
-            </AdminLayout>
+            <NotifyProvider>
+              <AdminLayout>
+                <SearchPage />
+              </AdminLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/dashboard',
           element: (
-            <AdminLayout>
-              <DashboardAdmin />
-            </AdminLayout>
+            <NotifyProvider>
+              <AdminLayout>
+                <DashboardAdmin />
+              </AdminLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/appendices-create/:id',
           element: (
-            <AdminLayout>
-              <CreateAppendices />
-            </AdminLayout>
+            <NotifyProvider>
+              <AdminLayout>
+                <CreateAppendices />
+              </AdminLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/appendices/:id',
           element: (
-            <AdminLayout>
-              <AppendicesContract />
-            </AdminLayout>
+            <NotifyProvider>
+              <AdminLayout>
+                <AppendicesContract />
+              </AdminLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/manage-reason',
           element: (
-            <AdminLayout>
-              <ListReason />
-            </AdminLayout>
+            <NotifyProvider>
+              <AdminLayout>
+                <ListReason />
+              </AdminLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/department',
           element: (
-            <AdminLayout>
-              <Department />
-            </AdminLayout>
+            <NotifyProvider>
+              <AdminLayout>
+                <Department />
+              </AdminLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/view/:id/sign/:customer',
           element: (
-            <AdminLayout>
-              <ViewSignContract />
-            </AdminLayout>
+            <NotifyProvider>
+              <AdminLayout>
+                <ViewSignContract />
+              </AdminLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/view/:id/sign-appendices/:customer',
           element: (
-            <AdminLayout>
-              <ViewSignAppendicesContract />
-            </AdminLayout>
+            <NotifyProvider>
+              <AdminLayout>
+                <ViewSignAppendicesContract />
+              </AdminLayout>{' '}
+            </NotifyProvider>
           )
         },
         {
           path: '/search/:fieldSearch/:searchText',
           element: (
-            <AdminLayout>
-              <SearchPageResult />
-            </AdminLayout>
+            <NotifyProvider>
+              <AdminLayout>
+                <SearchPageResult />
+              </AdminLayout>{' '}
+            </NotifyProvider>
           )
         },
         {
           path: '/profile',
           element: (
-            <AdminLayout>
-              <Profile />
-            </AdminLayout>
+            <NotifyProvider>
+              <AdminLayout>
+                <Profile />
+              </AdminLayout>{' '}
+            </NotifyProvider>
           )
         },
         {
           path: '/change-password',
           element: (
-            <AdminLayout>
-              <ChangePassword />
-            </AdminLayout>
+            <NotifyProvider>
+              <AdminLayout>
+                <ChangePassword />
+              </AdminLayout>{' '}
+            </NotifyProvider>
           )
         },
         {
           path: '/employee',
           element: (
-            <AdminLayout>
-              <Employee />
-            </AdminLayout>
+            <NotifyProvider>
+              <AdminLayout>
+                <Employee />
+              </AdminLayout>{' '}
+            </NotifyProvider>
           )
         },
         {
           path: '/old-contract',
           element: (
-            <AdminLayout>
-              <OldContract />
-            </AdminLayout>
+            <NotifyProvider>
+              <AdminLayout>
+                <OldContract />
+              </AdminLayout>{' '}
+            </NotifyProvider>
           )
         },
         {
           path: '/template-contract',
           element: (
-            <AdminLayout>
-              <TemplateContract />
-            </AdminLayout>
+            <NotifyProvider>
+              <AdminLayout>
+                <TemplateContract />
+              </AdminLayout>{' '}
+            </NotifyProvider>
           )
         },
         {
           path: '/type-contract',
           element: (
-            <AdminLayout>
-              <TypeContract />
-            </AdminLayout>
+            <NotifyProvider>
+              <AdminLayout>
+                <TypeContract />
+              </AdminLayout>{' '}
+            </NotifyProvider>
           )
         },
         {
           path: '/contract',
           element: (
-            <AdminLayout>
-              <Contract />
-            </AdminLayout>
+            <NotifyProvider>
+              <AdminLayout>
+                <Contract />
+              </AdminLayout>{' '}
+            </NotifyProvider>
           )
         },
         {
           path: '/company',
           element: (
-            <AdminLayout>
-              <CompanyInformation />
-            </AdminLayout>
+            <NotifyProvider>
+              <AdminLayout>
+                <CompanyInformation />
+              </AdminLayout>{' '}
+            </NotifyProvider>
           )
         },
         {
           path: '/pay-slip',
           element: (
-            <AdminLayout>
-              <PaySlipFormula />
-            </AdminLayout>
+            <NotifyProvider>
+              <AdminLayout>
+                <PaySlipFormula />
+              </AdminLayout>{' '}
+            </NotifyProvider>
           )
         },
         {
           path: '/contract/detail/:id',
           element: (
-            <AdminLayout>
-              <ViewDetailContract />
-            </AdminLayout>
+            <NotifyProvider>
+              <AdminLayout>
+                <ViewDetailContract />
+              </AdminLayout>{' '}
+            </NotifyProvider>
           )
         },
         {
           path: '/contract/create',
           element: (
-            <AdminLayout>
-              <CreateContract />
-            </AdminLayout>
+            <NotifyProvider>
+              <AdminLayout>
+                <CreateContract />
+              </AdminLayout>{' '}
+            </NotifyProvider>
           )
         },
         {
           path: '/template-contract/create',
           element: (
-            <AdminLayout>
-              <CreateTemplateContract />
-            </AdminLayout>
+            <NotifyProvider>
+              <AdminLayout>
+                <CreateTemplateContract />
+              </AdminLayout>{' '}
+            </NotifyProvider>
           )
         },
         {
           path: '/contract/history/:id',
           element: (
-            <AdminLayout>
-              <ContractHistory />
-            </AdminLayout>
+            <NotifyProvider>
+              <AdminLayout>
+                <ContractHistory />
+              </AdminLayout>{' '}
+            </NotifyProvider>
           )
         },
         {
           path: '/salary',
           element: (
-            <AdminLayout>
-              <FormProvider>
-                <Salary />
-              </FormProvider>
-            </AdminLayout>
+            <NotifyProvider>
+              <AdminLayout>
+                <FormProvider>
+                  <Salary />
+                </FormProvider>
+              </AdminLayout>{' '}
+            </NotifyProvider>
           )
         },
         {
           path: '/logout',
           element: (
-            <AdminLayout>
-              <Logout />
-            </AdminLayout>
+            <NotifyProvider>
+              <AdminLayout>
+                <Logout />
+              </AdminLayout>{' '}
+            </NotifyProvider>
           )
         },
         {
           path: '*',
           element: (
-            <AdminLayout>
-              <Error />
-            </AdminLayout>
+            <NotifyProvider>
+              <AdminLayout>
+                <Error />
+              </AdminLayout>
+            </NotifyProvider>
           )
         }
       ]
@@ -262,191 +313,229 @@ const Routes = () => {
         {
           path: '/',
           element: (
-            <UserLayout>
-              <AdminOfficer>
-                <SearchPage />
-              </AdminOfficer>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <AdminOfficer>
+                  <SearchPage />
+                </AdminOfficer>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/appendices-create/:id',
           element: (
-            <UserLayout>
-              <AdminOfficer>
-                <CreateAppendices />
-              </AdminOfficer>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <AdminOfficer>
+                  <CreateAppendices />
+                </AdminOfficer>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/appendices/:id',
           element: (
-            <UserLayout>
-              <AdminOfficer>
-                <AppendicesContract />
-              </AdminOfficer>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <AdminOfficer>
+                  <AppendicesContract />
+                </AdminOfficer>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/profile',
           element: (
-            <UserLayout>
-              <AdminOfficer>
-                <Profile />
-              </AdminOfficer>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <AdminOfficer>
+                  <Profile />
+                </AdminOfficer>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/change-password',
           element: (
-            <UserLayout>
-              <AdminOfficer>
-                <ChangePassword />
-              </AdminOfficer>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <AdminOfficer>
+                  <ChangePassword />
+                </AdminOfficer>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/search/:fieldSearch/:searchText',
           element: (
-            <UserLayout>
-              <AdminOfficer>
-                <SearchPageResult />
-              </AdminOfficer>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <AdminOfficer>
+                  <SearchPageResult />
+                </AdminOfficer>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/type-contract',
           element: (
-            <UserLayout>
-              <AdminOfficer>
-                <TypeContract />
-              </AdminOfficer>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <AdminOfficer>
+                  <TypeContract />
+                </AdminOfficer>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/template-contract/create',
           element: (
-            <UserLayout>
-              <AdminOfficer>
-                <CreateTemplateContract />
-              </AdminOfficer>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <AdminOfficer>
+                  <CreateTemplateContract />
+                </AdminOfficer>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/view/:id/sign/:customer',
           element: (
-            <UserLayout>
-              <AdminOfficer>
-                <ViewSignContract />
-              </AdminOfficer>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <AdminOfficer>
+                  <ViewSignContract />
+                </AdminOfficer>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/view/:id/sign-appendices/:customer',
           element: (
-            <UserLayout>
-              <AdminOfficer>
-                <ViewSignAppendicesContract />
-              </AdminOfficer>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <AdminOfficer>
+                  <ViewSignAppendicesContract />
+                </AdminOfficer>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/employee',
           element: (
-            <UserLayout>
-              <AdminOfficer>
-                <Employee />
-              </AdminOfficer>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <AdminOfficer>
+                  <Employee />
+                </AdminOfficer>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/old-contract',
           element: (
-            <UserLayout>
-              <AdminOfficer>
-                <OldContract />
-              </AdminOfficer>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <AdminOfficer>
+                  <OldContract />
+                </AdminOfficer>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/template-contract',
           element: (
-            <UserLayout>
-              <AdminOfficer>
-                <TemplateContract />
-              </AdminOfficer>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <AdminOfficer>
+                  <TemplateContract />
+                </AdminOfficer>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/contract/detail/:id',
           element: (
-            <UserLayout>
-              <AdminOfficer>
-                <ViewDetailContract />
-              </AdminOfficer>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <AdminOfficer>
+                  <ViewDetailContract />
+                </AdminOfficer>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/contract',
           element: (
-            <UserLayout>
-              <AdminOfficer>
-                <Contract />
-              </AdminOfficer>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <AdminOfficer>
+                  <Contract />
+                </AdminOfficer>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/contract/create',
           element: (
-            <UserLayout>
-              <AdminOfficer>
-                <CreateContract />
-              </AdminOfficer>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <AdminOfficer>
+                  <CreateContract />
+                </AdminOfficer>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/salary',
           element: (
-            <UserLayout>
-              <AdminOfficer>
-                <Salary />
-              </AdminOfficer>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <AdminOfficer>
+                  <Salary />
+                </AdminOfficer>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/logout',
           element: (
-            <UserLayout>
-              <AdminOfficer>
-                <Logout />
-              </AdminOfficer>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <AdminOfficer>
+                  <Logout />
+                </AdminOfficer>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '*',
           element: (
-            <UserLayout>
-              <AdminOfficer>
-                <Error />
-              </AdminOfficer>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <AdminOfficer>
+                  <Error />
+                </AdminOfficer>
+              </UserLayout>
+            </NotifyProvider>
           )
         }
       ]
@@ -460,191 +549,229 @@ const Routes = () => {
         {
           path: '/',
           element: (
-            <UserLayout>
-              <Sale>
-                <SearchPage />
-              </Sale>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <Sale>
+                  <SearchPage />
+                </Sale>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/dashboard',
           element: (
-            <UserLayout>
-              <Sale>
-                <DashboardSale />
-              </Sale>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <Sale>
+                  <DashboardSale />
+                </Sale>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/appendices-create/:id',
           element: (
-            <UserLayout>
-              <Sale>
-                <CreateAppendices />
-              </Sale>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <Sale>
+                  <CreateAppendices />
+                </Sale>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/appendices/:id',
           element: (
-            <UserLayout>
-              <Sale>
-                <AppendicesContract />
-              </Sale>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <Sale>
+                  <AppendicesContract />
+                </Sale>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/profile',
           element: (
-            <UserLayout>
-              <Sale>
-                <Profile />
-              </Sale>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <Sale>
+                  <Profile />
+                </Sale>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/change-password',
           element: (
-            <UserLayout>
-              <Sale>
-                <ChangePassword />
-              </Sale>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <Sale>
+                  <ChangePassword />
+                </Sale>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/view/:id/sign/:customer',
           element: (
-            <UserLayout>
-              <Sale>
-                <ViewSignContract />
-              </Sale>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <Sale>
+                  <ViewSignContract />
+                </Sale>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/view/:id/sign-appendices/:customer',
           element: (
-            <UserLayout>
-              <Sale>
-                <ViewSignAppendicesContract />
-              </Sale>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <Sale>
+                  <ViewSignAppendicesContract />
+                </Sale>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/contract/detail/:id',
           element: (
-            <UserLayout>
-              <Sale>
-                <ViewDetailContract />
-              </Sale>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <Sale>
+                  <ViewDetailContract />
+                </Sale>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/search/:fieldSearch/:searchText',
           element: (
-            <UserLayout>
-              <Sale>
-                <SearchPageResult />
-              </Sale>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <Sale>
+                  <SearchPageResult />
+                </Sale>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/type-contract',
           element: (
-            <UserLayout>
-              <Sale>
-                <TypeContract />
-              </Sale>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <Sale>
+                  <TypeContract />
+                </Sale>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/template-contract/create',
           element: (
-            <UserLayout>
-              <Sale>
-                <CreateTemplateContract />
-              </Sale>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <Sale>
+                  <CreateTemplateContract />
+                </Sale>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/old-contract',
           element: (
-            <UserLayout>
-              <Sale>
-                <OldContract />
-              </Sale>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <Sale>
+                  <OldContract />
+                </Sale>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/template-contract',
           element: (
-            <UserLayout>
-              <Sale>
-                <TemplateContract />
-              </Sale>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <Sale>
+                  <TemplateContract />
+                </Sale>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/contract',
           element: (
-            <UserLayout>
-              <Sale>
-                <Contract />
-              </Sale>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <Sale>
+                  <Contract />
+                </Sale>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/contract/create',
           element: (
-            <UserLayout>
-              <Sale>
-                <CreateContract />
-              </Sale>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <Sale>
+                  <CreateContract />
+                </Sale>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/salary',
           element: (
-            <UserLayout>
-              <Sale>
-                <Salary />
-              </Sale>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <Sale>
+                  <Salary />
+                </Sale>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/logout',
           element: (
-            <UserLayout>
-              <Sale>
-                <Logout />
-              </Sale>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <Sale>
+                  <Logout />
+                </Sale>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '*',
           element: (
-            <UserLayout>
-              <Sale>
-                <Error />
-              </Sale>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <Sale>
+                  <Error />
+                </Sale>
+              </UserLayout>
+            </NotifyProvider>
           )
         }
       ]
@@ -658,41 +785,49 @@ const Routes = () => {
         {
           path: '/',
           element: (
-            <UserLayout>
-              <StaffOfficer>
-                <HomeUser />
-              </StaffOfficer>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <StaffOfficer>
+                  <HomeUser />
+                </StaffOfficer>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/logout',
           element: (
-            <UserLayout>
-              <StaffOfficer>
-                <Logout />
-              </StaffOfficer>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <StaffOfficer>
+                  <Logout />
+                </StaffOfficer>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '/profile',
           element: (
-            <UserLayout>
-              <StaffOfficer>
-                <Profile />
-              </StaffOfficer>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <StaffOfficer>
+                  <Profile />
+                </StaffOfficer>
+              </UserLayout>
+            </NotifyProvider>
           )
         },
         {
           path: '*',
           element: (
-            <UserLayout>
-              <StaffOfficer>
-                <Error />
-              </StaffOfficer>
-            </UserLayout>
+            <NotifyProvider>
+              <UserLayout>
+                <StaffOfficer>
+                  <Error />
+                </StaffOfficer>
+              </UserLayout>
+            </NotifyProvider>
           )
         }
       ]

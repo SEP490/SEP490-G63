@@ -10,13 +10,11 @@ import LoadingPage from './components/shared/LoadingPage/LoadingPage.tsx'
 function App() {
   return (
     <AuthProvider>
-      <NotifyProvider>
-        <DndProvider backend={HTML5Backend}>
-          <Suspense fallback={<LoadingPage />}>
-            <Routes />
-          </Suspense>
-        </DndProvider>
-      </NotifyProvider>
+      <DndProvider backend={HTML5Backend}>
+        <Suspense fallback={<LoadingPage />}>
+          <Routes />
+        </Suspense>
+      </DndProvider>
     </AuthProvider>
   )
 }
