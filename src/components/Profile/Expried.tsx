@@ -14,7 +14,6 @@ const Expried = ({ closeModal, selectedCustomer, bankModal, setBankModal, bankIm
   const [isConfirm, setIsConfirm] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState<any>()
   const [extendData, setExtendData] = useState<any>()
-  console.log('selectedCustomer: ', selectedCustomer)
 
   const {
     register,
@@ -28,10 +27,14 @@ const Expried = ({ closeModal, selectedCustomer, bankModal, setBankModal, bankIm
     (params: { companyId: string; pricePlanId: string; payed: boolean }) => extendService(params),
     {
       onSuccess: (response) => {
-        console.log('as: ', response.object)
+        console.log('response', response)
 
-        setExtendData(response?.object)
-        setIsConfirm(true)
+        if (response.code == '00') {
+          setExtendData(response?.object)
+          setIsConfirm(true)
+        } else if (response.code == '01') {
+          errorNotification('Dịch vụ đã được gia hạn trước đó!')
+        } else errorNotification('Có lỗi xảy ra trong quá trình gia hạn dịch vụ!')
       },
       onError: () => {
         errorNotification('Có lỗi xảy ra trong quá trình gia hạn dịch vụ!')
@@ -43,8 +46,6 @@ const Expried = ({ closeModal, selectedCustomer, bankModal, setBankModal, bankIm
     (params: { orderId: string; amount: number }) => handleBankTransaction(params),
     {
       onSuccess: (response) => {
-        console.log('vm: ', response)
-
         setBankImage(response.object.data.qrDataURL)
         successNotification('Vui lòng quét mã QR để thanh toán!')
         refetch()
@@ -56,9 +57,9 @@ const Expried = ({ closeModal, selectedCustomer, bankModal, setBankModal, bankIm
   )
 
   const onSubmit: SubmitHandler<FormData> = async () => {
-    if (selectedCustomer?.companyId && selectedPlan?.id) {
+    if (selectedCustomer.id && selectedPlan?.id) {
       extendServiceMutation.mutate({
-        companyId: selectedCustomer?.companyId,
+        companyId: selectedCustomer.id,
         pricePlanId: selectedPlan?.id,
         payed: false
       })
@@ -68,8 +69,6 @@ const Expried = ({ closeModal, selectedCustomer, bankModal, setBankModal, bankIm
   }
 
   const handleBankTransfer = () => {
-    console.log('extendData: ', extendData)
-
     closeModal()
     setBankModal(true)
 

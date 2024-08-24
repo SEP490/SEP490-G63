@@ -84,8 +84,6 @@ const Salary = () => {
     },
     {
       onSuccess: (result) => {
-        console.log(result)
-
         setTotalPage(result?.object?.totalPages)
       },
       onError: (error: AxiosError<{ message: string }>) => {

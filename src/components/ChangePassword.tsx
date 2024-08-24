@@ -42,6 +42,7 @@ const ChangePassword = () => {
   const onSubmit = async (data: any) => {
     changePasswordQuery.mutate(data)
   }
+
   return (
     <div className='bg-[#e8eaed] h-full flex justify-center items-center'>
       <div className='w-[90%] sm:w-[80%] min-h-[90%] bg-white rounded-md flex justify-around flex-wrap items-center'>

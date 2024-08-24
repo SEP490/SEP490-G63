@@ -203,18 +203,19 @@ const CreateContract = () => {
     }
     setLoadingMailB(false)
   }
-  const handleAutoFillPartyB = async (data) => {
-    if (data != '') {
+  const handleAutoFillPartyB = async () => {
+    const result = await formInfoPartB.trigger('taxNumber')
+    if (result) {
       setLoadingB(true)
       try {
-        const response = await getDataByTaxNumber(data)
+        const taxNumber = formInfoPartB.getValues('taxNumber')
+        const response = await getDataByTaxNumber(taxNumber)
         if (response.success && response.object) {
           formInfoPartB.reset(response.object)
           disableFormB.current = true
         } else {
           disableFormB.current = false
           formInfoPartB.reset({
-            taxNumber: data,
             name: '',
             email: '',
             address: '',
@@ -720,22 +721,22 @@ const CreateContract = () => {
                   message: 'Mã số thuế không hợp lệ'
                 }
               }}
-              render={({ field }) => {
-                return (
-                  <AsyncCreatableSelect
-                    cacheOptions
-                    className='block w-full disabled:bg-gray-200  rounded-md border-0 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 z-30'
-                    loadOptions={promiseOptions}
-                    defaultOptions={taxList}
-                    styles={customStyles}
-                    placeholder='Mã số thuế'
-                    selected={field.value}
-                    onChange={async (data) => {
-                      await handleAutoFillPartyB(data.value)
-                    }}
-                  />
-                )
-              }}
+              render={({ field }) => (
+                <AsyncCreatableSelect
+                  cacheOptions
+                  className='block w-full disabled:bg-gray-200  rounded-md border-0 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 z-30'
+                  loadOptions={promiseOptions}
+                  defaultOptions={taxList}
+                  styles={customStyles}
+                  placeholder='Mã số thuế'
+                  selected={field.value}
+                  onChange={async (data) => {
+                    field.onChange(data.value)
+
+                    await handleAutoFillPartyB()
+                  }}
+                />
+              )}
             />
             <div className='absolute z-50 right-12 top-0 h-full flex items-center'>{loadingB && <LoadingSvgV2 />}</div>
           </div>
