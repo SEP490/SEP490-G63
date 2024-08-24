@@ -2,7 +2,7 @@ import { useQuery, useMutation } from 'react-query'
 import { useAuth } from '~/context/authProvider'
 import { banContract, getCompanyContract, getContract, getContractAdmin } from '~/services/admin.contract.service'
 import Loading from '../shared/Loading/Loading'
-import { Fragment, useState } from 'react'
+import { Fragment, SetStateAction, useEffect, useRef, useState } from 'react'
 import moment from 'moment'
 import { Dialog, Menu, Transition } from '@headlessui/react'
 import { ArrowPathIcon, EyeIcon, LockOpenIcon, NoSymbolIcon, XMarkIcon } from '@heroicons/react/24/outline'
@@ -32,6 +32,9 @@ const ContractInformation = () => {
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(10)
   const [totalPage, setTotalPage] = useState(1)
+  const prevPageRef = useRef(page)
+  const prevSizeRef = useRef(size)
+  const [searchTerm, setSearchTerm] = useState('')
 
   const handleCodeChange = (e: any) => {
     setCode(e.target.value)
@@ -58,14 +61,13 @@ const ContractInformation = () => {
       onSuccess: (response) => {
         if (response.code == '00') {
           setIsSend(true)
-          console.log('duma: ', response.object)
 
           setData1(response.object)
           successNotification('Xác minh thành công')
           setCanFetchContractCompany(true)
         } else if (response.code == '01') {
-          errorNotification('Mã xác minh không chính xác')
-        }
+          errorNotification('Mã xác minh không đúng')
+        } else errorNotification('Xác minh không thành công')
       },
       onError: () => {
         errorNotification('Lỗi xác minh')
@@ -82,7 +84,7 @@ const ContractInformation = () => {
 
   const { data: dataContractCompany, refetch } = useQuery(
     'get-contract-company',
-    () => getCompanyContract(page, size, data1?.companyId),
+    () => getCompanyContract(page, size, user?.email),
     {
       enabled: canFetchContractCompany && !!user?.email,
       onSuccess: (response) => {
@@ -96,6 +98,13 @@ const ContractInformation = () => {
     setShouldFetch(true)
   }
 
+  useEffect(() => {
+    if (prevPageRef.current !== page || prevSizeRef.current !== size) {
+      prevPageRef.current = page
+      prevSizeRef.current = size
+      refetch()
+    }
+  }, [page, refetch, size])
   const banContractMutation = useMutation((id: string) => banContract(id), {
     onSuccess: () => {
       successNotification('Hủy dịch vụ thành công')
@@ -117,6 +126,14 @@ const ContractInformation = () => {
     setBankModal(false)
     setBankImage(null)
   }
+
+  const handleSearchChange = (e: { target: { value: SetStateAction<string> } }) => {
+    setSearchTerm(e.target.value)
+  }
+
+  const filteredContracts = dataContractCompany?.object?.content?.filter((d: { pricePlanName: string }) =>
+    d.pricePlanName.toLowerCase().includes(searchTerm.toLowerCase())
+  )
 
   return (
     <>
@@ -154,10 +171,10 @@ const ContractInformation = () => {
               {getContractMutation.isLoading ? (
                 <LoadingIcon />
               ) : (
-                <div className='flex'>
+                <button className='flex' disabled={isLoading}>
                   <FaCircleCheck className='mt-1 mr-1' />
                   Xác minh
-                </div>
+                </button>
               )}
             </button>
           </form>
@@ -187,48 +204,21 @@ const ContractInformation = () => {
                     type='text'
                     id='table-search'
                     className='block p-2 ps-10 w-full text-xs text-gray-900 border border-gray-300 rounded-md  bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                    placeholder='Tìm kiếm tên hợp đồng'
-                  />
-                </div>
-                {/* <div className='w-[40%] h-full '>
-                  <DatePicker
-                    onChange={() => console.log('a')}
-                    className='text-xs text-gray-900 border border-gray-300 rounded-md  bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                    selected={startDate}
-                    placeholderText='Ngày bắt đầu'
-                    onChange={(date) => setStartDate(date)}
+                    placeholder='Tìm kiếm loại hợp đồng'
+                    value={searchTerm}
+                    onChange={handleSearchChange}
                   />
                 </div>
 
-                <div className='w-[40%] h-full'>
-                  <DatePicker
-                    onChange={() => console.log('a')}
-                    className='text-xs text-gray-900 border border-gray-300 rounded-md  bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                    selected={endDate}
-                    minDate={startDate}
-                    placeholderText='Ngày kết thúc'
-                    onChange={(date) => setEndDate(date)}
-                  />
-                </div> */}
-                <button
+                {/* <button
                   type='submit'
                   className='rounded-md flex gap-1 bg-main-color px-4 py-2 text-sm font-medium text-white hover:bg-hover-main focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
                 >
                   Tìm
-                </button>
+                </button> */}
               </div>
             </form>
             <div className='overflow-x-auto  my-3 z-0 h-[70vh]'>
-              <button
-                className='rounded-md m-2 float-right flex gap-1 bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
-                onClick={() => {
-                  setSelectedModal(dataContractCompany?.id)
-                  setExtendModal(true)
-                }}
-              >
-                <FaArrowsUpDownLeftRight className='mt-1' />
-                Gia hạn
-              </button>
               <table className='w-full text-sm text-left shadow-md sm:rounded-lg rtl:text-right text-gray-500 dark:text-gray-400 overflow-auto z-0'>
                 <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
                   <tr>
@@ -246,31 +236,25 @@ const ContractInformation = () => {
                     </th>
 
                     <th scope='col' className='px-2 py-3 text-center'>
-                      Trạng thái
-                    </th>
-                    <th scope='col' className='px-2 py-3 text-center'>
-                      Ngày tạo
+                      Ngày đăng ký
                     </th>
                     <th scope='col' className='px-2 py-3 text-center'>
                       Số tiền(VND)
                     </th>
+                    <th scope='col' className='px-2 py-3 text-center'>
+                      Trạng thái
+                    </th>
                     <th></th>
                   </tr>
                 </thead>
+                {/* {dataContractCompany?.object && ( */}
                 <tbody className='w-full'>
-                  {dataContractCompany?.object?.content?.map((d: any, index: number) => (
+                  {filteredContracts?.map((d: any, index: number) => (
                     <tr className=' w-full bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'>
                       {/* <td className='px-2 py-2 text-center'>{data1?.id}</td> */}
                       <td className='px-2 py-2 text-center'>{d.companyName || '___'}</td>
                       <td className='px-2 py-2 text-center'>{d?.taxCode || '___'}</td>
                       <td className='px-2 py-2 text-center'>{d?.pricePlanName || '___'}</td>
-                      <td className='px-2 py-2 text-center'>
-                        {d?.status === 'PROCESSING'
-                          ? 'Đang sử dụng'
-                          : d?.status === 'APPROVED'
-                            ? 'Đã chấp nhận'
-                            : '___'}
-                      </td>
 
                       <td className='px-2 py-2 text-center'>
                         {d?.createdDate ? moment(d?.createdDate).format('DD-MM-YYYY') : d?.createdDate || '___'}
@@ -278,6 +262,26 @@ const ContractInformation = () => {
                       <td className='px-2 py-2 text-center'>
                         {d?.price == null ? 0 : (d?.price + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',') || '___'}
                       </td>
+                      <td
+                        className={`px-2 py-2 text-center font-bold ${
+                          d?.status === 'PROCESSING'
+                            ? 'text-amber-500'
+                            : d?.status === 'APPROVED'
+                              ? 'text-green-500'
+                              : d?.status === 'REJECTED'
+                                ? 'text-red-500'
+                                : ''
+                        }`}
+                      >
+                        {d?.status === 'PROCESSING'
+                          ? 'Đang xử lý'
+                          : d?.status === 'APPROVED'
+                            ? 'Đã chấp nhận'
+                            : d?.status === 'REJECTED'
+                              ? 'Đã từ chối'
+                              : '___'}
+                      </td>
+
                       <td className='px-2 py-2 text-center'>
                         <Menu as='div' className='relative inline-block text-left '>
                           <Menu.Button>
@@ -298,8 +302,8 @@ const ContractInformation = () => {
                             leaveFrom='transform opacity-100 scale-100'
                             leaveTo='transform opacity-0 scale-95'
                           >
-                            <Menu.Items className='absolute right-8 top-[-100%] z-50 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
-                              {d?.status == 'APRROVED' ? (
+                            <Menu.Items className='absolute right-8 top-[-100%] z-50 mt-2 w-40 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
+                              {d?.status == 'APPROVED' ? (
                                 <>
                                   <Menu.Item>
                                     {({ active }) => (
@@ -308,7 +312,7 @@ const ContractInformation = () => {
                                         title='Xem'
                                         className={`${
                                           active ? 'bg-green-500 text-white' : 'text-gray-900'
-                                        } group flex w-full items-center  gap-3 rounded-md px-2 py-2 text-sm `}
+                                        } group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm `}
                                       >
                                         <EyeIcon className='h-5' /> Xem hợp đồng
                                       </button>
@@ -330,24 +334,6 @@ const ContractInformation = () => {
                                       </button>
                                     )}
                                   </Menu.Item>
-
-                                  {d?.status != 'LOCKED' && d?.status != 'EXPIRED' && (
-                                    <Menu.Item>
-                                      {({ active }) => (
-                                        <button
-                                          title='Chặn'
-                                          onClick={() => {
-                                            setDeleteModal(true)
-                                          }}
-                                          className={`${
-                                            active ? 'bg-green-500 text-white' : 'text-gray-900'
-                                          } group flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm `}
-                                        >
-                                          <NoSymbolIcon className='h-5' /> Hủy
-                                        </button>
-                                      )}
-                                    </Menu.Item>
-                                  )}
                                 </>
                               ) : (
                                 <Menu.Item>
@@ -370,19 +356,25 @@ const ContractInformation = () => {
                       </td>
                     </tr>
                   ))}
+                  <h1 className='h-[100px]'>alo</h1>
+                  <h1 className='h-[100px]'>alo</h1>
+                  <h1 className='h-[100px]'>alo</h1>
                 </tbody>
+                {/* // )} */}
               </table>
+              {!isLoading && dataContractCompany?.object?.content.length != 0 ? (
+                <Pagination
+                  totalPages={totalPage}
+                  currentPage={page + 1}
+                  size={size}
+                  setSize={setSize}
+                  setPage={setPage}
+                  onPageChange={handlePageChange}
+                />
+              ) : (
+                <div className='flex justify-center items-center py-12 text-gray-500'>Không tìm thấy hợp đồng</div>
+              )}
             </div>
-            {!isLoading && data && dataContractCompany?.object.content.length != 0 && (
-              <Pagination
-                totalPages={totalPage}
-                currentPage={page + 1}
-                size={size}
-                setSize={setSize}
-                setPage={setPage}
-                onPageChange={handlePageChange}
-              />
-            )}
           </div>
         </div>
       )}
@@ -453,10 +445,7 @@ const ContractInformation = () => {
                     Hủy dịch vụ
                   </Dialog.Title>
                   <div>
-                    <div>
-                      Gói dịch vụ sẽ được hủy với <span className='bold'>{data1?.companyName || '___'}</span>. Bạn có
-                      chắc chắn với quyết định của mình?
-                    </div>
+                    <div>Gói dịch vụ sẽ được hủy. Bạn có chắc chắn với quyết định của mình?</div>
                     <div className='w-full flex justify-end mt-6'>
                       <button
                         type='button'

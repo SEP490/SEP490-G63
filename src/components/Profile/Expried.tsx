@@ -27,8 +27,14 @@ const Expried = ({ closeModal, selectedCustomer, bankModal, setBankModal, bankIm
     (params: { companyId: string; pricePlanId: string; payed: boolean }) => extendService(params),
     {
       onSuccess: (response) => {
-        setExtendData(response?.object)
-        setIsConfirm(true)
+        console.log('response', response)
+
+        if (response.code == '00') {
+          setExtendData(response?.object)
+          setIsConfirm(true)
+        } else if (response.code == '01') {
+          errorNotification('Dịch vụ đã được gia hạn trước đó!')
+        } else errorNotification('Có lỗi xảy ra trong quá trình gia hạn dịch vụ!')
       },
       onError: () => {
         errorNotification('Có lỗi xảy ra trong quá trình gia hạn dịch vụ!')
@@ -51,9 +57,9 @@ const Expried = ({ closeModal, selectedCustomer, bankModal, setBankModal, bankIm
   )
 
   const onSubmit: SubmitHandler<FormData> = async () => {
-    if (selectedCustomer?.companyId && selectedPlan?.id) {
+    if (selectedCustomer.id && selectedPlan?.id) {
       extendServiceMutation.mutate({
-        companyId: selectedCustomer?.companyId,
+        companyId: selectedCustomer.id,
         pricePlanId: selectedPlan?.id,
         payed: false
       })
