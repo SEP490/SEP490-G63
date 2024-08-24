@@ -98,7 +98,7 @@ const DashboardSale = () => {
               repeat={Infinity}
               style={{ fontSize: '16px', display: 'inline-block' }}
             />
-            <img src={user?.avatar ? user?.avatar : avatar} className='w-[100px] h-[100px]'></img>
+            <img src={user?.avatar ? user?.avatar : avatar} className='w-[100px] h-[100px] rounded-[50%]'></img>
             <div className='font-bold'>{user?.name}</div>
             <div>{user?.email}</div>
           </div>

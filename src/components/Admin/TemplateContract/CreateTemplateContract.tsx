@@ -155,7 +155,7 @@ const CreateTemplateContract = () => {
             {...register('name', {
               required: 'Tên hợp đồng không được để trống',
               pattern: {
-                value: new RegExp(dataRegex.REGEX_TEXT),
+                value: new RegExp(dataRegex.REGEX_CONTRACT_NAME),
                 message: 'Tên hợp đồng không hợp lệ'
               }
             })}
