@@ -8,7 +8,6 @@ import { permissionObject } from '~/common/const/permissions'
 function AdminLayout({ children }: any) {
   const location = useLocation()
   const { token, user } = useAuth()
-
   const { width } = useViewport()
   const isMobile = width <= 1024
   if (token || user?.role == ADMIN || user?.permissions.includes(permissionObject.MANAGER)) {

@@ -3,9 +3,6 @@ import useToast from '~/hooks/useToast'
 import { validateEmail } from '~/common/utils/checkMail'
 
 const AsyncCreatableSelectComponent = ({ selected, setSelected, option, isDisabled = false }: any) => {
-  console.log('option', option)
-  console.log('setSelected', selected)
-
   const { errorNotification } = useToast()
 
   const filterColors = (inputValue: string) => {

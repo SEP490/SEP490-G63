@@ -69,6 +69,7 @@ const ViewDetailContract = () => {
   const [deleteModal, setDeleteModal] = useState(false)
   const formInfoPartA = useForm<CompanyInfo>()
   const formInfoPartB = useForm<CompanyInfo>()
+  const [refetch, setRefetch] = useState(false)
   const [open, setOpen] = useState(false)
   const [detailContract, setDetailContract] = useState<any>()
   const { data: typeContract, isLoading: loadingTypeContract } = useQuery('type-contract', () =>
@@ -357,6 +358,7 @@ const ViewDetailContract = () => {
   const deleteTemplate = useMutation(deleteNewContract, {
     onSuccess: () => {
       successNotification('Xóa thành công!')
+      navigate('/contract')
     },
     onError: (error: AxiosError<{ message: string }>) => {
       errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
@@ -404,7 +406,7 @@ const ViewDetailContract = () => {
       }
     }
     fetchAPI()
-  }, [formInfoPartA, formInfoPartB, reset, id])
+  }, [formInfoPartA, formInfoPartB, reset, id, refetch])
 
   return (
     <div className='w-full h-full flex justify-center py-2 bg-[#e8eaed] '>
@@ -1191,7 +1193,13 @@ const ViewDetailContract = () => {
                     <div className='font-semibold'>Chỉnh sửa</div>
                     <XMarkIcon className='h-5 w-5 mr-3 mb-3 cursor-pointer' onClick={() => setEditModal(false)} />
                   </div>
-                  <EditNewContract selectedContract={detailContract} handleCloseModal={() => setEditModal(false)} />
+                  <EditNewContract
+                    selectedContract={detailContract}
+                    handleCloseModal={() => setEditModal(false)}
+                    refetch={() => {
+                      setRefetch(!refetch)
+                    }}
+                  />
                 </Dialog.Panel>
               </Transition.Child>
             </div>
@@ -1234,7 +1242,9 @@ const ViewDetailContract = () => {
                     id={id}
                     status={status}
                     closeModal={() => setChangeStatus(false)}
-                    refetch={() => {}}
+                    refetch={() => {
+                      setRefetch(!refetch)
+                    }}
                     refetchNumber={() => {}}
                     dataC={detailContract}
                   />
