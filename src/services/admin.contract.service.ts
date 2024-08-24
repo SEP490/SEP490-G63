@@ -20,9 +20,11 @@ export const getContract = async (email: string | undefined, code: string) => {
   }
 }
 
-export const getCompanyContract = async (page: any, size: any, companyId: any) => {
+export const getCompanyContract = async (page: any, size: any, email: any) => {
   try {
-    const response = await adminInstance.get(`manager/queueExtend/public/${page}/${size}/${companyId}`)
+    console.log('email', email)
+
+    const response = await adminInstance.get(`manager/queueExtend/public/${page}/${size}/${email}`)
     return response.data
   } catch (error) {
     console.log(error)

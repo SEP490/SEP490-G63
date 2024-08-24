@@ -40,15 +40,8 @@ export async function validateEmailWithDebounce(email: string) {
 
     const isValid = response.data.deliverability === 'DELIVERABLE'
 
-    if (isValid) {
-      console.log('Email hợp lệ.')
-    } else {
-      alert('Email không hợp lệ.')
-    }
-
     return isValid
   } catch (error) {
-    console.error('Lỗi khi kiểm tra email:', error)
     return false
   }
 }
