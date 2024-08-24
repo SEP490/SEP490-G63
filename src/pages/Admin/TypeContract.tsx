@@ -174,8 +174,8 @@ const TypeContract = () => {
                         <td className='px-3 py-4 w-[16%]'>
                           <div className='w-[100%] truncate ...'>{d.title}</div>
                         </td>
-                        <td className='px-3 py-4 w-[80%]'>
-                          <div className='w-[100%] truncate ...'>{d.description}</div>
+                        <td className='px-3 py-4 '>
+                          <div className='w-[1000px] truncate ...'>{d.description}</div>
                         </td>
 
                         <td className='px-3 py-4 w-[20px] cursor-pointer ho'>
