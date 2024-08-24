@@ -206,7 +206,6 @@ const Employee = () => {
                     <th className='px-3 py-3 ' align='center'>
                       Số điện thoại
                     </th>
-                    <th className='px-3 py-3 '>Vị trí</th>
                     <th className='px-3 py-3 '>Quyền</th>
                     <th className='px-3 py-3 '>Trạng thái</th>
                     <th className='px-3 py-3'></th>
@@ -238,8 +237,6 @@ const Employee = () => {
                         <td className='px-3 py-4' align='center'>
                           {d.phone}
                         </td>
-
-                        <td className='px-3 py-4'>{d.position}</td>
                         <td className='px-3 py-4'>{d.permissions?.slice(1, -1)}</td>
                         <td className='px-3 py-4'>
                           {d.status == 'ACTIVE' ? (

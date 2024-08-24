@@ -28,7 +28,6 @@ type FromType = {
 interface IProp {
   closeModal: () => void
   refetch: any
-  department: any
 }
 const AddNewEmployee = ({ closeModal, refetch }: IProp) => {
   const {

@@ -99,6 +99,7 @@ const CreateContract = () => {
         console.error('Error fetching banks:', err)
       })
   }, [])
+  console.log(formInfoPartB.getValues('taxNumber'))
 
   // const sendMailQuery = useMutation(sendMailPublic)
   const createContractQuery = useMutation(createNewContract, {
@@ -916,7 +917,6 @@ const CreateContract = () => {
           <select
             disabled={createContractQuery?.isLoading || disableFormB.current}
             {...formInfoPartB.register('bankName', { required: 'Tên ngân hàng không được để trống' })}
-            onChange={() => formInfoPartB.reset({ bankId: '' })}
             className='block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:bg-slate-200'
           >
             <option key={null} value={'Tên ngân hàng'}>
@@ -1024,6 +1024,7 @@ const CreateContract = () => {
             onClick={async () => {
               const result = await trigger()
               const result2 = await formInfoPartB.trigger()
+              console.log(formInfoPartB.formState.errors)
 
               if (!result) {
                 setFocus(Object.keys(errors)?.[0])

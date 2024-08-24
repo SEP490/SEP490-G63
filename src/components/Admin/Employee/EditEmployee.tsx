@@ -28,7 +28,6 @@ interface IProp {
   data: DataEmployee | undefined
   closeModal: () => void
   refetch: any
-  department: any
 }
 const EditEmployee = ({ data, closeModal, refetch }: IProp) => {
   const {
