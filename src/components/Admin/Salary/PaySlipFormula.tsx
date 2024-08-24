@@ -18,11 +18,13 @@ const PaySlipFormula = () => {
               <td className='px-1 py-2 font-bold'>Giá trị hợp đồng(VND)</td>
               {data?.object?.content
                 ?.sort((a, b) => a.fromValueContract - b.fromValueContract)
-                .map((d: any) => (
+                .map((d: any, index) => (
                   <td className='px-1 py-2 border-l' key={d.id} align='center'>
                     {formatPrice(d.fromValueContract) == 0 && formatPrice(d.toValueContract) != 0
                       ? `< ${formatPrice(d.toValueContract)}`
-                      : `${formatPrice(d.fromValueContract)} - ${formatPrice(d.toValueContract)}`}
+                      : index + 1 == data?.object?.content?.length
+                        ? `${formatPrice(d.fromValueContract)} <`
+                        : `${formatPrice(d.fromValueContract)} - ${formatPrice(d.toValueContract)}`}
                   </td>
                 ))}
             </tr>
