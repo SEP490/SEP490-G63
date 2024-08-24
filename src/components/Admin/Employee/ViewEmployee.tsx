@@ -18,7 +18,6 @@ type FromType = {
 }
 interface IProp {
   data: DataEmployee | undefined
-  department: any
 }
 const ViewEmployee = ({ data }: IProp) => {
   const {
