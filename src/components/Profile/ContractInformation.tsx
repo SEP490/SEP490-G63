@@ -58,6 +58,8 @@ const ContractInformation = () => {
       onSuccess: (response) => {
         if (response.code == '00') {
           setIsSend(true)
+          console.log('duma: ', response.object)
+
           setData1(response.object)
           successNotification('Xác minh thành công')
           setCanFetchContractCompany(true)
