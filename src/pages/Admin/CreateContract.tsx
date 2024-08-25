@@ -890,9 +890,7 @@ const CreateContract = () => {
             type='text'
             disabled={createContractQuery?.isLoading || disableFormB.current}
             placeholder='Nhập thông tin'
-            {...formInfoPartB.register('businessNumber', {
-              required: 'Giấy phép ĐKKD không được để trống'
-            })}
+            {...formInfoPartB.register('businessNumber')}
           />
           <div
             className={`text-red-500 absolute text-[12px] ${formInfoPartB.formState.errors.businessNumber ? 'visible' : 'invisible'}`}
