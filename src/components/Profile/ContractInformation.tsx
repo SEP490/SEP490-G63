@@ -356,9 +356,6 @@ const ContractInformation = () => {
                       </td>
                     </tr>
                   ))}
-                  <h1 className='h-[100px]'>alo</h1>
-                  <h1 className='h-[100px]'>alo</h1>
-                  <h1 className='h-[100px]'>alo</h1>
                 </tbody>
                 {/* // )} */}
               </table>

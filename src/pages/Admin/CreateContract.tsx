@@ -99,7 +99,6 @@ const CreateContract = () => {
         console.error('Error fetching banks:', err)
       })
   }, [])
-  console.log(formInfoPartB.getValues('taxNumber'))
 
   // const sendMailQuery = useMutation(sendMailPublic)
   const createContractQuery = useMutation(createNewContract, {
