@@ -10,9 +10,7 @@ function App() {
   return (
     <AuthProvider>
       <DndProvider backend={HTML5Backend}>
-        <Suspense fallback={<LoadingPage />}>
-          <Routes />
-        </Suspense>
+        <Routes />
       </DndProvider>
     </AuthProvider>
   )
