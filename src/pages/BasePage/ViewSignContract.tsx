@@ -1,4 +1,4 @@
-import { Dialog, Field, Textarea, Transition } from '@headlessui/react'
+import { Dialog, Transition } from '@headlessui/react'
 import { useMemo, useRef, useState } from 'react'
 import { Label } from 'react-konva'
 import { useQuery } from 'react-query'
@@ -154,16 +154,14 @@ const ViewSignContract = () => {
         <div className='w-full'>
           <div className='w-full text-center font-bold text-[24px] my-3'>Ký hợp đồng</div>
           <div className='w-full mt-5 px-2'>
-            <Field>
-              <Label className='text-sm/6 font-medium text-black'>Nhận xét:</Label>
-              <Textarea
-                disabled={data?.object?.statusCurrent != 'WAIT_SIGN_A' && data?.object?.statusCurrent != 'WAIT_SIGN_B'}
-                ref={commentRef}
-                placeholder='Đưa ra một số nhận xét về bản hợp đồng'
-                className={`mt-3 w-full resize-none rounded-lg border-none bg-black/5 py-1.5 px-3 text-sm/6 text-black focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25`}
-                rows={10}
-              />
-            </Field>
+            <label className='text-sm/6 font-medium text-black'>Nhận xét:</label>
+            <textarea
+              disabled={data?.object?.statusCurrent != 'WAIT_SIGN_A' && data?.object?.statusCurrent != 'WAIT_SIGN_B'}
+              ref={commentRef}
+              placeholder='Đưa ra một số nhận xét về bản hợp đồng'
+              className={`mt-3 w-full resize-none rounded-lg border-none bg-black/5 py-1.5 px-3 text-sm/6 text-black focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25`}
+              rows={10}
+            />
           </div>
           <div className='w-full flex gap-1 justify-center'>
             {customer == '2' && (
