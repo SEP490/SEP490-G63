@@ -410,7 +410,7 @@ const ContractInformation = () => {
                 leaveFrom='opacity-100 scale-100'
                 leaveTo='opacity-0 scale-95'
               >
-                <Dialog.Panel className='w-[100vw] md:w-[90vw] md:h-[94vh] transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all'>
+                <Dialog.Panel className='w-[100vw] md:w-[90vw] md:h-[85vh] transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all'>
                   <div className='flex justify-between'>
                     <div className='font-semibold'>Xem hợp đồng</div>
                     <XMarkIcon className='h-5 w-5 mr-3 mb-3 cursor-pointer' onClick={closeModal} />
