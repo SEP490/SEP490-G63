@@ -219,6 +219,16 @@ const ContractInformation = () => {
               </div>
             </form>
             <div className='overflow-x-auto  my-3 z-0 h-[70vh]'>
+              <button
+                className='rounded-md m-2 float-right flex gap-1 bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75'
+                onClick={() => {
+                  setSelectedModal(dataContractCompany?.id)
+                  setExtendModal(true)
+                }}
+              >
+                <FaArrowsUpDownLeftRight className='mt-1' />
+                Gia hạn
+              </button>
               <table className='w-full text-sm text-left shadow-md sm:rounded-lg rtl:text-right text-gray-500 dark:text-gray-400 overflow-auto z-0'>
                 <thead className=' text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
                   <tr>
@@ -318,7 +328,7 @@ const ContractInformation = () => {
                                       </button>
                                     )}
                                   </Menu.Item>
-                                  <Menu.Item>
+                                  {/* <Menu.Item>
                                     {({ active }) => (
                                       <button
                                         title='Gia hạn'
@@ -333,7 +343,7 @@ const ContractInformation = () => {
                                         <ArrowPathIcon className='h-5' /> Gia hạn
                                       </button>
                                     )}
-                                  </Menu.Item>
+                                  </Menu.Item> */}
                                 </>
                               ) : (
                                 <Menu.Item>
@@ -356,9 +366,6 @@ const ContractInformation = () => {
                       </td>
                     </tr>
                   ))}
-                  <h1 className='h-[100px]'>alo</h1>
-                  <h1 className='h-[100px]'>alo</h1>
-                  <h1 className='h-[100px]'>alo</h1>
                 </tbody>
                 {/* // )} */}
               </table>
