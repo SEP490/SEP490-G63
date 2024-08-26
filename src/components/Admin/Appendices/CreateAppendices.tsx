@@ -8,7 +8,6 @@ import { useState, useEffect, SetStateAction } from 'react'
 import { VietQR } from 'vietqr'
 import { useMutation, useQuery } from 'react-query'
 import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
-import { statusRequest } from '~/common/const/status'
 import LoadingIcon from '~/assets/LoadingIcon'
 import { createAppendices, sendMailPublicApp } from '~/services/contract.appendices.service'
 import moment from 'moment'
@@ -611,9 +610,7 @@ const CreateAppendices = () => {
             disabled
             hidden
             placeholder='Nhập thông tin'
-            {...formInfoPartB.register('businessNumber', {
-              required: 'Giấy phép ĐKKD không được để trống'
-            })}
+            {...formInfoPartB.register('businessNumber')}
           />
           <div
             className={`text-red-500 absolute text-[12px] ${formInfoPartB.formState.errors.businessNumber ? 'visible' : 'invisible'}`}

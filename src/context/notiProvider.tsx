@@ -110,7 +110,9 @@ const NotifyProvider: React.FC<Props> = ({ children }) => {
       stompClient.subscribe(`/topic/notifications/${user?.email}`, (message) => {
         if (message.body) {
           setTotalNotRead((totalNotRead) => totalNotRead + 1)
-          setRealReload(new Date())
+          setTimeout(() => {
+            setRealReload(new Date())
+          }, 2000)
           setNotifications((prevNotifications) => [JSON.parse(message.body), ...prevNotifications])
           inforNotification('📣 Bạn có một thông báo mới')
           const audio = document.getElementById('notification-sound') as HTMLAudioElement

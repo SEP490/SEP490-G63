@@ -40,6 +40,7 @@ import ListReason from '~/components/Admin/Reason/ListReason.tsx'
 import DashboardAdmin from '~/components/Dashboard/DashboardAdmin.tsx'
 import SelectAutoComplete from '~/components/BaseComponent/SelectAutoComplete.tsx'
 import NotifyProvider from '~/context/notiProvider.tsx'
+import ViewAppendicesContract from '~/components/Admin/Appendices/ViewAppendicesContract.tsx'
 
 const Routes = () => {
   const { token, user } = useAuth()
@@ -86,6 +87,16 @@ const Routes = () => {
             <NotifyProvider>
               <AdminLayout>
                 <AppendicesContract />
+              </AdminLayout>
+            </NotifyProvider>
+          )
+        },
+        {
+          path: '/appendices/:id/detail/:idDetail',
+          element: (
+            <NotifyProvider>
+              <AdminLayout>
+                <ViewAppendicesContract />
               </AdminLayout>
             </NotifyProvider>
           )
@@ -347,6 +358,18 @@ const Routes = () => {
           )
         },
         {
+          path: '/appendices/:id/detail/:idDetail',
+          element: (
+            <NotifyProvider>
+              <UserLayout>
+                <AdminOfficer>
+                  <ViewAppendicesContract />
+                </AdminOfficer>
+              </UserLayout>
+            </NotifyProvider>
+          )
+        },
+        {
           path: '/profile',
           element: (
             <NotifyProvider>
@@ -589,6 +612,18 @@ const Routes = () => {
               <UserLayout>
                 <Sale>
                   <AppendicesContract />
+                </Sale>
+              </UserLayout>
+            </NotifyProvider>
+          )
+        },
+        {
+          path: '/appendices/:id/detail/:idDetail',
+          element: (
+            <NotifyProvider>
+              <UserLayout>
+                <Sale>
+                  <ViewAppendicesContract />
                 </Sale>
               </UserLayout>
             </NotifyProvider>

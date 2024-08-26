@@ -667,8 +667,9 @@ const AppendicesContract = () => {
                           <div
                             className='cursor-pointer text-blue-500 hover:underline'
                             onClick={() => {
-                              setSelectedContract(d)
-                              setOpenModal(true)
+                              navigate(`/appendices/${id}/detail/${d.id}`)
+                              // setSelectedContract(d)
+                              // setOpenModal(true)
                             }}
                           >
                             Xem

@@ -1,7 +1,6 @@
 import React from 'react'
 import { Stage, Layer, Line } from 'react-konva'
 import { ArrowPathIcon, CheckIcon } from '@heroicons/react/24/outline'
-import { Description, Field, Label, Textarea } from '@headlessui/react'
 import { useForm } from 'react-hook-form'
 import { sendMail, sendMailPublic } from '~/services/contract.service'
 import useToast from '~/hooks/useToast'

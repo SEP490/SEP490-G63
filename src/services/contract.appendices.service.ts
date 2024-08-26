@@ -43,7 +43,7 @@ export const getNewContractByIdNotToken = async (id: any) => {
 }
 
 export const updateNewContract = async (data: any) => {
-  const response = await axiosInstant.post(`contract`, {
+  const response = await axiosInstant.post(`api/contract-appendices`, {
     ...data,
     value: data.value.replace(/,/g, '').replace(/\./g, '')
   })

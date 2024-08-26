@@ -99,6 +99,10 @@ export const statusObjectHistory = {
     title: 'Tạo mới',
     color: 'text-blue-500'
   },
+  UPDATE: {
+    title: 'Chỉnh sửa',
+    color: 'text-blue-500'
+  },
   WAIT_APPROVE: {
     title: 'Yêu cầu duyệt',
     color: 'text-yellow-500'
@@ -144,7 +148,41 @@ export const statusRequest: any = {
   1: {
     status: 'WAIT_APPROVE',
     title: 'Xin duyệt hợp đồng',
-    description: 'Yêu cầu xin trình duyệt hợp đồng'
+    description: ({ name, html, src }: any) => {
+      return `<div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#f4f4f4', color: '#333', padding: '20px' }}>
+          <div
+            style={{
+              backgroundColor: '#ffffff',
+              padding: '20px',
+              borderRadius: '5px',
+              boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+              maxWidth: '600px',
+              margin: 'auto'
+            }}
+          >
+            <h2 style='color: #2c3e50;'>Tdocman</h2>
+            <p style='fontSize: "16px"; line-height: "1.6";'>Kính gửi ${name},</p>
+            <p style='fontSize: "16px"; line-height: "1.6";'>
+              Chúng tôi xin gửi đến hợp đồng để ký kết. Vui lòng xem qua nội dung hợp đồng và duyệt nếu đồng ý
+              với các điều khoản.
+            </p>
+            ${html}
+            <p style='fontSize: "16px"; line-height: "1.6";'>
+              Nếu có bất kỳ thắc mắc nào, xin vui lòng liên hệ lại với chúng tôi.
+            </p>
+            <p style='fontSize: "16px"; line-height: "1.6";'>Trân trọng,</p>
+            <p style='fontSize:" 16px"; line-height: "1.6";'>
+              <strong>Tdocman</strong>
+            </p>
+            <a
+              href="${src}"
+              style='display: inline-block; background-color: #3498db; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 20px;'
+            >
+              Xem Hợp Đồng
+            </a>
+          </div>
+        </div>`
+    }
   },
   2: { status: 'APPROVED', title: 'Xác nhận duyệt hợp đồng', description: 'Xác nhận duyệt hợp đồng' },
   3: { status: 'APPROVE_FAIL', title: 'Từ chối duyệt hợp đồng', description: 'Từ chối duyệt hợp đồng' },

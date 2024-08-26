@@ -1,21 +1,17 @@
 import { useForm } from 'react-hook-form'
 import SunEditor from 'suneditor-react'
 import '../../../styles/suneditor.css'
-import { createNewContract, getNewContractById, updateNewContract } from '~/services/contract.service'
 import useToast from '~/hooks/useToast'
 import { useNavigate } from 'react-router-dom'
-import { SetStateAction, useEffect, useMemo, useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { updateTemplateContract } from '~/services/template-contract.service'
+import { SetStateAction, useEffect, useState } from 'react'
+import { useMutation, useQueryClient } from 'react-query'
 import { AxiosError } from 'axios'
 import { validateEmailDebounced } from '~/common/utils/checkMail'
 import { VietQR } from 'vietqr'
-import Loading from '~/components/shared/Loading/Loading'
 import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
-import { getContractType } from '~/services/type-contract.service'
 import LoadingIcon from '~/assets/LoadingIcon'
 import moment from 'moment'
-import { getAppendicesContractById } from '~/services/contract.appendices.service'
+import { getAppendicesContractById, updateNewContract } from '~/services/contract.appendices.service'
 
 interface FormType {
   name: string
@@ -47,9 +43,9 @@ const EditAppendicesContract = ({ selectedContract, handleCloseModal, refetch }:
   const [loading, setLoading] = useState(true)
   const [detailContract, setDetailContract] = useState<any>()
   const queryClient = useQueryClient()
-  const { data: typeContract, isLoading: loadingTypeContract } = useQuery('type-contract', () =>
-    getContractType({ page: 0, size: 100, title: '' })
-  )
+  const [rule, setRule] = useState('')
+  const [term, setTerm] = useState('')
+
   const {
     register,
     getValues,
@@ -116,26 +112,23 @@ const EditAppendicesContract = ({ selectedContract, handleCloseModal, refetch }:
   })
 
   const onSubmit = async () => {
-    const rule: any = document.getElementsByName('rule')[0]
-    const term: any = document.getElementsByName('term')[0]
-    if (rule.value.replace(/<[^>]*>?/gm, '') == '') {
+    if (rule.replace(/<[^>]*>?/gm, '') == '') {
       errorNotification('Điều khoản thông tin không được để trống')
       return
     }
-    if (term.value.replace(/<[^>]*>?/gm, '') == '') {
+    if (term.replace(/<[^>]*>?/gm, '') == '') {
       errorNotification('Điều khoản hợp đồng không được để trống')
       return
     }
     const bodyData = {
       ...getValues(),
       id: detailContract?.id,
-      rule: rule.value,
-      term: term.value,
+      rule: rule,
+      term: term,
       partyA: formInfoPartA.getValues(),
       partyB: formInfoPartB.getValues(),
       createdBy: detailContract?.createdBy
     }
-
     updateContract.mutate(bodyData)
     // try {
     //   //   const resultA = await handleSubmitBank(selectedBankA, accountNumberA)
@@ -166,7 +159,7 @@ const EditAppendicesContract = ({ selectedContract, handleCloseModal, refetch }:
         value: e.target.value.replace(/[^0-9,]/g, '')
       })
   }
-  if (loading || loadingTypeContract) return <LoadingPage />
+  if (loading) return <LoadingPage />
 
   return (
     <div className='full flex justify-center overflow-auto h-[90%] mb-6'>
@@ -176,12 +169,6 @@ const EditAppendicesContract = ({ selectedContract, handleCloseModal, refetch }:
       >
         <div className='w-full flex gap-6 items-center'>
           <div className='font-bold'>Thông tin cơ bản</div>
-          <select
-            {...register('contractTypeId')}
-            className={` block w-fit rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-          >
-            {typeContract?.content.map((d: any) => <option value={d.id}>{d.title}</option>)}
-          </select>
         </div>
         <div className='w-full mt-5 relative'>
           <label className='font-light '>
@@ -239,6 +226,7 @@ const EditAppendicesContract = ({ selectedContract, handleCloseModal, refetch }:
             placeholder='Căn cứ vào điều luật...'
             height='60vh'
             setContents={detailContract?.rule}
+            onChange={(content) => setRule(content)}
             setOptions={{
               buttonList: [
                 ['undo', 'redo'],
@@ -622,9 +610,7 @@ const EditAppendicesContract = ({ selectedContract, handleCloseModal, refetch }:
             type='text'
             disabled
             placeholder='Nhập thông tin'
-            {...formInfoPartB.register('businessNumber', {
-              required: 'Giấy phép ĐKKD không được để trống'
-            })}
+            {...formInfoPartB.register('businessNumber')}
           />
           <div
             className={`text-red-500 absolute text-[12px] ${formInfoPartB.formState.errors.businessNumber ? 'visible' : 'invisible'}`}
@@ -702,7 +688,7 @@ const EditAppendicesContract = ({ selectedContract, handleCloseModal, refetch }:
             {formInfoPartB.formState.errors.bankAccOwer?.message}
           </div>
         </div>
-        <div className='w-full md:w-[30%] '></div>
+        <div className='w-full md:w-[30%]'></div>
         <div className='w-full md:w-[30%]'></div>
         <div className='w-full mt-5 font-bold'>Điều khoản hợp đồng</div>
         <div className='w-full mt-3'>
@@ -711,6 +697,7 @@ const EditAppendicesContract = ({ selectedContract, handleCloseModal, refetch }:
             placeholder='Điều khoản'
             height='60vh'
             setContents={detailContract?.term}
+            onChange={(content) => setTerm(content)}
             setOptions={{
               buttonList: [
                 ['undo', 'redo'],
@@ -730,7 +717,7 @@ const EditAppendicesContract = ({ selectedContract, handleCloseModal, refetch }:
             }}
           />
         </div>
-        <div className='w-full mt-5 relative'>
+        {/* <div className='w-full mt-5 relative'>
           <input
             className={`text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400  sm:text-sm sm:leading-6 mr-3`}
             placeholder='Nhập tên hợp đồng'
@@ -738,7 +725,7 @@ const EditAppendicesContract = ({ selectedContract, handleCloseModal, refetch }:
             {...register('urgent')}
           />
           <label className='font-light '>Tạo hợp đồng với trạng thái khẩn cấp</label>
-        </div>
+        </div> */}
         <div className='w-full flex justify-end'>
           <button
             type='button'

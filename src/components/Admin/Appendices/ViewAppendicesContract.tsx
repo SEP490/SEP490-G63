@@ -2,7 +2,6 @@ import { Fragment, ReactNode, SetStateAction, useEffect, useMemo, useState } fro
 import { useForm } from 'react-hook-form'
 import { useMutation, useQuery } from 'react-query'
 import { useNavigate, useParams } from 'react-router-dom'
-import { deleteNewContract, getNewContractById, getNewContractByIdNotToken } from '~/services/contract.service'
 import { getContractType } from '~/services/type-contract.service'
 import { VietQR } from 'vietqr'
 import useToast from '~/hooks/useToast'
@@ -27,8 +26,10 @@ import { permissionObject } from '~/common/const/permissions'
 import { AxiosError } from 'axios'
 import LoadingIcon from '~/assets/LoadingIcon'
 import ViewContract from '../NewContract/ViewContract'
-import EditNewContract from '../NewContract/EditNewContract'
-import SendMailUpdateStatus from '../NewContract/SendMailUpdateSatatus'
+import { deleteAppendices, getAppendicesContractById } from '~/services/contract.appendices.service'
+import EditAppendicesContract from './EditAppendicesContract'
+import SendMailUpdateStatus from './SendMailUpdateStatus'
+import { getNewContractByIdNotToken } from '~/services/contract.service'
 
 interface FormType {
   name: string
@@ -59,7 +60,7 @@ type ActionType = {
   callback: any
 }
 const ViewAppendicesContract = () => {
-  const { id } = useParams()
+  const { id, idDetail } = useParams()
   const { user } = useAuth()
   const navigate = useNavigate()
   const [status, setStatus] = useState<number>(0)
@@ -71,9 +72,8 @@ const ViewAppendicesContract = () => {
   const formInfoPartB = useForm<CompanyInfo>()
   const [open, setOpen] = useState(false)
   const [detailContract, setDetailContract] = useState<any>()
-  const { data: typeContract, isLoading: loadingTypeContract } = useQuery('type-contract', () =>
-    getContractType({ page: 0, size: 100, title: '' })
-  )
+  const [detailContractAppendices, setDetailContractAppendices] = useState<any>()
+  const [refetch, setRefetch] = useState(false)
   const actionSale: ActionType[] = [
     {
       id: 1,
@@ -101,19 +101,6 @@ const ViewAppendicesContract = () => {
       callback: (d: any) => {
         setStatus(7)
         setChangeStatus(true)
-      }
-    },
-    {
-      id: 3,
-      title: (
-        <>
-          <DocumentPlusIcon className='h-5' /> Phụ lục hợp đồng
-        </>
-      ),
-      color: 'text-blue-700',
-      disable: (d: any) => d?.status != 'SUCCESS' || d?.statusCurrent != 'SUCCESS',
-      callback: (d: any) => {
-        navigate(`/appendices/${d.id}`)
       }
     },
     {
@@ -172,6 +159,7 @@ const ViewAppendicesContract = () => {
         setChangeStatus(true)
       }
     },
+
     {
       id: 4,
       title: (
@@ -198,19 +186,6 @@ const ViewAppendicesContract = () => {
       callback: (d: any) => {
         setStatus(7)
         setChangeStatus(true)
-      }
-    },
-    {
-      id: 3,
-      title: (
-        <>
-          <DocumentPlusIcon className='h-5' /> Phụ lục hợp đồng
-        </>
-      ),
-      color: 'text-blue-700',
-      disable: (d: any) => d?.status != 'SUCCESS' || d?.statusCurrent != 'SUCCESS',
-      callback: (d: any) => {
-        navigate(`/appendices/${d.id}`)
       }
     },
     {
@@ -254,7 +229,7 @@ const ViewAppendicesContract = () => {
         return !statusPL.includes(d?.statusCurrent)
       },
       callback: (d: any) => {
-        navigate(`/view/${d?.id}/sign/1`)
+        navigate(`/view/${d?.id}/sign-appendices/1`)
       }
     },
     {
@@ -289,19 +264,6 @@ const ViewAppendicesContract = () => {
       callback: (d: any) => {
         setStatus(7)
         setChangeStatus(true)
-      }
-    },
-    {
-      id: 3,
-      title: (
-        <>
-          <DocumentPlusIcon className='h-5' /> Phụ lục hợp đồng
-        </>
-      ),
-      color: 'text-blue-700',
-      disable: (d: any) => d?.status != 'SUCCESS' || d?.statusCurrent != 'SUCCESS',
-      callback: (d: any) => {
-        navigate(`/appendices/${d.id}`)
       }
     },
     {
@@ -354,16 +316,17 @@ const ViewAppendicesContract = () => {
     reset,
     formState: { errors }
   } = useForm<FormType>()
-  const deleteTemplate = useMutation(deleteNewContract, {
+  const deleteTemplate = useMutation(deleteAppendices, {
     onSuccess: () => {
       successNotification('Xóa thành công!')
+      navigate(`/appendices/${id}`)
     },
     onError: (error: AxiosError<{ message: string }>) => {
       errorNotification(error.response?.data?.message || 'Lỗi hệ thống')
     }
   })
   const handleDelete = () => {
-    deleteTemplate.mutate(id as string)
+    deleteTemplate.mutate(idDetail as string)
   }
   const [banks, setBanks] = useState([])
   const clientID = '258d5960-4516-48c5-9316-bb95b978424f'
@@ -386,10 +349,12 @@ const ViewAppendicesContract = () => {
   useEffect(() => {
     async function fetchAPI() {
       try {
-        if (id) {
-          const response = await getNewContractByIdNotToken(id)
-          if (response.object) {
-            setDetailContract(response.object)
+        if (idDetail) {
+          const response = await getAppendicesContractById(idDetail)
+          const response2 = await getNewContractByIdNotToken(id)
+          if (response.object && response2) {
+            setDetailContractAppendices(response.object)
+            setDetailContract(response2.object)
             reset({ ...response.object, value: response.object.value.toLocaleString() })
             if (response.object.partyA) {
               formInfoPartA.reset(response.object.partyA)
@@ -404,7 +369,7 @@ const ViewAppendicesContract = () => {
       }
     }
     fetchAPI()
-  }, [formInfoPartA, formInfoPartB, reset, id])
+  }, [formInfoPartA, formInfoPartB, reset, id, idDetail, refetch])
 
   return (
     <div className='w-full h-full flex justify-center py-2 bg-[#e8eaed] '>
@@ -415,13 +380,13 @@ const ViewAppendicesContract = () => {
         <div className='w-full flex items-center justify-between'>
           <div className='w-[50%] flex flex-wrap'>
             <div className='font-bold w-full'>Thông tin cơ bản</div>
-            <div className='w-full'>Người tạo: {detailContract?.createdBy}</div>
-            <div className='w-full'>Người duyệt: {detailContract?.approvedBy}</div>
+            <div className='w-full'>Người tạo: {detailContractAppendices?.createdBy}</div>
+            <div className='w-full'>Người duyệt: {detailContractAppendices?.approvedBy}</div>
             <div className='w-full'>
               Trạng thái:
-              <span className={`font-semibold ${statusObject[detailContract?.statusCurrent]?.color}`}>
-                {detailContract?.statusCurrent
-                  ? statusObject[detailContract?.statusCurrent]?.title?.[permissionUser]
+              <span className={`pl-1 font-semibold ${statusObject[detailContractAppendices?.currentStatus]?.color}`}>
+                {detailContractAppendices?.currentStatus
+                  ? statusObject[detailContractAppendices?.currentStatus]?.title?.[permissionUser]
                   : ''}
               </span>
             </div>
@@ -429,7 +394,7 @@ const ViewAppendicesContract = () => {
           <div className='w-[50%] flex gap-3 items-center justify-end'>
             <button
               type='button'
-              onClick={() => navigate('/contract')}
+              onClick={() => navigate(`/appendices/${id}`)}
               className='flex justify-center items-center gap-3 cursor-pointer bg-gray-400 hover:bg-gray-500 text-white px-3 py-2 rounded-md'
             >
               Trở lại
@@ -450,12 +415,12 @@ const ViewAppendicesContract = () => {
               >
                 <Menu.Items className='absolute right-24 -top-10 z-50 mt-2 w-48 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
                   {actionTable[permissionUser]?.map((action: ActionType) => (
-                    <Menu.Item key={action.id} disabled={action.disable(detailContract)}>
+                    <Menu.Item key={action.id} disabled={action.disable(detailContractAppendices)}>
                       {({ active }) => (
                         <button
-                          onClick={() => action.callback(detailContract)}
+                          onClick={() => action.callback(detailContractAppendices)}
                           type='button'
-                          className={`group flex w-full items-center ${action.disable(detailContract) ? 'text-gray-300' : active ? 'bg-blue-500 text-white' : action?.color} gap-3 rounded-md px-2 py-1 text-sm `}
+                          className={`group flex w-full items-center ${action.disable(detailContractAppendices) ? 'text-gray-300' : active ? 'bg-blue-500 text-white' : action?.color} gap-3 rounded-md px-2 py-1 text-sm `}
                         >
                           {action.title}
                         </button>
@@ -471,13 +436,6 @@ const ViewAppendicesContract = () => {
         <div className='w-full flex gap-6 items-center justify-between'>
           <div className='font-bold'>Thông tin hợp đồng</div>
           <div className='flex items-center gap-4'>
-            <select
-              {...register('contractTypeId')}
-              disabled
-              className={` block w-fit rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-            >
-              {typeContract?.content.map((d: any) => <option value={d.id}>{d.title}</option>)}
-            </select>
             <Listbox>
               <div className='relative'>
                 <Listbox.Button className='px-4 py-2 cursor-pointer rounded-md bg-blue-500 text-white flex justify-center text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm'>
@@ -499,7 +457,7 @@ const ViewAppendicesContract = () => {
                       }
                       value='history'
                     >
-                      {() => <ContractHistory selectedContract={id} />}
+                      {() => <ContractHistory selectedContract={idDetail} />}
                     </Listbox.Option>
                   </Listbox.Options>
                 </Transition>
@@ -571,7 +529,7 @@ const ViewAppendicesContract = () => {
             placeholder='Căn cứ vào điều luật...'
             height='60vh'
             disable
-            setContents={detailContract?.rule}
+            setContents={detailContractAppendices?.rule}
             setOptions={{
               buttonList: [
                 ['undo', 'redo'],
@@ -954,9 +912,7 @@ const ViewAppendicesContract = () => {
             type='text'
             disabled
             placeholder='Nhập thông tin'
-            {...formInfoPartB.register('businessNumber', {
-              required: 'Giấy phép ĐKKD không được để trống'
-            })}
+            {...formInfoPartB.register('businessNumber')}
           />
           <div
             className={`text-red-500 absolute text-[12px] ${formInfoPartB.formState.errors.businessNumber ? 'visible' : 'invisible'}`}
@@ -1042,7 +998,7 @@ const ViewAppendicesContract = () => {
             placeholder='Điều khoản'
             height='60vh'
             disable={true}
-            setContents={detailContract?.term}
+            setContents={detailContractAppendices?.term}
             setOptions={{
               buttonList: [
                 ['undo', 'redo'],
@@ -1062,7 +1018,7 @@ const ViewAppendicesContract = () => {
             }}
           />
         </div>
-        <div className='w-full mt-5 relative'>
+        {/* <div className='w-full mt-5 relative'>
           <input
             className={`text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400  sm:text-sm sm:leading-6 mr-3`}
             placeholder='Nhập tên hợp đồng'
@@ -1071,7 +1027,7 @@ const ViewAppendicesContract = () => {
             {...register('urgent')}
           />
           <label className='font-light '>Tạo hợp đồng với trạng thái khẩn cấp</label>
-        </div>
+        </div> */}
       </form>
       <Transition appear show={open} as={Fragment}>
         <Dialog as='div' className='relative z-50 w-[90vw]' onClose={() => setOpen(false)}>
@@ -1191,7 +1147,13 @@ const ViewAppendicesContract = () => {
                     <div className='font-semibold'>Chỉnh sửa</div>
                     <XMarkIcon className='h-5 w-5 mr-3 mb-3 cursor-pointer' onClick={() => setEditModal(false)} />
                   </div>
-                  <EditNewContract selectedContract={detailContract} handleCloseModal={() => setEditModal(false)} />
+                  <EditAppendicesContract
+                    selectedContract={detailContract}
+                    handleCloseModal={() => setEditModal(false)}
+                    refetch={() => {
+                      setRefetch(!refetch)
+                    }}
+                  />
                 </Dialog.Panel>
               </Transition.Child>
             </div>
@@ -1231,11 +1193,10 @@ const ViewAppendicesContract = () => {
                     </div>
                   </div>
                   <SendMailUpdateStatus
-                    id={id}
+                    id={idDetail}
                     status={status}
                     closeModal={() => setChangeStatus(false)}
                     refetch={() => {}}
-                    refetchNumber={() => {}}
                     dataC={detailContract}
                   />
                 </Dialog.Panel>
