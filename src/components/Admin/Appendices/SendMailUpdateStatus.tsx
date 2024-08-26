@@ -21,7 +21,7 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC }: IProps
   const [selectedTo, setSelectedTo] = useState<any[]>([])
   const [selectedCc, setSelectedCc] = useState<any[]>([])
   const [subject, setSubject] = useState<string>(statusRequest[status]?.title)
-  const [editorData, setEditorData] = useState<any>(statusRequest[status]?.description)
+  const [editorData, setEditorData] = useState<any>()
   const { successNotification, errorNotification } = useToast()
   const [open, setOpen] = useState(false)
   const [files, setFiles] = useState<any>([])
@@ -85,15 +85,15 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC }: IProps
   }
 
   const handleSubmit = async () => {
-    if (selectedTo.length === 0) {
+    if (selectedTo?.length == 0) {
       errorNotification('Trường "Đến" không được để trống!')
       return
     }
-    if (subject.trim() === '') {
+    if (subject && subject?.trim() == '') {
       errorNotification('Trường "Tiêu đề" không được để trống!')
       return
     }
-    if (editorData.trim() === '') {
+    if (editorData && editorData?.trim() == '') {
       errorNotification('Trường "Nội dung" không được để trống!')
       return
     }
@@ -107,24 +107,25 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC }: IProps
     })
     formData.append('subject', subject)
     formData.append('reasonId', status == 3 || status == 6 || status == 9 ? reason.current?.value : '')
-    const htmlContent = editorData
-
-    formData.append(
-      'htmlContent',
-      htmlContent +
-        (status == 4
-          ? `<a href="${BASE_URL_FE}view/${id}/sign-appendices/1">Ký ngay</a>`
+    const htmlContent = statusRequest[status]?.description({
+      name: status == 4 ? `Sếp` : status == 7 ? `Quý khách hàng` : selectedTo?.[0]?.value,
+      html: editorData || '',
+      src:
+        status == 4
+          ? `${BASE_URL_FE}view/${id}/sign-appendices/1`
           : status == 7
-            ? `<a href="${BASE_URL_FE}view/${id}/sign-appendices/2">Ký ngay</a>`
-            : '')
-    )
+            ? `${BASE_URL_FE}view/${id}/sign-appendices/2`
+            : `${BASE_URL_FE}appendices/${dataC?.id}/detail/${id}`
+    })
+
+    formData.append('htmlContent', htmlContent)
     formData.append('contractAppendicesId', id as string)
     formData.append('attachments', contractFile.current, `${dataContract?.object?.name}.pdf`)
     selectedFiles.forEach((file) => {
       formData.append('attachments', file)
     })
     if (status) formData.append('status', statusRequest[status]?.status)
-    formData.append('description', htmlContent)
+    formData.append('description', 'Gửi duyệt')
     try {
       const response = await sendMailApp(formData)
       if (response) {
