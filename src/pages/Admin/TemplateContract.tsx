@@ -123,9 +123,7 @@ const TemplateContract = () => {
                       STT
                     </th>
                     <th className='px-3 py-3'>Tên hợp đồng</th>
-                    <th className='px-3 py-3' align='center'>
-                      Số hợp đồng
-                    </th>
+                    <th className='px-3 py-3'>Số hợp đồng</th>
                     <th className='px-3 py-3'>Chi tiết</th>
                     <th className='px-3 py-3' align='center'>
                       Ngày tạo
@@ -146,9 +144,7 @@ const TemplateContract = () => {
                           {page * size + index + 1 < 10 ? `0${page * size + index + 1}` : page * size + index + 1}
                         </td>
                         <td className='px-3 py-4'>{d.nameContract}</td>
-                        <td className='px-3 py-4' align='center'>
-                          {d.numberContract}
-                        </td>
+                        <td className='px-3 py-4'>{d.numberContract}</td>
                         <td className='px-3 py-4'>
                           <div
                             className='cursor-pointer text-blue-500 hover:underline'

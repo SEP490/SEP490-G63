@@ -43,6 +43,8 @@ const EditAppendicesContract = ({ selectedContract, handleCloseModal, refetch }:
   const [loading, setLoading] = useState(true)
   const [detailContract, setDetailContract] = useState<any>()
   const queryClient = useQueryClient()
+  const [rule, setRule] = useState('')
+  const [term, setTerm] = useState('')
 
   const {
     register,
@@ -110,26 +112,23 @@ const EditAppendicesContract = ({ selectedContract, handleCloseModal, refetch }:
   })
 
   const onSubmit = async () => {
-    const rule: any = document.getElementsByName('rule')[0]
-    const term: any = document.getElementsByName('term')[0]
-    if (rule.value.replace(/<[^>]*>?/gm, '') == '') {
+    if (rule.replace(/<[^>]*>?/gm, '') == '') {
       errorNotification('Điều khoản thông tin không được để trống')
       return
     }
-    if (term.value.replace(/<[^>]*>?/gm, '') == '') {
+    if (term.replace(/<[^>]*>?/gm, '') == '') {
       errorNotification('Điều khoản hợp đồng không được để trống')
       return
     }
     const bodyData = {
       ...getValues(),
       id: detailContract?.id,
-      rule: rule.value,
-      term: term.value,
+      rule: rule,
+      term: term,
       partyA: formInfoPartA.getValues(),
       partyB: formInfoPartB.getValues(),
       createdBy: detailContract?.createdBy
     }
-
     updateContract.mutate(bodyData)
     // try {
     //   //   const resultA = await handleSubmitBank(selectedBankA, accountNumberA)
@@ -227,6 +226,7 @@ const EditAppendicesContract = ({ selectedContract, handleCloseModal, refetch }:
             placeholder='Căn cứ vào điều luật...'
             height='60vh'
             setContents={detailContract?.rule}
+            onChange={(content) => setRule(content)}
             setOptions={{
               buttonList: [
                 ['undo', 'redo'],
@@ -697,6 +697,7 @@ const EditAppendicesContract = ({ selectedContract, handleCloseModal, refetch }:
             placeholder='Điều khoản'
             height='60vh'
             setContents={detailContract?.term}
+            onChange={(content) => setTerm(content)}
             setOptions={{
               buttonList: [
                 ['undo', 'redo'],

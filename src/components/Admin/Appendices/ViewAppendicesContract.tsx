@@ -26,13 +26,10 @@ import { permissionObject } from '~/common/const/permissions'
 import { AxiosError } from 'axios'
 import LoadingIcon from '~/assets/LoadingIcon'
 import ViewContract from '../NewContract/ViewContract'
-import {
-  deleteAppendices,
-  getAppendicesContractById,
-  getNewContractByIdNotToken
-} from '~/services/contract.appendices.service'
+import { deleteAppendices, getAppendicesContractById } from '~/services/contract.appendices.service'
 import EditAppendicesContract from './EditAppendicesContract'
 import SendMailUpdateStatus from './SendMailUpdateStatus'
+import { getNewContractByIdNotToken } from '~/services/contract.service'
 
 interface FormType {
   name: string
@@ -75,6 +72,7 @@ const ViewAppendicesContract = () => {
   const formInfoPartB = useForm<CompanyInfo>()
   const [open, setOpen] = useState(false)
   const [detailContract, setDetailContract] = useState<any>()
+  const [detailContractAppendices, setDetailContractAppendices] = useState<any>()
   const [refetch, setRefetch] = useState(false)
   const actionSale: ActionType[] = [
     {
@@ -351,10 +349,12 @@ const ViewAppendicesContract = () => {
   useEffect(() => {
     async function fetchAPI() {
       try {
-        if (id) {
+        if (idDetail) {
           const response = await getAppendicesContractById(idDetail)
-          if (response.object) {
-            setDetailContract(response.object)
+          const response2 = await getNewContractByIdNotToken(id)
+          if (response.object && response2) {
+            setDetailContractAppendices(response.object)
+            setDetailContract(response2.object)
             reset({ ...response.object, value: response.object.value.toLocaleString() })
             if (response.object.partyA) {
               formInfoPartA.reset(response.object.partyA)
@@ -380,13 +380,13 @@ const ViewAppendicesContract = () => {
         <div className='w-full flex items-center justify-between'>
           <div className='w-[50%] flex flex-wrap'>
             <div className='font-bold w-full'>Thông tin cơ bản</div>
-            <div className='w-full'>Người tạo: {detailContract?.createdBy}</div>
-            <div className='w-full'>Người duyệt: {detailContract?.approvedBy}</div>
+            <div className='w-full'>Người tạo: {detailContractAppendices?.createdBy}</div>
+            <div className='w-full'>Người duyệt: {detailContractAppendices?.approvedBy}</div>
             <div className='w-full'>
               Trạng thái:
-              <span className={`pl-1 font-semibold ${statusObject[detailContract?.currentStatus]?.color}`}>
-                {detailContract?.currentStatus
-                  ? statusObject[detailContract?.currentStatus]?.title?.[permissionUser]
+              <span className={`pl-1 font-semibold ${statusObject[detailContractAppendices?.currentStatus]?.color}`}>
+                {detailContractAppendices?.currentStatus
+                  ? statusObject[detailContractAppendices?.currentStatus]?.title?.[permissionUser]
                   : ''}
               </span>
             </div>
@@ -415,12 +415,12 @@ const ViewAppendicesContract = () => {
               >
                 <Menu.Items className='absolute right-24 -top-10 z-50 mt-2 w-48 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
                   {actionTable[permissionUser]?.map((action: ActionType) => (
-                    <Menu.Item key={action.id} disabled={action.disable(detailContract)}>
+                    <Menu.Item key={action.id} disabled={action.disable(detailContractAppendices)}>
                       {({ active }) => (
                         <button
-                          onClick={() => action.callback(detailContract)}
+                          onClick={() => action.callback(detailContractAppendices)}
                           type='button'
-                          className={`group flex w-full items-center ${action.disable(detailContract) ? 'text-gray-300' : active ? 'bg-blue-500 text-white' : action?.color} gap-3 rounded-md px-2 py-1 text-sm `}
+                          className={`group flex w-full items-center ${action.disable(detailContractAppendices) ? 'text-gray-300' : active ? 'bg-blue-500 text-white' : action?.color} gap-3 rounded-md px-2 py-1 text-sm `}
                         >
                           {action.title}
                         </button>
@@ -529,7 +529,7 @@ const ViewAppendicesContract = () => {
             placeholder='Căn cứ vào điều luật...'
             height='60vh'
             disable
-            setContents={detailContract?.rule}
+            setContents={detailContractAppendices?.rule}
             setOptions={{
               buttonList: [
                 ['undo', 'redo'],
@@ -998,7 +998,7 @@ const ViewAppendicesContract = () => {
             placeholder='Điều khoản'
             height='60vh'
             disable={true}
-            setContents={detailContract?.term}
+            setContents={detailContractAppendices?.term}
             setOptions={{
               buttonList: [
                 ['undo', 'redo'],
@@ -1193,7 +1193,7 @@ const ViewAppendicesContract = () => {
                     </div>
                   </div>
                   <SendMailUpdateStatus
-                    id={id}
+                    id={idDetail}
                     status={status}
                     closeModal={() => setChangeStatus(false)}
                     refetch={() => {}}
