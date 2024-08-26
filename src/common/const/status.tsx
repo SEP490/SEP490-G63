@@ -99,6 +99,10 @@ export const statusObjectHistory = {
     title: 'Tạo mới',
     color: 'text-blue-500'
   },
+  UPDATE: {
+    title: 'Chỉnh sửa',
+    color: 'text-blue-500'
+  },
   WAIT_APPROVE: {
     title: 'Yêu cầu duyệt',
     color: 'text-yellow-500'
