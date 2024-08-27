@@ -193,7 +193,7 @@ const NavBar = () => {
         </div>
         <div className='flex items-center gap-4 '>
           <Popover className='relative'>
-            {({ open }) => (
+            {({ open, close }) => (
               <>
                 <Popover.Button
                   className={`
