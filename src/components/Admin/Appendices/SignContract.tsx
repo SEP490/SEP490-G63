@@ -3,6 +3,7 @@ import React, { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Stage, Layer, Line } from 'react-konva'
 import { useMutation } from 'react-query'
+import { BASE_URL_FE } from '~/common/const'
 import { statusRequest } from '~/common/const/status'
 import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
 import useToast from '~/hooks/useToast'
@@ -17,12 +18,24 @@ interface IProps {
   createdBy: string | undefined
   to: string
   cc: string
+  contractId: string
   phoneVerify: any
 }
 type FormTypeSMS = {
   code: number
 }
-const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy, to, cc, phoneVerify }: IProps) => {
+const SignContract = ({
+  id,
+  customer,
+  comment,
+  setModalSign,
+  refetch,
+  createdBy,
+  to,
+  cc,
+  phoneVerify,
+  contractId
+}: IProps) => {
   const [lines, setLines] = React.useState<any>([])
   const isDrawing = React.useRef(false)
   const stageRef = React.useRef<any>(null)
@@ -81,12 +94,19 @@ const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy,
     formData.append('to', to)
     if (cc != null) formData.append('cc', cc)
     formData.append('subject', statusRequest[customer == '2' ? 8 : 5]?.title)
-    formData.append('htmlContent', statusRequest[customer == '2' ? 8 : 5]?.description)
+    formData.append(
+      'htmlContent',
+      statusRequest[customer == '2' ? 8 : 5]?.description({
+        name: '',
+        html: '',
+        src: `${BASE_URL_FE}appendices/${contractId}/detail/${id}`
+      })
+    )
     formData.append('contractAppendicesId', id as string)
     formData.append('status', statusRequest[customer == '2' ? 8 : 5]?.status)
     formData.append('createdBy', createdBy as string)
     formData.append('reasonId', '')
-    formData.append('description', statusRequest[customer == '2' ? 8 : 5]?.description)
+    formData.append('description', comment)
     try {
       const response = await sendMailPublicApp(formData)
     } catch (error) {

@@ -51,7 +51,7 @@ const NavBar = () => {
     if (noti?.typeNotification == 'CONTRACT') {
       navigate(`/contract/detail/${noti?.contractId}`)
     } else if (noti?.typeNotification == 'APPENDICES CONTRACT') {
-      navigate(`/appendices/${noti?.contractId}`)
+      navigate(`/appendices/${noti?.contractId}/detail/${noti?.contractAppendicesId}`)
     }
 
     if (!noti.markRead) {

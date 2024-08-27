@@ -217,6 +217,7 @@ const ViewSignAppendicesContract = () => {
                   </Dialog.Title>
                   <SignContract
                     id={id}
+                    contractId={data?.object?.contractId}
                     createdBy={customer == '1' ? user?.email : getValues('email')}
                     customer={customer}
                     comment={commentRef.current?.value}
