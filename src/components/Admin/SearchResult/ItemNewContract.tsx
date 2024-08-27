@@ -12,29 +12,29 @@ const ItemNewContract = ({ data }: any) => {
   }
   return (
     <>
-      <div className='flex gap-2 w-full' key={data.id}>
+      <div className='flex gap-2 w-full' key={data?.id}>
         <div className='w-1/2'>
           <div
             className='text-blue-700 hover:underline text-[20px] cursor-pointer'
-            onClick={() => navigate('/contract')}
+            onClick={() => navigate(`/contract/detail/${data?.id}`)}
           >
-            {data.name} | {data.number}
+            {data?.name} | {data?.number}
           </div>
           <div className='text-black flex flex-col'>
             <div>
-              <strong>Bên A:</strong> {data.partyA?.name} - Đại diện bởi {data.partyA?.position}:{' '}
-              {data.partyA?.presenter} - Địa chỉ: {data.partyA?.address}
+              <strong>Bên A:</strong> {data.partyA?.name} - Đại diện bởi {data?.partyA?.position}:{' '}
+              {data?.partyA?.presenter} - Địa chỉ: {data?.partyA?.address}
             </div>
             <div>
               <strong>Bên B:</strong> {data.partyB?.name}- Đại diện bởi {data.partyB?.position}:{' '}
-              {data.partyB?.presenter} - Địa chỉ: {data.partyB?.address}
+              {data?.partyB?.presenter} - Địa chỉ: {data?.partyB?.address}
             </div>
           </div>
 
           <div id='rule'></div>
         </div>
         <div className='border shadow-md relative'>
-          <iframe className='' src={data.file} />
+          <iframe className='' src={data?.file} />
           <div className='absolute h-full w-full z-30 top-0 right-0' onClick={() => setOpenModalContract(true)}></div>
         </div>
       </div>

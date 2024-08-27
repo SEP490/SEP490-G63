@@ -80,11 +80,16 @@ const OldContract = () => {
       }
     }
   )
-  const { handleSubmit, register } = useForm<FormSearch>()
+  const { handleSubmit, register, reset } = useForm<FormSearch>()
   const onSubmit: SubmitHandler<FormSearch> = async (data) => {
     navigate(`/search/old-contract/${data.searchText}`)
   }
-
+  const handleInputValue = (e: any) => {
+    const inp = e.target.value.replace('/', '').replace('\\', '')
+    reset({
+      searchText: inp
+    })
+  }
   useEffect(() => {
     if (prevPageRef.current !== page || prevSizeRef.current !== size) {
       prevPageRef.current = page
@@ -117,6 +122,7 @@ const OldContract = () => {
             <input
               type='text'
               id='table-search'
+              onInput={handleInputValue}
               {...register('searchText')}
               className='block p-2 ps-10 w-[80%] shadow-md text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
               placeholder='Thông tin hợp đồng'

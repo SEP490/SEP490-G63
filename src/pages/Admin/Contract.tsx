@@ -630,11 +630,16 @@ const Contract = () => {
   const handleDelete = () => {
     if (selectedContract) deleteTemplate.mutate(selectedContract.id)
   }
-  const { handleSubmit, register } = useForm<FormSearch>()
+  const { handleSubmit, register, reset } = useForm<FormSearch>()
   const onSubmit: SubmitHandler<FormSearch> = async (data) => {
     navigate(`/search/contract/${data.searchText}`)
   }
-
+  const handleInputValue = (e: any) => {
+    const inp = e.target.value.replace('/', '').replace('\\', '')
+    reset({
+      searchText: inp
+    })
+  }
   useEffect(() => {
     if (prevPageRef.current !== page || prevSizeRef.current !== size) {
       prevPageRef.current = page
@@ -667,6 +672,7 @@ const Contract = () => {
             <input
               type='text'
               id='table-search'
+              onInput={handleInputValue}
               {...register('searchText', {
                 required: true
               })}

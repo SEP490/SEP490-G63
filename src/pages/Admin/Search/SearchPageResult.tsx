@@ -41,6 +41,7 @@ const SearchPageResult = () => {
       setTotalPage(result?.object?.totalPages)
     }
   })
+
   const handleInputValue = (e: any) => {
     const inp = e.target.value.replace('/', '').replace('\\', '')
     reset({
@@ -133,16 +134,18 @@ const SearchPageResult = () => {
             fieldSearch == 'contract' ? <ItemNewContract data={d} /> : <ItemOldContract data={d} />
           )}
         </div>
-        <div className='mt-6'>
-          <Pagination
-            totalPages={totalPage}
-            currentPage={page + 1}
-            size={size}
-            setSize={setSize}
-            setPage={setPage}
-            onPageChange={handlePageChange}
-          />
-        </div>
+        {data && data?.content?.length != 0 && (
+          <div className='mt-6'>
+            <Pagination
+              totalPages={totalPage}
+              currentPage={page + 1}
+              size={size}
+              setSize={setSize}
+              setPage={setPage}
+              onPageChange={handlePageChange}
+            />
+          </div>
+        )}
       </div>
     </div>
   )
