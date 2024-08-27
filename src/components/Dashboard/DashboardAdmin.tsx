@@ -134,7 +134,7 @@ const DashboardAdmin = () => {
             <label>Thống kê số hợp đồng thành công theo nhân viên</label>
           </div>
           <div className='flex flex-col items-center mt-6'>
-            <ReactApexChart options={optionPie.options} series={optionPie.series} type='pie' width={380} />
+            <ReactApexChart options={optionPie.options} series={optionPie.series} type='pie' width={500} />
 
             <label>Thống kê các nguyên nhân được chọn khi hợp đồng bị từ chối</label>
           </div>
