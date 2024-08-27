@@ -10,7 +10,7 @@ import { getListReason } from '~/services/reason.service'
 type FormData = {
   reasonId: string
 }
-const RejectSignContract = ({ contract, comment, createdBy }: any) => {
+const RejectSignContract = ({ contract, comment, createdBy, refetch }: any) => {
   const { errorNotification, successNotification } = useToast()
   const { data: dataReason } = useQuery('reason-data', () => getListReason(0, 50))
   const {
@@ -21,6 +21,7 @@ const RejectSignContract = ({ contract, comment, createdBy }: any) => {
   const sendMailReject = useMutation(sendMailPublic, {
     onError: () => {
       errorNotification('Gửi yêu cầu thất bại')
+      refetch()
     },
     onSuccess: () => {
       successNotification('Từ chối thành công!')

@@ -538,5 +538,6 @@ export const statusContract: any = [
   { status: 'WAIT_APPROVE', title: 'Chờ duyệt' },
   { status: 'WAIT_SIGN_A', title: 'Chờ ký' },
   { status: 'SIGN_B_OK', title: 'Khách ký thành công' },
-  { sttaus: 'SUCCESS', title: 'Hoàn thành' }
+  { status: 'SIGN_A_OK', title: 'Sếp ký thành công' },
+  { status: 'SUCCESS', title: 'Hoàn thành' }
 ]

@@ -365,7 +365,7 @@ const Contract = () => {
       ),
       color: 'text-teal-700',
       disable: (d: any) => {
-        const statusPL = user?.email == d.createdBy ? ['SIGN_A_OK'] : ['']
+        const statusPL = user?.email == d.createdBy ? ['SIGN_A_OK', 'SIGN_B_FAIL'] : ['']
         return !statusPL.includes(d?.statusCurrent)
       },
       callback: (d: any) => {

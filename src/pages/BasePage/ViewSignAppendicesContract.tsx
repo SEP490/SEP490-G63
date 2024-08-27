@@ -262,7 +262,15 @@ const ViewSignAppendicesContract = () => {
                   <Dialog.Title as='h3' className='text-lg font-medium leading-6 text-gray-900'>
                     Từ chối ký hợp đồng
                   </Dialog.Title>
-                  <RejectSignContract contract={data?.object} comment={commentRef.current?.value} />
+                  <RejectSignContract
+                    contract={data?.object}
+                    comment={commentRef.current?.value}
+                    refetch={() => {
+                      setModalReject(false)
+                      refetch()
+                    }}
+                    createdBy={customer == '1' ? user?.email : getValues('email')}
+                  />
                 </Dialog.Panel>
               </Transition.Child>
             </div>
