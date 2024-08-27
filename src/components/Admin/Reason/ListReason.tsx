@@ -88,7 +88,7 @@ const ListReason = () => {
                       STT
                     </th>
                     <th className='px-3 py-3 w-[200px]'>Nguyên nhân</th>
-                    <th className='px-3 py-3 w-[250px]'>Mô tả</th>
+                    <th className='px-3 py-3 w-fit'>Mô tả</th>
                     <th className='px-3 py-3'></th>
                   </tr>
                 </thead>
@@ -105,7 +105,7 @@ const ListReason = () => {
                           {index + 1 < 10 ? `0${index + 1}` : index + 1}
                         </td>
                         <td className='px-3 py-4 w-[250px]'>{d.title}</td>
-                        <td className='px-3 py-4'>{d.description}</td>
+                        <td className='px-3 py-4 '>{d.description}</td>
 
                         <td className='px-3 py-4 text-right'>
                           <Menu as='div' className='relative inline-block text-left '>
