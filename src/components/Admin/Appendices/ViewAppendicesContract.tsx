@@ -83,7 +83,7 @@ const ViewAppendicesContract = () => {
         </>
       ),
       color: 'text-blue-700',
-      disable: (d: any) => !d?.canSend || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
+      disable: (d: any) => !d?.canSend || d?.status == 'SUCCESS' || d?.currentStatus == 'SUCCESS',
       callback: (d: any) => {
         setStatus(1)
         setChangeStatus(true)
@@ -97,7 +97,7 @@ const ViewAppendicesContract = () => {
         </>
       ),
       color: 'text-teal-700',
-      disable: (d: any) => !d?.canSendForCustomer || d?.status == 'SUCCESS' || d?.statusCurrent == 'SUCCESS',
+      disable: (d: any) => !d?.canSendForCustomer || d?.status == 'SUCCESS' || d?.currentStatus == 'SUCCESS',
       callback: (d: any) => {
         setStatus(7)
         setChangeStatus(true)
@@ -226,7 +226,7 @@ const ViewAppendicesContract = () => {
       color: 'text-green-700',
       disable: (d: any) => {
         const statusPL = user?.email == d?.createdBy ? ['NEW'] : ['WAIT_SIGN_A']
-        return !statusPL.includes(d?.statusCurrent)
+        return !statusPL.includes(d?.currentStatus)
       },
       callback: (d: any) => {
         navigate(`/view/${d?.id}/sign-appendices/1`)
@@ -242,7 +242,7 @@ const ViewAppendicesContract = () => {
       color: 'text-orange-700',
       disable: (d: any) => {
         const statusPL = user?.email == d?.createdBy ? [] : ['WAIT_SIGN_A']
-        return !statusPL.includes(d?.statusCurrent)
+        return !statusPL.includes(d?.currentStatus)
       },
       callback: (d: any) => {
         setStatus(6)
@@ -259,7 +259,7 @@ const ViewAppendicesContract = () => {
       color: 'text-teal-700',
       disable: (d: any) => {
         const statusPL = user?.email == d?.createdBy ? ['SIGN_A_OK'] : ['']
-        return !statusPL.includes(d?.statusCurrent)
+        return !statusPL.includes(d?.currentStatus)
       },
       callback: (d: any) => {
         setStatus(7)
@@ -276,7 +276,7 @@ const ViewAppendicesContract = () => {
       color: 'text-violet-700',
       disable: (d: any) => {
         const statusPL = user?.email == d?.createdBy ? ['NEW', 'SIGN_B_FAIL'] : ['SIGN_A_FAIL']
-        return !statusPL.includes(d?.statusCurrent)
+        return !statusPL.includes(d?.currentStatus)
       },
       callback: (d: any) => {
         setEditModal(true)
@@ -292,7 +292,7 @@ const ViewAppendicesContract = () => {
       color: 'text-red-700',
       disable: (d: any) => {
         const statusPL = user?.email == d?.createdBy ? ['NEW', 'SIGN_B_FAIL'] : ['SIGN_A_FAIL']
-        return !statusPL.includes(d?.statusCurrent)
+        return !statusPL.includes(d?.currentStatus)
       },
       callback: (d: any) => {
         setDeleteModal(true)
@@ -1196,7 +1196,9 @@ const ViewAppendicesContract = () => {
                     id={idDetail}
                     status={status}
                     closeModal={() => setChangeStatus(false)}
-                    refetch={() => {}}
+                    refetch={() => {
+                      setRefetch(!refetch)
+                    }}
                     dataC={detailContract}
                   />
                 </Dialog.Panel>

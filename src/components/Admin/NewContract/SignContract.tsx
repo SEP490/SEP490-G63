@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { Stage, Layer, Line } from 'react-konva'
 import { useMutation, useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
+import { BASE_URL_FE } from '~/common/const'
 import { statusRequest } from '~/common/const/status'
 import Loading from '~/components/shared/Loading/Loading'
 import LoadingPage from '~/components/shared/LoadingPage/LoadingPage'
@@ -83,12 +84,19 @@ const SignContract = ({ id, customer, comment, setModalSign, refetch, createdBy,
     formData.append('to', to)
     if (cc != null) formData.append('cc', cc)
     formData.append('subject', statusRequest[customer == '2' ? 8 : 5]?.title)
-    formData.append('htmlContent', statusRequest[customer == '2' ? 8 : 5]?.description)
+    formData.append(
+      'htmlContent',
+      statusRequest[customer == '2' ? 8 : 5]?.description({
+        name: '',
+        html: comment,
+        src: `${BASE_URL_FE}contract/detail/${id}`
+      })
+    )
     formData.append('contractId', id as string)
     formData.append('status', statusRequest[customer == '2' ? 8 : 5]?.status)
     formData.append('createdBy', createdBy as string)
     formData.append('reasonId', '')
-    formData.append('description', statusRequest[customer == '2' ? 8 : 5]?.description)
+    formData.append('description', comment)
     try {
       const response = await sendMailPublic(formData)
     } catch (error) {

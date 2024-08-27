@@ -125,7 +125,7 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC }: IProps
       formData.append('attachments', file)
     })
     if (status) formData.append('status', statusRequest[status]?.status)
-    formData.append('description', 'Gửi duyệt')
+    formData.append('description', editorData)
     try {
       const response = await sendMailApp(formData)
       if (response) {
