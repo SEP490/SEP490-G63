@@ -108,7 +108,7 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC }: IProps
     formData.append('subject', subject)
     formData.append('reasonId', status == 3 || status == 6 || status == 9 ? reason.current?.value : '')
     const htmlContent = statusRequest[status]?.description({
-      name: status == 4 ? `Sếp` : status == 7 ? `Quý khách hàng` : selectedTo?.[0]?.value,
+      name: status == 4 ? `Sếp` : status == 7 ? `Quý khách hàng` : selectedTo?.[0]?.value || '',
       html: editorData || '',
       src:
         status == 4

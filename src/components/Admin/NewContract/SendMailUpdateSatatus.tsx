@@ -20,7 +20,7 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
   const [selectedTo, setSelectedTo] = useState<any[]>([])
   const [selectedCc, setSelectedCc] = useState<any[]>([])
   const [subject, setSubject] = useState<string>(statusRequest[status]?.title)
-  const [editorData, setEditorData] = useState<any>(statusRequest[status]?.description)
+  const [editorData, setEditorData] = useState<any>('')
   const { successNotification, errorNotification } = useToast()
   const [open, setOpen] = useState(false)
   const [loadingSubmit, setLoadingSubmit] = useState(false)
@@ -116,16 +116,17 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
       formData.append('cc', email.value)
     })
     formData.append('subject', subject)
-    const htmlContent = editorData
-    formData.append(
-      'htmlContent',
-      htmlContent +
-        (status == 4
-          ? `<a href="${BASE_URL_FE}view/${id}/sign/1">Ký ngay</a>`
+    const htmlContent = statusRequest[status]?.description({
+      name: status == 4 ? `Sếp` : status == 7 ? `Quý khách hàng` : selectedTo?.[0]?.value || '',
+      html: editorData || '',
+      src:
+        status == 4
+          ? `${BASE_URL_FE}view/${id}/sign/1`
           : status == 7
-            ? `<a href="${BASE_URL_FE}view/${id}/sign/2">Ký ngay</a>`
-            : '')
-    )
+            ? `${BASE_URL_FE}view/${id}/sign/2`
+            : `${BASE_URL_FE}contract/detail/${id}`
+    })
+    formData.append('htmlContent', htmlContent)
     formData.append('contractId', id as string)
     formData.append('reasonId', status == 3 || status == 6 || status == 9 ? reason.current?.value : '')
     formData.append('attachments', contractFile.current, `${dataContract?.object?.name}.pdf`)
@@ -133,7 +134,7 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
       formData.append('attachments', file.file)
     })
     if (status) formData.append('status', statusRequest[status]?.status)
-    formData.append('description', htmlContent)
+    formData.append('description', editorData)
     try {
       const response = await sendMail(formData)
       if (response) {
