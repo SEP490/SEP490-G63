@@ -74,8 +74,39 @@ const DashboardAdmin = () => {
         }
       }
     }
-  }, [dataSuccess, dataRejectUser])
-
+  }, [dataSuccess])
+  const optionPie = useMemo(() => {
+    const list = dataRejectUser?.object
+    const dataNumber: number[] = []
+    const dataLabel: any[] = []
+    list?.forEach((element: any) => {
+      dataNumber.push(parseInt(element?.totalNumberOfRejected))
+      dataLabel.push(element?.reasonTitle)
+    })
+    return {
+      series: dataNumber,
+      options: {
+        chart: {
+          width: 380,
+          type: 'pie'
+        },
+        labels: dataLabel,
+        responsive: [
+          {
+            breakpoint: 450,
+            options: {
+              chart: {
+                width: 380
+              },
+              legend: {
+                position: 'bottom'
+              }
+            }
+          }
+        ]
+      }
+    }
+  }, [dataRejectUser])
   return (
     <div className='w-full h-full flex flex-col pb-6 bg-white overflow-auto'>
       <div className='w-full flex items-center justify-start gap-10 px-10 my-4'>
@@ -93,14 +124,19 @@ const DashboardAdmin = () => {
         </div> */}
         Tổng số hợp đồng thành công: {totalSuccess}
       </div>
-      <div className='w-full flex px-6 justify-between'>
-        <div className='w-[78%]'>
+      <div className='w-full h-full flex px-6 justify-between'>
+        <div className='w-[78%] overflow-y-auto overflow-x-hidden'>
           <div className='flex flex-col items-center'>
             <div className='w-full'>
               <ReactApexChart options={optionData.options} series={optionData.series} type='bar' height={350} />
             </div>
 
             <label>Thống kê số hợp đồng thành công theo nhân viên</label>
+          </div>
+          <div className='flex flex-col items-center mt-6'>
+            <ReactApexChart options={optionPie.options} series={optionPie.series} type='pie' width={380} />
+
+            <label>Thống kê các nguyên nhân được chọn khi hợp đồng bị từ chối</label>
           </div>
         </div>
         <div className='w-[20%]'>
@@ -116,11 +152,8 @@ const DashboardAdmin = () => {
             <div className='font-bold'>{user?.name}</div>
             <div>{user?.email}</div>
           </div>
-          <div></div>
         </div>
       </div>
-
-      {/* <ReactApexChart options={state.options} series={state.series} type='bar' height={350} /> */}
     </div>
   )
 }
