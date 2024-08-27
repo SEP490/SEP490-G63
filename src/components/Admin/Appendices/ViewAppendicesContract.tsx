@@ -1062,7 +1062,7 @@ const ViewAppendicesContract = () => {
                     </div>
                   </div>
 
-                  <ViewContract src={detailContract?.file} />
+                  <ViewContract src={detailContractAppendices?.file} />
                 </Dialog.Panel>
               </Transition.Child>
             </div>
@@ -1148,7 +1148,7 @@ const ViewAppendicesContract = () => {
                     <XMarkIcon className='h-5 w-5 mr-3 mb-3 cursor-pointer' onClick={() => setEditModal(false)} />
                   </div>
                   <EditAppendicesContract
-                    selectedContract={detailContract}
+                    selectedContract={detailContractAppendices}
                     handleCloseModal={() => setEditModal(false)}
                     refetch={() => {
                       setRefetch(!refetch)

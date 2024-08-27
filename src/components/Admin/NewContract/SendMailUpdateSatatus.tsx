@@ -103,10 +103,6 @@ const SendMailUpdateStatus = ({ id, status, closeModal, refetch, dataC, refetchN
       errorNotification('Trường "Tiêu đề" không được để trống!')
       return
     }
-    if (editorData.trim() === '') {
-      errorNotification('Trường "Nội dung" không được để trống!')
-      return
-    }
     setLoadingSubmit(true)
     const formData = new FormData()
     selectedTo.forEach((email) => {
