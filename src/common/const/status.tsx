@@ -148,7 +148,7 @@ export const statusRequest: any = {
   1: {
     status: 'WAIT_APPROVE',
     title: 'Xin duyệt hợp đồng',
-    description: ({ name, html, src }: any) => {
+    description: ({ name = '', html = '', src = '' }: any) => {
       return `<div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#f4f4f4', color: '#333', padding: '20px' }}>
           <div
             style={{
@@ -184,19 +184,351 @@ export const statusRequest: any = {
         </div>`
     }
   },
-  2: { status: 'APPROVED', title: 'Xác nhận duyệt hợp đồng', description: 'Xác nhận duyệt hợp đồng' },
-  3: { status: 'APPROVE_FAIL', title: 'Từ chối duyệt hợp đồng', description: 'Từ chối duyệt hợp đồng' },
-  4: { status: 'WAIT_SIGN_A', title: 'Xác nhận xin ký hợp đồng', description: 'Yêu cầu xin trình kí hợp đồng' },
-  5: { status: 'SIGN_A_OK', title: 'Xác nhận ký hợp đồng', description: 'Xác nhận ký hợp đồng' },
-  6: { status: 'SIGN_A_FAIL', title: 'Từ chối ký hợp đồng', description: 'Từ chối ký hợp đồng' },
+  2: {
+    status: 'APPROVED',
+    title: 'Xác nhận duyệt hợp đồng',
+    description: ({ name = '', html = '', src = '' }: any) => {
+      return `<div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#f4f4f4', color: '#333', padding: '20px' }}>
+        <div
+          style={{
+            backgroundColor: '#ffffff',
+            padding: '20px',
+            borderRadius: '5px',
+            boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+            maxWidth: '600px',
+            margin: 'auto'
+          }}
+        >
+          <h2 style='color: #2c3e50;'>Tdocman</h2>
+          <p style='fontSize: "16px"; line-height: "1.6";'>Kính gửi ${name},</p>
+          <p style='fontSize: "16px"; line-height: "1.6";'>
+            Chúng tôi xin gửi đến hợp đồng để ký kết. Vui lòng xem qua nội dung hợp đồng và duyệt nếu đồng ý
+            với các điều khoản.
+          </p>
+          ${html}
+          <p style='fontSize: "16px"; line-height: "1.6";'>
+            Nếu có bất kỳ thắc mắc nào, xin vui lòng liên hệ lại với chúng tôi.
+          </p>
+          <p style='fontSize: "16px"; line-height: "1.6";'>Trân trọng,</p>
+          <p style='fontSize:" 16px"; line-height: "1.6";'>
+            <strong>Tdocman</strong>
+          </p>
+          <a
+            href="${src}"
+            style='display: inline-block; background-color: #3498db; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 20px;'
+          >
+            Xem Hợp Đồng
+          </a>
+        </div>
+      </div>`
+    }
+  },
+  3: {
+    status: 'APPROVE_FAIL',
+    title: 'Từ chối duyệt hợp đồng',
+    description: ({ name = '', html = '', src = '' }: any) => {
+      return `<div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#f4f4f4', color: '#333', padding: '20px' }}>
+        <div
+          style={{
+            backgroundColor: '#ffffff',
+            padding: '20px',
+            borderRadius: '5px',
+            boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+            maxWidth: '600px',
+            margin: 'auto'
+          }}
+        >
+          <h2 style='color: #2c3e50;'>Tdocman</h2>
+          <p style='fontSize: "16px"; line-height: "1.6";'>Kính gửi ${name},</p>
+          <p style='fontSize: "16px"; line-height: "1.6";'>
+            ADMIN OFFICER đã từ chối duyệt hợp đồng.
+          </p>
+          ${html}
+          <p style='fontSize: "16px"; line-height: "1.6";'>
+            Nếu có bất kỳ thắc mắc nào, xin vui lòng liên hệ lại với chúng tôi.
+          </p>
+          <p style='fontSize: "16px"; line-height: "1.6";'>Trân trọng,</p>
+          <p style='fontSize:" 16px"; line-height: "1.6";'>
+            <strong>Tdocman</strong>
+          </p>
+          <a
+            href="${src}"
+            style='display: inline-block; background-color: #3498db; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 20px;'
+          >
+            Xem Hợp Đồng
+          </a>
+        </div>
+      </div>`
+    }
+  },
+  4: {
+    status: 'WAIT_SIGN_A',
+    title: 'Xác nhận xin ký hợp đồng',
+    description: ({ name = '', html = '', src = '' }: any) => {
+      return `<div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#f4f4f4', color: '#333', padding: '20px' }}>
+        <div
+          style={{
+            backgroundColor: '#ffffff',
+            padding: '20px',
+            borderRadius: '5px',
+            boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+            maxWidth: '600px',
+            margin: 'auto'
+          }}
+        >
+          <h2 style='color: #2c3e50;'>Tdocman</h2>
+          <p style='fontSize: "16px"; line-height: "1.6";'>Kính gửi ${name},</p>
+          <p style='fontSize: "16px"; line-height: "1.6";'>
+            Chờ sếp ký hợp đồng.
+          </p>
+          ${html}
+          <p style='fontSize: "16px"; line-height: "1.6";'>
+            Nếu có bất kỳ thắc mắc nào, xin vui lòng liên hệ lại với chúng tôi.
+          </p>
+          <p style='fontSize: "16px"; line-height: "1.6";'>Trân trọng,</p>
+          <p style='fontSize:" 16px"; line-height: "1.6";'>
+            <strong>Tdocman</strong>
+          </p>
+          <a
+            href="${src}"
+            style='display: inline-block; background-color: #3498db; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 20px;'
+          >
+            Xem Hợp Đồng
+          </a>
+        </div>
+      </div>`
+    }
+  },
+  5: {
+    status: 'SIGN_A_OK',
+    title: 'Xác nhận ký hợp đồng',
+    description: ({ name = '', html = '', src = '' }: any) => {
+      return `<div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#f4f4f4', color: '#333', padding: '20px' }}>
+          <div
+            style={{
+              backgroundColor: '#ffffff',
+              padding: '20px',
+              borderRadius: '5px',
+              boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+              maxWidth: '600px',
+              margin: 'auto'
+            }}
+          >
+            <h2 style='color: #2c3e50;'>Tdocman</h2>
+            <p style='fontSize: "16px"; line-height: "1.6";'>Kính gửi ${name},</p>
+            <p style='fontSize: "16px"; line-height: "1.6";'>
+              ADMIN đã ký.
+            </p>
+            ${html}
+            <p style='fontSize: "16px"; line-height: "1.6";'>
+              Nếu có bất kỳ thắc mắc nào, xin vui lòng liên hệ lại với chúng tôi.
+            </p>
+            <p style='fontSize: "16px"; line-height: "1.6";'>Trân trọng,</p>
+            <p style='fontSize:" 16px"; line-height: "1.6";'>
+              <strong>Tdocman</strong>
+            </p>
+            <a
+              href="${src}"
+              style='display: inline-block; background-color: #3498db; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 20px;'
+            >
+              Xem Hợp Đồng
+            </a>
+          </div>
+        </div>`
+    }
+  },
+  6: {
+    status: 'SIGN_A_FAIL',
+    title: 'Từ chối ký hợp đồng',
+    description: ({ name = '', html = '', src = '' }: any) => {
+      return `<div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#f4f4f4', color: '#333', padding: '20px' }}>
+        <div
+          style={{
+            backgroundColor: '#ffffff',
+            padding: '20px',
+            borderRadius: '5px',
+            boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+            maxWidth: '600px',
+            margin: 'auto'
+          }}
+        >
+          <h2 style='color: #2c3e50;'>Tdocman</h2>
+          <p style='fontSize: "16px"; line-height: "1.6";'>Kính gửi ${name},</p>
+          <p style='fontSize: "16px"; line-height: "1.6";'>
+            Chúng tôi xin gửi đến hợp đồng để ký kết. Vui lòng xem qua nội dung hợp đồng và duyệt nếu đồng ý
+            với các điều khoản.
+          </p>
+          ${html}
+          <p style='fontSize: "16px"; line-height: "1.6";'>
+            Nếu có bất kỳ thắc mắc nào, xin vui lòng liên hệ lại với chúng tôi.
+          </p>
+          <p style='fontSize: "16px"; line-height: "1.6";'>Trân trọng,</p>
+          <p style='fontSize:" 16px"; line-height: "1.6";'>
+            <strong>Tdocman</strong>
+          </p>
+          <a
+            href="${src}"
+            style='display: inline-block; background-color: #3498db; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 20px;'
+          >
+            Xem Hợp Đồng
+          </a>
+        </div>
+      </div>`
+    }
+  },
   7: {
     status: 'WAIT_SIGN_B',
     title: 'Xác nhận trao đổi và ký hợp đồng',
-    description: 'Yêu cầu xác nhận trao đổi và xin ký hợp đồng'
+    description: ({ name = '', html = '', src = '' }: any) => {
+      return `<div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#f4f4f4', color: '#333', padding: '20px' }}>
+          <div
+            style={{
+              backgroundColor: '#ffffff',
+              padding: '20px',
+              borderRadius: '5px',
+              boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+              maxWidth: '600px',
+              margin: 'auto'
+            }}
+          >
+            <h2 style='color: #2c3e50;'>Tdocman</h2>
+            <p style='fontSize: "16px"; line-height: "1.6";'>Kính gửi ${name},</p>
+            <p style='fontSize: "16px"; line-height: "1.6";'>
+               Chúng tôi xin gửi đến hợp đồng để ký kết. Vui lòng xem qua nội dung hợp đồng và ký nếu đồng ý
+            với các điều khoản
+            </p>
+            ${html}
+            <p style='fontSize: "16px"; line-height: "1.6";'>
+              Nếu có bất kỳ thắc mắc nào, xin vui lòng liên hệ lại với chúng tôi.
+            </p>
+            <p style='fontSize: "16px"; line-height: "1.6";'>Trân trọng,</p>
+            <p style='fontSize:" 16px"; line-height: "1.6";'>
+              <strong>Tdocman</strong>
+            </p>
+            <a
+              href="${src}"
+              style='display: inline-block; background-color: #3498db; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 20px;'
+            >
+              Xem Hợp Đồng
+            </a>
+          </div>
+        </div>`
+    }
   },
-  8: { status: 'SIGN_B_OK', title: 'Xác nhận ký hợp đồng', description: 'Xác nhận ký hợp đồng' },
-  9: { status: 'SIGN_B_FAIL', title: 'Từ chối ký hợp đồng', description: 'Từ chối ký hợp đồng' },
-  10: { status: 'NEW', title: 'Tạo mới hợp đồng', description: 'Bạn đã tạo mới hợp đồng thành công' }
+  8: {
+    status: 'SIGN_B_OK',
+    title: 'Xác nhận ký hợp đồng',
+    description: ({ name = '', html = '', src = '' }: any) => {
+      return `<div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#f4f4f4', color: '#333', padding: '20px' }}>
+          <div
+            style={{
+              backgroundColor: '#ffffff',
+              padding: '20px',
+              borderRadius: '5px',
+              boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+              maxWidth: '600px',
+              margin: 'auto'
+            }}
+          >
+            <h2 style='color: #2c3e50;'>Tdocman</h2>
+            <p style='fontSize: "16px"; line-height: "1.6";'>Kính gửi ${name},</p>
+            <p style='fontSize: "16px"; line-height: "1.6";'>
+              Khách Hàng đã ký thành công.
+            </p>
+            ${html}
+            <p style='fontSize: "16px"; line-height: "1.6";'>
+              Nếu có bất kỳ thắc mắc nào, xin vui lòng liên hệ lại với chúng tôi.
+            </p>
+            <p style='fontSize: "16px"; line-height: "1.6";'>Trân trọng,</p>
+            <p style='fontSize:" 16px"; line-height: "1.6";'>
+              <strong>Tdocman</strong>
+            </p>
+            <a
+              href="${src}"
+              style='display: inline-block; background-color: #3498db; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 20px;'
+            >
+              Xem Hợp Đồng
+            </a>
+          </div>
+        </div>`
+    }
+  },
+  9: {
+    status: 'SIGN_B_FAIL',
+    title: 'Từ chối ký hợp đồng',
+    description: ({ name = '', html = '', src = '' }: any) => {
+      return `<div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#f4f4f4', color: '#333', padding: '20px' }}>
+        <div
+          style={{
+            backgroundColor: '#ffffff',
+            padding: '20px',
+            borderRadius: '5px',
+            boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+            maxWidth: '600px',
+            margin: 'auto'
+          }}
+        >
+          <h2 style='color: #2c3e50;'>Tdocman</h2>
+          <p style='fontSize: "16px"; line-height: "1.6";'>Kính gửi ${name},</p>
+          <p style='fontSize: "16px"; line-height: "1.6";'>
+            Khách hàng ký thành công.
+          </p>
+          ${html}
+          <p style='fontSize: "16px"; line-height: "1.6";'>
+            Nếu có bất kỳ thắc mắc nào, xin vui lòng liên hệ lại với chúng tôi.
+          </p>
+          <p style='fontSize: "16px"; line-height: "1.6";'>Trân trọng,</p>
+          <p style='fontSize:" 16px"; line-height: "1.6";'>
+            <strong>Tdocman</strong>
+          </p>
+          <a
+            href="${src}"
+            style='display: inline-block; background-color: #3498db; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 20px;'
+          >
+            Xem Hợp Đồng
+          </a>
+        </div>
+      </div>`
+    }
+  },
+  10: {
+    status: 'NEW',
+    title: 'Tạo mới hợp đồng',
+    description: ({ name = '', html = '', src = '' }: any) => {
+      return `<div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#f4f4f4', color: '#333', padding: '20px' }}>
+        <div
+          style={{
+            backgroundColor: '#ffffff',
+            padding: '20px',
+            borderRadius: '5px',
+            boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+            maxWidth: '600px',
+            margin: 'auto'
+          }}
+        >
+          <h2 style='color: #2c3e50;'>Tdocman</h2>
+          <p style='fontSize: "16px"; line-height: "1.6";'>Kính gửi ${name},</p>
+          <p style='fontSize: "16px"; line-height: "1.6";'>
+            Tạo mới hợp đồng thành công.
+          </p>
+          ${html}
+          <p style='fontSize: "16px"; line-height: "1.6";'>
+            Nếu có bất kỳ thắc mắc nào, xin vui lòng liên hệ lại với chúng tôi.
+          </p>
+          <p style='fontSize: "16px"; line-height: "1.6";'>Trân trọng,</p>
+          <p style='fontSize:" 16px"; line-height: "1.6";'>
+            <strong>Tdocman</strong>
+          </p>
+          <a
+            href="${src}"
+            style='display: inline-block; background-color: #3498db; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 20px;'
+          >
+            Xem Hợp Đồng
+          </a>
+        </div>
+      </div>`
+    }
+  }
 }
 export const statusContract: any = [
   {
